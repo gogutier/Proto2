@@ -1,0 +1,16 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<div class="post">
+<h5>
+        <div class="date">
+            {{ minuta.dia }}
+        </div>
+</h5>
+</br>
+
+    <p><h6>Minuta: </h6> {{ minuta.texto|linebreaksbr }}</p>
+    <p><h6>Observaciones: </h6> {{ minuta.obs|linebreaksbr }}</p>
+
+<h4><a href="{% url 'minutas' %}" class="top-menu"><span class="glyphicon glyphicon-plus">Volver</span></a></h4>
+</div>
+{% endblock %}

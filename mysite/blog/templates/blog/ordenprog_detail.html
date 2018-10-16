@@ -1,0 +1,311 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+  <h1 class="posttitle loader">{{ordenprog.fecha_programa}}</h1>
+
+
+
+<!--
+
+<table class='table' id='table'>
+
+  <tr bgcolor="#dddddd">
+
+    {% for maquina in maquinas %}
+    <td>
+    <h3>{{maquina}}</h3>
+    </th>
+    {% endfor %}
+  </tr>
+
+
+  <tr>
+    <td colspan="7" class="centerText">
+    <h5>{{ordenprog.horizonteini.isoformat}}</h5>
+    </th>
+
+  </tr>
+
+
+
+{% for turno in turnos%}
+
+  <tr>
+
+
+    <td>
+    <h4>{{turno.turno}}</h4>
+    </th>
+
+
+
+
+  {% for maquina in maquinas %}
+
+    <td>
+
+
+
+    {% for detalle in detalleprog %}
+
+
+
+          {% if detalle.programma == ordenprog %}
+
+          {% if detalle.datefinajustada.isoformat == ordenprog.horizonteini.isoformat %}
+            {% if detalle.workcenter == maquina.maquina %}
+            {% if detalle.turno == turno.turno %}
+
+
+
+
+              <a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>
+
+
+              {% for prod in prodreal%}
+
+              {% if prod.orderId == detalle.orderId %}
+              <li><a href="#">Programado: {{detalle.qIn}}</a></li>
+              <li><a href="#">Encontrado en producción real</a></li>
+              {% if prod.datefinajustada == detalle.datefinajustada %}
+              {% if prod.turno == detalle.turno %}
+
+              <li><a href="#">Coincide fecha y turno</a></li>
+              <li><a href="#">Producido: {{prod.qProd}}</a></li>
+
+
+              <li><a href="#">C {{ detalle.completo_unidades}} </a></li>
+
+
+              {% endif %}
+              {% endif %}
+              {% endif %}
+
+              {% endfor %}
+              {% endif %}
+
+
+
+            </li>
+            {% endif %}
+          {% endif %}
+          {% endif %}
+
+
+      {% endfor %}
+
+
+      </th>
+      {% endfor %}
+
+
+
+
+    {% endfor %}
+  </tr>
+
+
+
+</table>
+
+-->
+
+<h3>Tabla JS:</h3>
+<div class="row" id="parsed_csv_list">
+</div>
+
+
+<script type="text/javascript">
+
+displayHTMLTable("hola");
+
+function displayHTMLTable(results){
+  var imagenok ='<img src=http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png alt=""  height=20 width=20></img>'
+  var imagennot = '<img src=http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-delete-icon.png alt="" height=20 width=20></img>'
+  var imagenalert= '<img src=http://iconset.eu5.org/images/alert%20icon-3.jpg alt="" height=20 width=20></img>'
+  var img;
+  var realproducido;
+  var realproducidototal;
+  var strnamecliente;
+  var horini= moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
+  var hormid = horini
+  var horfin= moment.parseZone("{{ordenprog.horizontefin.isoformat|safe}}");
+  console.log(hormid.format("YYYY-MM-DDTHH:mm:ssZ"))
+
+  var table = "<table class='table' >";
+
+
+
+
+
+
+
+    //Tom el hor ini y el hor fin y hace un loop para todos los días intermedios.
+
+
+do {
+
+  table+= "<tr>";
+  table+= '<td colspan="7" style="text-align: center">';
+  table+= '<h5 >' + hormid.format("DD-MM-YYYY") +'</h5>';
+  table+= '</td>';
+  table+= '</tr>';
+
+  table+= '<tr bgcolor="#dddddd">';
+  table+= '<td>';
+  table+= '<h3></h3>';
+  table+= '</th>';
+  table+= '{% for maquina in maquinas %}';
+  table+= '<td style="text-align: center">';
+  table+= '<h3>{{maquina}}</h3>';
+  table+= '</th>';
+  table+= '{% endfor %}';
+  table+= '</tr>';
+
+
+
+{% for turno in turnos%}; //problema?
+table+=   '<tr>';
+table+=     '<td>';
+table+=     '<h4>{{turno.turno}}</h4>';
+table+=     '</td>';
+table+=     '{% for maquina in maquinas %}';
+table+=     '<td>';
+table+=     '{% for detalle in detalleprog %}';//acá podemos poner un filtro para evitarse el segundo if
+table+=          ' {% if detalle.programma == ordenprog %}';
+//table+=           ' <h4>{{ detalle.datefinajustada.isoformat }}</h4>';
+
+if ("{{detalle.datefinajustada.isoformat}}" == hormid.format('YYYY-MM-DDTHH:mm:ssZ'))
+{
+table+=             '{% if detalle.workcenter == maquina.maquina %}';
+table+=             '{% if detalle.turno == turno.turno %}';
+
+// Aquí agrego latabla resumen por orden
+table+=               '<table class="table" >';
+table+=               '<tr class="tr">';
+table+=               '<td ><a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>'
+  img=imagennot;
+  {% for prod in prodreal%};
+  table+=                  '{% if prod.orderId == detalle.orderId %}';
+  table+=                  '{% if prod.datefinajustada == detalle.datefinajustada %}';
+  table+=                   '{% if prod.turno == detalle.turno %}';
+                     img=imagenok;//coincide en fecha y turno
+  table+=                   '{% else %}'//coincide en fecha y turno
+                 img=imagenalert;//coincide en fecha y turno
+  //table+=                 '<li><a href="#">Producido: {{prod.qProd}}</a></li>';
+  //table+=                 '<li><a href="#">C {{ detalle.completo_unidades}} </a></li>';
+  table+=                   '{% endif %}';
+  table+=                   '{% else %}'//coincide en fecha y turno
+                    img=imagenalert;//coincide en fecha y turno
+  table+=                   '{% endif %}';
+  table+=                 '{% endif %}';
+
+  {% endfor %};
+  table+=                   img;//coincide en fecha y turno
+  table+=                    '<br/>';
+  realproducido=0;
+  realproducidototal=0;
+  {% for prod in prodreal%};
+  {% if prod.orderId == detalle.orderId %};
+  realproducidototal=realproducidototal+{{prod.qProd}} ;
+
+  {% if prod.datefinajustada == detalle.datefinajustada %};
+  {% if prod.turno == detalle.turno %};
+  realproducido= realproducido+{{prod.qProd}} ;
+  table+=                  '<td colspan="1">'+ Math.floor(100*{{prod.qProd}}/{{detalle.qIn}}) + '%'+'</th>';
+  {% endif %};
+  {% endif %};
+  {% endif %};
+  {% endfor %};
+//table+=                  '<td colspan="1">'+{{prod.qProd}}+'</th>';
+table+=                  '</tr>';
+table+=                   '<tr>';
+table+=                   '<td colspan="2">';//Acá ingreso los datos Programados vs convertidos (la suma de todas las unidades de esa ID independiente de si fue en otro turno o máquina)
+table+=                   'Prog: {{detalle.qIn}} </br>';
+realproducido=0;
+realproducidototal=0;
+{% for prod in prodreal%};
+{% if prod.orderId == detalle.orderId %};
+realproducidototal=realproducidototal+{{prod.qProd}} ;
+{% if prod.datefinajustada == detalle.datefinajustada %};
+{% if prod.turno == detalle.turno %};
+realproducido= realproducido+{{prod.qProd}} ;
+{% endif %};
+{% endif %};
+{% endif %};
+{% endfor %};
+
+table+=                   'Real: '+ realproducido +' </br>';
+table+=                   'Real Tot: '+ realproducidototal +' </br>';
+
+table+=                   'P:'+ moment.parseZone('{{detalle.datefin.isoformat}}').format("DD-MM-YY HH:mm") +'</br>';
+table+=                   'R:';
+{% for prod in prodreal%};
+{% if prod.orderId == detalle.orderId %};
+table+=                   moment.parseZone('{{prod.datefin.isoformat}}').format("DD-MM-YY HH:mm") +'</br>';;
+{% endif %};
+{% endfor %};
+table+=                   '</td>';
+table+=                   '</tr>';
+table+=                  '<tr>';
+table+=                  '<td colspan="2" style="font-size: 10px">';
+strnamecliente = '#';
+{% for prod in prodreal%};
+{% if prod.orderId == detalle.orderId %};
+strnamecliente = '{{prod.cliente}}'.substring(0,20);
+
+{% endif %};
+
+
+{% endfor %};
+table+=                  strnamecliente;
+table+=                 '</td>';
+table+=                  '</tr>';
+
+
+table+=               '</table>';
+//table+=               '<li><a href="#">Programado: {{detalle.qIn}}</a></li>';
+//table+=               '<li><a href="#">Encontrado en producción real</a></li>';
+
+
+table+=               '{% endif %}';
+table+=               '<!--<a href="#"> {{ detalle.datefinajustada }} </a>-->';
+table+=            '</li>';
+table+=            ' {% endif %}';
+}
+table+=           '{% endif %}';
+table+=       '{% endfor %}';
+table+=       '</td>';
+table+=       '{% endfor %}';
+{% endfor %};
+table+=   '</tr>';
+hormid=hormid.add(1,"d")
+}while(hormid.isSameOrBefore(horfin))
+  //************************
+  /*
+  <tr>
+    <td colspan="7">
+      <h5 >{{ordenprog.horizontefin.isoformat}}</h5>
+    </th>
+
+  </tr>
+
+
+
+
+  */
+  //************************
+
+
+
+    table+= "</tr>";
+
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+}
+
+
+</script>
+
+{% endblock %}

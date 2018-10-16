@@ -1,0 +1,332 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<h1>Carga producción real</h1>
+<h4><a href="http://interlink.corrupac.cl/pagegenerator.dll/SIMPLEORDERSTATUSCM">CSV Interlink</a></h4>
+<br>
+
+<div class="container" style="padding:10px 10px;">
+
+
+      <div class="well">
+        <div class="row">
+
+          <form method="POST" class="post-form">
+          {% csrf_token %}
+            <div class="form-group" style="display:none">
+              <h4>Cargar datos aquí</h4>
+              {{ form.ultrafile}}
+              </div>
+              <input type="file" id="csvFileUpload" accept=".csv"/>
+              <input type="button" id="upload" class="btn btn-primary" value="UploadCSV" onclick = "UploadCSV()" accept=".csv"/>
+
+            <div class="botongrabarform" id="botongrabar" style="display:none">
+            <button type="submit" class="save btn btn-default">Save</button>
+            </div>
+
+          </form>
+          <br>
+
+        </div>
+</div>
+
+<h3>Tabla generada:</h3>
+<div class="row" id="parsed_csv_list">
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+
+function reemplazar(input)
+{
+  output=input.replace(/TRANSPORTES, TECNOLOGIA/g, 'TRANSPORTES TECNOLOGIA');
+  output=output.replace(/I, FRUIT SPA/g, 'I. FRUIT SPA');
+  output=output.replace(/Flexo Martin/g, 'FFG');
+  output=output.replace(/FFG WARD/g, 'FFW');
+  output=output.replace(/TCY/g, 'TCY');
+  output=output.replace(/DRO/g, 'DRO');
+  output=output.replace(/WARD/g, 'WRD');
+  output=output.replace(/HYCORR/g, 'HCR');
+
+
+  return output;
+}
+
+
+function displayHTMLTable(results){
+  var table = "<table class='table' id='table'>";
+  var data = results;//var data = results.data;
+  matriz = data;
+
+  matriz=filtrocolumna(matriz);
+  matriz=filtrofila(matriz);
+
+
+
+
+
+  for(i=0;i<data.length;i++){
+    table+= "<tr>";
+    var row = data[i];
+    var cells = row.join(",").split(",");
+
+    for(j=0;j<cells.length;j++){
+      table+= "<td>";
+      table+= cells[j];
+      table+= "</th>";
+
+      data[i][j]= cells[j]; //Esto posiblemente se agregó después durante las pruebas
+
+
+    }
+    table+= "</tr>";
+  }
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+  document.getElementById("botongrabar").style.display = "block";
+
+
+
+
+   //alert(matriz2);
+   //muestraresumen();
+
+   //ini = new Date ( "2018-08-12 07:00:00");
+   //fin = new Date ( "2018-09-30 07:00:00");
+   //muestra_ocupacion(ini,fin);
+}
+
+function filtrofila(tablain)
+{
+for(i=0;i<=tablain[0].length-1;i++){
+    if (tablain[0][i]=="Maquina")
+    {
+    for(j=1;j<=tablain.length-1;j++)
+      {
+        if(!(tablain[j][i]=="FFG" ||tablain[j][i]=="FFW" ||tablain[j][i]=="TCY" || tablain[j][i]=="DRO"||tablain[j][i]=="WRD" || tablain[j][i]=="HCR"))
+        {
+          tablain.splice(j,1);
+          j=j-1;
+        }
+
+      }
+    }
+
+  }
+tablaout=tablain;
+return tablaout;
+
+}
+
+function filtrocolumna(tablain){
+  //Identifica la columna que quiero rescatar. deben venir en un lista?.
+  //elimina todas los elementos de las columnas que no estén en esa lista.
+
+  var listaborrar = [];
+  //eliminando columnas que no me interesan
+  for(i=0;i<=tablain[0].length-1;i++){
+
+    if (!(tablain[0][i]=="Cliente" || tablain[0][i]=="No. Orden" || tablain[0][i]=="ID Especificacion" || tablain[0][i]=="Fecha Hora de termino" || tablain[0][i]=="Cantidad Ordenada" || tablain[0][i]=="Laminas Programadas" || tablain[0][i]=="# de Salidas" || tablain[0][i]=="Laminas Producidas" || tablain[0][i]=="Terminado %" || tablain[0][i]=="Maquina" || tablain[0][i]=="Fecha termino ajustada" || tablain[0][i]=="Turno" || tablain[0][i]==";"  ))
+    //esto después tengo que reemplazarlo por una lista que venga de input
+    {
+      listaborrar.push(i);
+      for(j=0;j<=tablain.length-1;j++)
+      {
+      //console.log(j);
+      //matriz3[j].splice(i,1);
+      //j=i-1;
+      }
+
+    }
+
+    if (tablain[0][i]=="No. Orden")
+    //esto después tengo que reemplazarlo por una lista que venga de input
+    {
+
+      for(j=0;j<=tablain.length-1;j++)
+      {
+      //console.log(j);
+      tablain[j][1]=tablain[j][1].replace(/-/g, '');
+      }
+
+    }
+
+
+  }
+
+
+
+
+  for(j=0;j<=tablain.length-1;j++)
+    {
+
+    for (i=listaborrar.length-1;i>=0;i--)
+      {
+        //alert("borrando columna: " + listaborrar[i]);
+        tablain[j].splice(listaborrar[i],1);
+        i=i-1;
+      }
+      //alert("Resultado: " + matriz3[0]);
+    }
+
+
+  tablaout=tablain;
+  console.log(tablaout);
+
+
+
+  return tablaout;
+}
+
+function UploadCSV() {
+    var csvFileUpload = document.getElementById("csvFileUpload");
+    var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+    if (regex.test(csvFileUpload.value.toLowerCase()))
+     {
+        if (typeof (FileReader) != "undefined")
+            {
+              var reader = new FileReader();
+              reader.onload = function (e)
+              {
+                  var table = document.createElement("table");
+                  var string=e.target.result;
+                  string = reemplazar(string);
+                  //console.log(string);
+                  matriz=Papa.parse(string).data;
+
+                  console.log(matriz);
+                  console.log("largo: "+ matriz.length);
+                  console.log("agrego las las columnas de fecha ter ajust y turno")
+                  var colterminationdate = matriz[0].indexOf("Fecha Hora de termino");
+                  matriz[0].push("Fecha termino ajustada");
+                  matriz[0].push("Turno");
+                  for(i=1;i<matriz.length;i++)
+
+                    {
+
+                      var datefinoriginal = (matriz[i][colterminationdate].substring(0,16));
+
+                      //console.log("Original: " + datefinoriginal);
+
+                      var datepost = moment(datefinoriginal, "DD-MM-YYYY HH:mm");
+
+
+                      var horater=Number(datepost.format("HH"));
+                      var minter=Number(datepost.format("mm"));
+
+
+                          if(0<=horater && horater<7)
+                          {
+
+                            fechater= datepost.subtract(1,"d").format("DD-MM-YYYY");
+                            turno = "C"
+
+                          }
+                          else if ((7<=horater && horater<13) || (horater==14 && minter<30))
+                          {
+                            fechater = datepost.format("DD-MM-YYYY");
+                            turno= "A"
+
+                          }
+                          else if ((horater==14 && minter>=30) || (15<=horater && horater<22))
+                          {
+                            fechater = datepost.format("DD-MM-YYYY");
+                            turno= "B"
+
+                          }
+                          else if (horater=>23)
+                          {
+                            fechater = datepost.format("DD-MM-YYYY");
+                            turno= "C"
+
+                          }
+
+                          //console.log("fechater: " + fechater)
+                          //console.log("turno: " + turno)
+
+                          matriz[i].push(fechater);
+                          matriz[i].push(turno);
+                          console.log("matriz[i]: " + matriz[i])
+
+
+                    }
+
+
+                  console.log("Agregando el ;");
+                  for(i=0;i<matriz.length-1;i++)
+                    {
+
+
+
+                    matriz[i].push(";");
+                    console.log("matriz[i] + ; : " + matriz[i]);
+
+                    }
+
+                  displayHTMLTable(matriz);
+                  $('#id_ultrafile').val(matriz);
+
+
+                }
+            reader.readAsText(csvFileUpload.files[0]);//esto es necesario?
+      }
+      else
+        {
+            alert("This browser does not support HTML5.");
+        }
+    } else
+    {
+        alert("Please upload a valid CSV file.");
+    }
+}
+
+
+</script>
+
+
+<script type="text/javascript">
+
+/*El upload origina
+    function UploadCSV() {
+        var csvFileUpload = document.getElementById("csvFileUpload");
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+        if (regex.test(csvFileUpload.value.toLowerCase())) {
+            if (typeof (FileReader) != "undefined") {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var table = document.createElement("table");
+                    console.log(e.target.result);
+                    var rows = e.target.result.split("\n");
+                    for (var i = 0; i < rows.length; i++) {
+                        var row = table.insertRow(-1);
+                        var cells = rows[i].split(",");
+                        for (var j = 0; j < cells.length; j++) {
+                            var cell = row.insertCell(-1);
+                            cell.innerHTML = cells[j];
+                        }
+                    }
+                    var dvTable = document.getElementById("dvTable");
+                    dvTable.innerHTML = "";
+                    dvTable.appendChild(table);
+                }
+                reader.readAsText(csvFileUpload.files[0]);
+            } else {
+                alert("This browser does not support HTML5.");
+            }
+        } else {
+            alert("Please upload a valid CSV file.");
+        }
+    }
+    */
+</script>
+
+
+<div id="dvTable">
+</div>
+
+
+{%endblock%}

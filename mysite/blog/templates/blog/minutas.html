@@ -1,0 +1,10 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<h3><a href="{% url 'minuta_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus">Nueva Minuta</span></a></h3>
+<h4>  Minutas:</h4>
+{% for minuta in minutas %}
+<h4><a href="{% url 'minuta_detail' pk=minuta.pk %}">  {{ minuta.dia }}</a></h4>
+{% endfor %}
+{% endblock %}

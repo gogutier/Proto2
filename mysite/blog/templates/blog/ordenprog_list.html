@@ -1,0 +1,17 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Resumen Conversión</h1>
+{% if ordenprog_list %}
+<ul>
+  {% for ordenprog in ordenprog_list %}
+    <li>
+      <a href="{{ hola }}">{{ ordenprog.fecha_programa }}</a> ({{ordenprog.transaction_index}})
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>No hay ordenes programadas :/.</p>
+{% endif %}
+
+
+{% endblock %}

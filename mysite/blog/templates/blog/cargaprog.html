@@ -1,0 +1,383 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Carga De Programa diario</h1>
+
+<form method="POST" class="post-form">
+{% csrf_token %}
+<div class="">
+  <h4>Cargar datos aquí</h4>
+  {{ form.ultrafile}}
+</div>
+<button type="button" id="convert">Convert</button>
+<div class="botongrabarform" id="botongrabar">
+<button type="submit" class="save btn btn-default">Save</button>
+</div>
+
+</form>
+
+
+<div class="row" id="parsed_csv_list">
+
+</div>
+
+
+
+<script type="text/javascript">
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+$("#convert").click(function()
+{
+  var x = document.getElementById("botongrabarform");
+
+  //$("#botongrabar").toggle();
+
+  var code = $('#id_ultrafile').val();//toma el dato que se llenó en el form ultrafile (donde se pega la tabla como texto)
+  //var code = esprima.parse(code);
+  //console.log(code);
+  //console.log("convirtiendo....");
+  //reemplazo todas las comas por puntos, para evitar problemas después del parsed_csv_list
+  code=code.replace(/,/g,'.');
+
+  //
+  code2 = Papa.parse(code,{
+	delimiter: "",	// auto-detect
+	newline: "",	// auto-detect
+	quoteChar: '"',
+	escapeChar: '"',
+	header: false,
+	trimHeaders: false,
+	dynamicTyping: false,
+	preview: 0,
+	encoding: "",
+	worker: false,
+	comments: false,
+	step: undefined,
+	complete: undefined,
+	error: undefined,
+	download: false,
+	skipEmptyLines: true,
+	chunk: undefined,
+	fastMode: undefined,
+	beforeFirstChunk: undefined,
+	withCredentials: undefined,
+	transform: undefined
+});
+  //code3 = JSON.parse(code2);
+
+  code2 = code2.data;
+  //console.log(code2);
+
+  //reviso que todas las filas tengan el mismo numero de columnas q la fila cero, si no la elimino.
+  for(i=1;i<code2.length-1;i++)
+  {
+    //console.log(code2[i]);
+    if(code2[i].length!=code2[0].length)
+    {
+      //console.log("borrar");
+      //code2.splice(i,1);
+    }
+
+
+  }
+  //utiliza papaparse para separar archivo
+  //genera tabla indicando los array generados (esto es opcional para el desarrollo).
+  //console.log(code2);
+  //console.log("code2.data antes:");
+  //console.log(code2);
+  //console.log(code3);
+  //var result = (code2 + " Hola q tal");
+
+ //console.log("code data length: " + code2.length);
+
+//Identifico la columna de fecha de término esperada, a convierto a fecha y luego hago la transformación a fecha ajustada y turno.
+
+var colterminationdate = code2[0].indexOf("RUNENDDATE");
+var colfechaprograma = code2[0].indexOf("CREACION_PROGRAMACION");
+//console.log("index runend: " + colterminationdate)
+var fechaprog = (code2[i][colfechaprograma].substring(0,16));
+
+
+
+if (colterminationdate != -1)
+{
+  code2[0].push("Fecha Termino Ajustada");
+  code2[0].push("Turno");
+  code2[0].push("Horizonteini");
+  code2[0].push("Horizontefin");
+  //code2[0].push(";");
+  var turno
+  var fechater
+  var horini
+  var horfin
+
+  for(i=1;i<code2.length;i++)//Acá por qué funciona con code2.length y no con code2.length - 1 ??
+  {
+    var datefinoriginal = (code2[i][colterminationdate].substring(0,16));
+
+    //console.log("Original: " + datefinoriginal);
+
+    var datepost = moment(datefinoriginal, "DD-MM-YYYY HH:mm");
+    var dateposthor = moment(fechaprog, "DD-MM-YYYY HH:mm");
+
+
+    var horater=Number(datepost.format("HH"));
+    var minter=Number(datepost.format("mm"));
+
+    /*ejemplo moment
+    var momentDate = moment('23.11.2009 12:34:56', 'DD.MM.YYYY HH:mm:ss');
+    var date = momentDate.;
+
+    */
+
+    //console.log("Momentado1: " + datepost);
+    //console.log("Momentado2: " + datepost.format("DD-MM-YYYY HH:mm"));
+    //console.log("Momentado2 retrasado: " + datepost.subtract(1,"d").format("DD-MM-YYYY"));
+    //console.log("Momentado3: " + datepost.format("HH"))//format("HH:mm"));
+
+
+    //console.log("horater: " + horater)
+    //console.log("minter: " + minter)
+
+    if(0<=horater && horater<7)
+    {
+
+      fechater= datepost.subtract(1,"d").format("DD-MM-YYYY");
+      turno = "C"
+
+    }
+    else if ((7<=horater && horater<=13) || (horater==14 && minter<30))
+    {
+      fechater = datepost.format("DD-MM-YYYY");
+      turno= "A"
+
+    }
+    else if ((horater==14 && minter>=30) || (15<=horater && horater<22))
+    {
+      fechater = datepost.format("DD-MM-YYYY");
+      turno= "B"
+
+    }
+    else if (horater<=23)
+    {
+      fechater = datepost.format("DD-MM-YYYY");
+      turno= "C"
+
+    }
+
+    //console.log("fechater: " + fechater)
+    //console.log("turno: " + turno)
+
+    code2[i].push(fechater);
+    code2[i].push(turno);
+
+
+
+    horini=dateposthor.format("DD-MM-YYYY");
+    horfin=dateposthor.add(1,"d").format("DD-MM-YYYY");
+
+    code2[i].push(horini);
+    code2[i].push(horfin);
+
+
+
+    //code2[i].push(";");
+
+    //console.log("code2[i]: " + code2[i])
+
+
+
+
+    /*
+
+
+    caso1
+    0=<hora<7-->C y se atrasa un día
+    7=<hora<14 $$ 30=<min=<59 ok
+
+
+    */
+
+
+
+
+  }
+
+}
+
+var colterminoajustada = code2[0].indexOf("Fecha Termino Ajustada");
+var fechaprogcomp = (code2[1][colfechaprograma].substring(0,11));
+
+for(i=0;i<code2.length-1;i++)
+
+
+  {
+      code2[0].push(";");
+      for(i=1;i<code2.length-1;i++)
+      {
+
+
+          code2[i].push(";");
+          //console.log("code data2 [i] + ; : " + code2.data[i]);
+          //console.log("comparando " + code2[i][colterminoajustada] + " y " + fechaprogcomp)
+          //console.log("es igual " + (moment(code2[i][colterminoajustada], "DD-MM-YYYY").format("DD-MM-YYYY") +" a " + moment(fechaprogcomp, "DD-MM-YYYY").add(7,"d").format("DD-MM-YYYY") +"?"));
+          //console.log(  moment(code2[i][colterminoajustada], "DD-MM-YYYY").isBefore( moment(fechaprogcomp, "DD-MM-YYYY").add(7,"d")     ) )
+          if (   !(   moment(code2[i][colterminoajustada], "DD-MM-YYYY").isBefore(moment(fechaprogcomp, "DD-MM-YYYY").add(7,"d")  )   )   )
+          //var datepost = moment(datefinoriginal, "DD-MM-YYYY HH:mm");
+          {
+            console.log("Esta hay que borrarlaaaaaa");
+            code2.splice(i,1);
+            i=i-1;
+
+          }
+          /*
+            if (!(code2[i].length == code2[0].length))
+            {
+              //console.log("No lo es");
+              //code2.splice(i,1);
+
+            }
+            //code2.splice(code2.length,1);
+          */
+
+
+      }
+
+
+    //console.log("code2.data después:");
+    //console.log(code2);
+
+    tabla=filtrocolumna(code2);
+    tabla=filtrofila(tabla);
+
+    //console.log(tabla);
+
+    displayHTMLTable(tabla);
+
+    $('#id_ultrafile').val(tabla);//acá es donde se manda al dato al form q se envía al servidor django
+    //$('#id_ultrafile').val(code2.data);
+
+    //$('#result').html(result);
+  }
+
+});
+
+
+  /// para sumar 2 inputs
+  //Se escribe la función dentro del click
+
+  $("#sumar").click(function() {
+    var num1 = +($('#numero1').val());
+    var num2 = +($('#numero2').val());
+    //var code = esprima.parse(code);
+    var result = (num1 + num2);
+    $('#resultado').html(result);
+    });
+
+
+  function filtrofila(tablain)
+    {
+    for(i=0;i<=tablain[0].length-1;i++){
+        if (tablain[0][i]=="WORKCENTERID")
+        {
+          console.log("encontrado workcenterid");
+        for(j=1;j<=tablain.length-1;j++)
+          {
+            if(!(tablain[j][i]=="FFG" ||tablain[j][i]=="FFW" ||tablain[j][i]=="TCY" || tablain[j][i]=="DRO"||tablain[j][i]=="WRD" || tablain[j][i]=="HCR"))
+            {
+              console.log("encontrado fila a eliminar");
+              tablain.splice(j,1);
+              j=j-1;
+            }
+
+          }
+        }
+
+      }
+
+    tablaout=tablain;
+    return tablaout;
+
+    }
+
+
+function filtrocolumna(tablain){
+  //Identifica la columna que quiero rescatar. deben venir en un lista?.
+  //elimina todas los elementos de las columnas que no estén en esa lista.
+
+  var listaborrar = [];
+  //eliminando columnas que no me interesan
+
+
+
+  for(i=0;i<=tablain[0].length-1;i++){
+
+    if (!(tablain[0][i]=="CREACION_PROGRAMACION" || tablain[0][i]=="TRANSACTIONINDEX" || tablain[0][i]=="WORKCENTERID" || tablain[0][i]=="ORDERID" || tablain[0][i]=="SETUPSTARTDATE" || tablain[0][i]=="RUNENDDATE" || tablain[0][i]=="QUANTITYIN" || tablain[0][i]=="Fecha Termino Ajustada" || tablain[0][i]== "Turno" || tablain[0][i]== "Horizonteini" || tablain[0][i]== "Horizontefin" || tablain[0][i]== ";"))
+    //esto después tengo que reemplazarlo por una lista que venga de input
+    {
+      listaborrar.push(i);
+      for(j=0;j<=tablain.length-1;j++)
+      {
+      //console.log(j);
+      //matriz3[j].splice(i,1);
+      }
+
+    }
+
+  }
+
+  //console.log(tablain);
+
+
+  for(j=0;j<=tablain.length-1;j++)
+    {
+
+    for (i=listaborrar.length-1;i>=0;i--)
+      {
+        //alert("borrando columna: " + listaborrar[i]);
+        tablain[j].splice(listaborrar[i],1);
+        i=i-1;
+      }
+      //alert("Resultado: " + matriz3[0]);
+    }
+
+
+  tablaout=tablain;
+
+
+
+  return tablaout;
+}
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(results){
+  var table = "<table class='table' id='table'>";
+  var data = results;
+  matriz = data;
+
+  for(i=0;i<data.length-1;i++){
+    table+= "<tr>";
+    var row = data[i];
+    var cells = row.join(",").split(",");
+
+    for(j=0;j<cells.length-1;j++){
+      table+= "<td>";
+      table+= cells[j];
+      table+= "</th>";
+
+    }
+    table+= "</tr>";
+  }
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+}
+
+
+
+</script>
+
+
+
+{% endblock %}

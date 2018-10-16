@@ -1,0 +1,43 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Resumen Programa Conversión V2</h1>
+{% if ordenes %}
+{% for ordenprog in ordenes %}
+<ul>
+  <h2>
+  <a href="{% url 'ordenprog_detail' pk=ordenprog.pk %}">{{ordenprog.fecha_programa}}</a>
+  </h2>
+  <br>
+
+</ul>
+{% endfor %}
+{% endif %}
+
+
+
+<script type="text/javascript">
+
+/*
+
+Ejemplo agregar objeto a string sólo si no existe
+
+var item = "Hello World";
+var array = [];
+if (array.indexOf(item) === -1) array.push(item);
+
+//With object
+
+var item = {name: "tom", text: "tasty"}
+var array = [{}]
+if (!array.find(o => o.name === 'tom' && o.text === 'tasty'))
+    array.push(item)
+
+
+*/
+
+</script>
+
+
+
+
+{% endblock %}

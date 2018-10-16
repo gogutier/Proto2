@@ -1,0 +1,24 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Resumen de solicitudes de cambio ingresadas</h1>
+
+<div class="centerstage">
+  {% for solcamb in solcamb_list %}
+
+  <div class="solcamb">
+    <h1>
+      <a href="{% url 'solcamb_detail' pk=solcamb.pk %}">{{ solcamb.title }}</a>
+      <a href="{% url 'solcamb_detail' pk=solcamb.pk %}">{{ solcamb.pk }}</a>
+    </h1>
+
+  </div>
+
+  {% endfor %}
+
+</div>
+
+
+
+<p>Revisar y aprovar para que sean oficiales</p>
+
+{% endblock %}

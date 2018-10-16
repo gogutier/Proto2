@@ -1,0 +1,120 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<h1>Ingresar Solicitudes de cambio en programa</h1>
+
+
+
+<br>
+<div class="container" style="padding:10px 10px;">
+
+<textarea rows="8" cols="160" id="code">Ingresar cambios</textarea>
+<br>
+<button type="button" id="convert">Convert</button>
+<p id="result">Result</p>
+
+</div>
+<br>
+<div class="container">
+  <input type="text" id="numero1">
+  <input type="text" id="numero2">
+  <input type="button" id="sumar" value="OKI">
+  <br>
+  <p id="resultado"></p>
+</div>
+
+<div class="row" id="parsed_csv_list">
+
+</div>
+
+<script type="text/javascript">
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+$("#convert").click(function() {
+  var code = $('#code').val();
+  //var code = esprima.parse(code);
+  code2 = Papa.parse(code);
+
+  //utiliza papaparse para separar archivo
+  //genera tabla indicando los array generados (esto es opcional para el desarrollo).
+  console.log(code2);
+  var result = (code2 + " Hola q tal");
+  displayHTMLTable(code2);
+
+  $('#result').html(result);
+  });
+
+
+  /// para sumar 2 inputs
+  //Se escribe la función dentro del click
+
+  $("#sumar").click(function() {
+    var num1 = +($('#numero1').val());
+    var num2 = +($('#numero2').val());
+    //var code = esprima.parse(code);
+    var result = (num1 + num2);
+    $('#resultado').html(result);
+    });
+
+
+
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(results){
+  var table = "<table class='table' id='table'>";
+  var data = results.data;
+  matriz = data;
+
+  for(i=0;i<data.length;i++){
+    table+= "<tr>";
+    var row = data[i];
+    var cells = row.join(",").split(",");
+
+    for(j=0;j<cells.length;j++){
+      table+= "<td>";
+      table+= cells[j];
+      table+= "</th>";
+
+    }
+    table+= "</tr>";
+  }
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+}
+
+
+
+</script>
+
+
+<form class="form-horizontal" method="POST" action="">
+{% csrf_token %}
+{{ formset.management_form }}
+{% for form in formset %}
+<div class="row form-row spacer">
+    <div class="col-2">
+        <label>{{form.name.label}}</label>
+    </div>
+    <div class="col-4">
+        <div class="input-group">
+            {{form.name}}
+            <div class="input-group-append">
+                <button class="btn btn-success add-form-row">+</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div class="row spacer">
+    <div class="col-4 offset-2">
+        <button type="submit" class="btn btn-block btn-primary">Create</button>
+    </div>
+</div>
+</form>
+
+
+
+{%endblock%}

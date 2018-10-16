@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<h1>{{pruebamods}}</h1>
+<br>
+<form method="POST" class="post-form">{% csrf_token %}
+{% csrf_token %}
+{{ form.as_p }}
+<button type="submit" class="save btn btn-default">Save</button>
+</form>
+
+<br>
+<h2>{{posts}}</h2>
+
+{% for item in pruebamods %}
+    <div class="post">
+        <div class="date">
+            {{ item.dato1 }}
+        </div>
+    </div>
+{% endfor %}
+
+
+<form id="my_form" action="." method="post">
+    {% csrf_token %}
+       <a href="#" onclick="document.forms['my_form'].submit();">Call Form</a>
+       <input type="checkbox" name="call_form" checked style="visibility:hidden"><br>
+       <input type="submit" value="create form" style="visibility:hidden" />
+</form>
+<h2>{{posts}}</h2>
+
+
+{% endblock %}
