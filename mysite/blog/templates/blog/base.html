@@ -106,9 +106,20 @@
           <li>
             <a class="nav-link" href="https://www.github.com">gitttthubb</a>
           </li>
+
           <li>
             <a class="nav-link" href="{% url 'solcamb_list' %}">Res SolCamb</a>
           </li>-->
+
+          <li>
+            <a class="nav-link" href="{% url 'Inicio' %}">Inicio</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'res_conv_v2' %}">Resumen Conversión</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'minutas' %}">Minutas SaC</a>
+          </li>
         </ul>
 
       </div>
@@ -151,11 +162,12 @@
             <a class="nav-link" href="{% url 'prueba_ultimate' %}">PRUEBA ULTIMATE</a>
           </li>
         -->
+
+
+
+          {% if user.is_authenticated %}
           <li>
-            <a class="nav-link" href="{% url 'Inicio' %}">Inicio</a>
-          </li>
-          <li>
-            <a class="nav-link" href="{% url 'minutas' %}">Minutas SaC</a>
+            <a class="nav-link" href="{% url 'carga_orderinfo' %}">Carga OrderInfo</a>
           </li>
 
           <li>
@@ -164,10 +176,6 @@
           <li>
             <a class="nav-link" href="{% url 'carga_prod_real' %}">Carga Prod Conversión</a>
           </li>
-          <li>
-            <a class="nav-link" href="{% url 'res_conv_v2' %}">Resumen Conversión</a>
-          </li>
-          {% if user.is_authenticated %}
 
           <li>
             <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

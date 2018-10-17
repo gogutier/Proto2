@@ -9,6 +9,14 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class OrderInfo(models.Model):
+    orderId=models.CharField(unique=True, max_length=100, editable=False, default=".")
+    padron=models.CharField(max_length=100, default=".")
+    cliente=models.CharField(max_length=100, default=".")
+
+    def __str__(self):
+        return (self.orderId)
+
 class Minuta(models.Model):
     dia=models.DateField(blank=False, default = datetime.datetime.now())
     texto=models.TextField(default = "")

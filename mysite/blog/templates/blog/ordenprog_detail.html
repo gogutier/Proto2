@@ -127,6 +127,7 @@ function displayHTMLTable(results){
   var realproducido;
   var realproducidototal;
   var strnamecliente;
+  var strpadron;
   var horini= moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
   var hormid = horini
   var horfin= moment.parseZone("{{ordenprog.horizontefin.isoformat|safe}}");
@@ -203,29 +204,58 @@ table+=               '<td ><a href="http://interlink.corrupac.cl/pagegenerator.
   {% endfor %};
   table+=                   img;//coincide en fecha y turno
   table+=                    '<br/>';
+
+
   realproducido=0;
   realproducidototal=0;
+  table+=                  '<td colspan="1">';
   {% for prod in prodreal%};
   {% if prod.orderId == detalle.orderId %};
   realproducidototal=realproducidototal+{{prod.qProd}} ;
-
+  table+=                   Math.floor(100*{{prod.qProd}}/{{prod.qOrd}});
   {% if prod.datefinajustada == detalle.datefinajustada %};
   {% if prod.turno == detalle.turno %};
   realproducido= realproducido+{{prod.qProd}} ;
-  table+=                  '<td colspan="1">'+ Math.floor(100*{{prod.qProd}}/{{detalle.qIn}}) + '%'+'</th>';
+
   {% endif %};
   {% endif %};
   {% endif %};
   {% endfor %};
+  table+= '%'+'</th>';
 //table+=                  '<td colspan="1">'+{{prod.qProd}}+'</th>';
+
+
 table+=                  '</tr>';
+
+
+table+=                  '<tr>';
+table+=                  '<td colspan="2" style="font-size: 12px">';
+strnamecliente = '#';
+strpadron = '#';
+{% for orderinfo in orderinfos%};
+{% if orderinfo.orderId == detalle.orderId %};
+strnamecliente = '{{orderinfo.cliente}}'.substring(0,20);
+strpadron = '{{orderinfo.padron}}'.substring(0,20);
+
+{% endif %};
+
+
+{% endfor %};
+table+=                  strnamecliente;
+table+=                  '</br>';
+table+=                  strpadron;
+table+=                 '</td>';
+table+=                  '</tr>';
+
+
 table+=                   '<tr>';
 table+=                   '<td colspan="2">';//Acá ingreso los datos Programados vs convertidos (la suma de todas las unidades de esa ID independiente de si fue en otro turno o máquina)
-table+=                   'Prog: {{detalle.qIn}} </br>';
+
 realproducido=0;
 realproducidototal=0;
 {% for prod in prodreal%};
 {% if prod.orderId == detalle.orderId %};
+table+=                   'Prog: {{prod.qOrd}} </br>';
 realproducidototal=realproducidototal+{{prod.qProd}} ;
 {% if prod.datefinajustada == detalle.datefinajustada %};
 {% if prod.turno == detalle.turno %};
@@ -247,20 +277,8 @@ table+=                   moment.parseZone('{{prod.datefin.isoformat}}').format(
 {% endfor %};
 table+=                   '</td>';
 table+=                   '</tr>';
-table+=                  '<tr>';
-table+=                  '<td colspan="2" style="font-size: 10px">';
-strnamecliente = '#';
-{% for prod in prodreal%};
-{% if prod.orderId == detalle.orderId %};
-strnamecliente = '{{prod.cliente}}'.substring(0,20);
-
-{% endif %};
 
 
-{% endfor %};
-table+=                  strnamecliente;
-table+=                 '</td>';
-table+=                  '</tr>';
 
 
 table+=               '</table>';

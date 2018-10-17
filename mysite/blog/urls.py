@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^book/$',views.create_book_with_authors,name='book_authors_model'),
     url(r'^pruebaultimate/$',views.prueba_ultimate,name='prueba_ultimate'),
     url(r'^cargaprograma/$',views.carga_prog,name='carga_prog'),
+    url(r'^cargaorderinfo/$',views.carga_orderinfo,name='carga_orderinfo'),
     url(r'^cargaproduccion/$',views.carga_prod_real,name='carga_prod_real'),
     url(r'^resumenconversion/$',views.ResConvView.as_view(),name='res_conv'),
     url(r'^resconv/$',views.res_conv_v2,name='res_conv_v2'),

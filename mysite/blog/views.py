@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta
+from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -99,6 +99,7 @@ class OrdenProgDetailView(DetailView):
         context['prodreal'] = ProdReal.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
         context['maquinas'] = Maquinas.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
         context['turnos'] = Turnos.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
+        context['orderinfos'] = OrderInfo.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque
         #context['maquinas'] = maquinas
         return context
 
@@ -107,7 +108,7 @@ class Inicio(View): #ESto se puede cambiar a format based view (para que no sea 
     'blog/inicio.html'
     #suma el total de órdenes producidas reales para los últimos 5 días.
     datefinajustadaini = datetime(2018, 9 ,12,0,0)
-    datefinajustadafin=  datetime(2018, 9 ,18,0,0)
+    datefinajustadafin=  datetime(2018, 9 ,25,0,0)
     datefinajustadaobj=  datetime(1,1,1,0,0)
     Producciones = []
     Dias=[]
@@ -133,7 +134,7 @@ def get_data(request, *args, **kwargs):
     prodsreales = ProdReal.objects.all()
 
     datefinajustadaini = datetime(2018, 9 ,12,0,0)
-    datefinajustadafin=  datetime(2018, 9 ,18,0,0)
+    datefinajustadafin=  datetime(2018, 9 ,25,0,0)
     datefinajustadaobj=  datetime(1,1,1,0,0)
     Producciones = []
     Dias=[]
@@ -212,6 +213,7 @@ def carga_prod_real(request):
             colTurno = None
             colUnisprod = None
             colMaquina = None
+            colqOrd = None
 
             for i in range(len(datoprocesado[0])):
                 if datoprocesado[0][i] == "Cliente":
@@ -239,9 +241,12 @@ def carga_prod_real(request):
                     #print("columna transaction en: " + str(i))
                     colTurno = i
 
+                if datoprocesado[0][i] == "Cantidad Ordenada":#Esto en verdad corresponde a las cajas producidas
+                    #print("columna transaction en: " + str(i))
+                    colqOrd = i
 
 
-                if datoprocesado[0][i] == "Laminas Producidas":
+                if datoprocesado[0][i] == "Laminas Producidas":#Esto en verdad corresponde a las cajas producidas
                     #print("columna transaction en: " + str(i))
                     colUnisprod = i
 
@@ -271,7 +276,7 @@ def carga_prod_real(request):
                 datefinajustada_datetime = datetime.strptime(datoprocesado[i][colDatefinajust], "%d-%m-%Y")#"%d-%m-%Y %H:%M"
                 datefin_datetime = datetime.strptime(datoprocesado[i][colDatefin], "%d-%m-%Y %H:%M:%S")
 
-                ProdReal.objects.get_or_create(cliente=datoprocesado[i][colCliente], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], qProd=datoprocesado[i][colUnisprod], maquina=datoprocesado[i][colMaquina])
+                ProdReal.objects.get_or_create(cliente=datoprocesado[i][colCliente], orderId=datoprocesado[i][colOrderId], qOrd=datoprocesado[i][colqOrd], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], qProd=datoprocesado[i][colUnisprod], maquina=datoprocesado[i][colMaquina])
             #################
 
 
@@ -280,6 +285,77 @@ def carga_prod_real(request):
 
     return render(request, template_name, {'form':form})
 
+
+
+#################################################
+
+def carga_orderinfo(request):
+    pruebamods = PruebaMod.objects.all()
+
+    template_name = 'blog/cargaorderinfo.html'
+
+    if request.method == "POST":
+        form = PruebaModForm(request.POST)
+        if form.is_valid():
+
+
+            datocrudo=form.cleaned_data["ultrafile"]
+            datoprocesado=datocrudo.split(";")
+
+            #PruebaTabla.objects.create(item1=datoprocesado[0],item2=datoprocesado[1],item3=datoprocesado[2])
+
+            post = form.save(commit=False)
+
+            post.save()
+
+        else:
+            datocrudo=form.data["ultrafile"]
+
+            datoprocesado=datocrudo.split(",;,")
+
+            for i in range (len(datoprocesado)):
+                datoprocesado[i]=datoprocesado[i].split(",")
+
+            ####### identifica las columnas y crea los objetos que me interesanself.
+            colOrderId = None#Esta la tengo que pasar a datetime
+            colPadron = None
+            colCliente = None#Esta la tengo que pasar a datetime
+
+
+            for i in range(len(datoprocesado[0])):
+                if datoprocesado[0][i] == "ORDERID":
+                    #print("columna creación en: " + str(i))
+                    colOrderId = i
+
+                if datoprocesado[0][i] == "INTERNALSPECID":
+                    #print("columna transaction en: " + str(i))
+                    colPadron = i
+
+                if datoprocesado[0][i] == "CUSTOMERNAME":
+                    #print("columna Horizonteini en: " + str(i))
+                    colCliente = i
+
+            print("guardando..")
+            for i in range(1,len(datoprocesado)):
+
+
+                    OrderInfo.objects.get_or_create(orderId=datoprocesado[i][colOrderId],padron=datoprocesado[i][colPadron], cliente=datoprocesado[i][colCliente])
+
+            print("completado!")
+    else:
+        form = PruebaModForm()
+
+    return render(request, template_name, {'form':form})
+
+
+
+
+
+
+
+
+
+###############################################33
 
 def carga_prog(request):
     pruebamods = PruebaMod.objects.all()

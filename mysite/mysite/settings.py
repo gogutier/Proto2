@@ -26,7 +26,7 @@ SECRET_KEY = 'xp7jtii@x2%#^p3hnjvb@i1+&yq4sj-6yb$kge+rpvyrg_o__y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['gogutier.pythonanywhere.com','127.0.0.1']
 
 
 # Application definition
