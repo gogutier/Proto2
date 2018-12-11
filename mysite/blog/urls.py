@@ -34,11 +34,20 @@ urlpatterns = [
     url(r'^cargaorderinfo/$',views.carga_orderinfo,name='carga_orderinfo'),
     url(r'^cargaproduccion/$',views.carga_prod_real,name='carga_prod_real'),
     url(r'^resumenconversion/$',views.ResConvView.as_view(),name='res_conv'),
-    url(r'^resconv/$',views.res_conv_v2,name='res_conv_v2'),
+    url(r'^resconv/$',views.res_conv_v2,name='res_conv_v2'), #Lista de programas conversióno
+    url(r'^rescorr/$',views.res_corr,name='res_corr'), #Lista programas corrugado
     url(r'^minutas/$',views.minutas,name='minutas'),
     url(r'^minuta/new/$',views.minuta_new,name='minuta_new'),
-    url(r'^ordenprog/(?P<pk>\d+)$', views.OrdenProgDetailView.as_view(),name='ordenprog_detail'),
+    url(r'^ordenprog/(?P<pk>\d+)$', views.OrdenProgDetailView.as_view(),name='ordenprog_detail'), #resumen de programas conversión cargados
+    url(r'^ordenprogcorr/(?P<pk>\d+)$', views.OrdenProgCorrDetailView.as_view(),name='ordenprogcorr_detail'),
     url(r'^minuta/(?P<pk>\d+)$', views.minuta_detail,name='minuta_detail'),
+    url(r'^cargamaestropadron/$',views.carga_maestrop,name='carga_maestrop'),
+    url(r'^kpiconv/$',views.kpi_conv,name='kpi_conv'),
+    url(r'^kpiconv_res/$',views.kpi_conv_res,name='kpi_conv_res'),
+    url(r'^cargaprogcorr/$',views.carga_prog_corr,name='carga_prog_corr'),
+    url(r'^cargainventario/$',views.carga_inventario,name='carga_inventario'),
+    url(r'^res_pareados/$',views.res_pareados,name='res_pareados'),
+    url(r'^res_inventario/$',views.resumen_inv,name='resumen_inv'),
 
 
 

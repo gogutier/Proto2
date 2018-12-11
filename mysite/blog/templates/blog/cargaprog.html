@@ -91,10 +91,12 @@ $("#convert").click(function()
  //console.log("code data length: " + code2.length);
 
 //Identifico la columna de fecha de término esperada, a convierto a fecha y luego hago la transformación a fecha ajustada y turno.
-
+var colstartdate = code2[0].indexOf("SETUPSTARTDATE");
 var colterminationdate = code2[0].indexOf("RUNENDDATE");
 var colfechaprograma = code2[0].indexOf("CREACION_PROGRAMACION");
+//console.log("index runini: " + colstartdate)
 //console.log("index runend: " + colterminationdate)
+
 var fechaprog = (code2[i][colfechaprograma].substring(0,16));
 
 
@@ -114,6 +116,22 @@ if (colterminationdate != -1)
   for(i=1;i<code2.length;i++)//Acá por qué funciona con code2.length y no con code2.length - 1 ??
   {
     var datefinoriginal = (code2[i][colterminationdate].substring(0,16));
+    // busco si tiene el caracter ":". Si no, le agrego el "00:00"
+    if (datefinoriginal.search(":") == -1)
+    {
+      datefinoriginal = datefinoriginal + (" 00:00");
+      console.log("agregado el 00:00 al fin")
+      code2[i][colterminationdate]=datefinoriginal;
+    }
+
+    var dateinioriginal = (code2[i][colstartdate].substring(0,16));
+    // busco si tiene el caracter ":". Si no, le agrego el "00:00"
+    if (dateinioriginal.search(":") == -1)
+    {
+      dateinioriginal = dateinioriginal + (" 00:00");
+      console.log("agregado el 00:00 al ini")
+      code2[i][colstartdate] = dateinioriginal
+    }
 
     //console.log("Original: " + datefinoriginal);
 
@@ -254,8 +272,8 @@ for(i=0;i<code2.length-1;i++)
 
     displayHTMLTable(tabla);
 
-    $('#id_ultrafile').val(tabla);//acá es donde se manda al dato al form q se envía al servidor django
-    //$('#id_ultrafile').val(code2.data);
+    $('#id_ultrafile').val(tabla);
+
 
     //$('#result').html(result);
   }
@@ -277,10 +295,13 @@ for(i=0;i<code2.length-1;i++)
 
   function filtrofila(tablain)
     {
+
     for(i=0;i<=tablain[0].length-1;i++){
+
+
         if (tablain[0][i]=="WORKCENTERID")
         {
-          console.log("encontrado workcenterid");
+          //console.log("encontrado workcenterid");
         for(j=1;j<=tablain.length-1;j++)
           {
             if(!(tablain[j][i]=="FFG" ||tablain[j][i]=="FFW" ||tablain[j][i]=="TCY" || tablain[j][i]=="DRO"||tablain[j][i]=="WRD" || tablain[j][i]=="HCR"))
@@ -292,6 +313,24 @@ for(i=0;i<code2.length-1;i++)
 
           }
         }
+
+
+        if (tablain[0][i]=="SETUPSTARTDATE")
+        {
+          console.log("encontrado SETUPSTARTDATE");
+        for(j=1;j<=tablain.length-1;j++)
+          {
+          /*
+            if (tablain[j][i].search(":") == -1)
+            {
+              tablain[j][i] = tablain[j][i] + (" 00:00")
+            }
+          */
+
+          }
+        }
+
+
 
       }
 
@@ -315,6 +354,7 @@ function filtrocolumna(tablain){
     if (!(tablain[0][i]=="CREACION_PROGRAMACION" || tablain[0][i]=="TRANSACTIONINDEX" || tablain[0][i]=="WORKCENTERID" || tablain[0][i]=="ORDERID" || tablain[0][i]=="SETUPSTARTDATE" || tablain[0][i]=="RUNENDDATE" || tablain[0][i]=="QUANTITYIN" || tablain[0][i]=="Fecha Termino Ajustada" || tablain[0][i]== "Turno" || tablain[0][i]== "Horizonteini" || tablain[0][i]== "Horizontefin" || tablain[0][i]== ";"))
     //esto después tengo que reemplazarlo por una lista que venga de input
     {
+
       listaborrar.push(i);
       for(j=0;j<=tablain.length-1;j++)
       {
@@ -356,20 +396,20 @@ function displayHTMLTable(results){
   var data = results;
   matriz = data;
 
-  for(i=0;i<data.length-1;i++){
+  for(i=0;i<=data.length-1;i++){
     table+= "<tr>";
     var row = data[i];
     var cells = row.join(",").split(",");
 
-    for(j=0;j<cells.length-1;j++){
+    for(j=0;j<=cells.length-1;j++){
       table+= "<td>";
       table+= cells[j];
       table+= "</th>";
 
     }
-    table+= "</tr>";
-  }
-  table+= "</table>";
+      table+= "</tr>";
+    }
+    table+= "</table>";
   $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
 
 }

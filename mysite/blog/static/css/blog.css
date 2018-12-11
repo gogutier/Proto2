@@ -1,3 +1,19 @@
+#wrapper {
+width: 500px;
+border: 1px solid black;
+overflow: auto;
+}
+#div1 {
+  float: left;
+  width: 300px;
+  border: 1px solid red;
+}
+#div2 {
+  float: right;
+  border: 1px solid green;
+   margin: 0 0 0 302px;
+}
+
 .spaceUnder {
   /*padding-bottom: 1em;*/
   border: 0 ;

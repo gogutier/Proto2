@@ -1,114 +1,9 @@
 {% extends "blog/base.html" %}
 {% block content %}
 
-  <h1 class="posttitle loader">{{ordenprog.fecha_programa}}</h1>
 
+  <h1 class="posttitle">{{ordenprog.fecha_programa}}</h1>
 
-
-<!--
-
-<table class='table' id='table'>
-
-  <tr bgcolor="#dddddd">
-
-    {% for maquina in maquinas %}
-    <td>
-    <h3>{{maquina}}</h3>
-    </th>
-    {% endfor %}
-  </tr>
-
-
-  <tr>
-    <td colspan="7" class="centerText">
-    <h5>{{ordenprog.horizonteini.isoformat}}</h5>
-    </th>
-
-  </tr>
-
-
-
-{% for turno in turnos%}
-
-  <tr>
-
-
-    <td>
-    <h4>{{turno.turno}}</h4>
-    </th>
-
-
-
-
-  {% for maquina in maquinas %}
-
-    <td>
-
-
-
-    {% for detalle in detalleprog %}
-
-
-
-          {% if detalle.programma == ordenprog %}
-
-          {% if detalle.datefinajustada.isoformat == ordenprog.horizonteini.isoformat %}
-            {% if detalle.workcenter == maquina.maquina %}
-            {% if detalle.turno == turno.turno %}
-
-
-
-
-              <a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>
-
-
-              {% for prod in prodreal%}
-
-              {% if prod.orderId == detalle.orderId %}
-              <li><a href="#">Programado: {{detalle.qIn}}</a></li>
-              <li><a href="#">Encontrado en producción real</a></li>
-              {% if prod.datefinajustada == detalle.datefinajustada %}
-              {% if prod.turno == detalle.turno %}
-
-              <li><a href="#">Coincide fecha y turno</a></li>
-              <li><a href="#">Producido: {{prod.qProd}}</a></li>
-
-
-              <li><a href="#">C {{ detalle.completo_unidades}} </a></li>
-
-
-              {% endif %}
-              {% endif %}
-              {% endif %}
-
-              {% endfor %}
-              {% endif %}
-
-
-
-            </li>
-            {% endif %}
-          {% endif %}
-          {% endif %}
-
-
-      {% endfor %}
-
-
-      </th>
-      {% endfor %}
-
-
-
-
-    {% endfor %}
-  </tr>
-
-
-
-</table>
-
--->
 
 <h3>Tabla JS:</h3>
 <div class="row" id="parsed_csv_list">
@@ -119,15 +14,32 @@
 
 displayHTMLTable("hola");
 
+{% load staticfiles %}
+
 function displayHTMLTable(results){
-  var imagenok ='<img src=http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png alt=""  height=20 width=20></img>'
-  var imagennot = '<img src=http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-delete-icon.png alt="" height=20 width=20></img>'
-  var imagenalert= '<img src=http://iconset.eu5.org/images/alert%20icon-3.jpg alt="" height=20 width=20></img>'
+
+  var imagenok ='<img src= {% static "images/sign-check-icon.png" %} alt=""  height=18 width=18></img>'
+  var imagennot = '<img src={% static "images/sign-delete-icon.png" %} alt="" height=18 width=18></img>'
+  var imagenalert= '<img src={% static "images/alert%20icon-3.jpg" %} alt="" height=15 width=15></img>'
+  var imagenmed1 = '<img src={% static "images/check-icon.png" %}  alt="" height=17 width=17></img>'
+  var imagenmed2 = '<img src={% static "images/ok-256.gif" %} alt="" height=18 width=18></img>'
+  var imagenatrasa = '<img src={% static "images/25610.svg" %} alt="" height=15 width=10></img>'
+  var imagenadelanta = '<img src={% static "images/25637.svg" %} alt="" height=15 width=10></img>'
   var img;
+
+
   var realproducido;
   var realproducidototal;
   var strnamecliente;
   var strpadron;
+  var m2;
+  var m2prog;
+  var unidsprog;
+  var qin;
+  var qprod;
+  var qord;
+  var uxg;
+
   var horini= moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
   var hormid = horini
   var horfin= moment.parseZone("{{ordenprog.horizontefin.isoformat|safe}}");
@@ -156,163 +68,359 @@ do {
   table+= '<td>';
   table+= '<h3></h3>';
   table+= '</th>';
-  table+= '{% for maquina in maquinas %}';
-  table+= '<td style="text-align: center">';
-  table+= '<h3>{{maquina}}</h3>';
-  table+= '</th>';
-  table+= '{% endfor %}';
+        {% for maquina in maquinas %};
+            table+= '<td style="text-align: center">';
+            table+= '<h4>{{maquina}}</h4>';
+            //**Acá muestro el resumen del día.
+            //table+= '</br>';
+            table+= '</th>';
+        {% endfor %};
   table+= '</tr>';
 
 
 
-{% for turno in turnos%}; //problema?
-table+=   '<tr>';
-table+=     '<td>';
-table+=     '<h4>{{turno.turno}}</h4>';
-table+=     '</td>';
-table+=     '{% for maquina in maquinas %}';
-table+=     '<td>';
-table+=     '{% for detalle in detalleprog %}';//acá podemos poner un filtro para evitarse el segundo if
-table+=          ' {% if detalle.programma == ordenprog %}';
-//table+=           ' <h4>{{ detalle.datefinajustada.isoformat }}</h4>';
+        {% for turno in turnos%}; //problema?
 
-if ("{{detalle.datefinajustada.isoformat}}" == hormid.format('YYYY-MM-DDTHH:mm:ssZ'))
-{
-table+=             '{% if detalle.workcenter == maquina.maquina %}';
-table+=             '{% if detalle.turno == turno.turno %}';
-
-// Aquí agrego latabla resumen por orden
-table+=               '<table class="table" >';
-table+=               '<tr class="tr">';
-table+=               '<td ><a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>'
-  img=imagennot;
-  {% for prod in prodreal%};
-  table+=                  '{% if prod.orderId == detalle.orderId %}';
-  table+=                  '{% if prod.datefinajustada == detalle.datefinajustada %}';
-  table+=                   '{% if prod.turno == detalle.turno %}';
-                     img=imagenok;//coincide en fecha y turno
-  table+=                   '{% else %}'//coincide en fecha y turno
-                 img=imagenalert;//coincide en fecha y turno
-  //table+=                 '<li><a href="#">Producido: {{prod.qProd}}</a></li>';
-  //table+=                 '<li><a href="#">C {{ detalle.completo_unidades}} </a></li>';
-  table+=                   '{% endif %}';
-  table+=                   '{% else %}'//coincide en fecha y turno
-                    img=imagenalert;//coincide en fecha y turno
-  table+=                   '{% endif %}';
-  table+=                 '{% endif %}';
-
-  {% endfor %};
-  table+=                   img;//coincide en fecha y turno
-  table+=                    '<br/>';
-
-
-  realproducido=0;
-  realproducidototal=0;
-  table+=                  '<td colspan="1">';
-  {% for prod in prodreal%};
-  {% if prod.orderId == detalle.orderId %};
-  realproducidototal=realproducidototal+{{prod.qProd}} ;
-  table+=                   Math.floor(100*{{prod.qProd}}/{{prod.qOrd}});
-  {% if prod.datefinajustada == detalle.datefinajustada %};
-  {% if prod.turno == detalle.turno %};
-  realproducido= realproducido+{{prod.qProd}} ;
-
-  {% endif %};
-  {% endif %};
-  {% endif %};
-  {% endfor %};
-  table+= '%'+'</th>';
-//table+=                  '<td colspan="1">'+{{prod.qProd}}+'</th>';
-
-
-table+=                  '</tr>';
-
-
-table+=                  '<tr>';
-table+=                  '<td colspan="2" style="font-size: 12px">';
-strnamecliente = '#';
-strpadron = '#';
-{% for orderinfo in orderinfos%};
-{% if orderinfo.orderId == detalle.orderId %};
-strnamecliente = '{{orderinfo.cliente}}'.substring(0,20);
-strpadron = '{{orderinfo.padron}}'.substring(0,20);
-
-{% endif %};
-
-
-{% endfor %};
-table+=                  strnamecliente;
-table+=                  '</br>';
-table+=                  strpadron;
-table+=                 '</td>';
-table+=                  '</tr>';
-
-
-table+=                   '<tr>';
-table+=                   '<td colspan="2">';//Acá ingreso los datos Programados vs convertidos (la suma de todas las unidades de esa ID independiente de si fue en otro turno o máquina)
-
-realproducido=0;
-realproducidototal=0;
-{% for prod in prodreal%};
-{% if prod.orderId == detalle.orderId %};
-table+=                   'Prog: {{prod.qOrd}} </br>';
-realproducidototal=realproducidototal+{{prod.qProd}} ;
-{% if prod.datefinajustada == detalle.datefinajustada %};
-{% if prod.turno == detalle.turno %};
-realproducido= realproducido+{{prod.qProd}} ;
-{% endif %};
-{% endif %};
-{% endif %};
-{% endfor %};
-
-table+=                   'Real: '+ realproducido +' </br>';
-table+=                   'Real Tot: '+ realproducidototal +' </br>';
-
-table+=                   'P:'+ moment.parseZone('{{detalle.datefin.isoformat}}').format("DD-MM-YY HH:mm") +'</br>';
-table+=                   'R:';
-{% for prod in prodreal%};
-{% if prod.orderId == detalle.orderId %};
-table+=                   moment.parseZone('{{prod.datefin.isoformat}}').format("DD-MM-YY HH:mm") +'</br>';;
-{% endif %};
-{% endfor %};
-table+=                   '</td>';
-table+=                   '</tr>';
+              table+=   '<tr>';
+                table+=     '<td>';
+                table+=     '<h4>{{turno.turno}}</h4>';
+                table+=     '</td>';
 
 
 
+                      {% for maquina in maquinas %};
 
-table+=               '</table>';
-//table+=               '<li><a href="#">Programado: {{detalle.qIn}}</a></li>';
-//table+=               '<li><a href="#">Encontrado en producción real</a></li>';
+                            table+=     '<td>';
+                            {% for detalle in detalleprog %};//acá podemos poner un filtro para evitarse el segundo if
 
 
-table+=               '{% endif %}';
-table+=               '<!--<a href="#"> {{ detalle.datefinajustada }} </a>-->';
-table+=            '</li>';
-table+=            ' {% endif %}';
-}
-table+=           '{% endif %}';
-table+=       '{% endfor %}';
-table+=       '</td>';
-table+=       '{% endfor %}';
-{% endfor %};
+                            realproducido=0;
+                            realproducidototal=0;
+                            strnamecliente="";
+                            strpadron="";
+                            m2=0;
+                            m2prog=0;
+                            unidsprog=0;
+                            qin=0;
+                            qprod=0;
+                            qord=0;
+                            uxg=0;
+
+                            table+=          ' {% if detalle.programma == ordenprog %}';
+
+
+                            //table+=           ' <h4>{{ detalle.datefinajustada.isoformat }}</h4>';
+
+                            if ("{{detalle.datefinajustada.isoformat}}" == hormid.format('YYYY-MM-DDTHH:mm:ssZ'))
+                            {
+                            table+=             '{% if detalle.workcenter == maquina.maquina %}';
+                            table+=             '{% if detalle.turno == turno.turno %}';
+
+                            // Aquí agrego latabla resumen por orden
+                            table+=               '<table class="table" >';
+                            table+=               '<tr class="tr">';
+                            table+=               '<td style="font-size: 15px; padding: 15px 5px;"><a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>'
+                              img=imagennot;
+                                {% for prod in prodreal%};
+                                      table+=                  '{% if prod.orderId == detalle.orderId %}';
+                                      table+=                  '{% if prod.datefinajustada == detalle.datefinajustada %}';
+                                      table+=                   '{% if prod.turno == detalle.turno %}';
+                                      qprod={{prod.qProd}};
+                                      qord={{prod.qOrd}};
+
+                                      if(Math.floor(100*{{prod.qProd}}/{{prod.qOrd}})>=90){
+                                        img=imagenok;//coincide en fecha y turno
+                                      }
+                                      else{
+                                        img=imagenmed1;//coincide en fecha y turno
+                                      }
+
+
+
+                                      table+=                   '{% else %}'//coincide en fecha y turno
+                                                     img=imagenalert;//coincide en fecha y turno
+                                      //table+=                 '<li><a href="#">Producido: {{prod.qProd}}</a></li>';
+                                      //table+=                 '<li><a href="#">C {{ detalle.completo_unidades}} </a></li>';
+                                      table+=                   '{% endif %}';
+                                      table+=                   '{% else %}'//coincide en fecha y turno
+                                                        img=imagenalert;//coincide en fecha y turno
+                                      table+=                   '{% endif %}';
+                                      table+=                 '{% endif %}';
+
+                                {% endfor %};
+                              table+=                   img;//coincide en fecha y turno
+                              if (img==imagenalert){
+
+                                    {% for prod in prodreal%};
+                                          {% if prod.orderId == detalle.orderId %};
+
+                                          if( moment.parseZone('{{prod.datefinajustada.isoformat}}').isAfter(moment.parseZone('{{detalle.datefinajustada.isoformat}}')))
+                                          {
+                                            table+= imagenatrasa;
+                                          }else if (moment.parseZone('{{prod.datefinajustada.isoformat}}').isBefore(moment.parseZone('{{detalle.datefinajustada.isoformat}}'))) {
+                                            table+= imagenadelanta;
+                                          }else{
+
+                                            if('{{detalle.turno}}'=='A'){
+                                              if('{{prod.turno}}'=='A'){
+                                                //Nada pq es igual
+
+                                              }
+                                              if('{{prod.turno}}'=='B'){
+                                                //Nada pq es igual
+                                                //table+= "se atrasó!";
+                                                table+= imagenatrasa;
+
+                                              }
+                                              if('{{prod.turno}}'=='C'){
+                                                //Nada pq es igual
+                                                //table+= "se atrasó!";
+                                                table+= imagenatrasa;
+
+                                              }
+                                            }
+                                            if('{{detalle.turno}}'=='B'){
+                                              if('{{prod.turno}}'=='A'){
+                                                //table+= "se adelantó!";
+                                                table+= imagenadelanta;
+
+                                              }
+                                              if('{{prod.turno}}'=='B'){
+                                                //Nada pq es igual
+
+
+                                              }
+                                              if('{{prod.turno}}'=='C'){
+                                                //Nada pq es igual
+                                                //table+= "se atrasó!";
+                                                table+= imagenatrasa;
+
+                                              }
+                                            }
+                                            if('{{detalle.turno}}'=='C'){
+                                              if('{{prod.turno}}'=='A'){
+                                                //table+= "se adelantó!";
+                                                table+= imagenadelanta;
+
+                                              }
+                                              if('{{prod.turno}}'=='B'){
+                                                //table+= "se adelantó!";
+                                                table+= imagenadelanta;
+
+
+                                              }
+                                              if('{{prod.turno}}'=='C'){
+                                                //Nada pq es igual
+
+
+                                              }
+                                            }
+
+
+                                          }
+                                          {% endif %}
+                                    {% endfor %}
+
+
+
+                              }
+                              table+=                    '<br/>';
+
+
+                              realproducido=0;
+                              realproducidototal=0;
+                              table+=                  '<td colspan="1" style="font-size: 15px; padding: 15px 5px;">';
+                                  {% for prod in prodreal%}; //aquí aplicar el filtro para que considere la última prodreal subida para cada ID
+                                        {% if prod.orderId == detalle.orderId %};
+                                        realproducidototal=realproducidototal+{{prod.qProd}} ;
+                                        table+=                   Math.floor(100*{{prod.qProd}}/{{prod.qOrd}});
+
+                                        {% if prod.datefinajustada == detalle.datefinajustada %};
+                                        {% if prod.turno == detalle.turno %};
+                                        realproducido= realproducido+{{prod.qProd}} ;
+
+                                        {% endif %};
+                                        {% endif %};
+                                        {% endif %};
+                                  {% endfor %};
+                              table+= '%'+'</th>';
+                            //table+=                  '<td colspan="1">'+{{prod.qProd}}+'</th>';
+
+
+                            table+=                  '</tr>';
+
+
+                            table+=                  '<tr>';
+                            table+=                  '<td colspan="2" style="font-size: 12px">';
+                            strnamecliente = '#';
+                            strpadron = '#';
+                            m2 = 0;
+
+
+                                    {% for orderinfo in orderinfos%};
+                                          {% if orderinfo.orderId == detalle.orderId %};
+                                          strnamecliente = '{{orderinfo.cliente}}'.substring(0,15);
+                                          strpadron = '{{orderinfo.padron}}'.substring(0,20);
+
+                                          /*
+                                              {% for padron in padrones%}
+                                                    {% if padron.padron == orderinfo.padron %}
+                                                    m2= (({{padron.m2uni}} * qprod)/1000).toFixed(1);
+                                                    m2prog= (({{padron.m2uni}} * {{detalle.qIn}} * {{padron.uxg}})/1000).toFixed(1)
+                                                    unidsprog= {{detalle.qIn}} * {{padron.uxg}};
+                                                    uxg={{padron.uxg}};
+                                                    {% endif %}
+                                              {% endfor %}
+                                            */
+                                            {% endif %};
+                                          {% endfor %};
+
+
+
+                            table+=                  strnamecliente;
+                            table+=                  '</br>';
+                            table+=                  strpadron;
+
+                            /*
+                            table+=                  '</br>';
+                            table+=                  "m2 Prod: " + m2 + " Mm2";
+                            table+=                  '</br>';
+                            table+=                  "m2 Prog (qin): " + m2prog + " Mm2";
+                            table+=                  '</br>';
+                            table+=                  "Unids prog (placas a consumir * uxg): " + unidsprog;
+                            table+=                  '</br>';
+                            table+=                  "qProd: " + qprod;
+                            table+=                  '</br>';
+                            table+=                  "qOrd: " + qord;
+                            table+=                  '</br>';
+                            table+=                  "uxg: " + uxg;
+
+                            */
+
+                            table+=                  '</td>';
+                            table+=                  '</tr>';
+
+
+                            //////////////////////////////////
+
+
+
+                            ////////
+                            /*
+
+                            table+=                   '<tr>';
+
+
+
+                            table+=                   '<td colspan="2">';//Acá ingreso los datos Programados vs convertidos (la suma de todas las unidades de esa ID independiente de si fue en otro turno o máquina)
+
+                            realproducido=0;
+                            realproducidototal=0;
+                                      {% for prod in prodreal%};
+                                            {% if prod.orderId == detalle.orderId %};
+                                            table+=                   'Prog: {{prod.qOrd}} </br>';
+                                            realproducidototal=realproducidototal+{{prod.qProd}} ;
+                                            {% if prod.datefinajustada == detalle.datefinajustada %};
+                                            {% if prod.turno == detalle.turno %};
+                                            realproducido= realproducido+{{prod.qProd}} ;
+                                            {% endif %};
+                                            {% endif %};
+                                            {% endif %};
+                                      {% endfor %};
+
+                            table+=                   'Real: '+ realproducido +' </br>';
+                            table+=                   'Real Tot: '+ realproducidototal +' </br>';
+
+                            table+=                   'P:'+ moment.parseZone('{{detalle.datefin.isoformat}}').format("DD-MM-YY HH:mm") +'</br>';
+                            table+=                   'R:';
+                                      {% for prod in prodreal%};
+                                              {% if prod.orderId == detalle.orderId %};
+                                              table+=                   moment.parseZone('{{prod.datefin.isoformat}}').format("DD-MM-YY HH:mm") +'</br>';
+                                              if( moment.parseZone('{{prod.datefinajustada.isoformat}}').isAfter(moment.parseZone('{{detalle.datefinajustada.isoformat}}')))
+                                              {
+                                                table+= "se atrasó!";
+                                              }else if (moment.parseZone('{{prod.datefinajustada.isoformat}}').isBefore(moment.parseZone('{{detalle.datefinajustada.isoformat}}'))) {
+                                                table+= "se adelantó!";
+                                              }else{
+
+                                                if('{{detalle.turno}}'=='A'){
+                                                  if('{{prod.turno}}'=='A'){
+                                                    //Nada pq es igual
+
+                                                  }
+                                                  if('{{prod.turno}}'=='B'){
+                                                    //Nada pq es igual
+                                                    table+= "se atrasó!";
+
+                                                  }
+                                                  if('{{prod.turno}}'=='C'){
+                                                    //Nada pq es igual
+                                                    table+= "se atrasó!";
+
+                                                  }
+                                                }
+                                                if('{{detalle.turno}}'=='B'){
+                                                  if('{{prod.turno}}'=='A'){
+                                                    table+= "se adelantó!";
+
+                                                  }
+                                                  if('{{prod.turno}}'=='B'){
+                                                    //Nada pq es igual
+
+
+                                                  }
+                                                  if('{{prod.turno}}'=='C'){
+                                                    //Nada pq es igual
+                                                    table+= "se atrasó!";
+
+                                                  }
+                                                }
+                                                if('{{detalle.turno}}'=='C'){
+                                                  if('{{prod.turno}}'=='A'){
+                                                    table+= "se adelantó!";
+
+                                                  }
+                                                  if('{{prod.turno}}'=='B'){
+                                                    table+= "se adelantó!";
+
+
+                                                  }
+                                                  if('{{prod.turno}}'=='C'){
+                                                    //Nada pq es igual
+
+
+                                                  }
+                                                }
+
+
+                                              }
+                                              {% endif %};
+                                      {% endfor %};
+                            table+=                   '</td>';
+                      table+=                   '</tr>';
+
+                        */
+                        ///////////////////////////////////////////
+
+
+                        table+=               '</table>'; //fin de la tabla chica que tiene los detalles de una ID programada.
+
+
+
+                        table+=               '{% endif %}';
+                        table+=               '<!--<a href="#"> {{ detalle.datefinajustada }} </a>-->';
+                        table+=            '</li>';
+                        table+=            ' {% endif %}';
+                        }
+                        table+=           '{% endif %}';
+                        {% endfor %};
+                        table+=       '</td>';
+                  {% endfor %}
+        {% endfor %};
 table+=   '</tr>';
 hormid=hormid.add(1,"d")
 }while(hormid.isSameOrBefore(horfin))
-  //************************
-  /*
-  <tr>
-    <td colspan="7">
-      <h5 >{{ordenprog.horizontefin.isoformat}}</h5>
-    </th>
 
-  </tr>
-
-
-
-
-  */
-  //************************
 
 
 

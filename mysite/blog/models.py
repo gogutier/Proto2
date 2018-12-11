@@ -9,37 +9,180 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class FotoInventario(models.Model):
+
+    fecha_carga=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+
+    total_kraft_kg=models.IntegerField(default=0)
+    total_blanco_kg=models.IntegerField(default=0)
+    total_CPP_kg=models.IntegerField(default=0)
+    total_otros_kg=models.IntegerField(default=0)
+
+    kraft_saldos_kg=models.IntegerField(default=0)
+    blanco_saldos_kg=models.IntegerField(default=0)
+    CPP_saldos_kg=models.IntegerField(default=0)
+    otros_saldos_kg=models.IntegerField(default=0)
+
+    kraft_saldos_un=models.IntegerField(default=0)
+    blanco_saldos_un=models.IntegerField(default=0)
+    CPP_saldos_un=models.IntegerField(default=0)
+    otros_saldos_un=models.IntegerField(default=0)
+
+
+    kraft_retenidos_un=models.IntegerField(default=0)
+    blanco_retenidos_un=models.IntegerField(default=0)
+    CPP_retenidos_un=models.IntegerField(default=0)
+    otros_retenidos_un=models.IntegerField(default=0)
+
+    kraft_retenidos_kg=models.IntegerField(default=0)
+    blanco_retenidos_kg=models.IntegerField(default=0)
+    CPP_retenidos_kg=models.IntegerField(default=0)
+    otros_retenidos_kg=models.IntegerField(default=0)
+
+
+    kraft_1_meses_kg=models.IntegerField(default=0)
+    blanco_1_meses_kg=models.IntegerField(default=0)
+    CPP_1_meses_kg=models.IntegerField(default=0)
+    otros_1_meses_kg=models.IntegerField(default=0)
+
+    kraft_3_meses_kg=models.IntegerField(default=0)
+    blanco_3_meses_kg=models.IntegerField(default=0)
+    CPP_3_meses_kg=models.IntegerField(default=0)
+    otros_3_meses_kg=models.IntegerField(default=0)
+
+    kraft_6_meses_kg=models.IntegerField(default=0)
+    blanco_6_meses_kg=models.IntegerField(default=0)
+    CPP_6_meses_kg=models.IntegerField(default=0)
+    otros_6_meses_kg=models.IntegerField(default=0)
+
+    def __str__(self):
+        return ( str(self.fecha_carga) )
+
+
+
+
+class DiaConv2(models.Model):
+    diaajust=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    turno=models.ForeignKey('blog.Turnos', blank=False, on_delete=models.CASCADE)
+    semana=models.IntegerField(default=0)
+    mes=models.IntegerField(default=0)
+    anno=models.IntegerField(default=0)
+    #maquina=models.ForeignKey('blog.Maquinas', blank=False, on_delete=models.CASCADE)
+    progIdFFG=models.FloatField(default=0) #Id programado
+    prodIdFFG=models.FloatField(default=0) #Id producido que sí fue programado para ese turno
+    prod2IdFFG=models.FloatField(default=0) #Id roducido dentro del turno pero fuera de programa
+    progM2FFG=models.FloatField(default=0) #M2 programado
+    prodM2FFG=models.FloatField(default=0) #M2 producido que sí fue programado para ese turno
+    prod2M2FFG=models.FloatField(default=0)#M2 roducido dentro del turno pero fuera de programa
+
+    progIdFFW=models.FloatField(default=0)
+    prodIdFFW=models.FloatField(default=0)
+    prod2IdFFW=models.FloatField(default=0)
+    progM2FFW=models.FloatField(default=0)
+    prodM2FFW=models.FloatField(default=0)
+    prod2M2FFW=models.FloatField(default=0)
+
+    progIdTCY=models.FloatField(default=0)
+    prodIdTCY=models.FloatField(default=0)
+    prod2IdTCY=models.FloatField(default=0)
+    progM2TCY=models.FloatField(default=0)
+    prodM2TCY=models.FloatField(default=0)
+    prod2M2TCY=models.FloatField(default=0)
+
+    progIdHCR=models.FloatField(default=0)
+    prodIdHCR=models.FloatField(default=0)
+    prod2IdHCR=models.FloatField(default=0)
+    progM2HCR=models.FloatField(default=0)
+    prodM2HCR=models.FloatField(default=0)
+    prod2M2HCR=models.FloatField(default=0)
+
+
+    progIdWRD=models.FloatField(default=0)
+    prodIdWRD=models.FloatField(default=0)
+    prod2IdWRD=models.FloatField(default=0)
+    progM2WRD=models.FloatField(default=0)
+    prodM2WRD=models.FloatField(default=0)
+    prod2M2WRD=models.FloatField(default=0)
+
+
+    progIdDRO=models.FloatField(default=0)
+    prodIdDRO=models.FloatField(default=0)
+    prod2IdDRO=models.FloatField(default=0)
+    progM2DRO=models.FloatField(default=0)
+    prodM2DRO=models.FloatField(default=0)
+    prod2M2DRO=models.FloatField(default=0)
+
+    def __str__(self):
+        return ( str(self.diaajust)+" " + str(self.turno) )
+
+
+
+class Padron(models.Model):
+    padron=models.CharField(unique=True, max_length=100, editable=False, default=".")
+    m2uni=models.FloatField(default=0)
+    uxg=models.IntegerField(default=1)
+    status=models.CharField(max_length=100, default=".")
+
+    def __str__(self):
+        return (self.padron)
+
 class OrderInfo(models.Model):
     orderId=models.CharField(unique=True, max_length=100, editable=False, default=".")
     padron=models.CharField(max_length=100, default=".")
     cliente=models.CharField(max_length=100, default=".")
-
+    SO=models.CharField(max_length=100, default=".")
+    SOPosition=models.IntegerField(default=0)
+    qOrd=models.IntegerField(default=0)
+    blanksrequired=models.IntegerField(default=0)
+    blankstocorr=models.IntegerField(default=0)
+    fechacarga=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    clave=models.CharField(max_length=100, default=".")
     def __str__(self):
         return (self.orderId)
 
 class Minuta(models.Model):
-    dia=models.DateField(blank=False, default = datetime.datetime.now())
-    texto=models.TextField(default = "")
+    dia=models.DateField(blank=False, default = timezone.now())
+    texto=models.TextField(default = ".")
     obs=models.CharField(max_length=100, default="S/N")
 
     def __str__(self):
         return str((self.dia))
 
 class Turnos(models.Model):
-    turno=models.CharField(max_length=10, default="vacio")
+    turno=models.CharField(unique=True,max_length=10, default="vacio")
     horaini=models.CharField(max_length=100, default="vacio")
     horafin=models.CharField(max_length=100, default="vacio")
 
     def __str__(self):
-        return (self.turno)
+        return (str(self.turno))
 
 
 class Maquinas(models.Model):
-    maquina=models.CharField(max_length=10, default="vacio")
+    maquina=models.CharField(unique=True,max_length=10, default="vacio")
 
     def __str__(self):
-        return (self.maquina)
+        return (str(self.maquina))
 
+class Meses(models.Model):
+    mes=models.CharField(max_length=10, default="vacio")
+    mescorto=models.CharField(max_length=10, default="vacio")
+    mesnum=models.IntegerField(default=0)
+    dias=models.CharField(max_length=10, default="vacio")
+    diasnoprod=models.CharField(max_length=10, default="vacio")
+    año=models.IntegerField(default=0)
+
+    def __str__(self):
+        return (str(self.mes))
+
+class Semanas(models.Model):
+    semana=models.IntegerField(default="1")
+    mescorto=models.CharField(max_length=10, default="vacio")
+    mesnum=models.IntegerField(default=0)
+    diasprod=models.FloatField(default=5.5)
+    año=models.IntegerField(default=0)
+
+    def __str__(self):
+        return (str(self.semana))
 
 
 class ProdReal(models.Model):
@@ -52,10 +195,14 @@ class ProdReal(models.Model):
     datefinajustada = models.DateTimeField(blank=False)
     turno = models.CharField(max_length=200, default="vacio")
 
-    qOrd = models.CharField(max_length=200, default="vacio")
+    semana=models.IntegerField(default=0)
+    mes=models.IntegerField(default=0)
+    anno=models.IntegerField(default=0)
+
+    qOrd = models.IntegerField(default=0)
     lamDisp = models.CharField(max_length=200, default="vacio") #en interlink acá dice laminas programadas pero al parecer son las láminas disponible al momento de producir
     nSalidas = models.CharField(max_length=200, default="vacio")
-    qProd = models.CharField(max_length=200, default="vacio")
+    qProd = models.IntegerField(default=0)
     porcTerm = models.CharField(max_length=200, default="vacio")
     maquina = models.CharField(max_length=200, default="vacio")
 
@@ -98,13 +245,49 @@ class CargaProducciones(models.Model):
         return str((self.fecha_carga))
 '''
 
+class DetalleProgCorr(models.Model):
+
+    programma=models.ForeignKey('blog.OrdenProgCorr', related_name='fecha_prog', on_delete=models.CASCADE)
+
+    ajuste= models.CharField(max_length=20, default="vacio")
+    onda= models.CharField(max_length=20, default="vacio")
+    formato= models.CharField(max_length=20, default="vacio")
+    carton= models.CharField(max_length=20, default="vacio")
+    metroslineales= models.IntegerField(default=0)
+    trim= models.IntegerField(default=0)
+    papeles= models.CharField(max_length=50, default="vacio")
+    datefin = models.DateTimeField(blank=False)
+    datefinajustada = models.DateTimeField(blank=False)
+    turno = models.CharField(max_length=10, default="vacio")
+
+    def __str__(self):
+        return (str(self.ajuste))
+
+
+
+
+class OrdenProgCorr(models.Model):
+
+    fecha_programa= models.DateTimeField(blank=False, default=timezone.now)# tb puede incluir default=datetime.now
+    #fecha_programa=models.CharField(max_length=200, default="vacio")
+    #transaction_index= models.CharField(max_length=200, default="vacio")
+    horizonteini = models.DateTimeField(blank=True)
+    turnohorini = models.CharField(max_length=20, default="vacio")
+    horizontefin = models.DateTimeField(blank=True)
+    turnohorfin = models.CharField(max_length=20, default="vacio")
+
+    def __str__(self):
+        return str((self.fecha_programa))
+
 class OrdenProg(models.Model):
 
     fecha_programa= models.DateTimeField(blank=False)# tb puede incluir default=datetime.now
     #fecha_programa=models.CharField(max_length=200, default="vacio")
     transaction_index= models.CharField(max_length=200, default="vacio")
     horizonteini = models.DateTimeField(blank=True)
+    turnohorini = models.CharField(max_length=20, default="vacio")
     horizontefin = models.DateTimeField(blank=True)
+    turnohorfin = models.CharField(max_length=20, default="vacio")
 
     def __str__(self):
         return str((self.fecha_programa))

@@ -1,12 +1,14 @@
 {% extends "blog/base.html" %}
 {% block content %}
 <h1>Resumen Programa Conversión V2</h1>
+</br>
 {% if ordenes %}
 {% for ordenprog in ordenes %}
 <ul>
   <h2>
   <a href="{% url 'ordenprog_detail' pk=ordenprog.pk %}">{{ordenprog.fecha_programa}}</a>
   </h2>
+  <h4> next: {{ ordenprog.get_next_by_fecha_programa }}</h4>
   <br>
 
 </ul>

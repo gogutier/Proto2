@@ -38,10 +38,14 @@ $("#convert").click(function()
   //console.log("convirtiendo....");
   //reemplazo todas las comas por puntos, para evitar problemas después del parsed_csv_list
   code=code.replace(/,/g,'.');
+  code=code.replace(/\n\n/g,'\n');
+  //code=code.replace(/		/g,'	');
+  //	4900056683
+  //poner la consulta de sql que se debe hacer para filtrar las columnas que no sirven y no se generen errores
 
   //
   code2 = Papa.parse(code,{
-	delimiter: "",	// auto-detect
+	delimiter: "",// "",	// auto-detect
 	newline: "",	// auto-detect
 	quoteChar: '"',
 	escapeChar: '"',
@@ -155,7 +159,7 @@ function filtrocolumna(tablain){
 
   for(i=0;i<=tablain[0].length-1;i++){
 
-    if (!(tablain[0][i]=="ORDERID" || tablain[0][i]=="INTERNALSPECID" || tablain[0][i]=="CUSTOMERNAME" || tablain[0][i]== ";"))
+    if (!(tablain[0][i]=="ORDERID" || tablain[0][i]=="INTERNALSPECID" || tablain[0][i]=="CUSTOMERNAME" || tablain[0][i]=="SalesOrderNo" || tablain[0][i]=="SalesOrderPositionNo" || tablain[0][i]=="ITEMSORDERED" || tablain[0][i]=="BLANKSREQUIRED" || tablain[0][i]=="BLANKSTOCORR"|| tablain[0][i]== ";"))
     //esto después tengo que reemplazarlo por una lista que venga de input
     {
       listaborrar.push(i);
@@ -171,7 +175,7 @@ function filtrocolumna(tablain){
 
   //console.log(tablain);
 
-
+//	4900056683
   for(j=0;j<=tablain.length-1;j++)
     {
 
@@ -199,12 +203,12 @@ function displayHTMLTable(results){
   var data = results;
   matriz = data;
 
-  for(i=0;i<data.length-1;i++){
+  for(i=0;i<=data.length-1;i++){
     table+= "<tr>";
     var row = data[i];
     var cells = row.join(",").split(",");
 
-    for(j=0;j<cells.length-1;j++){
+    for(j=0;j<=cells.length-1;j++){
       table+= "<td>";
       table+= cells[j];
       table+= "</th>";

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Post, Comment, SolCamb, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo
+from blog.models import Post, Comment, SolCamb, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario
 
 
 # Register your models here.
@@ -19,3 +19,10 @@ admin.site.register(Maquinas)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(Turnos)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(Minuta)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(OrderInfo)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(Padron)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(DiaConv2)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(OrdenProgCorr)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(DetalleProgCorr)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(Meses)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(Semanas)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(FotoInventario)#Cuando se agregan estos hay que aplicar el migrate
