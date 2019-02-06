@@ -1,0 +1,271 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+
+  <h1 class="posttitle">{{ordenprogcorr.fecha_programa}}</h1>
+
+
+
+
+<h3>Tabla JS:</h3>
+<div class="row" id="parsed_csv_list">
+</div>
+
+
+<script type="text/javascript">
+var sumaML=0;
+var sumaMLReal=0;
+var sumaMLExtra=0;
+var trimPond=0;
+var aux=0;
+var aux1=0;
+var aux2=0;
+
+var auxtxt="";
+
+//Primero saaco la información de la BD y la guardo como array en javascript
+//
+var InfoProd = new Array();
+InfoProd[0]=new Array(); //Cartón
+InfoProd[1]=new Array(); //Trim (%)
+InfoProd[2]=new Array(); //ML Programados
+InfoProd[3]=new Array(); //ML Reales
+InfoProd[4]=new Array(); //Fechater prog
+InfoProd[5]=new Array(); //Fechater real
+InfoProd[6]=new Array(); //Ajuste
+
+// lleno el Array
+aux=0;
+
+{% for detalle in detalleprog %}
+
+  InfoProd[0].push("{{detalle.carton}}");
+  InfoProd[1].push(({{detalle.trim}}/{{detalle.formato}})*100).toFixed(1);
+  InfoProd[2].push({{detalle.metroslineales}});
+  InfoProd[4].push("{{detalle.datefin}}");
+  InfoProd[6].push("{{detalle.ajuste}}");
+
+  aux1=0;
+  auxtxt="";
+
+    {%for real in prodreal%}
+
+      {% if real.ajuste == detalle.ajuste %}
+
+
+        aux1=aux1 + {{real.metroslineales}} ;
+
+
+        auxtxt= "{{real.datefin}}";
+
+      {% endif %}
+      //falta agregarle el Else->guarda en lista de reales corrugados fuera de lo programado pero dentro del tiempo transcurrido hasta el siguiente programa.
+
+
+    {% endfor %}
+
+  InfoProd[3].push(aux1);
+  InfoProd[5].push(auxtxt);
+
+  aux++;
+
+
+
+{% endfor %}
+
+  console.log(InfoProd);
+
+  //Calculo Trim ponderado con datos de array y no de BD.
+
+  sumaML=0;
+  sumaMLReal=0;
+  sumaMLExtra=0;
+
+  for(i=0;i<=InfoProd[0].length-1;i++)
+  {
+
+    sumaML= sumaML + InfoProd[2][i];
+    sumaMLReal= sumaMLReal + InfoProd[3][i];
+    if(InfoProd[3][i]-InfoProd[2][i]>0)
+    {
+      sumaMLExtra= sumaMLExtra + InfoProd[3][i]-InfoProd[2][i];
+    }
+
+  }
+
+
+console.log("sumaML: ")
+console.log((sumaML))
+console.log("sumaMLReal: ")
+console.log((sumaMLReal))
+
+console.log("SumaMlExtra: ")
+console.log((sumaMLExtra))
+
+console.log("%Extra: ")
+console.log(sumaMLExtra/sumaMLReal)
+
+
+
+trimPond=0;
+
+  for(i=0;i<=InfoProd[0].length-1;i++)
+  {
+
+    trimPond = trimPond  + (InfoProd[1][i]*InfoProd[2][i]/sumaML);
+
+  }
+
+  console.log("TrimPond: ")
+  console.log(trimPond)
+
+//sumaML=0;
+//trimPond=0;
+
+  var table = "<table class='table' >";
+
+
+    table+= "<tr>";
+      table+= "<td>";
+        table+= "Trim Programado";
+      table+= "</td>";
+      table+= "<td>";
+        table+= (trimPond).toFixed(2);
+        table+= "%";
+      table+= "</td>";
+
+      table+= "<td>";
+      table+= "</td>";
+
+      table+= "<td>";
+        table+= "ML Reales";
+      table+= "</td>";
+      table+= "<td>";
+        table+= "ML Sobrante";
+      table+= "</td>";
+      table+= "<td>";
+        table+= "% Sobrante";
+      table+= "</td>";
+
+    table+= "</tr>";
+
+    table+= "<tr>";
+      table+= "<td>";
+        table+= "ML Programados";
+      table+= "</td>";
+      table+= "<td>";
+        table+= sumaML;
+        table+= " m";
+      table+= "</td>";
+
+      table+= "<td>";
+      table+= "</td>";
+
+
+        table+= "<td>";
+          table+= sumaMLReal;
+          table+= " m";
+        table+= "</td>";
+        table+= "<td>";
+          table+= sumaMLExtra;
+          table+= " m";
+        table+= "</td>";
+        table+= "<td>";
+          table+= ((sumaMLExtra/sumaMLReal)*100).toFixed(2);
+          table+= "%";
+        table+= "</td>";
+
+
+
+
+    table+= "</tr>";
+
+
+    table+= "<tr>";
+      table+= "<td>";
+      table+= "<td>";
+    table+= "</tr>";
+
+    table+= "<tr>";
+      table+= "<td>";
+        table+= "Ajuste";
+      table+= "</td>";
+      table+= "<td>";
+        table+= "Cartón";
+      table+= "</td>";
+
+      table+= "<td>";
+        table+= "Trim";
+      table+= "</td>";
+
+      table+= "<td>";
+        table+= "ML Prog";
+      table+= "</td>";
+
+      table+= "<td>";
+        table+= "ML Real";
+      table+= "</td>";
+
+      table+= "<td>";
+        table+= "Término Prog";
+      table+= "</td>";
+
+      table+= "<td>";
+        table+= "Término Real";
+      table+= "</td>";
+
+
+    table+= "</tr>";
+
+
+
+    for(i=0;i<=InfoProd[0].length-1;i++)
+    {
+
+      table+= "<tr>";
+
+        table+= "<td>";
+          table+= InfoProd[6][i];
+        table+= "</td>";
+
+        table+= "<td>";
+          table+= InfoProd[0][i];
+        table+= "</td>";
+
+        table+= "<td>";
+          table+= InfoProd[1][i].toFixed(2);
+          table+= "%";
+
+        table+= "</td>";
+
+        table+= "<td>";
+          table+= InfoProd[2][i];
+        table+= "</td>";
+
+        table+= "<td>";
+          table+= InfoProd[3][i];
+        table+= "</td>";
+
+        table+= "<td>";
+          table+= InfoProd[4][i];
+        table+= "</td>";
+
+        table+= "<td>";
+          table+= InfoProd[5][i];
+        table+= "</td>";
+
+      table+= "<tr>";
+
+    }
+
+
+
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+
+</script>
+
+{% endblock %}

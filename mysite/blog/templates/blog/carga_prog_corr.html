@@ -107,19 +107,20 @@ var colOrderId = code2[0].indexOf("ORDERID");
 
     //console.log("code2.data después:");
     //console.log(code2);
+    console.log("n° columnas: " + code2[0].length);
+    if (code2[0].length != 14)
+    {
+
+      alert("Cuidado! dato debe provenir de Lineup Manager")
+    }
 
     tabla=filtrocolumna(code2);
     tabla=filtrofila(tabla);
 
     for(i=0;i<code2.length-1;i++)
       {
-
-
-
               code2[i].push(";");
-
-
-        }
+      }
 
     console.log(tabla);
 
@@ -132,12 +133,12 @@ var colOrderId = code2[0].indexOf("ORDERID");
 });
 
 
-
+var col_fechater=12;
 
   function filtrofila(tablain)
     {
       //modifico la fecha de término de cada fila
-      //columna fecha termino=11
+      var col_fechater=12;
 
       var turno
       var fechater
@@ -145,22 +146,26 @@ var colOrderId = code2[0].indexOf("ORDERID");
       for(i=0;i<=code2.length-1;i++)
         {
 
-          console.log("fechater: " + tablain[i][11]);
-          if (tablain[i][11].search("-") == -1)
+          var datepost;
+
+          console.log("fechater: " + tablain[i][col_fechater]);
+          if (tablain[i][col_fechater].search("-") == -1)
           {
             //agrego el año y el mes de hoy
             var now = new Date().getTime()
             var current_time = new moment().format("DD-MM-YYYY");
             console.log(current_time);
 
-            tablain[i][11] = current_time + " " + tablain[i][11] ;
+            tablain[i][col_fechater] = current_time + " " + tablain[i][col_fechater] ;
+
+            datepost = moment(tablain[i][col_fechater], "DD-MM-YYYY HH:mm");
           }
 
           //Agrego el turno a cada fila según la fecha aparecida.
+          else{ datepost = moment(tablain[i][col_fechater], "DD-MM HH:mm");}
 
-          var datepost = moment(tablain[i][11], "DD-MM-YYYY HH:mm");
 
-          tablain[i][11] = datepost.format("DD-MM-YYYY HH:mm")
+          tablain[i][col_fechater] = datepost.format("DD-MM-YYYY HH:mm")
 
           var horater=Number(datepost.format("HH"));
           var minter=Number(datepost.format("mm"));
@@ -216,12 +221,7 @@ function filtrocolumna(tablain){
   //elimina todas los elementos de las columnas que no estén en esa lista.
   //eliminando columnas que no me interesan
 
-  console.log("n° columnas: " + tablain[0].length);
-  if (tablain[0].length != 15)
-  {
 
-    alert("Cuidado! dato debe provenir de Lineup Manager")
-  }
   tablaout=tablain;
   return tablaout;
   }

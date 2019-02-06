@@ -9,6 +9,61 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+
+
+class ProyMkt(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+    fechaproy= models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+
+
+    def __str__(self):
+        return (str(self.fechaproy))
+
+class ProyMktMes(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+    proymkt= models.ForeignKey('blog.ProyMkt', related_name='proymkt', on_delete=models.CASCADE,)
+    mes=models.CharField(max_length=10, default="vacio")
+    mescorto=models.CharField(max_length=10, default="vacio")
+    mesnum=models.IntegerField(default=0)
+
+    tot_unidades=models.IntegerField(default=1)
+    tot_me=models.IntegerField(default=1)
+    tot_golpes=models.IntegerField(default=1)
+
+
+    def __str__(self):
+        return (str(self.proymkt)+"-"+str(mesnum))
+
+
+
+#cada padrón en la proyección de marketing se asocia a un proyMktMes, no a un cliente (para no tener que agregar lista de clientes)
+
+class ProyMktPadron(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+    proymktmes= models.ForeignKey('blog.ProyMktMes', related_name='proymktmes', on_delete=models.CASCADE,)
+    cliente=models.CharField(max_length=20, default="vacio")
+    padron=models.CharField(max_length=20, default="vacio") #lo asocio al maestro padrón?
+    descripcion=models.CharField(max_length=100, default="vacio")
+    mercado=models.CharField(max_length=10, default="vacio")
+    maquina=models.CharField(max_length=10, default="vacio")
+    carton=models.CharField(max_length=10, default="vacio")
+
+    unidades=models.IntegerField(default=0)
+    m2=models.IntegerField(default=0)
+    tons=models.IntegerField(default=0)
+
+    ton_placa_equiv=models.IntegerField(default=0)
+
+
+    def __str__(self):
+        return (str(self.proymkt)+"-"+str(mesnum))
+
+
+
+
 class FotoInventario(models.Model):
 
     fecha_carga=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
@@ -244,6 +299,27 @@ class CargaProducciones(models.Model):
     def __str__(self):
         return str((self.fecha_carga))
 '''
+
+
+class ProdRealCorr(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+    #ajustedatefin= models.CharField(max_length=40, default="vacio")#para identificar solamente
+    ajuste= models.CharField(max_length=20, default="vacio")
+    onda= models.CharField(max_length=20, default="vacio")
+    formato= models.CharField(max_length=20, default="vacio")
+    carton= models.CharField(max_length=20, default="vacio")
+    metroslineales= models.IntegerField(default=0)
+    trim= models.IntegerField(default=0)
+    datefin = models.DateTimeField(blank=False)
+    datefinajustada = models.DateTimeField(blank=False)
+    turno = models.CharField(max_length=10, default="vacio")
+    duración_min = models.IntegerField(default=1)
+
+    def __str__(self):
+        return ( str(self.ajuste) + str(self.datefinajustada) )#Ojo que al cargar el ajuste, y hay uno nuevo, hay que sumarlo? Cómo distingur si se carga el mismo ajuste 2 veces? (hora salida)
+
+
 
 class DetalleProgCorr(models.Model):
 

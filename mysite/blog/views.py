@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.utils import timezone
-from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario
+from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -559,8 +559,8 @@ class OrdenProgCorrDetailView(DetailView):
         self.actualizadatos(pk)
 
         context = super().get_context_data(**kwargs)
-        context['detalleprog'] = DetalleProgCorr.objects.filter(programma = OrdenProg.objects.get(pk=pk), datefinajustada__lte = OrdenProg.objects.get(pk=pk).horizontefin ).order_by('datefin')#.filter(published_date__isnull=True).order_by('-published_date')
-        #context['prodreal'] = ProdReal.objects.filter(datefin__gt=OrdenProg.objects.get(pk=pk).fecha_programa, datefin__lt=OrdenProg.objects.get(pk=pk).horizontefin + timedelta(days=1)).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
+        context['detalleprog'] = DetalleProgCorr.objects.filter(programma = OrdenProgCorr.objects.get(pk=pk), datefinajustada__lte = OrdenProgCorr.objects.get(pk=pk).horizontefin ).order_by('datefin')#.filter(published_date__isnull=True).order_by('-published_date')
+        context['prodreal'] = ProdRealCorr.objects.filter(datefin__gte=OrdenProgCorr.objects.get(pk=pk).fecha_programa).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
         #context['maquinas'] = Maquinas.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
         #context['turnos'] = Turnos.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
         #context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
@@ -1029,16 +1029,16 @@ def carga_prog_corr(request):
             OrdenProgCorr.objects.get_or_create(fecha_programa=fecha_programa_datetime, horizonteini=fecha_programa_horini, horizontefin=fecha_programa_horfin )
 
 
-            colAjuste=2
-            colOnda=3
-            colFormato=4
-            colCarton=5
-            colMl=6
-            colTrim=7
-            colPapeles=8
-            colDatefin=11
-            colDatefinajustada=12
-            colTurno=13
+            colAjuste=3
+            colOnda=4
+            colFormato=5
+            colCarton=6
+            colMl=7
+            colTrim=8
+            colPapeles=9
+            colDatefin=12
+            colDatefinajustada=19
+            colTurno=20
 
 
 
@@ -1058,8 +1058,142 @@ def carga_prog_corr(request):
 
 
 
+def carga_prod_corr(request):
+    pruebamods = PruebaMod.objects.all()
+
+    template_name = 'blog/carga_prod_corr.html'
+
+    if request.method == "POST":
+        form = PruebaModForm(request.POST)
+        if form.is_valid():
 
 
+            datocrudo=form.cleaned_data["ultrafile"]
+            datoprocesado=datocrudo.split(";")
+
+            #PruebaTabla.objects.create(item1=datoprocesado[0],item2=datoprocesado[1],item3=datoprocesado[2])
+
+            post = form.save(commit=False)
+
+            post.save()
+
+        else:
+            datocrudo=form.data["ultrafile"]
+
+            datoprocesado=datocrudo.split(",;,")
+
+            for i in range (len(datoprocesado)):
+                datoprocesado[i]=datoprocesado[i].split(",")
+
+            ####### identifica las columnas y crea los objetos que me interesanself.
+
+
+
+
+                    #print("fecha programa")
+                        #print(fecha_programa_datetime)
+
+            #OrdenProgCorr.objects.get_or_create(fecha_programa=fecha_programa_datetime, horizonteini=fecha_programa_horini, horizontefin=fecha_programa_horfin )
+
+
+            colAjuste=0
+            colDatefin=1
+            colDatefinajustada=11
+            colOnda=5
+            colFormato=6
+            colCarton=4
+            colMl=8
+            colTrim=7
+            colTurno=12
+
+
+
+            print("guardando..")
+            for i in range(1,len(datoprocesado)):
+                datefinajustada_datetime = datetime.strptime(datoprocesado[i][colDatefinajustada], "%d-%m-%Y")#"%d-%m-%Y %H:%M"
+                datefin_datetime = datetime.strptime(datoprocesado[i][colDatefin], "%d-%m-%Y %H:%M")#"%d-%m-%Y %H:%M"
+
+                ProdRealCorr.objects.get_or_create(ajuste=datoprocesado[i][colAjuste], onda=datoprocesado[i][colOnda], formato=datoprocesado[i][colFormato], carton=datoprocesado[i][colCarton], metroslineales=datoprocesado[i][colMl], trim=datoprocesado[i][colTrim],datefin=datefin_datetime, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colTurno])
+
+                print("completado!")
+        return redirect ('res_corr')
+
+    else:
+        form = PruebaModForm()
+
+    return render(request, template_name, {'form':form})
+
+
+
+
+def carga_proyeccion(request):
+    pruebamods = PruebaMod.objects.all()
+
+    template_name = 'blog/carga_proyeccion.html'
+
+    if request.method == "POST":
+        form = PruebaModForm(request.POST)
+        if form.is_valid():
+
+
+            datocrudo=form.cleaned_data["ultrafile"]
+            datoprocesado=datocrudo.split(";")
+
+            #PruebaTabla.objects.create(item1=datoprocesado[0],item2=datoprocesado[1],item3=datoprocesado[2])
+
+            post = form.save(commit=False)
+
+            post.save()
+
+        else:
+            datocrudo=form.data["ultrafile"]
+
+            datoprocesado=datocrudo.split(",;,")
+
+            for i in range (len(datoprocesado)):
+                datoprocesado[i]=datoprocesado[i].split(",")
+
+            ####### identifica las columnas y crea los objetos que me interesanself.
+
+
+
+
+
+            fecha_programa_datetime=datetime.now()
+            fecha_programa_horini=fecha_programa_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
+            fecha_programa_horfin=fecha_programa_horini + timedelta(days=1)
+                        #print("fecha programa")
+                        #print(fecha_programa_datetime)
+
+            #OrdenProgCorr.objects.get_or_create(fecha_programa=fecha_programa_datetime, horizonteini=fecha_programa_horini, horizontefin=fecha_programa_horfin )
+
+
+            colAjuste=3
+            colOnda=4
+            colFormato=5
+            colCarton=6
+            colMl=7
+            colTrim=8
+            colPapeles=9
+            colDatefin=12
+            colDatefinajustada=19
+            colTurno=20
+
+
+
+            print("guardando..")
+            for i in range(1,len(datoprocesado)):
+                datefinajustada_datetime = datetime.strptime(datoprocesado[i][colDatefinajustada], "%d-%m-%Y")#"%d-%m-%Y %H:%M"
+                datefin_datetime = datetime.strptime(datoprocesado[i][colDatefin], "%d-%m-%Y %H:%M")#"%d-%m-%Y %H:%M"
+
+                #DetalleProgCorr.objects.get_or_create(programma=OrdenProgCorr.objects.filter(fecha_programa=fecha_programa_datetime)[0], ajuste=datoprocesado[i][colAjuste], onda=datoprocesado[i][colOnda], formato=datoprocesado[i][colFormato], carton=datoprocesado[i][colCarton], metroslineales=datoprocesado[i][colMl], trim=datoprocesado[i][colTrim], papeles=datoprocesado[i][colPapeles],datefin=datefin_datetime, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colTurno])
+                print("completado!")
+        return redirect ('res_corr')
+
+    else:
+        form = PruebaModForm()
+
+    return render(request, template_name, {'form':form})
 
 
 
@@ -1070,7 +1204,7 @@ def resumen_inv(request): #ESto se puede cambiar a format based view (para que n
     template_name='blog/resumeninv.html'
     #suma el total de órdenes producidas reales para los últimos 5 días.
     fotoinv = FotoInventario.objects.latest('fecha_carga')
-    inventarios = FotoInventario.objects.all().order_by('fecha_carga')[:3]
+    inventarios = FotoInventario.objects.all().order_by('-fecha_carga')[0:4]
 
     return render(request, template_name, {"fotoinv": fotoinv, "inventarios": inventarios })
 
@@ -1187,9 +1321,9 @@ def carga_inventario(request):
                             kraft_saldos_kg = kraft_saldos_kg + int(datoprocesado[i][colPeso])
                             kraft_saldos_un = kraft_saldos_un + 1
 
-                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<5):
+                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<6):
                             kraft_3_meses_kg=kraft_3_meses_kg + int(datoprocesado[i][colPeso])
-                        elif(float(datoprocesado[i][colAntiguedad])>=5):
+                        elif(float(datoprocesado[i][colAntiguedad])>=6):
                             kraft_6_meses_kg=kraft_6_meses_kg + int(datoprocesado[i][colPeso])
                         elif(float(datoprocesado[i][colAntiguedad])>=1 and float(datoprocesado[i][colAntiguedad])<3):
                             kraft_1_meses_kg=kraft_1_meses_kg + int(datoprocesado[i][colPeso])
@@ -1203,9 +1337,9 @@ def carga_inventario(request):
                             blanco_saldos_kg = blanco_saldos_kg + int(datoprocesado[i][colPeso])
                             blanco_saldos_un = blanco_saldos_un + 1
 
-                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<5):
+                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<6):
                             blanco_3_meses_kg=blanco_3_meses_kg + int(datoprocesado[i][colPeso])
-                        elif(float(datoprocesado[i][colAntiguedad])>=5):
+                        elif(float(datoprocesado[i][colAntiguedad])>=6):
                             blanco_6_meses_kg=blanco_6_meses_kg + int(datoprocesado[i][colPeso])
                         elif(float(datoprocesado[i][colAntiguedad])>=1 and float(datoprocesado[i][colAntiguedad])<3):
                             blanco_1_meses_kg=blanco_1_meses_kg + int(datoprocesado[i][colPeso])
@@ -1217,9 +1351,9 @@ def carga_inventario(request):
                             CPP_saldos_kg = CPP_saldos_kg + int(datoprocesado[i][colPeso])
                             CPP_saldos_un = CPP_saldos_un + 1
 
-                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<5):
+                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<6):
                             CPP_3_meses_kg=CPP_3_meses_kg + int(datoprocesado[i][colPeso])
-                        elif(float(datoprocesado[i][colAntiguedad])>=5):
+                        elif(float(datoprocesado[i][colAntiguedad])>=6):
                             CPP_6_meses_kg=CPP_6_meses_kg + int(datoprocesado[i][colPeso])
                         elif(float(datoprocesado[i][colAntiguedad])>=1 and float(datoprocesado[i][colAntiguedad])<3):
                             CPP_1_meses_kg=CPP_1_meses_kg + int(datoprocesado[i][colPeso])
@@ -1231,9 +1365,9 @@ def carga_inventario(request):
                             otros_saldos_kg = otros_saldos_kg + int(datoprocesado[i][colPeso])
                             otros_saldos_un = otros_saldos_un + 1
 
-                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<5):
+                        if ( float(datoprocesado[i][colAntiguedad])>=3 and float(datoprocesado[i][colAntiguedad])<6):
                             otros_3_meses_kg=otros_3_meses_kg + int(datoprocesado[i][colPeso])
-                        elif(float(datoprocesado[i][colAntiguedad])>=5):
+                        elif(float(datoprocesado[i][colAntiguedad])>=6):
                             otros_6_meses_kg=otros_6_meses_kg + int(datoprocesado[i][colPeso])
                         elif(float(datoprocesado[i][colAntiguedad])>=1 and float(datoprocesado[i][colAntiguedad])<3):
                             otros_1_meses_kg=otros_1_meses_kg + int(datoprocesado[i][colPeso])

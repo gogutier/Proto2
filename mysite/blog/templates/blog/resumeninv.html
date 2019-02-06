@@ -6,9 +6,6 @@
 
 <h4>Resumen Inventario</h4>
 
-<h5>{{fotoinv.fecha_carga}}</h5>
-
-
 
 <table class='table' cellspacing="0" cellpadding="0" >
 <tr>
@@ -32,17 +29,26 @@
 
 
 </tr>
+
+<tr>
+
+<td colspan='4'>
+  <canvas id="myChart3" width="300" height="100" ></canvas>
+</td>
+
+</tr>
+
 </table>
 </div>
 
 <script>
 
 
-var labels=[
+var labels=[]
 {% for inv in inventarios %}
-"{{inv.fecha_carga}}",
+labels.unshift("{{inv.fecha_carga}}")
 {% endfor %}
-]
+
 var default_items=[123, 124, 432]
 var sumatot=0;
 var sumaret=0;
@@ -219,6 +225,9 @@ table+= "</tr>";
 
 
 
+
+
+
 table+= "</table>";
 $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
 
@@ -232,50 +241,25 @@ window.onload = function() {
 
   var ctx2 = document.getElementById('myChart2').getContext('2d');
   window.myPie2 = new Chart(ctx2, config2);
+
+  var ctx3 = document.getElementById('myChart3').getContext('2d');
+  window.myPie3 = new Chart(ctx3, config3);
 };
 
-var config = {
-			type: 'pie',
-			data: {
-				datasets: [{
-					data: [
-						({{fotoinv.total_kraft_kg}}/1000).toFixed(0),
-						({{fotoinv.total_blanco_kg}}/1000).toFixed(0),
-						({{fotoinv.total_CPP_kg}}/1000).toFixed(0),
-						({{fotoinv.total_otros_kg}}/1000).toFixed(0),
-					],
-					backgroundColor: [
-						"rgba(10,70,190,0.5)",
-						"rgba(10,70,190,0.5)",
-						"rgba(10,70,190,0.5)",
-						"rgba(10,70,190,0.5)",
-					],
-					label: 'Dataset 1'
-				}],
-				labels: [
-					'Kraft',
-					'Blanco',
-					'CPP',
-					'Otros',
-				]
-			},
-			options: {
-				responsive: true
-			}
-		};
+
 
     var Kraft = [];
     var Blanco = [];
     var CPP = [];
     var Otros = [];
     var aux=0;
+
     {% for inv in inventarios %}
 
-
-    Kraft.push( ({{inv.total_kraft_kg}}/1000) );
-    Blanco.push( ({{inv.total_blanco_kg}}/1000));
-    CPP.push( ({{inv.total_CPP_kg}}/1000));
-    Otros.push( ({{inv.total_otros_kg}}/1000) );
+      Kraft.unshift( ({{inv.total_kraft_kg}}/1000) );
+      Blanco.unshift( ({{inv.total_blanco_kg}}/1000));
+      CPP.unshift( ({{inv.total_CPP_kg}}/1000));
+      Otros.unshift( ({{inv.total_otros_kg}}/1000) );
 
     {% endfor %}
 
@@ -366,6 +350,108 @@ var config = {
   };
 
 
+
+
+  var meses_1 = [];
+  var meses_3 = [];
+  var meses_6 = [];
+
+  var aux=0;
+  {% for inv in inventarios %}
+  aux=0;
+  aux= {{inv.kraft_1_meses_kg}} + {{inv.blanco_1_meses_kg}} + {{inv.CPP_1_meses_kg}} + {{inv.otros_1_meses_kg}}
+  meses_1.push( (aux/1000) );
+
+  aux=0;
+  aux= {{inv.kraft_3_meses_kg}} + {{inv.blanco_3_meses_kg}} + {{inv.CPP_3_meses_kg}} + {{inv.otros_3_meses_kg}}
+  meses_3.push( (aux/1000) );
+
+  aux=0;
+  aux= {{inv.kraft_6_meses_kg}} + {{inv.blanco_6_meses_kg}} + {{inv.CPP_6_meses_kg}} + {{inv.otros_6_meses_kg}}
+  meses_6.push( (aux/1000) );
+
+
+  {% endfor %}
+
+
+
+  var config3 = {
+  type: 'bar',
+  data: {
+      labels: labels,
+      datasets: [{
+          label: '1 mes',
+          data: meses_1,
+            backgroundColor: "rgba(10,70,190,0.5)",
+          //[
+              //'rgba(255, 99, 132, 0.2)',
+              //'rgba(54, 162, 235, 0.2)',
+              //'rgba(255, 206, 86, 0.2)',
+              //'rgba(75, 192, 192, 0.2)',
+              //'rgba(153, 102, 255, 0.2)',
+              //'rgba(255, 159, 64, 0.2)'
+          //],
+          //borderColor:
+          // [
+              //'rgba(255,99,132,1)',
+              //'rgba(54, 162, 235, 1)',
+              //'rgba(255, 206, 86, 1)',
+              //'rgba(75, 192, 192, 1)',
+              //'rgba(153, 102, 255, 1)',
+              //'rgba(255, 159, 64, 1)'
+          //],
+          borderWidth: 0
+      },{
+
+        label: '3 meses',
+        data: meses_3,
+        backgroundColor:
+            "rgba(82,154,190,0.5)",
+          borderWidth: 0
+
+      },{
+
+        label: '6 meses',
+        data: meses_6,
+        backgroundColor:
+            "rgba(120,100,50,0.5)",
+          borderWidth: 0
+
+      }]
+  },
+  options: {
+      title:{
+        display:true,
+        text:"Stock mayor a un mes (TN)"
+      },
+      tooltips: {
+mode: 'label',
+callbacks: {
+    label: function(tooltipItem, data) {
+        var corporation = data.datasets[tooltipItem.datasetIndex].label;
+        var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+        var total = 0;
+        for (var i = 0; i < data.datasets.length; i++)
+            total += data.datasets[i].data[tooltipItem.index];
+        if (tooltipItem.datasetIndex != data.datasets.length - 1) {
+            return [corporation + " : " + valor.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+        } else {
+            return [ corporation + " : " + valor.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'), "Total : " + total.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+        }
+    }
+}
+},
+      scales: {
+          xAxes: [{ stacked: false }],
+          yAxes: [{stacked: false,
+              ticks: {
+                  autoSkip: false,
+                  beginAtZero:true
+              }
+          }]
+      }
+  }
+};
 
 
 </script>
