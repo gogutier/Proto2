@@ -181,9 +181,62 @@ trimPond=0;
     table+= "</tr>";
 
 
+
+// Muestra el resumen de trims y pérdidas por cartones.
+
+var setCartones = [...new Set(InfoProd[0])];
+
+console.log(setCartones);
+
+console.log(setCartones.length);
+
+//genero una lista de todos los cartones distintos en el array principal
+
+//por cada carton genero los tados de trim ponderado y sobrante.
+
+
+table+= "<tr>";
+  table+= "<td>";
+  table+= "<td>";
+table+= "</tr>";
+
+
+aux1=0;
+sumaML=0;
+
+
+
+for(i=0;i<=setCartones.length-1;i++)
+{
+  aux1=0;
+  sumaML=0;
+
+  for(j=0;j<=InfoProd[0].length-1;j++)
+  {
+    if(setCartones[i]==InfoProd[0][j])
+    {
+      sumaML= sumaML+ InfoProd[2][j]  ;
+    }
+  }
+
+  table+= "<tr>";
+    table+= "<td>";
+      table+= setCartones[i];
+    table+= "</td>";
+
+    table+= "<td>";
+      table+= sumaML;
+    table+= "</td>";
+  table+= "</tr>";
+
+}
+
+
+
+
     table+= "<tr>";
       table+= "<td>";
-      table+= "<td>";
+      table+= "</td>";
     table+= "</tr>";
 
     table+= "<tr>";

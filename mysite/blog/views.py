@@ -581,6 +581,7 @@ class OrdenProgDetailView(DetailView):
         #referencia = OrdenProg.objects.filter(pk=pk[0])#ojo tmabién puede ser con el get. ahí hay que poner el [0] ya que no acepta más de un resultado
         referencia = OrdenProg.objects.get(pk=pk)
         detalles = DetalleProg.objects.filter(programma = referencia)
+        ordenprevia = OrdenProg.objects.get(pk=pk).get_previous_by_fecha_programa()
 
 
 
@@ -591,16 +592,21 @@ class OrdenProgDetailView(DetailView):
 
         print(pk)
 
-        self.actualizadatos(pk)
+        #self.actualizadatos(pk)
 
         context = super().get_context_data(**kwargs)
-        context['detalleprog'] = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk), datefinajustada__lte = OrdenProg.objects.get(pk=pk).horizontefin ).order_by('datefin')#.filter(published_date__isnull=True).order_by('-published_date')
-        context['prodreal'] = ProdReal.objects.filter(datefin__gt=OrdenProg.objects.get(pk=pk).fecha_programa, datefin__lt=OrdenProg.objects.get(pk=pk).horizontefin + timedelta(days=1)).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
+        detalleprog2 = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk), datefinajustada__lte = OrdenProg.objects.get(pk=pk).horizontefin )#.filter(published_date__isnull=True).order_by('-published_date')
+
+        detalleprogprev = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk).get_previous_by_fecha_programa(), datefin__lt= OrdenProg.objects.get(pk=pk).fecha_programa, datefinajustada__gte = OrdenProg.objects.get(pk=pk).fecha_programa.date() )
+
+        context['detalleprog'] = detalleprog2.union(detalleprogprev, all=True).order_by('datefin')
+
+        context['prodreal'] = ProdReal.objects.filter(datefin__gte=OrdenProg.objects.get(pk=pk).fecha_programa + timedelta(days=-1), datefin__lt=OrdenProg.objects.get(pk=pk).horizontefin + timedelta(days=1)).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
         context['maquinas'] = Maquinas.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
         context['turnos'] = Turnos.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
         context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
-        context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
-        #context['maquinas'] = maquinas
+        #context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
+
         return context
 
 
@@ -762,7 +768,7 @@ def res_corr(request):
 
 def res_conv_v2(request):
     template_name = 'blog/resumenconv.html'
-    ordenes = OrdenProg.objects.all().order_by('-fecha_programa') #Post.objects.filter(published_date__isnull=True).order_by('create_date')
+    ordenes = OrdenProg.objects.all().order_by('-fecha_programa')[:6] #Post.objects.filter(published_date__isnull=True).order_by('create_date')
     detallesProg = DetalleProg.objects.all()
 
     return render(request, template_name, {'ordenes':ordenes, "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
@@ -862,6 +868,7 @@ def carga_prod_real(request):
 
                 try:
                     o = ProdReal.objects.filter(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])[0]
+                    o = ProdReal.objects.filter(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])[0]
                 except:
                     o, created = ProdReal.objects.get_or_create(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])
 
@@ -873,6 +880,8 @@ def carga_prod_real(request):
                 o.anno=datefin_datetime.isocalendar()[0]
 
                 o.save()
+
+
             #################
 
 
@@ -884,6 +893,77 @@ def carga_prod_real(request):
 
 
 #################################################
+
+
+''' ### Referencia de caraorderinfo que no se cae.
+
+
+def carga_orderinfo(request):
+    pruebamods = PruebaMod.objects.all()
+
+    template_name = 'blog/cargaorderinfo.html'
+
+    if request.method == "POST":
+        form = PruebaModForm(request.POST)
+        if form.is_valid():
+
+
+            datocrudo=form.cleaned_data["ultrafile"]
+            datoprocesado=datocrudo.split(";")
+
+            #PruebaTabla.objects.create(item1=datoprocesado[0],item2=datoprocesado[1],item3=datoprocesado[2])
+
+            post = form.save(commit=False)
+
+            post.save()
+
+        else:
+            datocrudo=form.data["ultrafile"]
+
+            datoprocesado=datocrudo.split(",;,")
+
+            for i in range (len(datoprocesado)):
+                datoprocesado[i]=datoprocesado[i].split(",")
+
+            ####### identifica las columnas y crea los objetos que me interesanself.
+            colOrderId = None#Esta la tengo que pasar a datetime
+            colPadron = None
+            colCliente = None#Esta la tengo que pasar a datetime
+
+
+            for i in range(len(datoprocesado[0])):
+                if datoprocesado[0][i] == "ORDERID":
+                    #print("columna creación en: " + str(i))
+                    colOrderId = i
+
+                if datoprocesado[0][i] == "INTERNALSPECID":
+                    #print("columna transaction en: " + str(i))
+                    colPadron = i
+
+                if datoprocesado[0][i] == "CUSTOMERNAME":
+                    #print("columna Horizonteini en: " + str(i))
+                    colCliente = i
+
+            print("guardando..")
+            for i in range(1,len(datoprocesado)):
+
+
+                    o, created=OrderInfo.objects.get_or_create(orderId=datoprocesado[i][colOrderId])
+                    o.padron=datoprocesado[i][colPadron]
+                    o.cliente=datoprocesado[i][colCliente]
+                    o.save()
+
+            print("completado!")
+    else:
+        form = PruebaModForm()
+
+    return render(request, template_name, {'form':form})
+
+
+
+
+
+'''
 
 def carga_orderinfo(request):
     pruebamods = PruebaMod.objects.all()
@@ -959,7 +1039,7 @@ def carga_orderinfo(request):
             print("guardando..")
             for i in range(1,len(datoprocesado)):
 
-
+                    '''
                     o, created=OrderInfo.objects.get_or_create(orderId=datoprocesado[i][colOrderId])
                     o.padron=datoprocesado[i][colPadron]
                     o.cliente=datoprocesado[i][colCliente]
@@ -968,6 +1048,11 @@ def carga_orderinfo(request):
                     o.qOrd=datoprocesado[i][colQord]
                     o.blanksrequired=datoprocesado[i][colBlanksReq]
                     o.blankstocorr=datoprocesado[i][colBlanksToCorr]
+                    o.save()
+                    '''
+                    o, created=OrderInfo.objects.get_or_create(orderId=datoprocesado[i][colOrderId])
+                    o.padron=datoprocesado[i][colPadron]
+                    o.cliente=datoprocesado[i][colCliente]
                     o.save()
 
             print("completado!")
@@ -1560,6 +1645,9 @@ def carga_prog(request):
             colidpost = None
             coldatefinajust = None
             colturno = None
+            colanchoplaca= None
+            collargoplaca = None
+            colnumberout= None
 
 
             #print("Largo: " + str(len(datoprocesado[0])))
@@ -1585,6 +1673,15 @@ def carga_prog(request):
                 if datoprocesado[0][j] == "Turno":
                     #print("columna turno en: " + str(j))
                     colturno = j
+                if datoprocesado[0][j] == "INPUTSHEETWIDTH":
+                    #print("columna turno en: " + str(j))
+                    colanchoplaca = j
+                if datoprocesado[0][j] == "INPUTSHEETLENGTH":
+                    #print("columna turno en: " + str(j))
+                    collargoplaca = j
+                if datoprocesado[0][j] == "NUMBEROUT":
+                    #print("columna turno en: " + str(j))
+                    colnumberout = j
             #print("Completado!!!!")
 
             for i in range(1,len(datoprocesado)):
@@ -1611,7 +1708,7 @@ def carga_prog(request):
                     print(datoprocesado[i][colorderid])
 
 
-                    DetalleProg.objects.get_or_create(programma=OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0]  ,workcenter=datoprocesado[i][colworkcenter],orderId=datoprocesado[i][colorderid], dateini=dateini_datetime, datefin=datefin_datetime,qIn=cantQin, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colturno], orderIdPrev=datoprocesado[i][colorderid], orderIdPost=datoprocesado[i][colorderid])
+                    DetalleProg.objects.get_or_create(programma=OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0]  ,workcenter=datoprocesado[i][colworkcenter],orderId=datoprocesado[i][colorderid], dateini=dateini_datetime, datefin=datefin_datetime,qIn=cantQin, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colturno], orderIdPrev=datoprocesado[i][colorderid], orderIdPost=datoprocesado[i][colorderid], anchoplaca=datoprocesado[i][colanchoplaca], largoplaca=datoprocesado[i][collargoplaca], numberout=datoprocesado[i][colnumberout])
 
 
                 #except:

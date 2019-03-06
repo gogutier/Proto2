@@ -280,6 +280,10 @@ class DetalleProg(models.Model):
     turno = models.CharField(max_length=200, default="vacio")
 
     qIn = models.IntegerField(default=0)
+    anchoplaca= models.FloatField(default=0)
+    largoplaca= models.FloatField(default=0)
+    numberout=models.IntegerField(default=1)
+
     orderIdPrev = models.CharField(max_length=200, default="vacio")
     orderIdPost = models.CharField(max_length=200, default="vacio")
 
