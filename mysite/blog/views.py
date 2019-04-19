@@ -11,10 +11,80 @@ from django.http import JsonResponse
 import csv
 from datetime import datetime, timedelta
 from io import StringIO
-
+import pruebawebscrap
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+
+def placas_wip(request):
+
+    print("cargando datos wip")
+    template_name = 'blog/placas_wip.html'
+
+    placas_wip = pruebawebscrap.webscrap_wip()
+
+    ## [N° máquina, n° piezas, Area]
+
+
+
+    auxsumapiezas=0
+    auxsumaarea=0
+
+    for i in range(0,len(placas_wip)):
+        auxsumapiezas=auxsumapiezas+placas_wip[i][1]
+        auxsumaarea=auxsumaarea+placas_wip[i][2]
+
+    totales=[auxsumapiezas,auxsumaarea]
+    print("carga datos completada")
+
+    return render(request, template_name, {'placas_wip': placas_wip, 'totales': totales})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+
+
+def cump_proto(request):
+
+    print("carga datos iniciada")
+    template_name = 'blog/cump_proto.html'
+
+    ini= timezone.now()
+
+    producciones = ProdRealCorr.objects.filter(datefinajustada__gte=ini.replace(hour= 0, minute=0, second=0, microsecond=0)-timedelta(days=50)).order_by('datefin') #Post.objects.filter(published_date__isnull=True).order_by('create_date')
+    #turnos = Turnos.objects.all()
+    maquinas = Maquinas.objects.all()
+    # Trato de procesar toda la info en el server y solo mandar los datos que hay que poner en la tabla.
+    dias = []
+    MLprodreal = []
+    trims = []
+    for i in range(0,50):
+        fecha=(timezone.now()-timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0)
+        dias.append( fecha.strftime("%d-%m-%y"))
+        Prods=ProdRealCorr.objects.filter(datefinajustada=fecha).order_by('datefin')
+        metros=0
+        trimpond=0
+
+        print ("Ok listo para imprimir prods")
+        for prod in Prods:
+            print (prod)
+            metros= metros + prod.metroslineales
+        for prod in Prods:
+            if (metros != 0 and prod.formato != 0):
+                trimpond=trimpond+( (int(prod.trim)/int(prod.formato))*prod.metroslineales )/metros
+            else:
+                trimpond=0
+
+        MLprodreal.append(metros)
+        trims.append(trimpond)
+
+    #detalles = DetalleProg.objects.filter(programma=orden)
+    #meses=Meses.objects.all().order_by('mesnum')
+    #orderinfos= OrderInfo.objects.all().order_by('SO')
+
+    print("carga datos completada")
+
+    return render(request, template_name, {'producciones':producciones,'maquinas': maquinas, 'dias': dias, 'MLprodreal': MLprodreal, 'trims': trims } )# ,'orderinfos':orderinfos, 'maquinas': maquinas, 'meses':meses, 'detalles':detalles})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
 
 
@@ -867,8 +937,7 @@ def carga_prod_real(request):
                 datefin_datetime = datetime.strptime(datoprocesado[i][colDatefin], "%d-%m-%Y %H:%M:%S")
 
                 try:
-                    o = ProdReal.objects.filter(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])[0]
-                    o = ProdReal.objects.filter(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])[0]
+                    o = ProdReal.objects.filter(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])[0]
                 except:
                     o, created = ProdReal.objects.get_or_create(cliente=datoprocesado[i][colCliente], padron=datoprocesado[i][colPadron], orderId=datoprocesado[i][colOrderId], orderIdPrev="pendiente", orderIdPost="Final", datefin=datefin_datetime, datefinajustada=datefinajustada_datetime, turno=datoprocesado[i][colTurno], maquina=datoprocesado[i][colMaquina])
 

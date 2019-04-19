@@ -1,0 +1,38 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+
+
+<h3>Estado Placas WIP</h3>
+
+{% for placa in placas_wip%}
+
+<h4>{{placa}}</h4>
+
+
+
+{% endfor %}
+
+<h3>Totales</h3>
+<h4>{{totales}}</h4>
+
+
+<script type="text/javascript">
+  console.log("hola");
+  console.log("dasdasdas");
+  init();
+
+  function init(){
+
+
+  console.log ("q ase");
+  var int = self.setInterval(function () {
+    console.log("muy bien");
+  }, 10000); 
+  //refresh()
+  //var int = self.setInterval(function () {
+  //  refresh()
+  //}, 10000);
+}
+</script>
+{% endblock %}

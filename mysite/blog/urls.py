@@ -50,6 +50,8 @@ urlpatterns = [
     url(r'^cargainventario/$',views.carga_inventario,name='carga_inventario'),
     url(r'^res_pareados/$',views.res_pareados,name='res_pareados'),
     url(r'^res_inventario/$',views.resumen_inv,name='resumen_inv'),
+    url(r'^cump_proto/$',views.cump_proto,name='cump_proto'),
+    url(r'^placas_wip/$',views.placas_wip,name='placas_wip'),
 
 
 

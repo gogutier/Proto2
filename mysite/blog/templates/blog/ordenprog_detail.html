@@ -55,7 +55,7 @@ function displayHTMLTable(results){
   var imagenadelanta = '<img src={% static "images/25637.svg" %} alt="" height=15 width=10></img>'
   var img;
 
-
+  var flag1;
   var realproducido;
   var realproducidototal;
   var strnamecliente;
@@ -103,7 +103,7 @@ do {
 
   }
 
-  table+= '<h5 >' + m2prog.toLocaleString('es-ES',{maximumFractionDigits: 0 }) +' m2 </h5>';
+  table+= '<h5 > Total Programado: ' + m2prog.toLocaleString('es-ES',{maximumFractionDigits: 0 }) +' m2 </h5>';
 
   table+= '</td>';
   table+= '</tr>';
@@ -197,41 +197,53 @@ do {
                                     table+=               '<td style="font-size: 15px; padding: 15px 5px;"><a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>'
 
                                     img=imagennot;
+                                        flag1=0;
                                         {% for prod in prodreal%};
-                                              {% if prod.orderId == detalle.orderId %};
-                                              {% if prod.datefinajustada == detalle.datefinajustada %};
-                                              {% if prod.turno == detalle.turno %};
-                                              qprod={{prod.qProd}};
-                                              qord={{prod.qOrd}};
+                                            if (flag1==0)
+                                            {
+                                                  {% if prod.orderId == detalle.orderId %};
+                                                  {% if prod.datefinajustada == detalle.datefinajustada %};
+                                                  {% if prod.turno == detalle.turno %};
+                                                  flag1=1;
+                                                  qprod={{prod.qProd}};
+                                                  qord={{prod.qOrd}};
 
-                                              if(Math.floor(100*{{prod.qProd}}/{{prod.qOrd}})>=90){
-                                                img=imagenok;//coincide en fecha y turno
-                                              }
-                                              else{
-                                                img=imagenmed1;//coincide en fecha y turno
-                                              }
+                                                  if(Math.floor(100*{{prod.qProd}}/{{prod.qOrd}})>=90){
+                                                    img=imagenok;//coincide en fecha y turno
+                                                  }
+                                                  else{
+                                                    img=imagenmed1;//coincide en fecha y turno
+                                                  }
 
 
 
-                                              {% else %}//coincide en fecha y turno
-                                                             img=imagenalert;//coincide en fecha y turno
-                                              //table+=                 '<li><a href="#">Producido: {{prod.qProd}}</a></li>';
-                                              //table+=                 '<li><a href="#">C {{ detalle.completo_unidades}} </a></li>';
-                                              {% endif %};
-                                              {% else %}//coincide en fecha y turno
-                                                                img=imagenalert;//coincide en fecha y turno
-                                              {% endif %};
-                                              {% endif %};
+                                                  {% else %}//coincide en fecha y turno
+                                                                 img=imagenalert;//coincide en fecha y turno
+                                                  //table+=                 '<li><a href="#">Producido: {{prod.qProd}}</a></li>';
+                                                  //table+=                 '<li><a href="#">C {{ detalle.completo_unidades}} </a></li>';
+                                                  {% endif %};
+                                                  {% else %}//coincide en fecha y turno
+                                                                    img=imagenalert;//coincide en fecha y turno
+                                                  {% endif %};
+                                                  {% endif %};
+
+                                            }
 
                                         {% endfor %};
+                                        flag1=0;
+
                                       table+=                   img;//coincide en fecha y turno
 
 
 
                                       if (img==imagenalert){
 
+
                                             {% for prod in prodreal%};
+
+
                                                   {% if prod.orderId == detalle.orderId %};
+                                                  flag1=1;
 
                                                   if( moment.parseZone('{{prod.datefinajustada.isoformat}}').isAfter(moment.parseZone('{{detalle.datefinajustada.isoformat}}')))
                                                   {
@@ -298,7 +310,10 @@ do {
 
                                                   }
                                                   {% endif %}
+
+
                                             {% endfor %}
+
 
 
 
@@ -315,8 +330,12 @@ do {
                               realproducido=0;
                               realproducidototal=0;
                               table+=                  '<td colspan="1" style="font-size: 15px; padding: 15px 5px;">';
+                                  flag1=0;
                                   {% for prod in prodreal%}; //aquí aplicar el filtro para que considere la última prodreal subida para cada ID
+                                  if(flag1==0)
+                                  {
                                         {% if prod.orderId == detalle.orderId %};
+                                        flag1=1;
                                         realproducidototal=realproducidototal+{{prod.qProd}} ;
                                         table+=                   Math.floor(100*{{prod.qProd}}/{{prod.qOrd}});
 
@@ -327,7 +346,12 @@ do {
                                         {% endif %};
                                         {% endif %};
                                         {% endif %};
+
+                                  }
+
                                   {% endfor %};
+                                  flag1=0;
+
                               table+= '%'+'</th>';
                             //table+=                  '<td colspan="1">'+{{prod.qProd}}+'</th>';
 
