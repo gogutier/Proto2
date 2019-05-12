@@ -1,7 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.edit import CreateView
+from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr
+from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -17,29 +20,16 @@ import pruebawebscrap
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
 
-def placas_wip(request):
 
+
+
+
+def placas_wip(request):
     print("cargando datos wip")
     template_name = 'blog/placas_wip.html'
 
-    placas_wip = pruebawebscrap.webscrap_wip()
 
-    ## [N° máquina, n° piezas, Area]
-
-
-
-    auxsumapiezas=0
-    auxsumaarea=0
-
-    for i in range(0,len(placas_wip)):
-        auxsumapiezas=auxsumapiezas+placas_wip[i][1]
-        auxsumaarea=auxsumaarea+placas_wip[i][2]
-
-    totales=[auxsumapiezas,auxsumaarea]
-    print("carga datos completada")
-
-    return render(request, template_name, {'placas_wip': placas_wip, 'totales': totales})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
-
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
 
 
@@ -707,7 +697,7 @@ class Inicio(View): #ESto se puede cambiar a format based view (para que no sea 
 
 
 #Esta es la que les manda el dato al gráfico de inicio.
-def get_data(request, *args, **kwargs):
+def get_data_inicio(request, *args, **kwargs):
     orden = OrdenProg.objects.all().order_by('-pk').first()
     detallesProg = DetalleProg.objects.filter(programma= orden)
     prodsreales = ProdReal.objects.all()
@@ -825,6 +815,167 @@ def get_data(request, *args, **kwargs):
     }
     print("Enviando Json Datos Graph")
     return JsonResponse(data)#http response con el datatype de JS
+
+
+def get_data_wip(request, *args, **kwargs):
+
+
+    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
+
+
+    print("cargando datos wip")
+
+    placas_wip = pruebawebscrap.webscrap_wip()
+            ## [N° máquina, n° piezas, Area]
+    print("preparandose para copiar")
+    for i in range(9,0,-1):
+        print("copiando datos "+ str(i))
+
+        Info=InfoWIP.objects.all().order_by('contador')[i]
+        Infoprev=InfoWIP.objects.all().order_by('contador')[i-1]
+
+
+        Info.M2FFG=Infoprev.M2FFG
+        Info.PiFFG=Infoprev.PiFFG
+
+        Info.M2FFW=Infoprev.M2FFW
+        Info.PiFFW=Infoprev.PiFFW
+
+        Info.M2TCY=Infoprev.M2TCY
+        Info.PiTCY=Infoprev.PiTCY
+
+        Info.M2DRO=Infoprev.M2DRO
+        Info.PiDRO=Infoprev.PiDRO
+
+        Info.M2WRD=Infoprev.M2WRD
+        Info.PiWRD=Infoprev.PiWRD
+
+        Info.M2HCR=Infoprev.M2HCR
+        Info.PiHCR=Infoprev.PiHCR
+
+        Info.M2Total= Infoprev.M2Total
+        Info.PiTotal= Infoprev.PiTotal
+
+        Info.save()
+
+    #Actualizo el objeto InfoWIP n° cero:
+    Info=InfoWIP.objects.all().order_by('contador')[0]
+
+    Info.M2FFG=round(placas_wip[0][2],2)
+    Info.PiFFG=round(placas_wip[0][1],2)
+
+    Info.M2FFW=round(placas_wip[2][2],2)
+    Info.PiFFW=round(placas_wip[2][1],2)
+
+    Info.M2TCY=round(placas_wip[1][2],2)
+    Info.PiTCY=round(placas_wip[1][1],2)
+
+    Info.M2DRO=round(placas_wip[3][2],2)
+    Info.PiDRO=round(placas_wip[3][1],2)
+
+    Info.M2WRD=round(placas_wip[4][2],2)
+    Info.PiWRD=round(placas_wip[4][1],2)
+
+    Info.M2HCR=round(placas_wip[5][2],2)
+    Info.PiHCR=round(placas_wip[5][1],2)
+
+    Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR
+    Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR
+
+
+    Info.save()
+
+
+
+
+    auxsumapiezas=0
+    auxsumaarea=0
+
+    for i in range(0,len(placas_wip)):
+        auxsumapiezas=auxsumapiezas+placas_wip[i][1]
+        auxsumaarea=auxsumaarea+placas_wip[i][2]
+
+    totales=[auxsumapiezas,auxsumaarea]
+    print("carga datos completada")
+
+
+    #datos0=placas_wip#["red","blue","green"]
+    datos0=model_to_dict( InfoWIP.objects.all().order_by('contador')[0])
+    datos1=model_to_dict( InfoWIP.objects.all().order_by('contador')[1])
+    datos2=model_to_dict( InfoWIP.objects.all().order_by('contador')[2])
+    datos3=model_to_dict( InfoWIP.objects.all().order_by('contador')[3])
+    datos4=model_to_dict( InfoWIP.objects.all().order_by('contador')[4])
+    datos5=model_to_dict( InfoWIP.objects.all().order_by('contador')[5])
+    datos6=model_to_dict( InfoWIP.objects.all().order_by('contador')[6])
+    datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
+    datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
+    datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
+    totales=totales
+    data = {
+    "datos0": datos0,
+    "datos1": datos1,
+    "datos2": datos2,
+    "datos3": datos3,
+    "datos4": datos4,
+    "datos5": datos5,
+    "datos6": datos6,
+    "datos7": datos7,
+    "datos8": datos8,
+    "datos9": datos9,
+    "totales": totales,
+    }
+    print("Enviando Json Datos Graph")
+    return JsonResponse(data)#http response con el datatype de JS
+
+
+def get_data_wip_2(request, *args, **kwargs):
+
+
+    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
+
+
+    print("cargando datos wip")
+
+
+            ## [N° máquina, n° piezas, Area]
+        #Actualizo el objeto InfoWIP n° cero:
+
+
+
+
+    #datos0=placas_wip#["red","blue","green"]
+    datos0=model_to_dict( InfoWIP.objects.all().order_by('contador')[0])
+    datos1=model_to_dict( InfoWIP.objects.all().order_by('contador')[1])
+    datos2=model_to_dict( InfoWIP.objects.all().order_by('contador')[2])
+    datos3=model_to_dict( InfoWIP.objects.all().order_by('contador')[3])
+    datos4=model_to_dict( InfoWIP.objects.all().order_by('contador')[4])
+    datos5=model_to_dict( InfoWIP.objects.all().order_by('contador')[5])
+    datos6=model_to_dict( InfoWIP.objects.all().order_by('contador')[6])
+    datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
+    datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
+    datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
+    totales=datos0["M2FFG"]
+    print(totales)
+
+    data = {
+    "datos0": datos0,
+    "datos1": datos1,
+    "datos2": datos2,
+    "datos3": datos3,
+    "datos4": datos4,
+    "datos5": datos5,
+    "datos6": datos6,
+    "datos7": datos7,
+    "datos8": datos8,
+    "datos9": datos9,
+    "totales": totales,
+
+    }
+    print("Enviando Json Datos Graph")
+    return JsonResponse(data)#http response con el datatype de JS
+
+
+
 
 def res_corr(request):
     template_name = 'blog/resumencorr.html'

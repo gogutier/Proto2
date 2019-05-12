@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$',views.Inicio.as_view(),name='Inicio'),
-    url(r'^api/data/$',views.get_data,name='api-data'),
+    url(r'^api/data_inicio/$',views.get_data_inicio,name='api-data'),
     url(r'^about/$', views.AboutView.as_view(), name='about'),
     url(r'^post/(?P<pk>\d+)$', views.PostDetailView.as_view(),name='post_detail'),
     url(r'^post/new/$', views.CreatePostView.as_view(), name='post_new'),
@@ -52,9 +52,7 @@ urlpatterns = [
     url(r'^res_inventario/$',views.resumen_inv,name='resumen_inv'),
     url(r'^cump_proto/$',views.cump_proto,name='cump_proto'),
     url(r'^placas_wip/$',views.placas_wip,name='placas_wip'),
-
-
-
-
+    url(r'^api/data_wip/$',views.get_data_wip,name='api-data-wip'),
+    url(r'^api/data_wip_2/$',views.get_data_wip_2,name='api-data-wip-2'),
 
 ]

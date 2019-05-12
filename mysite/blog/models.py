@@ -9,6 +9,42 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class InfoWIP(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+
+    contador = models.IntegerField(default=0)
+
+    M2FFG=models.FloatField(default=0)
+    PiFFG=models.FloatField(default=0)
+
+    M2FFW=models.FloatField(default=0)
+    PiFFW=models.FloatField(default=0)
+
+    M2TCY=models.FloatField(default=0)
+    PiTCY=models.FloatField(default=0)
+
+    M2DRO=models.FloatField(default=0)
+    PiDRO=models.FloatField(default=0)
+
+    M2WRD=models.FloatField(default=0)
+    PiWRD=models.FloatField(default=0)
+
+    M2HCR=models.FloatField(default=0)
+    PiHCR=models.FloatField(default=0)
+
+    M2Otros=models.FloatField(default=0)
+    PiOtros=models.FloatField(default=0)
+
+    M2Total=models.FloatField(default=0)
+    PiTotal=models.FloatField(default=0)
+
+
+    fechamuestra= models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+
+
+    def __str__(self):
+        return (str(self.contador))
 
 
 class ProyMkt(models.Model):

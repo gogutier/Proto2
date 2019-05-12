@@ -39,17 +39,17 @@ def webscrap_wip():
 
     # verify we are now logged in
     page = browser.get_current_page()
-    print(page)
+    #print(page)
     messages = page.find_all(id="SIMPLETRANSCAR")
-    print(messages)
+    #print(messages)
     link = browser.find_link(id="SIMPLETRANSCAR")
     #assert page.select(".logout-form")
 
     browser.follow_link(link)
 
 
-    print(page.title.text)
-    print(browser.get_current_page())
+    #print(page.title.text)
+    #print(browser.get_current_page())
 
     #Falta hacer que selecciones la opción 800 en plant y luego apriete la el form submit, esto en el explorador al parecer lo hace solo (script?)
 
@@ -62,17 +62,17 @@ def webscrap_wip():
 
     #print(page)
     pagetxt  = browser.get_current_page().text
-    print("ini")
+    #print("ini")
     numinicio = browser.get_current_page().text.find("PiecesAvail1 = new Array")#.text
-    print(numinicio)
+    #print(numinicio)
     numfin=pagetxt[numinicio+24:numinicio+4000].find("'z'")-2
-    print(numfin)
+    #print(numfin)
     datatxt=pagetxt[numinicio+24:numinicio+numfin+24]
-    print(datatxt)
+    #print(datatxt)
 
     lista=datatxt.split("],[")
 
-    print(len(lista))
+    #print(len(lista))
     for i in range(0,len(lista)):
         lista[i]=lista[i].replace('parseInt(','')
         lista[i]=lista[i].replace(')','')
@@ -82,17 +82,17 @@ def webscrap_wip():
         lista[i]=lista[i].split(",")
         for j in range(0,len(lista[i])):
             lista[i][j]=float(lista[i][j])
-            print(lista[i][j])
-        print(lista[i])
-        print(lista[i][1])
+            #print(lista[i][j])
+        #print(lista[i])
+        #print(lista[i][1])
 
     ## N° máquina, n° piezas, Area, n° órdenes
 
 
-    print("Mostrando resumen por máquina")
+    #print("Mostrando resumen por máquina")
 
-    print("Maqunina 2:")
-    maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11), ("DIM",13)]
+    #print("Maqunina 2:")
+    maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11)]#, ("DIM",13)]
 
 
     resultado=[]
@@ -105,7 +105,7 @@ def webscrap_wip():
                 auxsumarea=auxsumarea+list[2]
                 auxsumapiezas=auxsumapiezas+list[1]
 
-        print(maquina[0] + ": " + str(auxsumarea) + ", " + str(auxsumapiezas))
+        #print(maquina[0] + ": " + str(auxsumarea) + ", " + str(auxsumapiezas))
         resultado.append([maquina[0],auxsumapiezas, auxsumarea])
 
     return(resultado)

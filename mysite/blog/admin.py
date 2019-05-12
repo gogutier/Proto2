@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Post, Comment, SolCamb, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr
+from blog.models import Post, Comment, SolCamb, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP
 
 
 # Register your models here.
@@ -30,3 +30,4 @@ admin.site.register(ProyMkt)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(ProyMktMes)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(ProyMktPadron)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(ProdRealCorr)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(InfoWIP)#Cuando se agregan estos hay que aplicar el migrate
