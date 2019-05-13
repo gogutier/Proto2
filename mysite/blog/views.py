@@ -954,8 +954,7 @@ def get_data_wip_2(request, *args, **kwargs):
     datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
     datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
     datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
-    totales=datos0["M2FFG"]
-    print(totales)
+
 
     data = {
     "datos0": datos0,
@@ -968,7 +967,7 @@ def get_data_wip_2(request, *args, **kwargs):
     "datos7": datos7,
     "datos8": datos8,
     "datos9": datos9,
-    "totales": totales,
+
 
     }
     print("Enviando Json Datos Graph")

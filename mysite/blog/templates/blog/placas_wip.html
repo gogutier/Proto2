@@ -290,7 +290,7 @@
           myTable.rows[1].cells[4].innerHTML = datos0["M2DRO"].toFixed(2)//datos0[3][2].toFixed(1);//DRO
           myTable.rows[1].cells[5].innerHTML = datos0["M2WRD"].toFixed(2)//datos0[4][2].toFixed(1);//WRD
           myTable.rows[1].cells[6].innerHTML = datos0["M2HCR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
-          //myTable.rows[1].cells[7].innerHTML = totales[1].toFixed(1);//Total
+          myTable.rows[1].cells[7].innerHTML = datos0["M2Total"].toFixed(2);//Total
 
 
           myTable.rows[2].cells[1].innerHTML = (datos0["M2FFG"]/(1661/68)).toFixed(1);//FFG
@@ -299,7 +299,7 @@
           myTable.rows[2].cells[4].innerHTML = (datos0["M2DRO"]/(2042/68)).toFixed(1);//DRO
           myTable.rows[2].cells[5].innerHTML = (datos0["M2WRD"]/(1378/68)).toFixed(1);//WRD
           myTable.rows[2].cells[6].innerHTML = (datos0["M2HCR"]/(1388/68)).toFixed(1);//HCR
-          //myTable.rows[2].cells[7].innerHTML = (totales[1]/(9423/68)).toFixed(1);//Total
+          myTable.rows[2].cells[7].innerHTML = (datos0["M2Total"]/(9423/68)).toFixed(1);//Total
 
           //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
 
