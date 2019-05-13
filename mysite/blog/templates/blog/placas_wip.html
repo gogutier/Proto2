@@ -244,6 +244,7 @@
 
       $("#parsed_csv_list").html(table);
 
+
       }
 
 
@@ -251,7 +252,7 @@
 
       window.setInterval(function(){
         console.log("hola");
-        datoswip();
+        datoswip_2();
 
       }, 60000);
 
@@ -304,6 +305,13 @@
           //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
 
           setChart();
+          fechamoment=moment.parseZone(datos0["fechamuestra"])
+          fecha="Ultima actualización: ";
+          fecha+= fechamoment.tz('America/Santiago').format('LLL');
+
+
+
+          $("#fechaupdate").html(fecha);
 
           },
           error: function(error_data){
@@ -429,6 +437,13 @@
 <canvas id="myChart" style="display= block; width:1000px"></canvas>
 
 <!--</div>-->
+
+
+
+  <h7 class="float-right" id="fechaupdate"></h7>
+
+  <div class="clearfix"></div>
+
 </div>
 
 

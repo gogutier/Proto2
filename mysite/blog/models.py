@@ -40,7 +40,7 @@ class InfoWIP(models.Model):
     PiTotal=models.FloatField(default=0)
 
 
-    fechamuestra= models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    fechamuestra= models.DateTimeField(blank=False, default = timezone.now())#.replace(hour= 0, minute=0, second=0, microsecond=0))
 
 
     def __str__(self):

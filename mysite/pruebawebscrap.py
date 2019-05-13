@@ -48,7 +48,7 @@ def webscrap_wip():
     browser.follow_link(link)
 
 
-    #print(page.title.text)
+    print(page.title.text)
     #print(browser.get_current_page())
 
     #Falta hacer que selecciones la opción 800 en plant y luego apriete la el form submit, esto en el explorador al parecer lo hace solo (script?)
@@ -110,4 +110,4 @@ def webscrap_wip():
 
     return(resultado)
 
-#print(webscrap_wip())
+print(webscrap_wip())
