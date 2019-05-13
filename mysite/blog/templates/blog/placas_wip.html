@@ -9,7 +9,7 @@
   {% block jquery %}
 
 
-  var labels = ["9","8","7","6","5","4","3","2","1","0"]; //valores de eje Y // Poner fecha en que se capturó cada dato.
+
   var endpoint='/api/data_wip/';
   var endpoint2='/api/data_wip_2/';
 
@@ -17,6 +17,22 @@
 
 
   function setChart(){
+
+
+    var f0 = moment.parseZone(datos0["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f1 = moment.parseZone(datos1["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f2 = moment.parseZone(datos2["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f3 = moment.parseZone(datos3["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f4 = moment.parseZone(datos4["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f5 = moment.parseZone(datos5["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f6 = moment.parseZone(datos6["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f7 = moment.parseZone(datos7["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f8 = moment.parseZone(datos8["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f9 = moment.parseZone(datos9["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+
+
+
+    var  labels = [f9,f8,f7,f6,f5,f4,f3,f2,f1,f0]; //valores de eje Y // Poner fecha en que se capturó cada dato.
 
     var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
@@ -51,7 +67,7 @@
             },{
 
               label: 'FFW',
-              data: [datos0["M2FFW"],datos1["M2FFW"],datos2["M2FFW"],datos3["M2FFW"],datos4["M2FFW"],datos5["M2FFW"],datos6["M2FFW"],datos7["M2FFW"],datos8["M2FFW"],datos9["M2FFW"]],
+              data: [datos9["M2FFW"],datos8["M2FFW"],datos7["M2FFW"],datos6["M2FFW"],datos5["M2FFW"],datos4["M2FFW"],datos3["M2FFW"],datos2["M2FFW"],datos1["M2FFW"],datos0["M2FFW"]],
               borderColor: "rgba(255,42,0)",
               backgroundColor: "rgba(255,42,0)",
                 borderWidth: 0
@@ -59,7 +75,7 @@
             },{
 
               label: 'TCY',
-              data: [datos0["M2TCY"],datos1["M2TCY"],datos2["M2TCY"],datos3["M2TCY"],datos4["M2TCY"],datos5["M2TCY"],datos6["M2TCY"],datos7["M2TCY"],datos8["M2TCY"],datos9["M2TCY"]],
+              data: [datos9["M2TCY"],datos8["M2TCY"],datos7["M2TCY"],datos6["M2TCY"],datos5["M2TCY"],datos4["M2TCY"],datos3["M2TCY"],datos2["M2TCY"],datos1["M2TCY"],datos0["M2TCY"]],
               borderColor: "rgba(0,204,0)",
               backgroundColor: "rgba(0,204,0)",
                 borderWidth: 0
@@ -67,7 +83,7 @@
             },{
 
               label: 'DRO',
-              data: [datos0["M2DRO"],datos1["M2DRO"],datos2["M2DRO"],datos3["M2DRO"],datos4["M2DRO"],datos5["M2DRO"],datos6["M2DRO"],datos7["M2DRO"],datos8["M2DRO"],datos9["M2DRO"]],
+              data: [datos9["M2DRO"],datos8["M2DRO"],datos7["M2DRO"],datos6["M2DRO"],datos5["M2DRO"],datos4["M2DRO"],datos3["M2DRO"],datos2["M2DRO"],datos1["M2DRO"],datos0["M2DRO"]],
               borderColor: "rgba(51,255,255)",
               backgroundColor: "rgba(51,255,255)",
                 borderWidth: 0
@@ -75,7 +91,7 @@
             },{
 
               label: 'WRD',
-              data: [datos0["M2WRD"],datos1["M2WRD"],datos2["M2WRD"],datos3["M2WRD"],datos4["M2WRD"],datos5["M2WRD"],datos6["M2WRD"],datos7["M2WRD"],datos8["M2WRD"],datos9["M2WRD"]],
+              data: [datos9["M2WRD"],datos8["M2WRD"],datos7["M2WRD"],datos6["M2WRD"],datos5["M2WRD"],datos4["M2WRD"],datos3["M2WRD"],datos2["M2WRD"],datos1["M2WRD"],datos0["M2WRD"]],
               borderColor: "rgba(255,255,25)",
               backgroundColor: "rgba(255,255,25)",
               borderWidth: 0
@@ -83,7 +99,7 @@
             },{
 
               label: 'HCR',
-              data: [datos0["M2HCR"],datos1["M2HCR"],datos2["M2HCR"],datos3["M2HCR"],datos4["M2HCR"],datos5["M2HCR"],datos6["M2HCR"],datos7["M2HCR"],datos8["M2HCR"],datos9["M2HCR"]],
+              data: [datos9["M2HCR"],datos8["M2HCR"],datos7["M2HCR"],datos6["M2HCR"],datos5["M2HCR"],datos4["M2HCR"],datos3["M2HCR"],datos2["M2HCR"],datos1["M2HCR"],datos0["M2HCR"]],
               borderColor: "rgba(255,102,204)",
               backgroundColor: "rgba(255,102,204)",
                 borderWidth: 0
@@ -306,7 +322,7 @@
 
           setChart();
           fechamoment=moment.parseZone(datos0["fechamuestra"])
-          fecha="Ultima actualización: ";
+          fecha="Última actualización: ";
           fecha+= fechamoment.tz('America/Santiago').format('LLL');
 
 
