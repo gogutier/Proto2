@@ -56,7 +56,7 @@ def webscrap_wip():
 
     browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedTransCar?MachineLink=0&PlantLink=1")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
-    #browser.launch_browser()
+    browser.launch_browser()
 
 
 
@@ -65,7 +65,7 @@ def webscrap_wip():
     #print("ini")
     numinicio = browser.get_current_page().text.find("PiecesAvail1 = new Array")#.text
     #print(numinicio)
-    numfin=pagetxt[numinicio+24:numinicio+4000].find("'z'")-2
+    numfin=pagetxt[numinicio+24:numinicio+6000].find("'z'")-2
     #print(numfin)
     datatxt=pagetxt[numinicio+24:numinicio+numfin+24]
     #print(datatxt)
@@ -92,18 +92,21 @@ def webscrap_wip():
     #print("Mostrando resumen por máquina")
 
     #print("Maqunina 2:")
+    #(maq, num maq)
     maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11)]#, ("DIM",13)]
 
 
     resultado=[]
     for maquina in maqs:
+        #se suma el área sólo si el número de piezas es positivo
         auxsumarea=0
         auxsumapiezas=0
         for list in lista:
 
             if list[0]==maquina[1]:
-                auxsumarea=auxsumarea+list[2]
-                auxsumapiezas=auxsumapiezas+list[1]
+                if list[1]>0:
+                    auxsumarea=auxsumarea+list[2]
+                    auxsumapiezas=auxsumapiezas+list[1]
 
         #print(maquina[0] + ": " + str(auxsumarea) + ", " + str(auxsumapiezas))
         resultado.append([maquina[0],auxsumapiezas, auxsumarea])
