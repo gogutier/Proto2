@@ -41,7 +41,7 @@
             labels: labels,
             datasets: [{
                 label: 'FFG',
-                data: [datos0["M2FFG"],datos1["M2FFG"],datos2["M2FFG"],datos3["M2FFG"],datos4["M2FFG"],datos5["M2FFG"],datos6["M2FFG"],datos7["M2FFG"],datos8["M2FFG"],datos9["M2FFG"]],
+                data: [datos9["M2FFG"],datos8["M2FFG"],datos7["M2FFG"],datos6["M2FFG"],datos5["M2FFG"],datos4["M2FFG"],datos3["M2FFG"],datos2["M2FFG"],datos1["M2FFG"],datos0["M2FFG"]],
                   borderColor: "rgba(0,42,255)",
                   backgroundColor: "rgba(0,42,255)",
                 //[
@@ -320,12 +320,13 @@
 
           //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
 
-          setChart();
+
           fechamoment=moment.parseZone(datos0["fechamuestra"])
           fecha="Última actualización: ";
           fecha+= fechamoment.tz('America/Santiago').format('LLL');
 
 
+          setChart();
 
           $("#fechaupdate").html(fecha);
 

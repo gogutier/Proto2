@@ -56,7 +56,7 @@ def webscrap_wip():
 
     browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedTransCar?MachineLink=0&PlantLink=1")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
-    browser.launch_browser()
+    #browser.launch_browser()
 
 
 
