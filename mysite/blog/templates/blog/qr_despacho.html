@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+{% load qr_code %}
+{% block content %}
+<h2>Ingresar datos transportista</h2>
+{% if camiones %}
+{% for camion in camiones %}
+<ul>
+  <h2>
+  <a href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
+  </h2>
+  <br>
+
+</ul>
+{% endfor %}
+{% endif %}
+
+{% qr_from_text ejemplo size="L" %}
+{% qr_from_text ejemplo size="L" %}
+{% endblock %}

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'qr_code', #https://django-qr-code.readthedocs.io/en/latest/pages/README.html#
 ]
 
 MIDDLEWARE = [

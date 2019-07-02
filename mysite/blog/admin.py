@@ -1,11 +1,11 @@
 from django.contrib import admin
-from blog.models import Post, Comment, SolCamb, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP
+from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion
 
 
 # Register your models here.
 admin.site.register(Post)
 admin.site.register(Comment)#Cuando se agregan estos hay que aplicar el migrate
-admin.site.register(SolCamb)#Cuando se agregan estos hay que aplicar el migrate
+
 admin.site.register(appointment)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(ProdID)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(Book)#Cuando se agregan estos hay que aplicar el migrate
@@ -31,3 +31,4 @@ admin.site.register(ProyMktMes)#Cuando se agregan estos hay que aplicar el migra
 admin.site.register(ProyMktPadron)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(ProdRealCorr)#Cuando se agregan estos hay que aplicar el migrate
 admin.site.register(InfoWIP)#Cuando se agregan estos hay que aplicar el migrate
+admin.site.register(Camion)#Cuando se agregan estos hay que aplicar el migrate

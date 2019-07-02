@@ -17,15 +17,11 @@ urlpatterns = [
     url(r'^comment/(?P<pk>\d+)/remove/$', views.comment_remove, name='comment_remove'),
     url(r'^post/(?P<pk>\d+)/publish/$', views.post_publish,name='post_publish'),
     url(r'^contact/$', views.ContactView, name='contact'),
-    url(r'^solcambios/new/$', views.CreateSolCambView.as_view(), name='solcamb_new'),
-    url(r'^solcambios/$',views.SolCambListView.as_view(),name='solcamb_list'),
-    url(r'^solcambioss/(?P<pk>\d+)$', views.SolCambDetailView.as_view(), name='solcamb_detail'),
     url(r'^appointment/$',views.appointmentCreate.as_view(),name='appointment_create'),
     url(r'^OCI/$',views.CreateOCIView.as_view(),name='OCI_create'),
     url(r'^csv/$',views.CargaCSV1, name='carga_csv_1'),
     url(r'^csv2/$',views.CargaCSV2, name='carga_csv_2'),
     url(r'^$',views.listaprodid,name='prodid_list'),
-    url(r'^newcambios/$',views.solcambiosss,name='solicitud_cambio'),
     url(r'^book/$',views.create_book_normal,name='book_normal'),
     url(r'^book/$',views.create_book_model_form,name='book_normal_model'),
     url(r'^book/$',views.create_book_with_authors,name='book_authors_model'),
@@ -54,5 +50,7 @@ urlpatterns = [
     url(r'^placas_wip/$',views.placas_wip,name='placas_wip'),
     url(r'^api/data_wip/$',views.get_data_wip,name='api-data-wip'),
     url(r'^api/data_wip_2/$',views.get_data_wip_2,name='api-data-wip-2'),
+    url(r'^qr_despacho/$',views.qr_despacho,name='qr_despacho'),
+    url(r'^camion_detail/(?P<pk>\d+)$', views.CamionDetailView.as_view(),name='camion_detail'), #datos de cada camiòn con qr asociado
 
 ]

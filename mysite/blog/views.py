@@ -4,11 +4,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment,SolCamb, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from blog.forms import PostForm, CommentForm, SolCambForm, ContactForm, AppointmentForm, OCImportacionForm, ProdIDForm, BookFormset, BookModelFormset, PruebaModForm, MinutaForm
+from blog.forms import PostForm, CommentForm, ContactForm, AppointmentForm, OCImportacionForm, ProdIDForm, BookFormset, BookModelFormset, PruebaModForm, MinutaForm, QRForm
 from django.views.generic import (TemplateView,ListView,CreateView,DetailView, UpdateView, DeleteView, View)
 from django.http import JsonResponse
 import csv
@@ -19,9 +19,58 @@ import pruebawebscrap
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
+class CamionDetailView(DetailView):
+    context_object_name = 'camion_detail'
+    model = Camion
+
+    def actualizadatos(self, pk):
+        #referencia = OrdenProg.objects.filter(pk=pk[0])#ojo tmabién puede ser con el get. ahí hay que poner el [0] ya que no acepta más de un resultado
+        referencia = OrdenProg.objects.get(pk=pk)
+        #detalles = DetalleProg.objects.filter(programma = referencia)
+        #ordenprevia = OrdenProg.objects.get(pk=pk).get_previous_by_fecha_programa()
 
 
 
+    def get_context_data(self, **kwargs):
+
+        pk = self.kwargs['pk']# this is the primary key from your URL
+        # your other code
+
+        print(pk)
+
+        #self.actualizadatos(pk)
+
+        context = super().get_context_data(**kwargs)
+        #detalleprog2 = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk), datefinajustada__lte = OrdenProg.objects.get(pk=pk).horizontefin )#.filter(published_date__isnull=True).order_by('-published_date')
+
+        #detalleprogprev = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk).get_previous_by_fecha_programa(), datefin__lt= OrdenProg.objects.get(pk=pk).fecha_programa, datefinajustada__gte = OrdenProg.objects.get(pk=pk).fecha_programa.date() )
+
+        #context['detalleprog'] = detalleprog2.union(detalleprogprev, all=True).order_by('datefin')
+
+        #context['prodreal'] = ProdReal.objects.filter(datefin__gte=OrdenProg.objects.get(pk=pk).fecha_programa + timedelta(days=-1), datefin__lt=OrdenProg.objects.get(pk=pk).horizontefin + timedelta(days=1)).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
+        #context['maquinas'] = Maquinas.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
+        #context['turnos'] = Turnos.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
+        #context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
+        #context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
+        context['camiones'] = Camion.objects.get(pk=pk)
+        context['patenteqr'] = Camion.objects.get(pk=pk).Patente
+        context['infoqr'] = (str(Camion.objects.get(pk=pk).Chofer) + "\t" + str(Camion.objects.get(pk=pk).Telefono) + "\t" + str(Camion.objects.get(pk=pk).Rut) + "\t\t" + str(Camion.objects.get(pk=pk).Transportista) )
+        return context
+
+
+
+def qr_despacho(request):
+    #print("cargando datos wip")
+    template_name = 'blog/qr_despacho.html'
+
+    camiones = Camion.objects.all() #Post.objects.filter(published_date__isnull=True).order_by('create_date')
+
+
+    return render(request, template_name, {'camiones':camiones})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+    return render(request, template_name, {'ejemplo': ejemplo, 'form':form})#
 
 
 def placas_wip(request):
@@ -2067,9 +2116,6 @@ def create_book_normal(request):
 
 
 
-def solcambiosss(request):
-
-    return render(request, 'blog/solicitud_cambio.html')
 
 
 def listaprodid(request):
@@ -2155,8 +2201,6 @@ def ContactView(request):
 def product(x,y):
     return x*y
 
-def tomanombre():
-    return SolCamb.objects.all()[:5]
 
 
 class CreateOCIView(LoginRequiredMixin,CreateView):
@@ -2191,9 +2235,8 @@ class appointmentCreate(LoginRequiredMixin, CreateView):
 class AboutView(TemplateView):
     template_name = 'about.html'
 
-class SolCambDetailView(DetailView):
-    model = SolCamb
 
+'''
 class SolCambListView( ListView):
 
     model = SolCamb
@@ -2202,7 +2245,7 @@ class SolCambListView( ListView):
     def get_queryset(self):
         return SolCamb.objects.filter(published_date__isnull=True).order_by('-published_date')#sql query
 
-'''
+
 class SolCambListView(TemplateView):
     template_name = 'solcamb_list.html'
 
@@ -2212,22 +2255,6 @@ class SolCambListView(TemplateView):
         return SolCamb.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')#sql query
 
     '''
-
-class CreateSolCambView(LoginRequiredMixin,CreateView):
-    login_url = '/login/'
-    redirec_field_name = 'blog/solcamb_detail.html'
-
-    form_class = SolCambForm
-
-    model = SolCamb
-
-    def get_initial(self):
-          #patient = self.request.GET.get('patient')
-          cliente = "Juanito"
-
-          return {
-            'cliente': cliente,
-            }
 
 
 class PostListView(ListView):
@@ -2309,11 +2336,6 @@ def post_publish(request, pk):
     post.publish()
     return redirect('post_detail', pk=pk)
 
-@login_required
-def solcamb_publish(request, pk):
-    solcamb = get_object_or_404(SolCamb, pk=pk)
-    solcamb.publish()
-    return redirect('solcamb_detail', pk=pk)
 
 
 

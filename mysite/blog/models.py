@@ -9,6 +9,23 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class Camion(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+
+    Patente=models.CharField(blank=False, unique=True, max_length=10, default="vacio")
+    Chofer=models.CharField(max_length=15, default="vacio")
+    Telefono=models.CharField(max_length=15, default="vacio")
+    Rut=models.CharField(max_length=15, default="vacio")
+    Transportista=models.CharField(max_length=20, default="vacio")
+
+    dia=models.DateField(max_length=10, default="vacio")
+
+    def __str__(self):
+        return (self.Patente)
+
+
+
 class InfoWIP(models.Model):
 
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
@@ -580,38 +597,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class SolCamb(models.Model):
-    author = models.ForeignKey('auth.User', on_delete=models.CASCADE,)
-    create_date = models.DateTimeField(default=timezone.now)
-    title = models.CharField(max_length = 200, default = "holi")
-    #post = models.ForeignKey('blog.Post', related_name='comments', on_delete=models.CASCADE,)
-    text = models.CharField(max_length=200)
-    solicitudot = models.CharField(max_length=200)
-    order_id = models.CharField(max_length=200)
-    cliente = models.CharField(max_length=200)
-    fechabpt = models.CharField(max_length=200)
-    maquina = models.CharField(max_length=200)
-    published_date = models.DateTimeField(blank=True, null=True)
-
-    approved_cambio = models.BooleanField(default=False)
-
-    def publish(self):
-        self.published_date = timezone.now()
-        self.save()
-
-    def approve_comments(self):
-        return self.comments.filter(approved_comment=True)
-
-    def get_absolute_url(self):
-       return reverse("solcamb_detail", kwargs={'pk':self.pk})
-
-
-    def __str__(self):
-        return self.title
-
-
 
 
 class appointment(models.Model):

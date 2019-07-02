@@ -1,6 +1,15 @@
 from django import forms
 from django.forms import formset_factory, modelformset_factory
-from blog.models import Post,Comment,SolCamb, appointment, OCImportacion, ProdID, Book, Author, PruebaMod, ProdReal, Minuta
+from blog.models import Post,Comment, appointment, OCImportacion, ProdID, Book, Author, PruebaMod, ProdReal, Minuta, Camion
+
+
+class QRForm(forms.ModelForm):
+    class Meta:
+        model = Camion
+        widgets = {
+            'dia': forms.DateInput(attrs={'class':'datepicker'}),
+        }
+        fields = ['dia', 'Transportista', 'Patente']
 
 class MinutaForm(forms.ModelForm):
     class Meta:
@@ -10,7 +19,7 @@ class MinutaForm(forms.ModelForm):
         }
         fields = ['dia', 'texto', 'obs']
 
-class PruebaModForm(forms.ModelForm):
+class PruebaModForm(forms.ModelForm): #acà se hace ala form y se summonea del views.py
     class Meta:
         model = PruebaMod
         fields = ['dato1', 'dato2', 'ultrafile']
@@ -133,7 +142,7 @@ class CommentForm(forms.ModelForm):
             'author':forms.TextInput(attrs={'class':'textinputclass'}),
             'text':forms.Textarea(attrs={'class':'editable medium-editor-textarea'}),
         }
-
+'''
 class SolCambForm(forms.ModelForm):
 
     motivo = forms.CharField(label='motivo', max_length=100)
@@ -148,3 +157,4 @@ class SolCambForm(forms.ModelForm):
             'id':forms.Textarea(attrs={'class':'textinputclass'}),
             'text':forms.Textarea(attrs={'class':'textinputclass'}),
         }
+'''
