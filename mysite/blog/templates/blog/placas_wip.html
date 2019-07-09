@@ -104,6 +104,21 @@
               backgroundColor: "rgba(255,102,204)",
                 borderWidth: 0
 
+            },{
+              label: 'DIM',
+              data: [datos9["M2DIM"],datos8["M2DIM"],datos7["M2DIM"],datos6["M2DIM"],datos5["M2DIM"],datos4["M2DIM"],datos3["M2DIM"],datos2["M2DIM"],datos1["M2DIM"],datos0["M2DIM"]],
+              borderColor: "rgba(25,25,225)",
+              backgroundColor: "rgba(25,25,225)",
+              borderWidth: 0
+
+            },{
+
+              label: 'CORR',
+              data: [datos9["M2CORR"],datos8["M2CORR"],datos7["M2CORR"],datos6["M2CORR"],datos5["M2CORR"],datos4["M2CORR"],datos3["M2CORR"],datos2["M2CORR"],datos1["M2CORR"],datos0["M2CORR"]],
+              borderColor: "rgba(155,155,125)",
+              backgroundColor: "rgba(155,155,125)",
+              borderWidth: 0
+
             }]
         },
         options: {
@@ -192,6 +207,12 @@
       table+= '<td style="text-align: center">';
       table+= '<h4 >' + 'HCR' + '<h4>';
       table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'DIM' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'CORR' + '<h4>';
+      table+= "</td>";
       table+= '<td>';
       table+= '<h5>' + 'Total' + '<h5>';
       table+= "</td>";
@@ -215,6 +236,14 @@
       table+= "</td>";
       table+= '<td style="text-align: center">';
       table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
       table+= "</td>";
       table+= '<td style="text-align: center">';
       table+= '<h4 ><h4>';
@@ -243,6 +272,14 @@
       table+= "</td>";
       table+= '<td style="text-align: center">';
       table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
       table+= "</td>";
       table+= '<td style="text-align: center">';
       table+= '<h4 ><h4>';
@@ -307,7 +344,9 @@
           myTable.rows[1].cells[4].innerHTML = datos0["M2DRO"].toFixed(2)//datos0[3][2].toFixed(1);//DRO
           myTable.rows[1].cells[5].innerHTML = datos0["M2WRD"].toFixed(2)//datos0[4][2].toFixed(1);//WRD
           myTable.rows[1].cells[6].innerHTML = datos0["M2HCR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
-          myTable.rows[1].cells[7].innerHTML = datos0["M2Total"].toFixed(2);//Total
+          myTable.rows[1].cells[7].innerHTML = datos0["M2DIM"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[8].innerHTML = datos0["M2CORR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[9].innerHTML = datos0["M2Total"].toFixed(2);//Total
 
 
           myTable.rows[2].cells[1].innerHTML = (datos0["M2FFG"]/(1661/68)).toFixed(1);//FFG
@@ -316,7 +355,9 @@
           myTable.rows[2].cells[4].innerHTML = (datos0["M2DRO"]/(2042/68)).toFixed(1);//DRO
           myTable.rows[2].cells[5].innerHTML = (datos0["M2WRD"]/(1378/68)).toFixed(1);//WRD
           myTable.rows[2].cells[6].innerHTML = (datos0["M2HCR"]/(1388/68)).toFixed(1);//HCR
-          myTable.rows[2].cells[7].innerHTML = (datos0["M2Total"]/(9423/68)).toFixed(1);//Total
+          myTable.rows[2].cells[7].innerHTML = (datos0["M2DIM"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[8].innerHTML = (datos0["M2CORR"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[9].innerHTML = (datos0["M2Total"]/(9423/68)).toFixed(1);//Total
 
           //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
 
@@ -386,7 +427,9 @@
           myTable.rows[1].cells[4].innerHTML = datos0["M2DRO"].toFixed(2)//datos0[3][2].toFixed(1);//DRO
           myTable.rows[1].cells[5].innerHTML = datos0["M2WRD"].toFixed(2)//datos0[4][2].toFixed(1);//WRD
           myTable.rows[1].cells[6].innerHTML = datos0["M2HCR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
-          myTable.rows[1].cells[7].innerHTML = totales[1].toFixed(1);//Total
+          myTable.rows[1].cells[7].innerHTML = datos0["M2DIM"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[8].innerHTML = datos0["M2CORR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[9].innerHTML = totales[1].toFixed(1);//Total
 
 
           myTable.rows[2].cells[1].innerHTML = (datos0["M2FFG"]/(1661/68)).toFixed(1);//FFG
@@ -395,6 +438,8 @@
           myTable.rows[2].cells[4].innerHTML = (datos0["M2DRO"]/(2042/68)).toFixed(1);//DRO
           myTable.rows[2].cells[5].innerHTML = (datos0["M2WRD"]/(1378/68)).toFixed(1);//WRD
           myTable.rows[2].cells[6].innerHTML = (datos0["M2HCR"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[6].innerHTML = (datos0["M2DIM"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[6].innerHTML = (datos0["M2CORR"]/(1388/68)).toFixed(1);//HCR
           myTable.rows[2].cells[7].innerHTML = (totales[1]/(9423/68)).toFixed(1);//Total
 
           //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)

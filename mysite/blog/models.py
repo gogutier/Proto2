@@ -19,7 +19,7 @@ class Camion(models.Model):
     Rut=models.CharField(max_length=15, default="vacio")
     Transportista=models.CharField(max_length=20, default="vacio")
 
-    dia=models.DateField(max_length=10, default="vacio")
+    dia=models.DateField(max_length=10, default=timezone.now())
 
     def __str__(self):
         return (self.Patente)
@@ -49,6 +49,12 @@ class InfoWIP(models.Model):
 
     M2HCR=models.FloatField(default=0)
     PiHCR=models.FloatField(default=0)
+
+    M2CORR=models.FloatField(default=0)
+    PiCORR=models.FloatField(default=0)
+
+    M2DIM=models.FloatField(default=0)
+    PiDIM=models.FloatField(default=0)
 
     M2Otros=models.FloatField(default=0)
     PiOtros=models.FloatField(default=0)

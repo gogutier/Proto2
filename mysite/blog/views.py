@@ -54,7 +54,7 @@ class CamionDetailView(DetailView):
         #context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
         context['camiones'] = Camion.objects.get(pk=pk)
         context['patenteqr'] = Camion.objects.get(pk=pk).Patente
-        context['infoqr'] = (str(Camion.objects.get(pk=pk).Chofer) + "\t" + str(Camion.objects.get(pk=pk).Telefono) + "\t" + str(Camion.objects.get(pk=pk).Rut) + "\t\t" + str(Camion.objects.get(pk=pk).Transportista) )
+        context['infoqr'] = (str(Camion.objects.get(pk=pk).Chofer) + "\t" + str(Camion.objects.get(pk=pk).Telefono) + "\t" + "\t" + str(Camion.objects.get(pk=pk).Rut) + "\t" + str(Camion.objects.get(pk=pk).Transportista) )
         return context
 
 
@@ -64,13 +64,15 @@ def qr_despacho(request):
     template_name = 'blog/qr_despacho.html'
 
     camiones = Camion.objects.all() #Post.objects.filter(published_date__isnull=True).order_by('create_date')
+    transportistas = []
+    for camion in camiones:
+        if not camion.Transportista in transportistas:
+            transportistas.append(camion.Transportista)
 
 
-    return render(request, template_name, {'camiones':camiones})#acá le puedo decir que los mande ordenados por fecha?
 
 
-
-    return render(request, template_name, {'ejemplo': ejemplo, 'form':form})#
+    return render(request, template_name, {'camiones':camiones, 'transportistas':transportistas})#acá le puedo decir que los mande ordenados por fecha?
 
 
 def placas_wip(request):
@@ -902,6 +904,12 @@ def get_data_wip(request, *args, **kwargs):
         Info.M2HCR=Infoprev.M2HCR
         Info.PiHCR=Infoprev.PiHCR
 
+        Info.M2DIM=Infoprev.M2DIM
+        Info.PiDIM=Infoprev.PiDIM
+
+        Info.M2CORR=Infoprev.M2CORR
+        Info.PiCORR=Infoprev.PiCORR
+
         Info.M2Total= Infoprev.M2Total
         Info.PiTotal= Infoprev.PiTotal
 
@@ -928,8 +936,14 @@ def get_data_wip(request, *args, **kwargs):
     Info.M2HCR=round(placas_wip[5][2],2)
     Info.PiHCR=round(placas_wip[5][1],2)
 
-    Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR
-    Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR
+    Info.M2DIM=round(placas_wip[6][2],2)
+    Info.PiDIM=round(placas_wip[6][1],2)
+
+    Info.M2CORR=round(placas_wip[7][2],2)
+    Info.PiCORR=round(placas_wip[7][1],2)
+
+    Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR+Info.M2DIM+Info.M2CORR
+    Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR+Info.PiDIM+Info.PiCORR
 
 
     Info.save()

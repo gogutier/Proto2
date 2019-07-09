@@ -93,7 +93,7 @@ def webscrap_wip():
 
     #print("Maqunina 2:")
     #(maq, num maq)
-    maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11)]#, ("DIM",13)]
+    maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11), ("DIM",13), ("CORR",17)]
 
 
     resultado=[]

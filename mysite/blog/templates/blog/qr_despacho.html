@@ -2,18 +2,32 @@
 {% load qr_code %}
 {% block content %}
 <h2>Ingresar datos transportista</h2>
-{% if camiones %}
-{% for camion in camiones %}
-<ul>
-  <h2>
-  <a href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
-  </h2>
-  <br>
 
-</ul>
-{% endfor %}
+{% if camiones %}
+  <table>
+
+    {% for transportista in transportistas %}
+      <tr>
+
+      <td>
+        <h5>{{transportista}}</h5>
+      </td>
+      <td>
+            {% for camion in camiones %}
+            {% if camion.Transportista == transportista %}
+            <a style="text-align: center;" href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
+            <br>
+            {% endif %}
+            {% endfor %}
+
+      </td>
+
+
+    </tr>
+  {% endfor %}
+  </table>
+
+
 {% endif %}
 
-{% qr_from_text ejemplo size="L" %}
-{% qr_from_text ejemplo size="L" %}
 {% endblock %}
