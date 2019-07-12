@@ -56,6 +56,12 @@ class Command(BaseCommand):
             Info.M2HCR=Infoprev.M2HCR
             Info.PiHCR=Infoprev.PiHCR
 
+            Info.M2CORR=Infoprev.M2CORR
+            Info.PiCORR=Infoprev.PiCORR
+
+            Info.M2DIM=Infoprev.M2DIM
+            Info.PiDIM=Infoprev.PiDIM
+
             Info.M2Otros= Infoprev.M2Otros
             Info.PiOtros= Infoprev.PiOtros
 
@@ -87,8 +93,14 @@ class Command(BaseCommand):
         Info.M2HCR=round(placas_wip[5][2],2)
         Info.PiHCR=round(placas_wip[5][1],2)
 
-        Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR
-        Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR
+        Info.M2DIM=round(placas_wip[6][2],2)
+        Info.PiDIM=round(placas_wip[6][1],2)
+
+        Info.M2CORR=round(placas_wip[7][2],2)
+        Info.PiCORR=round(placas_wip[7][1],2)
+
+        Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR+Info.M2DIM+Info.M2CORR
+        Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR+Info.PiDIM+Info.PiCORR
 
         Info.fechamuestra = timezone.now()
 
