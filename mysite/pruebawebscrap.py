@@ -96,7 +96,7 @@ def webscrap_wip():
     #(maq, num maq)
     maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11), ("DIM",13), ("CORR",0)]
 
-
+    #El corrugado no siempre aparece pero cuando aparece sale al principio, ver còmo hacer un if que detecte si apareciò el corrugado.
     corrarea=browser.get_current_page().find_all(class_="rpad")[9].text
     corrpiezas=browser.get_current_page().find_all(class_="rpad")[9].text
     corrarea=float(corrarea[corrarea.find("(")+1:corrarea.find(")")])
@@ -118,7 +118,7 @@ def webscrap_wip():
                     auxsumarea=auxsumarea+list[2]
                     auxsumapiezas=auxsumapiezas+list[1]
 
- 
+
 
         #print(maquina[0] + ": " + str(auxsumarea) + ", " + str(auxsumapiezas))
         if maquina[0]=="CORR":

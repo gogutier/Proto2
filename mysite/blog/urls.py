@@ -52,5 +52,5 @@ urlpatterns = [
     url(r'^api/data_wip_2/$',views.get_data_wip_2,name='api-data-wip-2'),
     url(r'^qr_despacho/$',views.qr_despacho,name='qr_despacho'),
     url(r'^camion_detail/(?P<pk>\d+)$', views.CamionDetailView.as_view(),name='camion_detail'), #datos de cada camiòn con qr asociado
-
+    url(r'^get_corrplan/$',views.get_corrplan,name='get_corrplan'),
 ]

@@ -15,9 +15,22 @@ import csv
 from datetime import datetime, timedelta
 from io import StringIO
 import pruebawebscrap
+import webscrap2
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+def get_corrplan(request):
+    #print("cargando datos wip")
+    template_name = 'blog/get_corrplan.html'
+
+    corrplan= [["hola"], ["q ase"]]
+    corrplan = webscrap2.webscrap_corrplan()
+
+    return render(request, template_name, {'corrplan':corrplan,})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
 
 class CamionDetailView(DetailView):
     context_object_name = 'camion_detail'
