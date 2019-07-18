@@ -9,7 +9,8 @@ def webscrap_corrplan():
     corrplan=[]
     with Display():
         # we can now start Firefox and it will run inside the virtual display
-        binary = FirefoxBinary('/home/gonzalo/Descargas/firefox-17.0.1/firefox/firefox-bin')
+        binary = FirefoxBinary('/home/gonzalo/Descargas/firefox-17.0.1/firefox/firefox-bin')#esto hay que cambiarlo al exportarlo a pythonanywhere, pasarlo a : "browser = webdriver.Firefox()""
+        #binary = FirefoxBinary('/home/gonzalo/Descargas/firefox-17.0.1/firefox/firefox-bin')
         driver = webdriver.Firefox(firefox_binary=binary)
 
         # put the rest of our selenium code in a try/finally
@@ -75,7 +76,7 @@ def webscrap_corrplan():
                 data = row.find_elements_by_tag_name('td')
                 file_row = []
                 for datum in data:
-                    datum_text = datum.text.encode('utf8')
+                    datum_text = datum.text#.encode('utf8')
                     file_row.append(datum_text)
                 corrplan.append(file_row)
 
@@ -90,5 +91,5 @@ def webscrap_corrplan():
             driver.quit()
         return(corrplan)
 
-print(webscrap_corrplan())
+#print(webscrap_corrplan())
 #########################3

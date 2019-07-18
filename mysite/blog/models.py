@@ -9,6 +9,45 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+
+class FotoCorrplan(models.Model):
+
+
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now())
+    usuario_foto=models.CharField(max_length=15, default="vacio")
+
+    def __str__(self):
+        return (str(self.fecha_foto))
+
+
+class OrdenCorrplan(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+
+    programa=models.ForeignKey('blog.FotoCorrplan', related_name='foto_corrplan', on_delete=models.CASCADE, default=0)#el ondelete te dice què hacer cuabndo se borra la foreignkey. En este caso cascade indica que todas se borren.
+    fecha_entrega=models.DateTimeField(blank=False, default=timezone.now())
+    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now())
+    order_id=models.CharField(max_length=15, default="vacio")
+    cliente=models.CharField(max_length=15, default="vacio")
+    SO=models.CharField(max_length=15, default="vacio")
+    carton=models.CharField(max_length=6, default="vacio")
+    padron=models.CharField(max_length=20, default="vacio")
+    cant_ord=models.IntegerField(default=0)
+    cant_corr=models.IntegerField(default=0)
+    medida=models.CharField(max_length=15, default="vacio")
+    area=models.FloatField(default=0)
+    ruta=models.CharField(max_length=25, default="vacio")
+    estado=models.CharField(max_length=15, default="vacio")
+    comprometida=models.BooleanField(default=False)
+    maquina=models.CharField(max_length=5, default="vacio")
+
+
+
+    def __str__(self):
+        return (self.order_id)
+
+
+
 class Camion(models.Model):
 
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)

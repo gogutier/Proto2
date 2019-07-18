@@ -57,7 +57,7 @@ def webscrap_wip():
     browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedTransCar?MachineLink=0&PlantLink=1")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
     #browser.launch_browser()
-    #print(browser.get_current_page())
+    print(browser.get_current_page())
 
 
 
@@ -94,9 +94,11 @@ def webscrap_wip():
 
     #print("Maqunina 2:")
     #(maq, num maq)
-    maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11), ("DIM",13), ("CORR",0)]
+    maqs = [("FFG",2), ("TCY",4), ("FFW",27), ("DRO",5) , ("WRD",12) , ("HCR",11), ("DIM",13), ("CORR",99)]
 
     #El corrugado no siempre aparece pero cuando aparece sale al principio, ver còmo hacer un if que detecte si apareciò el corrugado.
+
+    print(browser.get_current_page().find_all(class_="rpad")[0].text)
     corrarea=browser.get_current_page().find_all(class_="rpad")[9].text
     corrpiezas=browser.get_current_page().find_all(class_="rpad")[9].text
     corrarea=float(corrarea[corrarea.find("(")+1:corrarea.find(")")])
@@ -127,5 +129,6 @@ def webscrap_wip():
             resultado.append([maquina[0],auxsumapiezas, auxsumarea])
 
     return(resultado)
+
 
 print(webscrap_wip())
