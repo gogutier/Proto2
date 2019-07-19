@@ -71,6 +71,9 @@ class Command(BaseCommand):
             estado = (fila[12])
             if fila[13]=="Yes":
                 comprometida = True
+            else:
+                comprometida = False
+
             maquina = ("pendiente") #pendiente de sacar en base a la ruta (ùltim màquina de la ruta?)
 
             ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maquina  ) #usò siempre la misma :/

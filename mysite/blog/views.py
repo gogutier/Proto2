@@ -20,6 +20,80 @@ import webscrap2
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
+
+def consumos_puestos(request):
+    print("cargando consumos puestos")
+    template_name = 'blog/consumos_puestos.html'
+
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+
+def get_data_corrplan_cartones(request, *args, **kwargs):
+
+
+    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
+
+
+    print("cargando corrplan")
+
+
+            ## [N° máquina, n° piezas, Area]
+        #Actualizo el objeto InfoWIP n° cero:
+    #genero el diccionario con la suma de todas las àreas y los tipos de cartòn
+
+
+
+
+    datos0=[324,42,23,234,4]
+
+    #datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
+
+
+    labels=[]#agrego las fechas de cada dìa que quiero analizar (5 a partir de mañana)
+    metros2=[]
+    #append fecha hoy +1
+
+    horizonte=5
+    ahora=timezone.now()
+
+    for i in range(0,horizonte):
+        labels.append((ahora+timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0))
+        metros2.append(0)
+
+    default_items=[123, 124, 432]
+
+    fotocorr= FotoCorrplan.objects.all().order_by("-fecha_foto")[0]
+    print(fotocorr.fecha_foto)
+
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) ).order_by('fecha_inicio')
+
+    for orden in ordenes:
+        print(orden.fecha_inicio)
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2[i]=metros2[i]+orden.area
+
+
+    data = {
+    "labels": labels,
+    "defaults": default_items,
+    "datos0": datos0,
+    "metros2": metros2,
+
+    }
+    print("Enviando Json Datos Graph")
+    return JsonResponse(data)#http response con el datatype de JS
+
+
+
+
+
+
+
 def get_corrplan(request):
     #print("cargando datos wip")
     template_name = 'blog/get_corrplan.html'
