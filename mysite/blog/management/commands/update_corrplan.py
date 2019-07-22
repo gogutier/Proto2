@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from blog.models import OrdenCorrplan as OrdenCorrplan
 from blog.models import FotoCorrplan as FotoCorrplan
+from blog.models import Cartones as Cartones
+from blog.models import Maquinas as Maquinas
+
 from django.utils import timezone
 from datetime import datetime
 
@@ -57,7 +60,14 @@ class Command(BaseCommand):
             try:
                 fecha_inicio= datetime.strptime(str(fila[1]), '%d-%m-%Y %H:%M:%S') #ojo, hay que agregarle el timezone, para que no sea "naive"
             except:
-                fecha_inicio= datetime.strptime(str(fila[1]), '%d-%m-%Y') #ojo, hay que agregarle el timezone, para que no sea "naive"
+
+
+                try:
+                    fecha_inicio= datetime.strptime(str(fila[1]), '%d-%m-%Y') #ojo, hay que agregarle el timezone, para que no sea "naive"
+
+                except: #este es el caso en que hayan ordenes de estado "Nueva", las cuales todavìa no tienen fecha real asignada en màquina.
+                    fecha_inicio= datetime.strptime("1-01-1900", '%d-%m-%Y') #ojo, hay que agregarle el timezone, para que no sea "naive"
+
             order_id= (fila[2])
             cliente= (fila[3])
             SO= (fila[4])
@@ -74,11 +84,33 @@ class Command(BaseCommand):
             else:
                 comprometida = False
 
-            maquina = ("pendiente") #pendiente de sacar en base a la ruta (ùltim màquina de la ruta?)
+            #detectando la màquina a la que corresponde:
+            #print(fila[11])
+            if fila[11].find("FFG WARD")>=0:
+                maq, created =Maquinas.objects.get_or_create(maquina="FFW")
+            elif fila[11].find("WARD")>=0:
+                maq, created =Maquinas.objects.get_or_create(maquina="WRD")
+            elif fila[11].find("Flexo Martin")>=0:
+                maq, created =Maquinas.objects.get_or_create(maquina="FFG")
+            elif fila[11].find("HYCORR")>=0:
+                maq, created =Maquinas.objects.get_or_create(maquina="HCR")
+            elif fila[11].find("TCY")>=0:
+                maq, created =Maquinas.objects.get_or_create(maquina="TCY")
+            elif fila[11].find("DRO")>=0:
+                maq, created =Maquinas.objects.get_or_create(maquina="DRO")
+            else:
+                maq, created =Maquinas.objects.get_or_create(maquina="vacio")
+                print(fila[11])
+            #maquina = ("pendiente") #pendiente de sacar en base a la ruta (ùltim màquina de la ruta?)
 
-            ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maquina  ) #usò siempre la misma :/
+            ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maq  ) #usò siempre la misma :/
 
             ord_corrplan.save()
+            #acà podrìa intenar borrar los foto corrplan antiguos para no acumular tantos datos.
+
+
+            cartin, created =Cartones.objects.get_or_create(carton=fila[5])
+            cartin.save()
 
             #self.stdout.write(fila[0][4])
         self.stdout.write("Datos actualizados")

@@ -24,6 +24,9 @@
     var f2 = moment.parseZone(labels[2]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
     var f3 = moment.parseZone(labels[3]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
     var f4 = moment.parseZone(labels[4]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f5 = moment.parseZone(labels[5]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f6 = moment.parseZone(labels[6]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f7 = moment.parseZone(labels[7]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
     //var f5 = moment.parseZone(labels[5]).tz('America/Santiago').format('DD/MM/YY hh:mm');
     //var f6 = moment.parseZone(datos6["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
     //var f7 = moment.parseZone(datos7["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
@@ -32,7 +35,7 @@
 
 
 
-    var  labels2 = [f0,f1,f2,f3,f4]; //valores de eje Y // Poner fecha en que se capturó cada dato.
+    var  labels2 = [f0,f1,f2,f3,f4,f5,f6,f7]; //valores de eje Y // Poner fecha en que se capturó cada dato.
 
     var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
@@ -40,9 +43,9 @@
         data: {
             labels: labels2,
             datasets: [{
-                label: 'M2',
+                label: 'FFG',
                 //data: [datos9["M2FFG"],datos8["M2FFG"],datos7["M2FFG"],datos6["M2FFG"],datos5["M2FFG"],datos4["M2FFG"],datos3["M2FFG"],datos2["M2FFG"],datos1["M2FFG"],datos0["M2FFG"]],
-                data: metros2,
+                data: metros2FFG,
                   borderColor: "rgba(0,42,255)",
                   backgroundColor: "rgba(0,42,255)",
                 //[
@@ -68,9 +71,41 @@
             },{
 
               label: 'FFW',
-              data: [3,2,5],
+              data: metros2FFW,
               borderColor: "rgba(255,42,0)",
               backgroundColor: "rgba(255,42,0)",
+                borderWidth: 0
+
+            },{
+
+              label: 'TCY',
+              data: metros2TCY,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(155,50,50)",
+                borderWidth: 0
+
+            },{
+
+              label: 'DRO',
+              data: metros2DRO,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(55,201,30)",
+                borderWidth: 0
+
+            },{
+
+              label: 'WRD',
+              data: metros2WRD,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(25,220,250)",
+                borderWidth: 0
+
+            },{
+
+              label: 'HCR',
+              data: metros2HCR,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(255,200,0)",
                 borderWidth: 0
 
             }]
@@ -78,7 +113,7 @@
         options: {
             title:{
               display:true,
-              text:"Gráfico producciones pasadas-programadas"
+              text:"Gráfico ordenes puestas prox dias"
             },
             tooltips: {
       mode: 'label',
@@ -89,6 +124,8 @@
               var total = 0;
               for (var i = 0; i < data.datasets.length; i++)
                   {total += data.datasets[i].data[tooltipItem.index];}
+              //return ["Total : " + total ,corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+
               if (tooltipItem.datasetIndex == 0) {
                   return ["Total : " + total ,corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
 
@@ -174,7 +211,7 @@
 
       table+= "<tr>";
       table+= '<td style="text-align: center">';
-      table+= '<h4>'+'Mm2'+'<h4>';
+      table+= '<h4>'+'Mm2 hasta fin mes'+'<h4>';
       table+= "</td>";
       table+= '<td style="text-align: center">';
       table+= '<h4><h4>';
@@ -210,7 +247,7 @@
 
       table+= "<tr>";
       table+= '<td style="text-align: center">';
-      table+= '<h4>'+'turnos'+'<h4>';
+      table+= '<h4>'+'Mm2 prox mes'+'<h4>';
       table+= "</td>";
       table+= '<td style="text-align: center">';
       table+= '<h4><h4>';
@@ -282,10 +319,17 @@
           labels = response_data.labels; //aCÁ RECIBO UN ARRAY DE DATOS
           datos0 = response_data.datos0; //ACÁ RECIBO UN DICCIONARIO
           defaults = response_data.defaults; //ACÁ RECIBO UN DICCIONARIO
-          metros2 = response_data.metros2; //ACÁ RECIBO UN DICCIONARIO
+          metros2FFG = response_data.metros2FFG; //ACÁ RECIBO UN DICCIONARIO
+          metros2FFW = response_data.metros2FFW; //ACÁ RECIBO UN DICCIONARIO
+          metros2TCY= response_data.metros2TCY; //ACÁ RECIBO UN DICCIONARIO
+          metros2DRO = response_data.metros2DRO; //ACÁ RECIBO UN DICCIONARIO
+          metros2WRD = response_data.metros2WRD; //ACÁ RECIBO UN DICCIONARIO
+          metros2HCR = response_data.metros2HCR; //ACÁ RECIBO UN DICCIONARIO
+          fecha_foto = response_data.fecha_foto;
           console.log("datos ajax: ");
           console.log(labels);
-          console.log(metros2);
+          console.log(metros2FFG);
+          console.log(fecha_foto);
 
 
 

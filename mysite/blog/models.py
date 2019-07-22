@@ -10,6 +10,20 @@ MAR = "Marzo"
 ABR = "Abril"
 
 
+class Cartones(models.Model):
+
+    carton=models.CharField(max_length=7, blank=False, default="vacio")
+    l1=models.CharField(max_length=7, default="vacio")#en el futuro èstos tienen que estar asociados al Model "Papeles"
+    o1=models.CharField(max_length=7, default="vacio")
+    l2=models.CharField(max_length=7, default="vacio")
+    o2=models.CharField(max_length=7, default="vacio")
+    l3=models.CharField(max_length=7, default="vacio")
+
+
+    def __str__(self):
+        return (str(self.carton))
+
+
 class FotoCorrplan(models.Model):
 
 
@@ -39,7 +53,7 @@ class OrdenCorrplan(models.Model):
     ruta=models.CharField(max_length=25, default="vacio")
     estado=models.CharField(max_length=15, default="vacio")
     comprometida=models.BooleanField(default=False)
-    maquina=models.CharField(max_length=5, default="vacio")
+    maquina=models.ForeignKey('blog.Maquinas', related_name='maquina_programada', on_delete=models.SET_DEFAULT, default="vacio")
 
 
 

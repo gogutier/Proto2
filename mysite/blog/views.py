@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -53,36 +53,128 @@ def get_data_corrplan_cartones(request, *args, **kwargs):
 
 
     labels=[]#agrego las fechas de cada dìa que quiero analizar (5 a partir de mañana)
-    metros2=[]
+    metros2FFG=[]
+    metros2FFW=[]
+    metros2TCY=[]
+    metros2DRO=[]
+    metros2WRD=[]
+    metros2HCR=[]
+    metros2tot=[]
     #append fecha hoy +1
 
-    horizonte=5
+    horizonte=10
     ahora=timezone.now()
 
     for i in range(0,horizonte):
         labels.append((ahora+timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0))
-        metros2.append(0)
+        metros2FFG.append(0)
+        metros2FFW.append(0)
+        metros2TCY.append(0)
+        metros2DRO.append(0)
+        metros2WRD.append(0)
+        metros2HCR.append(0)
+        metros2tot.append(0)
+
 
     default_items=[123, 124, 432]
 
     fotocorr= FotoCorrplan.objects.all().order_by("-fecha_foto")[0]
-    print(fotocorr.fecha_foto)
+    fecha_foto=fotocorr.fecha_foto
+    print(fecha_foto)
+
+
+
+    FFG= Maquinas.objects.filter(maquina="FFG")[0]
+    FFW= Maquinas.objects.filter(maquina="FFW")[0]
+    TCY= Maquinas.objects.filter(maquina="TCY")[0]
+    DRO= Maquinas.objects.filter(maquina="DRO")[0]
+    WRD= Maquinas.objects.filter(maquina="WRD")[0]
+    HCR= Maquinas.objects.filter(maquina="HCR")[0]
+
 
     #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
-    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) ).order_by('fecha_inicio')
-
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, maquina= FFG, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
     for orden in ordenes:
-        print(orden.fecha_inicio)
+
         for i in range(0,horizonte):
             if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
-                metros2[i]=metros2[i]+orden.area
+                metros2FFG[i]=metros2FFG[i]+orden.area
+
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, maquina= FFW, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
+    for orden in ordenes:
+
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2FFW[i]=metros2FFW[i]+orden.area
+
+
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, maquina= TCY, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
+    for orden in ordenes:
+
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2TCY[i]=metros2TCY[i]+orden.area
+
+
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, maquina= DRO, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
+    for orden in ordenes:
+
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2DRO[i]=metros2DRO[i]+orden.area
+
+
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, maquina= WRD, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
+    for orden in ordenes:
+
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2WRD[i]=metros2WRD[i]+orden.area
+
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, maquina= HCR, fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
+    for orden in ordenes:
+
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2HCR[i]=metros2HCR[i]+orden.area
+
+
+
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr,fecha_inicio__gt=((ahora).replace(hour= 0, minute=0, second=0, microsecond=0)), fecha_inicio__lte=((ahora+timedelta(days=horizonte)).replace(hour= 0, minute=0, second=0, microsecond=0)) )
+    for orden in ordenes:
+
+        for i in range(0,horizonte):
+            if (orden.fecha_inicio).replace(hour= 0, minute=0, second=0, microsecond=0) == labels[i]:
+                metros2tot[i]=metros2tot[i]+orden.area
+
+    print("metros2tot: ")
+    print(metros2tot[0])
+    print(metros2FFG[0])
+    print(metros2FFW[0])
+    print(metros2TCY[0])
+    print(metros2DRO[0])
+    print(metros2WRD[0])
+    print(metros2HCR[0])
 
 
     data = {
     "labels": labels,
     "defaults": default_items,
     "datos0": datos0,
-    "metros2": metros2,
+    "metros2FFG": metros2FFG,
+    "metros2FFW": metros2FFW,
+    "metros2TCY": metros2TCY,
+    "metros2DRO": metros2DRO,
+    "metros2WRD": metros2WRD,
+    "metros2HCR": metros2HCR,
+
+    "fecha_foto": fecha_foto,
 
     }
     print("Enviando Json Datos Graph")
@@ -169,6 +261,298 @@ def placas_wip(request):
 
 
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+def get_data_wip(request, *args, **kwargs):#este hace que se actualice utilizando el wescrap, el otro no (mejor que no y se actualiza de manera coordinada a fin de cada turno.)
+
+    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
+
+
+    print("cargando datos wip")
+
+    placas_wip = pruebawebscrap.webscrap_wip()
+            ## [N° máquina, n° piezas, Area]
+    print("preparandose para copiar")
+    for i in range(9,0,-1):
+        print("copiando datos "+ str(i))
+
+        Info=InfoWIP.objects.all().order_by('contador')[i]
+        Infoprev=InfoWIP.objects.all().order_by('contador')[i-1]
+
+
+        Info.M2FFG=Infoprev.M2FFG
+        Info.PiFFG=Infoprev.PiFFG
+
+        Info.M2FFW=Infoprev.M2FFW
+        Info.PiFFW=Infoprev.PiFFW
+
+        Info.M2TCY=Infoprev.M2TCY
+        Info.PiTCY=Infoprev.PiTCY
+
+        Info.M2DRO=Infoprev.M2DRO
+        Info.PiDRO=Infoprev.PiDRO
+
+        Info.M2WRD=Infoprev.M2WRD
+        Info.PiWRD=Infoprev.PiWRD
+
+        Info.M2HCR=Infoprev.M2HCR
+        Info.PiHCR=Infoprev.PiHCR
+
+        Info.M2DIM=Infoprev.M2DIM
+        Info.PiDIM=Infoprev.PiDIM
+
+        Info.M2CORR=Infoprev.M2CORR
+        Info.PiCORR=Infoprev.PiCORR
+
+        Info.M2Total= Infoprev.M2Total
+        Info.PiTotal= Infoprev.PiTotal
+
+        Info.save()
+
+    #Actualizo el objeto InfoWIP n° cero:
+    Info=InfoWIP.objects.all().order_by('contador')[0]
+
+    Info.M2FFG=round(placas_wip[0][2],2)
+    Info.PiFFG=round(placas_wip[0][1],2)
+
+    Info.M2FFW=round(placas_wip[2][2],2)
+    Info.PiFFW=round(placas_wip[2][1],2)
+
+    Info.M2TCY=round(placas_wip[1][2],2)
+    Info.PiTCY=round(placas_wip[1][1],2)
+
+    Info.M2DRO=round(placas_wip[3][2],2)
+    Info.PiDRO=round(placas_wip[3][1],2)
+
+    Info.M2WRD=round(placas_wip[4][2],2)
+    Info.PiWRD=round(placas_wip[4][1],2)
+
+    Info.M2HCR=round(placas_wip[5][2],2)
+    Info.PiHCR=round(placas_wip[5][1],2)
+
+    Info.M2DIM=round(placas_wip[6][2],2)
+    Info.PiDIM=round(placas_wip[6][1],2)
+
+    Info.M2CORR=round(placas_wip[7][2],2)
+    Info.PiCORR=round(placas_wip[7][1],2)
+
+    Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR+Info.M2DIM+Info.M2CORR
+    Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR+Info.PiDIM+Info.PiCORR
+
+
+    Info.save()
+
+
+
+
+    auxsumapiezas=0
+    auxsumaarea=0
+
+    for i in range(0,len(placas_wip)):
+        auxsumapiezas=auxsumapiezas+placas_wip[i][1]
+        auxsumaarea=auxsumaarea+placas_wip[i][2]
+
+    totales=[auxsumapiezas,auxsumaarea]
+    print("carga datos completada")
+
+
+    #datos0=placas_wip#["red","blue","green"]
+    datos0=model_to_dict( InfoWIP.objects.all().order_by('contador')[0])
+    datos1=model_to_dict( InfoWIP.objects.all().order_by('contador')[1])
+    datos2=model_to_dict( InfoWIP.objects.all().order_by('contador')[2])
+    datos3=model_to_dict( InfoWIP.objects.all().order_by('contador')[3])
+    datos4=model_to_dict( InfoWIP.objects.all().order_by('contador')[4])
+    datos5=model_to_dict( InfoWIP.objects.all().order_by('contador')[5])
+    datos6=model_to_dict( InfoWIP.objects.all().order_by('contador')[6])
+    datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
+    datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
+    datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
+    totales=totales
+
+
+    ahora=timezone.now()
+    m2pormaq=[] #agrego el dato de los m2 programados por màquina que hay en las pròximas 24h.
+    fotocorr= FotoCorrplan.objects.all().order_by("-fecha_foto")[0]
+    #print(fotocorr.fecha_foto)
+
+    FFG= Maquinas.objects.filter(maquina="FFG")
+    FFW= Maquinas.objects.filter(maquina="FFW")
+    TCY= Maquinas.objects.filter(maquina="TCY")
+    DRO= Maquinas.objects.filter(maquina="DRO")
+    WRD= Maquinas.objects.filter(maquina="WRD")
+    HCR= Maquinas.objects.filter(maquina="HCR")
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+
+
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=FFG ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=FFW ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=TCY ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=DRO ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=WRD ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=HCR ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+
+
+    data = {
+    "datos0": datos0,
+    "datos1": datos1,
+    "datos2": datos2,
+    "datos3": datos3,
+    "datos4": datos4,
+    "datos5": datos5,
+    "datos6": datos6,
+    "datos7": datos7,
+    "datos8": datos8,
+    "datos9": datos9,
+    "totales": totales,
+    "m2pormaq": m2pormaq,
+    }
+    print("Enviando Json Datos Graph")
+    return JsonResponse(data)#http response con el datatype de JS
+
+
+
+
+def get_data_wip_2(request, *args, **kwargs):
+
+
+    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
+
+
+    print("cargando datos wip")
+
+
+            ## [N° máquina, n° piezas, Area]
+        #Actualizo el objeto InfoWIP n° cero:
+
+
+
+
+    #datos0=placas_wip#["red","blue","green"]
+    datos0=model_to_dict( InfoWIP.objects.all().order_by('contador')[0])
+    datos1=model_to_dict( InfoWIP.objects.all().order_by('contador')[1])
+    datos2=model_to_dict( InfoWIP.objects.all().order_by('contador')[2])
+    datos3=model_to_dict( InfoWIP.objects.all().order_by('contador')[3])
+    datos4=model_to_dict( InfoWIP.objects.all().order_by('contador')[4])
+    datos5=model_to_dict( InfoWIP.objects.all().order_by('contador')[5])
+    datos6=model_to_dict( InfoWIP.objects.all().order_by('contador')[6])
+    datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
+    datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
+    datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
+
+
+    print("cargando m2 cargados por màquina")
+
+    ahora=timezone.now()
+    m2pormaq=[] #agrego el dato de los m2 programados por màquina que hay en las pròximas 24h.
+    print("a1")
+    fotocorr= FotoCorrplan.objects.all().order_by("-fecha_foto")[0]
+    #print(fotocorr.fecha_foto)
+    print("a2")
+    FFG= Maquinas.objects.filter(maquina="FFG")[0]
+    print("a3")
+    FFW= Maquinas.objects.filter(maquina="FFW")[0]
+    TCY= Maquinas.objects.filter(maquina="TCY")[0]
+    DRO= Maquinas.objects.filter(maquina="DRO")[0]
+    WRD= Maquinas.objects.filter(maquina="WRD")[0]
+    HCR= Maquinas.objects.filter(maquina="HCR")[0]
+    #grabo suma de m2 diarios que coinciden con las fechas fijadas en el arreglo labels2
+
+
+    print("a4")
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=FFG ).order_by('fecha_inicio')
+    print("a5")
+    sumam2=0
+    for orden in ordenes:
+
+        sumam2 = sumam2 + orden.area
+    print(sumam2)
+    m2pormaq.append(sumam2)
+
+    print("a6")
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=FFW ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=TCY ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=DRO ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=WRD ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+    ordenes = OrdenCorrplan.objects.filter(programa= fotocorr, fecha_inicio__gt=((ahora)), fecha_inicio__lte=((ahora+timedelta(days=1))), maquina=HCR ).order_by('fecha_inicio')
+    sumam2=0
+    for orden in ordenes:
+        sumam2 = sumam2 + orden.area
+    m2pormaq.append(sumam2)
+
+
+    print("a7")
+
+    data = {
+    "datos0": datos0,
+    "datos1": datos1,
+    "datos2": datos2,
+    "datos3": datos3,
+    "datos4": datos4,
+    "datos5": datos5,
+    "datos6": datos6,
+    "datos7": datos7,
+    "datos8": datos8,
+    "datos9": datos9,
+    "m2pormaq": m2pormaq,
+
+
+    }
+    print("Enviando Json Datos Graph")
+    return JsonResponse(data)#http response con el datatype de JS
+
 
 
 
@@ -954,176 +1338,6 @@ def get_data_inicio(request, *args, **kwargs):
     }
     print("Enviando Json Datos Graph")
     return JsonResponse(data)#http response con el datatype de JS
-
-
-def get_data_wip(request, *args, **kwargs):
-
-
-    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
-
-
-    print("cargando datos wip")
-
-    placas_wip = pruebawebscrap.webscrap_wip()
-            ## [N° máquina, n° piezas, Area]
-    print("preparandose para copiar")
-    for i in range(9,0,-1):
-        print("copiando datos "+ str(i))
-
-        Info=InfoWIP.objects.all().order_by('contador')[i]
-        Infoprev=InfoWIP.objects.all().order_by('contador')[i-1]
-
-
-        Info.M2FFG=Infoprev.M2FFG
-        Info.PiFFG=Infoprev.PiFFG
-
-        Info.M2FFW=Infoprev.M2FFW
-        Info.PiFFW=Infoprev.PiFFW
-
-        Info.M2TCY=Infoprev.M2TCY
-        Info.PiTCY=Infoprev.PiTCY
-
-        Info.M2DRO=Infoprev.M2DRO
-        Info.PiDRO=Infoprev.PiDRO
-
-        Info.M2WRD=Infoprev.M2WRD
-        Info.PiWRD=Infoprev.PiWRD
-
-        Info.M2HCR=Infoprev.M2HCR
-        Info.PiHCR=Infoprev.PiHCR
-
-        Info.M2DIM=Infoprev.M2DIM
-        Info.PiDIM=Infoprev.PiDIM
-
-        Info.M2CORR=Infoprev.M2CORR
-        Info.PiCORR=Infoprev.PiCORR
-
-        Info.M2Total= Infoprev.M2Total
-        Info.PiTotal= Infoprev.PiTotal
-
-        Info.save()
-
-    #Actualizo el objeto InfoWIP n° cero:
-    Info=InfoWIP.objects.all().order_by('contador')[0]
-
-    Info.M2FFG=round(placas_wip[0][2],2)
-    Info.PiFFG=round(placas_wip[0][1],2)
-
-    Info.M2FFW=round(placas_wip[2][2],2)
-    Info.PiFFW=round(placas_wip[2][1],2)
-
-    Info.M2TCY=round(placas_wip[1][2],2)
-    Info.PiTCY=round(placas_wip[1][1],2)
-
-    Info.M2DRO=round(placas_wip[3][2],2)
-    Info.PiDRO=round(placas_wip[3][1],2)
-
-    Info.M2WRD=round(placas_wip[4][2],2)
-    Info.PiWRD=round(placas_wip[4][1],2)
-
-    Info.M2HCR=round(placas_wip[5][2],2)
-    Info.PiHCR=round(placas_wip[5][1],2)
-
-    Info.M2DIM=round(placas_wip[6][2],2)
-    Info.PiDIM=round(placas_wip[6][1],2)
-
-    Info.M2CORR=round(placas_wip[7][2],2)
-    Info.PiCORR=round(placas_wip[7][1],2)
-
-    Info.M2Total= Info.M2FFG +Info.M2FFW+Info.M2TCY+Info.M2DRO+Info.M2WRD+Info.M2HCR+Info.M2DIM+Info.M2CORR
-    Info.PiTotal= Info.PiFFG +Info.PiFFW+Info.PiTCY+Info.PiDRO+Info.PiWRD+Info.PiHCR+Info.PiDIM+Info.PiCORR
-
-
-    Info.save()
-
-
-
-
-    auxsumapiezas=0
-    auxsumaarea=0
-
-    for i in range(0,len(placas_wip)):
-        auxsumapiezas=auxsumapiezas+placas_wip[i][1]
-        auxsumaarea=auxsumaarea+placas_wip[i][2]
-
-    totales=[auxsumapiezas,auxsumaarea]
-    print("carga datos completada")
-
-
-    #datos0=placas_wip#["red","blue","green"]
-    datos0=model_to_dict( InfoWIP.objects.all().order_by('contador')[0])
-    datos1=model_to_dict( InfoWIP.objects.all().order_by('contador')[1])
-    datos2=model_to_dict( InfoWIP.objects.all().order_by('contador')[2])
-    datos3=model_to_dict( InfoWIP.objects.all().order_by('contador')[3])
-    datos4=model_to_dict( InfoWIP.objects.all().order_by('contador')[4])
-    datos5=model_to_dict( InfoWIP.objects.all().order_by('contador')[5])
-    datos6=model_to_dict( InfoWIP.objects.all().order_by('contador')[6])
-    datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
-    datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
-    datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
-    totales=totales
-    data = {
-    "datos0": datos0,
-    "datos1": datos1,
-    "datos2": datos2,
-    "datos3": datos3,
-    "datos4": datos4,
-    "datos5": datos5,
-    "datos6": datos6,
-    "datos7": datos7,
-    "datos8": datos8,
-    "datos9": datos9,
-    "totales": totales,
-    }
-    print("Enviando Json Datos Graph")
-    return JsonResponse(data)#http response con el datatype de JS
-
-
-def get_data_wip_2(request, *args, **kwargs):
-
-
-    #datefinajustadaobj2 = datefinajustadaini.strftime("%d %m %Y")
-
-
-    print("cargando datos wip")
-
-
-            ## [N° máquina, n° piezas, Area]
-        #Actualizo el objeto InfoWIP n° cero:
-
-
-
-
-    #datos0=placas_wip#["red","blue","green"]
-    datos0=model_to_dict( InfoWIP.objects.all().order_by('contador')[0])
-    datos1=model_to_dict( InfoWIP.objects.all().order_by('contador')[1])
-    datos2=model_to_dict( InfoWIP.objects.all().order_by('contador')[2])
-    datos3=model_to_dict( InfoWIP.objects.all().order_by('contador')[3])
-    datos4=model_to_dict( InfoWIP.objects.all().order_by('contador')[4])
-    datos5=model_to_dict( InfoWIP.objects.all().order_by('contador')[5])
-    datos6=model_to_dict( InfoWIP.objects.all().order_by('contador')[6])
-    datos7=model_to_dict( InfoWIP.objects.all().order_by('contador')[7])
-    datos8=model_to_dict( InfoWIP.objects.all().order_by('contador')[8])
-    datos9=model_to_dict( InfoWIP.objects.all().order_by('contador')[9])#["red","blue","green"]//EL RESTO DE LOS DATOS LOS SACO DE LA BASE DE DATOS?
-
-
-    data = {
-    "datos0": datos0,
-    "datos1": datos1,
-    "datos2": datos2,
-    "datos3": datos3,
-    "datos4": datos4,
-    "datos5": datos5,
-    "datos6": datos6,
-    "datos7": datos7,
-    "datos8": datos8,
-    "datos9": datos9,
-
-
-    }
-    print("Enviando Json Datos Graph")
-    return JsonResponse(data)#http response con el datatype de JS
-
 
 
 
