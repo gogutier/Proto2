@@ -55,4 +55,5 @@ urlpatterns = [
     url(r'^get_corrplan/$',views.get_corrplan,name='get_corrplan'),
     url(r'^consumos_puestos/$',views.consumos_puestos,name='consumos_puestos'),
     url(r'^api/get_data_corrplan_cartones/$',views.get_data_corrplan_cartones,name='get_data_corrplan_cartones'),
+    url(r'^panel_bpt/$',views.panel_bpt,name='panel_bpt'),
 ]

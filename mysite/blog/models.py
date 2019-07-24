@@ -10,6 +10,21 @@ MAR = "Marzo"
 ABR = "Abril"
 
 
+class CalleBPT(models.Model):
+
+    calle=models.CharField(max_length=7, blank=False, default="vacio")
+    sector=models.CharField(max_length=7, default="vacio")#en el futuro èstos tienen que estar asociados al Model "Papeles"
+    npallets=models.IntegerField(default=0)
+    m2=models.FloatField(default=0)
+    tons=models.FloatField(default=0)
+    maxm2=models.FloatField(default=0)
+
+
+    def __str__(self):
+        return (str(self.calle))
+
+
+
 class Cartones(models.Model):
 
     carton=models.CharField(max_length=7, blank=False, default="vacio")
