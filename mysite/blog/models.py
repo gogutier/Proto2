@@ -82,10 +82,10 @@ class Camion(models.Model):
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
 
     Patente=models.CharField(blank=False, unique=True, max_length=10, default="vacio")
-    Chofer=models.CharField(max_length=15, default="vacio")
+    Chofer=models.CharField(max_length=25, default="vacio")
     Telefono=models.CharField(max_length=15, default="vacio")
     Rut=models.CharField(max_length=15, default="vacio")
-    Transportista=models.CharField(max_length=20, default="vacio")
+    Transportista=models.CharField(max_length=25, default="vacio")
 
     dia=models.DateField(max_length=10, default=timezone.now())
 

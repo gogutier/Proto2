@@ -264,6 +264,25 @@ def qr_despacho(request):
 
     return render(request, template_name, {'camiones':camiones, 'transportistas':transportistas})#acá le puedo decir que los mande ordenados por fecha?
 
+#para crear new camiòn
+
+def new_camion(request):
+
+    if request.method == "POST":
+        form = QRForm(request.POST)
+        if form.is_valid():
+            camion = form.save(commit=False)
+
+
+            #post.published_date = timezone.now()
+            camion.save()
+            return redirect('camion_detail', pk=camion.pk)
+    else:
+        
+        form = QRForm()
+
+    return render(request, 'blog/camion_edit.html', {'form': form})
+
 
 def placas_wip(request):
     print("cargando datos wip")

@@ -9,7 +9,7 @@ class QRForm(forms.ModelForm):
         widgets = {
             'dia': forms.DateInput(attrs={'class':'datepicker'}),
         }
-        fields = ['dia', 'Transportista', 'Patente']
+        fields = [ 'Patente', 'Chofer', 'Telefono','Rut', 'Transportista' ]
 
 class MinutaForm(forms.ModelForm):
     class Meta:
