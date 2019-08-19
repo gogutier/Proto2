@@ -57,44 +57,37 @@ def webscrap_fgt():
     browser.open("http://interlink.corrupac.cl/pagegenerator.dll/EXTENDEDUIS")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
     #browser.launch_browser()
-    print(browser.get_current_page())
+    #print(browser.get_current_page())
+
+    page = browser.get_current_page()
+
+    #rows=[el.text for el in page.find_all(['td', 'th']) if el.text]
+
+    table = page.find(lambda tag: tag.name=='table' and tag.has_attr('id') and tag['id']=="dataTable")
+    rows = table.findAll(lambda tag: tag.name=='tr')
+    tabla=[]
+    for row in rows:
+        fila=[]
+        cols = row.findAll(lambda tag: tag.name=='td')
+        for col in cols:
+            #print(col.text)
+            fila.append(col.text)
+        tabla.append(fila)
+    #print(tabla)
+
+    #ahora borro las filas que no tengan 7 columnas:
+    for fila in tabla:
+        if len(fila)<5:
+            tabla.remove(fila)
+
+    print(tabla)
 
 
 
-    #print(page)
-    pagetxt  = browser.get_current_page().text
-    #print("ini")
-    numinicio = browser.get_current_page().text.find("PiecesAvail1 = new Array")#.text
-    #print(numinicio)
-    numfin=pagetxt[numinicio+24:numinicio+6000].find("'z'")-2
-    #print(numfin)
-    datatxt=pagetxt[numinicio+24:numinicio+numfin+24]
-    #print(datatxt)
+    #[el.text for el in sp.find_all(['td', 'th']) if el.text]
+    #print(rows)
 
-    lista=datatxt.split("],[")
-
-    #print(len(lista))
-
-            #print(lista[i][j])
-        #print(lista[i])
-        #print(lista[i][1])
-
-    ## N° máquina, n° piezas, Area, n° órdenes
-
-
-    #print("Mostrando resumen por máquina")
-
-    #print("Maqunina 2:")
-    #(maq, num maq)
-
-    #print(corrpiezas)
-
-    #prin(browser.get_current_page().find("a", class_="u-linkComplex").text)
-
-
-    resultado=["hola q ase"]
-
-    return(resultado)
+    return(tabla)
 
 
 print(webscrap_fgt())

@@ -131,4 +131,4 @@ def webscrap_wip():
     return(resultado)
 
 
-print(webscrap_wip())
+# print(webscrap_wip())
