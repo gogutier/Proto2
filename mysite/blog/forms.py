@@ -22,6 +22,7 @@ class MinutaForm(forms.ModelForm):
 class PruebaModForm(forms.ModelForm): #acà se hace ala form y se summonea del views.py
     class Meta:
         model = PruebaMod
+        #widget=forms.TextInput(attrs={'placeholder': _('Username'), 'class': 'form-control', 'autofocus': True})
         fields = ['dato1', 'dato2', 'ultrafile']
 
 

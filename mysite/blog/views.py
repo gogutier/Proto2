@@ -23,23 +23,35 @@ import webscrap2
 
 
 def invsimple(request):
-
     template_name = 'blog/invsimple.html'
 
     if request.method == "POST":
-        form = QRForm(request.POST)
+        form = PruebaModForm(request.POST)
+
         if form.is_valid():
-            camion = form.save(commit=False)
 
 
-            #post.published_date = timezone.now()
-            camion.save()
-            return redirect('camion_detail', pk=camion.pk)
+            datocrudo=form.cleaned_data["ultrafile"]
+
+            post.save()
+
+        else:
+            datocrudo=form.data["ultrafile"]
+
+            print("calculando valores")
+
+            o, created=FotoInventario.objects.get_or_create(fecha_carga=fecha_carga)
+            o.total_kraft_kg=total_kraft_kg
+
+            o.save()
+
+
+        #return redirect ('res_inventario')
+
     else:
+        form = PruebaModForm()
 
-        form = QRForm()
-
-    return render(request, template_name, {"form":form})
+    return render(request, template_name, {'form':form})
 
 
 

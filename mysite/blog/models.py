@@ -518,8 +518,8 @@ class PruebaTabla(models.Model):
         return self.item1
 
 class PruebaMod(models.Model):
-    dato1 = models.CharField(max_length=200, default="vacio")
-    dato2 = models.CharField(max_length=200, default="vacio")
+    dato1 = models.CharField(max_length=10, default="vacio")
+    dato2 = models.CharField(max_length=10, default="vacio")
     ultrafile = models.TextField(default = "")
 
     def __str__(self):

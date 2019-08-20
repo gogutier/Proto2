@@ -3,17 +3,23 @@
 
 {% block content %}
 
-<h4>Inventario cíclico por calle</h4>
-<button type="button" id="actualiza">Actualiza</button>
-<a href="{% url 'invsimple' %}">Toma Inventario</a>
+<form method="POST" class="post-form" id="theFormID">
+{% csrf_token %}
+
+  <td>{{ form.dato1|attr:"autofocus" }}</td>
+
+
+<button type="submit" >Save</button>
+
+</form>
+
+
+
 
  <h2>New Camion</h2>
 
 
-      <form method="POST" class="post-form">{% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">Save</button>
-      </form>
+
 
 
 
