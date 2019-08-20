@@ -10,6 +10,15 @@ MAR = "Marzo"
 ABR = "Abril"
 
 
+class BobInvCic(models.Model):
+
+    nbobina=models.CharField(max_length=9, blank=False, default="vacio")
+
+    def __str__(self):
+        return (str(nbobina))
+
+
+
 class CalleBPT(models.Model):
 
     calle=models.CharField(max_length=7, blank=False, default="vacio")

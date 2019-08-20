@@ -21,6 +21,29 @@ import webscrap2
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
 
+
+def invsimple(request):
+
+    template_name = 'blog/invsimple.html'
+
+    if request.method == "POST":
+        form = QRForm(request.POST)
+        if form.is_valid():
+            camion = form.save(commit=False)
+
+
+            #post.published_date = timezone.now()
+            camion.save()
+            return redirect('camion_detail', pk=camion.pk)
+    else:
+
+        form = QRForm()
+
+    return render(request, template_name, {"form":form})
+
+
+
+
 def panel_bpt(request):
     #print("cargando consumos puestos")
     template_name = 'blog/panel_bpt.html'
@@ -278,7 +301,7 @@ def new_camion(request):
             camion.save()
             return redirect('camion_detail', pk=camion.pk)
     else:
-        
+
         form = QRForm()
 
     return render(request, 'blog/camion_edit.html', {'form': form})
