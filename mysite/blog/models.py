@@ -12,7 +12,7 @@ ABR = "Abril"
 
 class BobInvCic(models.Model):
 
-    nbobina=models.CharField(max_length=9, blank=False, default="vacio")
+    nbobina=models.CharField(max_length=16, default="")
 
     def __str__(self):
         return (str(self.nbobina))
@@ -518,7 +518,7 @@ class PruebaTabla(models.Model):
         return self.item1
 
 class PruebaMod(models.Model):
-    dato1 = models.CharField(max_length=10, default="vacio")
+    dato1 = models.CharField(max_length=10)
     dato2 = models.CharField(max_length=10, default="vacio")
     ultrafile = models.TextField(default = "")
 

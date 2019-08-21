@@ -36,14 +36,16 @@ def invsimple(request):
             o.save()
 
             print(datocrudo)
+            form = PruebaModForm()
 
 
         else:
             datocrudo=form.data["dato1"]
             o , created = BobInvCic.objects.get_or_create(nbobina=datocrudo)
             o.save()
-            
+
             print(datocrudo)
+            form = PruebaModForm()
 
 
         #return redirect ('res_inventario')
@@ -51,9 +53,13 @@ def invsimple(request):
     else:
         form = PruebaModForm()
 
-    bobinas = BobInvCic.objects.all()
+    bobinas = reversed(list(BobInvCic.objects.all()))
 
-    return render(request, template_name, {'form':form,'bobinas':bobinas,})
+    mensajes=str(BobInvCic.objects.all().count())
+
+    print(mensajes)
+
+    return render(request, template_name, {'form':form,'bobinas':bobinas,"mensajes":mensajes})
 
 
 

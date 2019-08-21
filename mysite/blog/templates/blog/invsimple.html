@@ -1,4 +1,6 @@
-<h2>Toma inventario</h2>
+<h3>Toma inventario</h3>
+
+<h5>N° Tarimas: {{mensajes}}</h5>
 
 
 {% block content %}
@@ -8,15 +10,11 @@
 
   <td>{{ form.dato1 }}</td>
 
+  <button type="submit" class="save btn btn-default">Save</button>
+
 </form>
 
-<button type="submit" class="save btn btn-default">Save</button>
-
-  <form name="myform">
-  <input type="text" name="mytextfield">
-  </form>
-
-  <body OnLoad="document.myform2.dato1.focus();">
+<body OnLoad="document.myform2.dato1.focus();">
 
 {% for bobina in bobinas %}
 
