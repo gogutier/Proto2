@@ -15,7 +15,7 @@ class BobInvCic(models.Model):
     nbobina=models.CharField(max_length=9, blank=False, default="vacio")
 
     def __str__(self):
-        return (str(nbobina))
+        return (str(self.nbobina))
 
 
 

@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -31,19 +31,19 @@ def invsimple(request):
         if form.is_valid():
 
 
-            datocrudo=form.cleaned_data["ultrafile"]
+            datocrudo=form.cleaned_data["dato1"]
+            o, created = obInvCic.objects.get_or_create(nbobina=datocrudo)
+            o.save()
 
-            post.save()
+            print(datocrudo)
+
 
         else:
-            datocrudo=form.data["ultrafile"]
-
-            print("calculando valores")
-
-            o, created=FotoInventario.objects.get_or_create(fecha_carga=fecha_carga)
-            o.total_kraft_kg=total_kraft_kg
-
+            datocrudo=form.data["dato1"]
+            o , created = BobInvCic.objects.get_or_create(nbobina=datocrudo)
             o.save()
+            
+            print(datocrudo)
 
 
         #return redirect ('res_inventario')
@@ -51,7 +51,9 @@ def invsimple(request):
     else:
         form = PruebaModForm()
 
-    return render(request, template_name, {'form':form})
+    bobinas = BobInvCic.objects.all()
+
+    return render(request, template_name, {'form':form,'bobinas':bobinas,})
 
 
 

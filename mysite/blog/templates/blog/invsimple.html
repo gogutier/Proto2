@@ -3,26 +3,25 @@
 
 {% block content %}
 
-<form method="POST" class="post-form" id="theFormID">
+<form name="myform2" method="POST" class="post-form" id="theFormID">
 {% csrf_token %}
 
-  <td>{{ form.dato1|attr:"autofocus" }}</td>
-
-
-<button type="submit" >Save</button>
+  <td>{{ form.dato1 }}</td>
 
 </form>
 
+<button type="submit" class="save btn btn-default">Save</button>
 
+  <form name="myform">
+  <input type="text" name="mytextfield">
+  </form>
 
+  <body OnLoad="document.myform2.dato1.focus();">
 
- <h2>New Camion</h2>
+{% for bobina in bobinas %}
 
+<h6>{{bobina}}</h6>
 
-
-
-
-
-
+{% endfor %}
 
 {% endblock content %}
