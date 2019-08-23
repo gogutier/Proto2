@@ -53,6 +53,7 @@ class FotoCorrplan(models.Model):
 
     fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now())
     usuario_foto=models.CharField(max_length=15, default="vacio")
+    tiempo_carga=models.CharField(max_length=15, default="vacio")
 
     def __str__(self):
         return (str(self.fecha_foto))

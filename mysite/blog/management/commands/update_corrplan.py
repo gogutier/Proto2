@@ -37,6 +37,9 @@ class Command(BaseCommand):
 
         #################
 
+        ##Inicio el tiempo:
+        tini=datetime.now()
+
         self.stdout.write("cargando datos corrplan")
 
         foto_corrplan = webscrap2.webscrap_corrplan()
@@ -46,7 +49,13 @@ class Command(BaseCommand):
 
         #Creo Primero el Foto CorrPlan
 
-        foto, created =FotoCorrplan.objects.get_or_create(fecha_foto=timezone.now(), usuario_foto="userdefault")
+        tfin=datetime.now()
+
+        duracion= tfin-tini
+
+        durac=str(duracion)
+
+        foto, created =FotoCorrplan.objects.get_or_create(fecha_foto=timezone.now(), usuario_foto="userdefault", tiempo_carga=durac)
 
         foto.save()
 
@@ -105,18 +114,24 @@ class Command(BaseCommand):
                     print(fila[11])
                 #maquina = ("pendiente") #pendiente de sacar en base a la ruta (ùltim màquina de la ruta?)
 
+
+
+
                 ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maq  ) #usò siempre la misma :/
 
                 ord_corrplan.save()
                 #acà podrìa intenar borrar los foto corrplan antiguos para no acumular tantos datos.
 
                 #borrando todas las fotos corrplan anteriores a "foto"
+
                 FotoCorrplan.objects.filter(fecha_foto__lt=foto.fecha_foto, usuario_foto="userdefault").delete()
 
 
 
 
                 cartin, created =Cartones.objects.get_or_create(carton=fila[5])
+
+
                 cartin.save()
 
             #self.stdout.write(fila[0][4])
