@@ -4,11 +4,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from blog.forms import PostForm, CommentForm, ContactForm, AppointmentForm, OCImportacionForm, ProdIDForm, BookFormset, BookModelFormset, PruebaModForm, MinutaForm, QRForm
+from blog.forms import PostForm, CommentForm, ContactForm, AppointmentForm, OCImportacionForm, ProdIDForm, BookFormset, BookModelFormset, PruebaModForm, MinutaForm, QRForm, MovPalletForm
 from django.views.generic import (TemplateView,ListView,CreateView,DetailView, UpdateView, DeleteView, View)
 from django.http import JsonResponse
 import csv
@@ -20,6 +20,95 @@ import webscrap2
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
+
+def carga_mov_pallets(request):
+    template_name = 'blog/carga_mov_pallets.html'
+
+    if request.method == "POST":
+        form = MovPalletForm(request.POST)
+
+        if form.is_valid():
+
+            dato1=form.cleaned_data["TRANSACTIONINDEX"]
+            dato2=form.cleaned_data["PLANTID"]
+            dato3=form.cleaned_data["WAREHOUSE"]
+            dato4=form.cleaned_data["INTERNALSPECID"]
+            dato5=form.cleaned_data["ORDERID"]
+            dato6=form.cleaned_data["PARTID"]
+            dato7=form.cleaned_data["OPERATIONNO"]
+            dato8=form.cleaned_data["UNITTYPE"]
+            dato9=form.cleaned_data["UNITNO"]
+            dato10=form.cleaned_data["SOURCE"]
+            dato11=form.cleaned_data["DESTINATION"]
+            dato12=form.cleaned_data["EVENTDATETIME"]
+            dato13=form.cleaned_data["EVENTTIME"]
+
+            #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
+            o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato1)
+            o.PLANTID=dato2
+            o.WAREHOUSE=dato3
+            o.INTERNALSPECID=dato4
+            o.ORDERID=dato5
+            o.PARTID=dato6
+            o.OPERATIONNO=dato7
+            o.UNITTYPE=dato8
+            o.UNITNO=dato9
+            o.SOURCE=dato10
+            o.DESTINATION=dato11
+            o.EVENTDATETIME=dato12
+            o.EVENTTIME=dato13
+            o.save()
+
+
+            #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
+
+
+        else:
+            dato1=form.cleaned_data["TRANSACTIONINDEX"]
+            dato2=form.cleaned_data["PLANTID"]
+            dato3=form.cleaned_data["WAREHOUSE"]
+            dato4=form.cleaned_data["INTERNALSPECID"]
+            dato5=form.cleaned_data["ORDERID"]
+            dato6=form.cleaned_data["PARTID"]
+            dato7=form.cleaned_data["OPERATIONNO"]
+            dato8=form.cleaned_data["UNITTYPE"]
+            dato9=form.cleaned_data["UNITNO"]
+            dato10=form.cleaned_data["SOURCE"]
+            dato11=form.cleaned_data["DESTINATION"]
+            dato12=form.cleaned_data["EVENTDATETIME"]
+            dato13=form.cleaned_data["EVENTTIME"]
+
+            o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato1)
+            o.PLANTID=dato2
+            o.WAREHOUSE=dato3
+            o.INTERNALSPECID=dato4
+            o.ORDERID=dato5
+            o.PARTID=dato6
+            o.OPERATIONNO=dato7
+            o.UNITTYPE=dato8
+            o.UNITNO=dato9
+            o.SOURCE=dato10
+            o.DESTINATION=dato11
+            o.EVENTDATETIME=dato12
+            o.EVENTTIME=dato13
+            o.save()
+
+
+            #form = MovPalletForm()
+
+
+        #return redirect ('res_inventario')
+
+    else:
+        form = MovPalletForm()
+
+    #bobinas = reversed(list(BobInvCic.objects.all()))
+
+    #mensajes=str(BobInvCic.objects.all().count())
+
+    #print(mensajes)
+
+    return render(request, template_name, {'form':form})#,'bobinas':bobinas,"mensajes":mensajes})
 
 
 def invsimple(request):
@@ -67,6 +156,13 @@ def invsimple(request):
 def panel_bpt(request):
     #print("cargando consumos puestos")
     template_name = 'blog/panel_bpt.html'
+
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+def panel_wip(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_wip.html'
 
 
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?

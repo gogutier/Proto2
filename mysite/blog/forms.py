@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import formset_factory, modelformset_factory
-from blog.models import Post,Comment, appointment, OCImportacion, ProdID, Book, Author, PruebaMod, ProdReal, Minuta, Camion
+from blog.models import Post,Comment, appointment, OCImportacion, ProdID, Book, Author, PruebaMod, ProdReal, Minuta, Camion, MovPallets
 
 
 class QRForm(forms.ModelForm):
@@ -20,11 +20,21 @@ class MinutaForm(forms.ModelForm):
         fields = ['dia', 'texto', 'obs']
 
 
+
+class MovPalletForm(forms.ModelForm): #acà se hace ala form y se summonea del views.py
+    class Meta:
+        model = MovPallets
+        #widget=forms.TextInput(attrs={'placeholder': _('Username'), 'class': 'form-control', 'autofocus': True})
+
+        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME"]
+
+
+
 class PruebaModForm(forms.ModelForm): #acà se hace ala form y se summonea del views.py
     class Meta:
         model = PruebaMod
         #widget=forms.TextInput(attrs={'placeholder': _('Username'), 'class': 'form-control', 'autofocus': True})
-    
+
         fields = ['dato1', 'dato2', 'ultrafile']
 
 

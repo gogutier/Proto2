@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Carga Inventario bobinas</h1>
+</br>
+<h4>Copiar y pegar reporte QAD asdsad</h4>
+
+<form method="POST" class="post-form">
+{% csrf_token %}
+
+  {{ form.as_p}}
+
+
+<button type="submit" class="save btn btn-default">Save</button>
+
+
+</form>
+
+
+{% endblock %}

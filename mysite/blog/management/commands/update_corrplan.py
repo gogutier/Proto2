@@ -122,9 +122,12 @@ class Command(BaseCommand):
                 ord_corrplan.save()
                 #acà podrìa intenar borrar los foto corrplan antiguos para no acumular tantos datos.
 
+                ##Agregar la parte que borra todos los corrplans anteriores (se borró)
+
                 #borrando todas las fotos corrplan anteriores a "foto"
 
-                FotoCorrplan.objects.filter(fecha_foto__lt=foto.fecha_foto, usuario_foto="userdefault").delete()
+                instance=FotoCorrplan.objects.filter(fecha_foto__lt=foto.fecha_foto)
+                instance.delete()
 
 
 

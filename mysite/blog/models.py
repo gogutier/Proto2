@@ -9,6 +9,27 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class MovPallets(models.Model):
+
+    TRANSACTIONINDEX=models.CharField(max_length=16, blank=False, default="0")
+    PLANTID=models.CharField(max_length=16, default="0")
+    WAREHOUSE=models.CharField(max_length=16, default="0")
+    INTERNALSPECID=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+    PARTID=models.CharField(max_length=16, default="0")
+    OPERATIONNO=models.CharField(max_length=16, default="0")
+    UNITTYPE=models.CharField(max_length=16, default="0")
+    UNITNO=models.CharField(max_length=16, default="0")
+    SOURCE=models.CharField(max_length=16, default="0")
+    DESTINATION=models.CharField(max_length=16, default="0")
+    EVENTDATETIME=models.CharField(max_length=16, default="0")
+    EVENTTIME=models.CharField(max_length=16, default="0")
+
+
+
+    def __str__(self):
+        return (str(self.TRANSACTIONINDEX))
+
 
 class BobInvCic(models.Model):
 
@@ -51,7 +72,7 @@ class Cartones(models.Model):
 class FotoCorrplan(models.Model):
 
 
-    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now())
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
     usuario_foto=models.CharField(max_length=15, default="vacio")
     tiempo_carga=models.CharField(max_length=15, default="vacio")
 
@@ -64,8 +85,8 @@ class OrdenCorrplan(models.Model):
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
 
     programa=models.ForeignKey('blog.FotoCorrplan', related_name='foto_corrplan', on_delete=models.CASCADE, default=0)#el ondelete te dice què hacer cuabndo se borra la foreignkey. En este caso cascade indica que todas se borren.
-    fecha_entrega=models.DateTimeField(blank=False, default=timezone.now())
-    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now())
+    fecha_entrega=models.DateTimeField(blank=False, default=timezone.now)
+    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now)
     order_id=models.CharField(max_length=15, default="vacio")
     cliente=models.CharField(max_length=15, default="vacio")
     SO=models.CharField(max_length=15, default="vacio")
@@ -97,7 +118,7 @@ class Camion(models.Model):
     Rut=models.CharField(max_length=15, default="vacio")
     Transportista=models.CharField(max_length=25, default="vacio")
 
-    dia=models.DateField(max_length=10, default=timezone.now())
+    dia=models.DateField(max_length=10, default=timezone.now)
 
     def __str__(self):
         return (self.Patente)
@@ -141,7 +162,7 @@ class InfoWIP(models.Model):
     PiTotal=models.FloatField(default=0)
 
 
-    fechamuestra= models.DateTimeField(blank=False, default = timezone.now())#.replace(hour= 0, minute=0, second=0, microsecond=0))
+    fechamuestra= models.DateTimeField(blank=False, default = timezone.now)#.replace(hour= 0, minute=0, second=0, microsecond=0))
 
 
     def __str__(self):
@@ -333,7 +354,7 @@ class OrderInfo(models.Model):
         return (self.orderId)
 
 class Minuta(models.Model):
-    dia=models.DateField(blank=False, default = timezone.now())
+    dia=models.DateField(blank=False, default = timezone.now)
     texto=models.TextField(default = ".")
     obs=models.CharField(max_length=100, default="S/N")
 
@@ -651,7 +672,7 @@ class Post(models.Model):
     published_date = models.DateTimeField(blank=True, null=True)
 
     def publish(self):
-        self.published_date = timezone.now()
+        self.published_date = timezone.now
         self.save()
 
     def approve_comments(self):
@@ -699,7 +720,7 @@ class appointment(models.Model):
 
 
     def publish(self):
-        self.published_date = timezone.now()
+        self.published_date = timezone.now
         self.save()
 
     def approve_comments(self):
@@ -742,7 +763,7 @@ class ProdID(models.Model):
 
 
     def publish(self):
-        self.published_date = timezone.now()
+        self.published_date = timezone.now
         self.save()
 
     def approve_comments(self):
