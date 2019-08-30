@@ -104,11 +104,11 @@ def carga_mov_pallets(request):
 
     #bobinas = reversed(list(BobInvCic.objects.all()))
 
-    #mensajes=str(BobInvCic.objects.all().count())
+    ultimotransaction=str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0])
 
     #print(mensajes)
 
-    return render(request, template_name, {'form':form})#,'bobinas':bobinas,"mensajes":mensajes})
+    return render(request, template_name, {'form':form, "ultimo":ultimotransaction})#,'bobinas':bobinas,"mensajes":mensajes})
 
 
 def invsimple(request):

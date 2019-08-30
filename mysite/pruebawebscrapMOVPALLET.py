@@ -20,12 +20,13 @@ def webscrap_wip():
     # Uncomment for a more verbose output:
     # browser.set_verbose(2)
 
-    browser.open("http://interlink.corrupac.cl/pagegenerator.dll/Login")
+    browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
     #browser.follow_link("login")
+    print(browser.get_current_page())
     browser.select_form()
     #browser.select_form('formMain')
-    browser["User"] = "plant"#args.username
-    browser["password"] = "plant"#args.password
+    browser["TRANSACTIONINDEX"] = "plant"#args.username
+    ##browser["password"] = "plant"#args.password
     resp = browser.submit_selected()
 
     # Uncomment to launch a web browser on the current page:
@@ -36,7 +37,10 @@ def webscrap_wip():
     #>>> browser.follow_link("forms") #sigue el link que tenga la palabra indicada
     #<Response [200]>
     #>>> browser.get_url()
+    resultado=[]
 
+    return(resultado)
+    '''
     # verify we are now logged in
     page = browser.get_current_page()
     #print(page)
@@ -69,9 +73,8 @@ def webscrap_wip():
 
 
 
-    resultado=[]
 
+    '''
 
-    return(resultado)
 
 print(webscrap_wip())
