@@ -22,7 +22,7 @@ class MovPallets(models.Model):
     UNITNO=models.CharField(max_length=16, default="0")
     SOURCE=models.CharField(max_length=16, default="0")
     DESTINATION=models.CharField(max_length=16, default="0")
-    EVENTDATETIME=models.CharField(max_length=16, default="0")
+    EVENTDATETIME=models.DateTimeField(blank=False)
     EVENTTIME=models.CharField(max_length=16, default="0")
 
 

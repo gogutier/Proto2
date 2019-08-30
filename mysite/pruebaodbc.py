@@ -1,10 +1,71 @@
+from __future__ import print_function
+import mechanicalsoup
+import argparse
+from getpass import getpass
 from time import time, sleep
 import pyodbc
 
 
 print("hola")
+def webscrap_mov():
 
-def cargaDatos():
+    print("conectando a browser")
+    browser = mechanicalsoup.StatefulBrowser(
+        soup_config={'features': 'lxml'},
+        raise_on_404=True,
+        user_agent='MyBot/0.1: mysite.example.com/bot_info',
+    )
+    # Uncomment for a more verbose output:
+    # browser.set_verbose(2)
+
+    print("entrando a página")
+    browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+    #browser.follow_link("login")
+    #print(browser.get_current_page())
+    browser.select_form()
+    #browser.select_form('formMain')
+    print("obteniendo el transactionindex más nuevo..")
+    page = browser.get_current_page()
+    messages = page.find(id="ultimo")
+    print(messages.text)
+    row=cargaDatos(messages.text)
+    print(row)
+
+    if (row!=None):
+        print("escribiendo datos de transacción en página")
+        browser["TRANSACTIONINDEX"] = str(row[0])#args.username
+        browser["PLANTID"] = str(row[1])#args.username
+        browser["WAREHOUSE"] = str(row[2])#args.username
+        browser["INTERNALSPECID"] = str(row[3])#args.username
+        browser["ORDERID"] = str(row[4])#args.username
+        browser["PARTID"] = str(row[5])#args.username
+        browser["OPERATIONNO"] = str(row[6])#args.username
+        browser["UNITTYPE"] = str(row[7])#args.username
+        browser["UNITNO"] = str(row[8])#args.username
+        browser["SOURCE"] = str(row[9])#args.username
+        browser["DESTINATION"] = str(row[10])#args.username
+        browser["EVENTDATETIME"] = (row[11])#args.username
+        browser["EVENTTIME"] = str(row[12])#args.username
+
+
+    ##browser["password"] = "plant"#args.password
+        print("submiteando")
+        resp = browser.submit_selected()
+
+        # Uncomment to launch a web browser on the current page:
+        #browser.launch_browser()
+
+        #print(browser.open("http://interlink.corrupac.cl"))
+
+        #>>> browser.follow_link("forms") #sigue el link que tenga la palabra indicada
+        #<Response [200]>
+        #>>> browser.get_url()
+    resultado=[]
+
+    return(resultado)
+
+
+def cargaDatos(ultimo):
     print("conectándose a DB..")
     flag=0
 
@@ -26,24 +87,31 @@ def cargaDatos():
         flag=0
         #cursor.execute('SELECT TOP (10) [TRANSACTIONINDEX], [PLANTID]  FROM [ctidb_transact].[dbo].[CONVERTPROD]')
     if flag==1:
-        while True:
-            try:
-                print("iniciando consulta")
 
-                cursor.execute('SELECT TOP (10) [TRANSACTIONINDEX],[ORDERID],[UNITTYPE],[LOADID],[UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME]  FROM [ctidb_transact].[dbo].[MVLOAD] order by transactionindex desc ')
+        print("iniciando consulta")
 
-                for row in cursor:
-                    print(row)
+        cursor.execute('SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'+ ultimo +' order by transactionindex asc ')
 
-                print("adios")
-                sleep(10)
-            except:
-                print("Error!")
-                break
+        print("consulta exitosa")
+        print(cursor)
+
+        for row in cursor:
+
+                return(row)
+
+                    #print(str(row[0]))
+                    #webscrap_mov(row)
+
+
+
+
+
+
 
     else:
         print("Oh, a ocurrido un error!")
 
 while True:
-    cargaDatos()
+    webscrap_mov()
+
     sleep(2)
