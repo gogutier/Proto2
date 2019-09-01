@@ -19,10 +19,11 @@ class MovPallets(models.Model):
     PARTID=models.CharField(max_length=16, default="0")
     OPERATIONNO=models.CharField(max_length=16, default="0")
     UNITTYPE=models.CharField(max_length=16, default="0")
+    LOADID=models.CharField(max_length=16, default="0")
     UNITNO=models.CharField(max_length=16, default="0")
     SOURCE=models.CharField(max_length=16, default="0")
     DESTINATION=models.CharField(max_length=16, default="0")
-    EVENTDATETIME=models.DateTimeField(blank=False)
+    EVENTDATETIME=models.DateTimeField(max_length=32,blank=False)
     EVENTTIME=models.CharField(max_length=16, default="0")
 
 

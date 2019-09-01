@@ -25,8 +25,10 @@ class MovPalletForm(forms.ModelForm): #acà se hace ala form y se summonea del v
     class Meta:
         model = MovPallets
         #widget=forms.TextInput(attrs={'placeholder': _('Username'), 'class': 'form-control', 'autofocus': True})
-
-        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME"]
+        widgets = {
+            'EVENTDATETIME': forms.DateInput(attrs={'class':'datepicker'}),
+            }
+        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "LOADID", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME"]
 
 
 

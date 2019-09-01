@@ -29,29 +29,33 @@ def carga_mov_pallets(request):
 
         if form.is_valid():
 
-            dato1=form.cleaned_data["TRANSACTIONINDEX"]
-            dato2=form.cleaned_data["PLANTID"]
-            dato3=form.cleaned_data["WAREHOUSE"]
-            dato4=form.cleaned_data["INTERNALSPECID"]
-            dato5=form.cleaned_data["ORDERID"]
-            dato6=form.cleaned_data["PARTID"]
-            dato7=form.cleaned_data["OPERATIONNO"]
-            dato8=form.cleaned_data["UNITTYPE"]
+            dato0=form.cleaned_data["TRANSACTIONINDEX"]
+            dato1=form.cleaned_data["PLANTID"]
+            dato2=form.cleaned_data["WAREHOUSE"]
+            dato3=form.cleaned_data["INTERNALSPECID"]
+            dato4=form.cleaned_data["ORDERID"]
+            dato5=form.cleaned_data["PARTID"]
+            dato6=form.cleaned_data["OPERATIONNO"]
+            dato7=form.cleaned_data["UNITTYPE"]
+            dato8=form.cleaned_data["LOADID"]
             dato9=form.cleaned_data["UNITNO"]
             dato10=form.cleaned_data["SOURCE"]
             dato11=form.cleaned_data["DESTINATION"]
-            dato12=form.cleaned_data["EVENTDATETIME"]
+            dato12t=form.cleaned_data["EVENTDATETIME"]
+            #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
+            print(dato12)
             dato13=form.cleaned_data["EVENTTIME"]
 
             #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
-            o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato1)
-            o.PLANTID=dato2
-            o.WAREHOUSE=dato3
-            o.INTERNALSPECID=dato4
-            o.ORDERID=dato5
-            o.PARTID=dato6
-            o.OPERATIONNO=dato7
-            o.UNITTYPE=dato8
+            o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
+            o.PLANTID=dato1
+            o.WAREHOUSE=dato2
+            o.INTERNALSPECID=dato3
+            o.ORDERID=dato4
+            o.PARTID=dato5
+            o.OPERATIONNO=dato6
+            o.UNITTYPE=dato7
+            o.LOADID=dato8
             o.UNITNO=dato9
             o.SOURCE=dato10
             o.DESTINATION=dato11
@@ -64,28 +68,33 @@ def carga_mov_pallets(request):
 
 
         else:
-            dato1=form.cleaned_data["TRANSACTIONINDEX"]
-            dato2=form.cleaned_data["PLANTID"]
-            dato3=form.cleaned_data["WAREHOUSE"]
-            dato4=form.cleaned_data["INTERNALSPECID"]
-            dato5=form.cleaned_data["ORDERID"]
-            dato6=form.cleaned_data["PARTID"]
-            dato7=form.cleaned_data["OPERATIONNO"]
-            dato8=form.cleaned_data["UNITTYPE"]
+            dato0=form.cleaned_data["TRANSACTIONINDEX"]
+            dato1=form.cleaned_data["PLANTID"]
+            dato2=form.cleaned_data["WAREHOUSE"]
+            dato3=form.cleaned_data["INTERNALSPECID"]
+            dato4=form.cleaned_data["ORDERID"]
+            dato5=form.cleaned_data["PARTID"]
+            dato6=form.cleaned_data["OPERATIONNO"]
+            dato7=form.cleaned_data["UNITTYPE"]
+            dato8=form.cleaned_data["LOADID"]
             dato9=form.cleaned_data["UNITNO"]
             dato10=form.cleaned_data["SOURCE"]
             dato11=form.cleaned_data["DESTINATION"]
-            dato12=form.cleaned_data["EVENTDATETIME"]
+            dato12t=form.cleaned_data["EVENTDATETIME"]
+            #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
+            print(dato12)
             dato13=form.cleaned_data["EVENTTIME"]
 
-            o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato1)
-            o.PLANTID=dato2
-            o.WAREHOUSE=dato3
-            o.INTERNALSPECID=dato4
-            o.ORDERID=dato5
-            o.PARTID=dato6
-            o.OPERATIONNO=dato7
-            o.UNITTYPE=dato8
+            #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
+            o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
+            o.PLANTID=dato1
+            o.WAREHOUSE=dato2
+            o.INTERNALSPECID=dato3
+            o.ORDERID=dato4
+            o.PARTID=dato5
+            o.OPERATIONNO=dato6
+            o.UNITTYPE=dato7
+            o.LOADID=dato8
             o.UNITNO=dato9
             o.SOURCE=dato10
             o.DESTINATION=dato11

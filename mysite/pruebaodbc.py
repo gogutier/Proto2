@@ -41,11 +41,13 @@ def webscrap_mov():
         browser["PARTID"] = str(row[5])#args.username
         browser["OPERATIONNO"] = str(row[6])#args.username
         browser["UNITTYPE"] = str(row[7])#args.username
-        browser["UNITNO"] = str(row[8])#args.username
-        browser["SOURCE"] = str(row[9])#args.username
-        browser["DESTINATION"] = str(row[10])#args.username
-        browser["EVENTDATETIME"] = (row[11])#args.username
-        browser["EVENTTIME"] = str(row[12])#args.username
+        browser["LOADID"] = str(row[8])#args.username
+        browser["UNITNO"] = str(row[9])#args.username
+        browser["SOURCE"] = str(row[10])#args.username
+        browser["DESTINATION"] = str(row[11])#args.username
+        browser["EVENTDATETIME"] = (row[12])#args.username
+        print((row[12]))
+        browser["EVENTTIME"] = str(row[13])#args.username
 
 
     ##browser["password"] = "plant"#args.password
