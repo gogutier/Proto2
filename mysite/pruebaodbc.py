@@ -19,8 +19,8 @@ def webscrap_mov():
     # browser.set_verbose(2)
 
     print("entrando a página")
-    #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-    browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+    browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+    #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
     #browser.follow_link("login")
     #print(browser.get_current_page())
     browser.select_form()
@@ -47,7 +47,7 @@ def webscrap_mov():
         browser["SOURCE"] = str(row[10])#args.username
         browser["DESTINATION"] = str(row[11])#args.username
         browser["EVENTDATETIME"] = (row[12])#args.username
-        print((row[12]))
+        #print((row[12]))
         browser["EVENTTIME"] = str(row[13])#args.username
 
 
