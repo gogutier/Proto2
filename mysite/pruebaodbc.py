@@ -19,7 +19,8 @@ def webscrap_mov():
     # browser.set_verbose(2)
 
     print("entrando a página")
-    browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+    #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+    browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
     #browser.follow_link("login")
     #print(browser.get_current_page())
     browser.select_form()
