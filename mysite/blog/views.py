@@ -80,7 +80,7 @@ def carga_mov_pallets(request):
             dato9=form.cleaned_data["UNITNO"]
             dato10=form.cleaned_data["SOURCE"]
             dato11=form.cleaned_data["DESTINATION"]
-            dato12t=form.cleaned_data["EVENTDATETIME"]
+            dato12=form.cleaned_data["EVENTDATETIME"]
             #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
             print(dato12)
             dato13=form.cleaned_data["EVENTTIME"]
