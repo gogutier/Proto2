@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -19,6 +19,98 @@ import webscrap2
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+def get_data_inventario(request, *args, **kwargs):
+
+
+        #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+        tcy1= Pallet.objects.filter(ubic__iexact="ZTCY1")
+        ntcy1=tcy1.count()
+
+        m2tcy1=0
+
+        for pallet in tcy1:
+            m2tcy1=m2tcy1+pallet.m2pallet
+
+
+
+        tcy2= Pallet.objects.filter(ubic__iexact="ZTCY2")
+        ntcy2=tcy2.count()
+
+        m2tcy2=0
+        for pallet in tcy2:
+            m2tcy2=m2tcy2+pallet.m2pallet
+
+
+
+
+        m2ZFFG1=212
+        m2ZFFG2=432
+        m2total=3123
+
+
+
+        prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0},"ZFFG2":{"cuenta":0,"m2tot":0},"ZDRO1":{"cuenta":0,"m2tot":0},"ZDRO2":{"cuenta":0,"m2tot":0},"ZFFW1":{"cuenta":0,"m2tot":0},"ZFFW2":{"cuenta":0,"m2tot":0},"ZSOB1":{"cuenta":0,"m2tot":0},"ZWRD1":{"cuenta":0,"m2tot":0},"ZWRD2":{"cuenta":0,"m2tot":0},"ZSOB2":{"cuenta":0,"m2tot":0},"ZHCR1":{"cuenta":0,"m2tot":0},"ZHCR2":{"cuenta":0,"m2tot":0},"ZTCY1":{"cuenta":0,"m2tot":0},"ZTCY2":{"cuenta":0,"m2tot":0},"ZPNC":{"cuenta":0,"m2tot":0}}
+
+        m2total=0
+        npalletstotal=0
+
+        for calle in datosWIP.keys():
+
+            datosWIP[str(calle)]['cuenta']= Pallet.objects.filter(ubic__iexact=str(calle)).count()
+            npalletstotal=npalletstotal+datosWIP[str(calle)]['cuenta']
+
+
+            m2aux=0
+            for pallet in Pallet.objects.filter(ubic__iexact=str(calle)):
+                m2aux= m2aux+pallet.m2pallet
+                m2total=m2total+pallet.m2pallet
+            datosWIP[str(calle)]['m2tot']=m2aux
+
+
+        #print(datosWIP)
+        #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
+        filtroentrada=[]
+
+        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")).order_by('-TRANSACTIONINDEX')[:10]
+
+        # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
+
+        for mov in filtro:
+            #movimiento=[tarja, destino, hora]
+            movimiento=[mov.LOADID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
+            filtroentrada.append(movimiento)
+
+
+        #print(filtroentrada)
+        filtrosalida=[]
+
+        filtro2=MovPallets.objects.filter(Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")).order_by('-TRANSACTIONINDEX')[:10]
+
+        # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
+
+        for mov in filtro2:
+            #movimiento=[tarja, destino, hora]
+            movimiento=[mov.LOADID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
+            filtrosalida.append(movimiento)
+
+
+        data = {
+        "prueba":prueba,
+        "datosWIP":datosWIP,
+        "m2total": m2total,
+        "npalletstotal": npalletstotal,
+        "filtroentrada": filtroentrada,
+        "filtrosalida": filtrosalida,
+
+        }
+        print("Enviando datos inventario")
+        return JsonResponse(data)#http response con el datatype de JS
+
+
 
 
 def carga_mov_pallets(request):
@@ -43,8 +135,16 @@ def carga_mov_pallets(request):
             dato11=form.cleaned_data["DESTINATION"]
             dato12=form.cleaned_data["EVENTDATETIME"]
             #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
-            print(dato12)
+
             dato13=form.cleaned_data["EVENTTIME"]
+
+            datounidadespallet=form.cleaned_data["unidadespallet"]
+            datokgpallet=form.cleaned_data["kgpallet"]
+            datom2pallet=form.cleaned_data["m2pallet"]
+            datoalto=form.cleaned_data["alto"]
+            datoancho=form.cleaned_data["ancho"]
+            datokguni=form.cleaned_data["kguni"]
+            datom2uni=form.cleaned_data["m2uni"]
 
             #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
             o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
@@ -61,7 +161,35 @@ def carga_mov_pallets(request):
             o.DESTINATION=dato11
             o.EVENTDATETIME=dato12
             o.EVENTTIME=dato13
+            o.unidadespallet=datounidadespallet
+            o.kgpallet=datokgpallet
+            o.m2pallet=datom2pallet
+            o.alto=datoalto
+            o.ancho=datoancho
+            o.kguni=datokguni
+            o.m2uni=datom2uni
+
             o.save()
+
+            #creo la ubicación de inventario en caso de que no exista.
+            a, created = UbicPallet.objects.get_or_create(calle=dato11)
+            a.save()
+
+            #creo el pallet en caso de que no exista. Si ya existe le actualizo la ubicación.
+
+            c, created = Pallet.objects.get_or_create(tarja=dato8)
+            c.padron=dato3
+            c.ubic=dato11
+            c.ancho=datoancho
+            c.alto=datoalto
+            c.unidades=datounidadespallet
+            c.m2uni=datom2uni
+            c.kguni=datokguni
+            c.m2pallet=datom2pallet
+            c.kgpallet=datokgpallet
+            c.save()
+
+
 
 
             #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren

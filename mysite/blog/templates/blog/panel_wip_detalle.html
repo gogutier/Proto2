@@ -1,0 +1,176 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>In Calles WIP</h1>
+<h4>Detalle</h4>
+</br>
+
+<div class="container" style="padding:10px 10px;">
+
+<div class="row" id="tablamensual">
+</div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+console.log("iniciando importación datos cumplimiento conversión..")
+
+displayHTMLTablamensual();
+
+
+
+function displayHTMLTablamensual(results){
+
+
+var table = "<table class='table' >";
+
+  table+= '<tr bgcolor="#dddddd">';
+    table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+    table+=  "Mes";
+    table+= "</td>";
+    {% for maquina in maquinas %}
+    table+= "<td>";
+    table+=  "{{maquina}}";
+    table+= "</td>";
+    {% endfor %}
+  table+= "</tr>";
+
+{% for mes in meses%}
+
+  table+= "<tr>"
+    table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+    table+= "{{mes}}";
+    table+= "</td>";
+
+    {% for maquina in maquinas %}
+    table+= "<td>";
+    table+= "<table class='table'>";
+    table+= "<tr class='tr' bgcolor='#dddffd'  >"
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      table+= "Prog";
+      table+= "</td>";
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      table+= "%On_Time";
+      table+= "</td>"
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      table+= "%Total";
+      table+= "</td>";
+    table+= "</tr>"
+    table+= "<tr class='tr'>"
+
+      var prog;
+      var prod1;
+      var prod2;
+
+      prog=sum{{mes.mescorto}}prog{{maquina}};
+      prod1= Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+      prod2= Math.floor(100*sum{{mes.mescorto}}prod2{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>"; //suma de las IDs programadas
+      table+= prog//Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+      table+= "</td>";
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        if(prog!=0)
+        {
+          table+= prod1;
+          table+= "%"
+        }
+        else
+        {
+          table+= '-';
+        }
+
+      table+= "</td>";
+
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      if(prog!=0)
+      {
+        table+= prod2;
+        table+= "%"
+      }
+      else
+      {
+        table+= '-';
+      }
+
+      table+= "</td>";
+
+    table+= "</tr>"
+
+
+
+    table+= "<tr class='tr'>"
+
+      var prog;
+      var prod1;
+      var prod2;
+
+      prog= ((sum{{mes.mescorto}}prog{{maquina}}m2)/1000).toFixed(1);
+      prod1= Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}m2/sum{{mes.mescorto}}prog{{maquina}}m2);
+      prod2= Math.floor(100*sum{{mes.mescorto}}prod2{{maquina}}m2/sum{{mes.mescorto}}prog{{maquina}}m2);
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>"; //suma de las IDs programadas
+      table+= prog//Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+      //table+= "Mm2"
+      table+= "</td>";
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        if(prog!=0)
+        {
+          table+= prod1;
+          table+= "%"
+        }
+        else
+        {
+          table+= '-';
+        }
+
+      table+= "</td>";
+
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      if(prog!=0)
+      {
+        table+= prod2;
+        table+= "%"
+      }
+      else
+      {
+        table+= '-';
+      }
+
+      table+= "</td>";
+
+    table+= "</tr>"
+
+
+
+
+    table+= "</table>";
+    table+= "</td>";
+    {% endfor %}
+
+  table+= "</tr>"
+
+  {% endfor %}
+
+
+table+= "</table>";
+$("#tablamensual").html(table); //Descomentar esto para ver la tabla grande
+}
+
+
+
+
+
+
+</script>
+
+
+
+
+{% endblock %}

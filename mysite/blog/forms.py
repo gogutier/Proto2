@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import formset_factory, modelformset_factory
-from blog.models import Post,Comment, appointment, OCImportacion, ProdID, Book, Author, PruebaMod, ProdReal, Minuta, Camion, MovPallets
+from blog.models import Post,Comment, appointment, OCImportacion, ProdID, Book, Author, PruebaMod, ProdReal, Minuta, Camion, MovPallets, Pallet
 
 
 class QRForm(forms.ModelForm):
@@ -21,6 +21,8 @@ class MinutaForm(forms.ModelForm):
 
 
 
+
+
 class MovPalletForm(forms.ModelForm): #acà se hace ala form y se summonea del views.py
     class Meta:
         model = MovPallets
@@ -28,7 +30,7 @@ class MovPalletForm(forms.ModelForm): #acà se hace ala form y se summonea del v
         widgets = {
             'EVENTDATETIME': forms.DateInput(attrs={'class':'datepicker'}),
             }
-        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "LOADID", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME"]
+        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "LOADID", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME", "unidadespallet", "kgpallet", "m2pallet", "alto", "ancho", "kguni", "m2uni"]
 
 
 

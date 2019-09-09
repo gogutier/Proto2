@@ -9,6 +9,44 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+
+
+class Pallet(models.Model):
+
+    tarja=models.CharField(unique=True, max_length=8, blank=False, default="0")
+    padron=models.CharField(max_length=16, default="0")
+    cliente=models.CharField(max_length=16, default="0")
+    ancho=models.FloatField(default=0)
+    alto=models.FloatField(default=0)
+    unidades=models.FloatField(default=0)
+    m2uni=models.FloatField(default=0)
+    kguni=models.FloatField(default=0)
+    ubic=models.CharField(max_length=32, default="vacio")
+    #ubic=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default="vacio")
+    fechaultmov=models.DateTimeField(blank=False, default=timezone.now)
+    fechacreac=models.DateTimeField(blank=False, default=timezone.now)
+    kgpallet=models.FloatField(default=0)
+    m2pallet=models.FloatField(default=0)
+
+
+    def __str__(self):
+        return (str(self.tarja))
+
+
+class UbicPallet(models.Model):
+
+    calle=models.CharField(max_length=32, blank=False, default="vacio")
+    tipo=models.CharField(max_length=16, default="vacio")
+    m2tot=models.FloatField(default=0)
+    m2max=models.FloatField(default=0)
+    npallets=models.IntegerField(default=0)
+
+
+    def __str__(self):
+        return (str(self.calle))
+
+
+
 class MovPallets(models.Model):
 
     TRANSACTIONINDEX=models.CharField(max_length=16, blank=False, default="0")
@@ -25,7 +63,15 @@ class MovPallets(models.Model):
     DESTINATION=models.CharField(max_length=32, default="0")
     EVENTDATETIME=models.DateTimeField(blank=False, default=timezone.now)
     EVENTTIME=models.CharField(max_length=16, default="0")
-
+    unidadespallet=models.IntegerField(default=0)
+    kgpallet=models.FloatField(default=0)
+    m2pallet=models.FloatField(default=0)
+    ###Estos son sólo para tomarlos en el mismo
+    ancho=models.FloatField(default=0)
+    alto=models.FloatField(default=0)
+    m2uni=models.FloatField(default=0)
+    kguni=models.FloatField(default=0)
+    ubic=models.CharField(max_length=32, default="vacio")
 
 
     def __str__(self):

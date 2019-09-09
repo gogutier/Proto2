@@ -3,6 +3,9 @@
 {% block content %}
 <h3>Panel WIP</h3>
 
+<h6 id="m2">Total m2:</h6>
+<h6 id="npal">Total pallets:</h6>
+
 
 <div class="container">
 
@@ -13,27 +16,283 @@
 </div>
 </div>
 
+
+
+
+<table class='table table-hover' id='tabla2'>
+
+<tr>
+  <td colspan="3" style="text-align: center; font-weight:bold">Últimas 10 entradas</td>
+
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td colspan="3" style="text-align: center; font-weight:bold">Últimas 10 salidas</td>
+
+</tr>
+<tr>
+  <td style="text-align: center">Tarja </td>
+  <td style="text-align: center">Destino</td>
+  <td style="text-align: center">Fecha</td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center">Tarja</td>
+  <td style="text-align: center">Destino</td>
+  <td style="text-align: center">Fecha</td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+<tr>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td></td>
+    <td></td>
+    <td></td>
+  <td></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+
+
+</table>
+
 <button type="button" id="convert">Convert</button>
+
+
 
 
 <script type="text/javascript">
 
+{% block jquery %}
+
+
+
+var endpoint='/api/get_data_inventario/';
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      datosWIP = response_data.datosWIP;
+      prueba = response_data.prueba;
+      m2total= response_data.m2total;
+      npalletstotal= response_data.npalletstotal;
+      filtroentrada= response_data.filtroentrada; //este es list of lists
+      filtrosalida= response_data.filtrosalida; //este es list of lists
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+      console.log(filtroentrada)
+
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+      var m2 = document.getElementById("m2");//.getElementsByTagName("td");
+      var npal = document.getElementById("npal");//.getElementsByTagName("td");
+      var tabla2 = document.getElementById("tabla2");//.getElementsByTagName("td");
+
+      for (var i=0; i < cuadros.length; i++)
+      {
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + "</br>" + datosWIP[cuadros[i][2]]['m2tot'].toFixed(0)+ "m2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
+      }//myTable.rows[cuadros[1][1]].cells[cuadros[0][1]].innerHTML = cuadros[1][2] + "</br>" + str(zffg2) ;
+
+      m2.innerHTML="Total m2: "+ String(m2total.toFixed(0))
+      npal.innerHTML="Total pallets: "+ String(npalletstotal)
+
+      for (var i=0; i < filtroentrada.length; i++)
+      {
+      tabla2.rows[2+i].cells[0].innerHTML=filtroentrada[i][0]
+      tabla2.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
+      tabla2.rows[2+i].cells[2].innerHTML=filtroentrada[i][2]
+      }
+
+      for (var i=0; i < filtrosalida.length; i++)
+      {
+      tabla2.rows[2+i].cells[7+0].innerHTML=filtrosalida[i][0]
+      tabla2.rows[2+i].cells[7+1].innerHTML=filtrosalida[i][1]
+      tabla2.rows[2+i].cells[7+2].innerHTML=filtrosalida[i][2]
+
+
+
+
+      }
+
+
+
+
+
+
+      //myTable.rows[1].cells[1].innerHTML = datos0["M2FFG"].toFixed(2)//datos0[0][2].toFixed(1);//FFG
+      //myTable.rows[1].cells[2].innerHTML = datos0["M2FFW"].toFixed(2)//datos0[2][2].toFixed(1);//FFW
+
+      //myTable.rows[1].cells[9].innerHTML = totales[1].toFixed(1);//Total
+
+      //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
+
+      //setChart();Acá es donde se crearía el gráfico
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+
 var cuadros= [];
 
-
-
-console.log(cuadros);
 
 
 
 /// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
 
 displayHTMLTable();
+datosinv()
+
+window.setInterval(function(){
+  console.log("hola");
+  datosinv();
+}, 3000);
+
 
 $("#convert").click(function()
 {
 
-updatecuadros();
+//updatecuadros();
+datosinv()
 //displayHTMLTable();
 
 });
@@ -43,15 +302,15 @@ updatecuadros();
 function displayHTMLTable(){
   var table = "<table class='table table-hover' id='table'>";
 
-    var rows = 17;
-    var columns = 21;
+    var rows = 14;
+    var columns = 26;
 
   for(i=0;i<rows-1;i++){
     table+= "<tr>";
 
 
     for(j=0;j<columns-1;j++){
-      table+= "<td style='font-size: 15px;'>";
+      table+= "<td style='font-size: 14px;'>";
       //table+= ".";
       table+= "</th>";
 
@@ -64,20 +323,22 @@ function displayHTMLTable(){
 
 
   //cambiando color de la table:
-  creacuadro(1,5,"zTCY2",3,5);
-  creacuadro(2,5,"zTCY1",3,5);
-  creacuadro(3,5,"zHCR2",3,5);
-  creacuadro(4,5,"zHCR1",3,5);
-  creacuadro(13,0,"zSob2",3,5);
-  creacuadro(14,0,"zWRD2",3,5);
-  creacuadro(15,0,"zWRD1",3,5);
-  creacuadro(17,0,"zSob1",3,5);
-  creacuadro(18,0,"zFFW2",3,5);
-  creacuadro(19,0,"zFFW1",3,5);
-  creacuadro(20,0,"zDRO2",3,5);
-  creacuadro(21,0,"zDRO1",3,5);
-  creacuadro(22,0,"zFFG2",3,5);
-  creacuadro(23,0,"zFFG1",3,5);
+  creacuadro(1,5,"ZTCY2",3,5);
+  creacuadro(2,5,"ZTCY1",3,5);
+  creacuadro(3,5,"ZHCR2",3,5);
+  creacuadro(4,5,"ZHCR1",3,5);
+  creacuadro(13,0,"ZSOB2",3,5);
+  creacuadro(14,0,"ZWRD2",3,5);
+  creacuadro(15,0,"ZWRD1",3,5);
+  creacuadro(17,0,"ZSOB1",3,5);
+  creacuadro(18,0,"ZFFW2",3,5);
+  creacuadro(19,0,"ZFFW1",3,5);
+  creacuadro(20,0,"ZDRO2",3,5);
+  creacuadro(21,0,"ZDRO1",3,5);
+  creacuadro(22,0,"ZFFG2",3,5);
+  creacuadro(23,0,"ZFFG1",3,5);
+  creacuadro(23,0,"ZFFG1",3,5);
+  creacuadro(4,9,"ZPNC",3,4);
 
 }
 
@@ -90,6 +351,8 @@ function creacuadro(x,y,texto,a,l){
   myTable.rows[y].cells[x].colSpan = parseInt(a);
   myTable.rows[y].cells[x].rowSpan = parseInt(l);
 
+  cuadros.push([x,y,texto]);
+
 }
 
 
@@ -100,7 +363,6 @@ function updatecuadros(){
   {
 
     var random = Math.floor((Math.random() * 100) + 1);
-    console.log(random)
 
     var myTable = document.getElementById("table");//.getElementsByTagName("td");
     myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + random.toString() + "%";
@@ -127,7 +389,7 @@ function updatecuadros(){
 
 }
 
-
+{% endblock %}
 </script>
 
 {% endblock %}

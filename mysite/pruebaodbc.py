@@ -19,8 +19,8 @@ def webscrap_mov():
     # browser.set_verbose(2)
 
     print("entrando a página")
-    browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-    #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+    #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+    browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
     #browser.follow_link("login")
     #print(browser.get_current_page())
     browser.select_form()
@@ -29,10 +29,11 @@ def webscrap_mov():
     page = browser.get_current_page()
     messages = page.find(id="ultimo")
     print(messages.text)
-    row=cargaDatos(messages.text)
+    row, datosextra=cargaDatos(messages.text)
     print(row)
 
-    if (row!=None):
+    if (row!=None and len(row)>0):
+
         print("escribiendo datos de transacción en página")
         browser["TRANSACTIONINDEX"] = str(row[0])#args.username
         browser["PLANTID"] = str(row[1])#args.username
@@ -49,6 +50,14 @@ def webscrap_mov():
         browser["EVENTDATETIME"] = (row[12])#args.username
         #print((row[12]))
         browser["EVENTTIME"] = str(row[13])#args.username
+        browser["unidadespallet"] = datosextra[0]
+        browser["kgpallet"] = datosextra[1]
+        browser["m2pallet"] = datosextra[2]
+        browser["alto"] = datosextra[3]
+        browser["ancho"] = datosextra[4]
+        browser["kguni"] = datosextra[5]
+        browser["m2uni"] = datosextra[6]
+
 
 
     ##browser["password"] = "plant"#args.password
@@ -93,17 +102,74 @@ def cargaDatos(ultimo):
 
         print("iniciando consulta")
 
-        cursor.execute('SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'+ ultimo +' order by transactionindex asc ')
+        #consulto los datos del último pallet que se movió menor al máximo transactionindex
 
-        print("consulta exitosa")
-        print(cursor)
+        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' order by transactionindex asc ")
 
-        for row in cursor:
 
-                return(row)
 
-                    #print(str(row[0]))
-                    #webscrap_mov(row)
+        #print("consulta exitosa")
+        #print(cursor[0])
+        #return(cursor[0])
+
+        try:
+            row1=cursor.fetchone()
+            print(row1[8])
+
+
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(row1[8]) +"' order by TRANSACTIONINDEX desc")
+            #De aquí quiero el número de unidades
+            #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
+            #for row in cursor:
+            #    print(row)
+            row2=cursor.fetchone()
+            unidadespallet=row2[5]
+            print("unidades pallet")
+            print(unidadespallet)
+
+
+
+            #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón
+            cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH],[GRADEID],[FLUTE],[SPECIALINSTR],[NUMBEROUT],[NUMBERIN],[ITEMWEIGHT] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
+
+            row3=cursor.fetchone()
+
+            #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
+            ancho=row3[3]
+            alto=row3[4]
+            pesouni=row3[11]
+
+
+            kgpallet= pesouni* unidadespallet
+
+            print("kgpallet")
+            print(kgpallet)
+
+            m2uni=ancho*alto/1000000
+
+            m2pallet= m2uni*unidadespallet
+            print("m2pallet")
+            print(m2pallet)
+
+
+            print("ancho")
+            print(ancho)
+            print("alto")
+            print(alto)
+            print("unidades")
+            print(unidadespallet)
+            print("pesouni")
+            print(pesouni)
+            print("m2uni")
+            print(m2uni)
+
+
+            datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni]
+        except:
+            row1=[]
+            datosextra=[]
+
+        return(row1, datosextra)
 
 
 
@@ -117,4 +183,4 @@ def cargaDatos(ultimo):
 while True:
     webscrap_mov()
 
-    sleep(2)
+    sleep(1)
