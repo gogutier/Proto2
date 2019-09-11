@@ -9,6 +9,7 @@
 {% csrf_token %}
 
   <td>{{ form.dato1 }}</td>
+  <td>{{ form.dato2 }}</td>
 
   <button type="submit" class="save btn btn-default">Save</button>
 
@@ -16,10 +17,21 @@
 
 <body OnLoad="document.myform2.dato1.focus();">
 
+<table>
+
+  <td>Bobina</td>
+  <td>Ubicación</td>
+
 {% for bobina in bobinas %}
 
-<h6>{{bobina}}</h6>
+<tr>
+  <td>{{bobina}}</td>
+  <td>{{bobina.ubic}}</td>
+</tr>
 
 {% endfor %}
+
+</table>
+
 
 {% endblock content %}

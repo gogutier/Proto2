@@ -81,6 +81,7 @@ class MovPallets(models.Model):
 class BobInvCic(models.Model):
 
     nbobina=models.CharField(max_length=16, default="")
+    ubic=models.CharField(max_length=12, default="")
 
     def __str__(self):
         return (str(self.nbobina))
@@ -588,7 +589,7 @@ class PruebaTabla(models.Model):
 
 class PruebaMod(models.Model):
     dato1 = models.CharField(max_length=10)
-    dato2 = models.CharField(max_length=10, default="vacio")
+    dato2 = models.CharField(max_length=10)
     ultrafile = models.TextField(default = "")
 
     def __str__(self):

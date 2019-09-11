@@ -22,17 +22,18 @@
 <table class='table table-hover' id='tabla2'>
 
 <tr>
-  <td colspan="3" style="text-align: center; font-weight:bold">Últimas 10 entradas</td>
+  <td colspan="4" style="text-align: center; font-weight:bold">Últimas 10 entradas</td>
 
   <td></td>
     <td></td>
     <td></td>
   <td></td>
-  <td colspan="3" style="text-align: center; font-weight:bold">Últimas 10 salidas</td>
+  <td colspan="4" style="text-align: center; font-weight:bold">Últimas 10 salidas</td>
 
 </tr>
 <tr>
   <td style="text-align: center">Tarja </td>
+  <td style="text-align: center">Origen</td>
   <td style="text-align: center">Destino</td>
   <td style="text-align: center">Fecha</td>
   <td></td>
@@ -40,6 +41,7 @@
     <td></td>
   <td></td>
   <td style="text-align: center">Tarja</td>
+  <td style="text-align: center">Origen</td>
   <td style="text-align: center">Destino</td>
   <td style="text-align: center">Fecha</td>
 </tr>
@@ -47,10 +49,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -59,10 +63,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -71,10 +77,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -83,10 +91,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -95,10 +105,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -107,10 +119,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -119,10 +133,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -131,10 +147,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -143,10 +161,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -155,10 +175,12 @@
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
   <td></td>
     <td></td>
     <td></td>
   <td></td>
+  <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
   <td style="text-align: center"></td>
@@ -226,15 +248,17 @@ function datosinv(){
       for (var i=0; i < filtroentrada.length; i++)
       {
       tabla2.rows[2+i].cells[0].innerHTML=filtroentrada[i][0]
-      tabla2.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
-      tabla2.rows[2+i].cells[2].innerHTML=filtroentrada[i][2]
+      tabla2.rows[2+i].cells[1].innerHTML=filtroentrada[i][1].substring(0,7)
+      tabla2.rows[2+i].cells[2].innerHTML=filtroentrada[i][2].substring(0,7)
+      tabla2.rows[2+i].cells[3].innerHTML=filtroentrada[i][3]
       }
 
       for (var i=0; i < filtrosalida.length; i++)
       {
-      tabla2.rows[2+i].cells[7+0].innerHTML=filtrosalida[i][0]
-      tabla2.rows[2+i].cells[7+1].innerHTML=filtrosalida[i][1]
-      tabla2.rows[2+i].cells[7+2].innerHTML=filtrosalida[i][2]
+      tabla2.rows[2+i].cells[8+0].innerHTML=filtrosalida[i][0]
+      tabla2.rows[2+i].cells[8+1].innerHTML=filtrosalida[i][1].substring(0,7)
+      tabla2.rows[2+i].cells[8+2].innerHTML=filtrosalida[i][2].substring(0,7)
+      tabla2.rows[2+i].cells[8+3].innerHTML=filtrosalida[i][3]
 
 
 
@@ -305,7 +329,7 @@ function displayHTMLTable(){
     var rows = 14;
     var columns = 26;
 
-  for(i=0;i<rows-1;i++){
+    ///
     table+= "<tr>";
 
 
@@ -313,10 +337,31 @@ function displayHTMLTable(){
       table+= "<td style='font-size: 14px;'>";
       //table+= ".";
       table+= "</th>";
+      }
 
-    }
+
+    table+= "</tr>";
+    ///
+
+
+    for(i=1;i<rows-1;i++){
+    table+= "<tr>";
+
+
+    for(j=0;j<columns-1-11;j++){
+      table+= "<td style='font-size: 14px;'>";
+      //table+= ".";
+      table+= "</th>";
+      }
+
+
     table+= "</tr>";
   }
+
+
+
+
+
   table+= "</table>";
   $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
 

@@ -81,20 +81,20 @@ def get_data_inventario(request, *args, **kwargs):
 
         for mov in filtro:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
             filtroentrada.append(movimiento)
 
 
         #print(filtroentrada)
         filtrosalida=[]
 
-        filtro2=MovPallets.objects.filter(Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")).order_by('-TRANSACTIONINDEX')[:10]
+        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO") ).order_by('-TRANSACTIONINDEX')[:10]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
             filtrosalida.append(movimiento)
 
 
@@ -258,7 +258,9 @@ def invsimple(request):
 
 
             datocrudo=form.cleaned_data["dato1"]
+            datocrudo2=form.cleaned_data["dato2"]
             o, created = obInvCic.objects.get_or_create(nbobina=datocrudo)
+            o.ubic=datocrudo2
             o.save()
 
             print(datocrudo)
@@ -267,16 +269,22 @@ def invsimple(request):
 
         else:
             datocrudo=form.data["dato1"]
+            datocrudo2=form.cleaned_data["dato2"]
             o , created = BobInvCic.objects.get_or_create(nbobina=datocrudo)
+            o.ubic=datocrudo2
             o.save()
 
             print(datocrudo)
-            form = PruebaModForm()
+            o=BobInvCic.objects.all().order_by('-pk')[0]
+
+            initial = {'dato2': o.ubic}
+            form = PruebaModForm(initial=initial)
 
 
         #return redirect ('res_inventario')
 
     else:
+        #initial = {'name': 'Initial name'}
         form = PruebaModForm()
 
     bobinas = reversed(list(BobInvCic.objects.all()))
