@@ -61,4 +61,6 @@ urlpatterns = [
     url(r'^invsimple/$',views.invsimple,name='invsimple'),
     url(r'^carga_mov_pallets/$',views.carga_mov_pallets,name='carga_mov_pallets'),
     url(r'^api/get_data_inventario/$',views.get_data_inventario,name='api-data-inventario'),
+    url(r'^panel_movpallets/$',views.panel_movpallets,name='panel_movpallets'),
+    url(r'^api/get_data_movpallets/$',views.get_data_movpallets,name='api_data_movpallets'),
 ]

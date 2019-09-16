@@ -20,6 +20,123 @@ import webscrap2
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
+def panel_movpallets(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_movpallets.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+def get_data_movpallets(request, *args, **kwargs):
+
+    #muestra evolución de últimas horas de cuántos pallets entraron a WIP y cuántos salieron (m2 y unidades)
+    #entrega datos para armar gráfico.
+    #como referencia, el de WIP.
+
+    labels=[]
+    ahora=timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0)
+    for i in range(0,8):
+        #por ahora los voy a ordenar por turno, después por hora.
+        fecha=(ahora-timedelta(days=7-i)).replace(hour= 7)
+        turno="A"
+        label= fecha.strftime("%d-%m") + " " + turno
+        labels.append({"fecha":fecha ,"turno":turno, "label": label})
+
+        fecha=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
+        turno="B"
+        label= fecha.strftime("%d-%m") + " " + turno
+        labels.append({"fecha":fecha ,"turno":turno, "label": label})
+
+        fecha=(ahora-timedelta(days=7-i)).replace(hour= 22)
+        turno="C"
+        label= fecha.strftime("%d-%m") + " " + turno
+        labels.append({"fecha":fecha ,"turno":turno, "label": label})
+
+    #ahpra por cada labe[] le anexo el dato de los m2 de entrada.
+
+
+    listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC"]
+    listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","ZPICADO"]
+
+    filtroentradaqs=Q()
+    filtrosalidaqs=Q()
+
+    for item in listafiltroentrada:
+        filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
+
+    for item in listafiltrosalida:
+        filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
+
+    for i in range(0,len(labels)-1):
+
+        #Entradas
+        filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
+        cantidad1=filtro.count()
+        #sumo los m2 asociados a cada pallets
+        m2tot=0
+        for mov in filtro:
+            m2tot=m2tot+mov.m2pallet
+
+        labels[i]["cantidadIn"]= cantidad1
+        labels[i]["m2In"]= m2tot
+
+
+        #Salidas
+        filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
+        cantidad1=filtro.count()
+        #sumo los m2 asociados a cada pallets
+        m2tot=0
+        for mov in filtro:
+            m2tot=m2tot+mov.m2pallet
+
+        labels[i]["cantidadOut"]= cantidad1
+        labels[i]["m2Out"]= m2tot
+
+
+
+
+    #Entrada
+    filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
+    cantidad1=filtro.count()
+
+    m2tot=0
+    for mov in filtro:
+        m2tot=m2tot+mov.m2pallet
+
+    labels[len(labels)-1]["cantidadIn"]= cantidad1
+    labels[len(labels)-1]["m2In"]= m2tot
+
+
+    #Salida
+    filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
+    cantidad1=filtro.count()
+
+    m2tot=0
+    for mov in filtro:
+        m2tot=m2tot+mov.m2pallet
+
+    labels[len(labels)-1]["cantidadOut"]= cantidad1
+    labels[len(labels)-1]["m2Out"]= m2tot
+
+
+
+
+
+    #estructura: inicio turno en datetime, inicio turno en texto, inicio turno en descripción, m2 ingreso a planta en ese turno, m2 salida de planta en ese turno.
+
+    #fecha, label, m2in, m2out
+
+    #labels.append((ahora+timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0))
+
+
+
+    data = {
+    "labels":labels,
+            }
+    print("Enviando datos movpallets")
+    return JsonResponse(data)#http response con el datatype de JS
+
+
 def get_data_inventario(request, *args, **kwargs):
 
 
@@ -53,7 +170,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0},"ZFFG2":{"cuenta":0,"m2tot":0},"ZDRO1":{"cuenta":0,"m2tot":0},"ZDRO2":{"cuenta":0,"m2tot":0},"ZFFW1":{"cuenta":0,"m2tot":0},"ZFFW2":{"cuenta":0,"m2tot":0},"ZSOB1":{"cuenta":0,"m2tot":0},"ZWRD1":{"cuenta":0,"m2tot":0},"ZWRD2":{"cuenta":0,"m2tot":0},"ZSOB2":{"cuenta":0,"m2tot":0},"ZHCR1":{"cuenta":0,"m2tot":0},"ZHCR2":{"cuenta":0,"m2tot":0},"ZTCY1":{"cuenta":0,"m2tot":0},"ZTCY2":{"cuenta":0,"m2tot":0},"ZPNC":{"cuenta":0,"m2tot":0}}
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0},"ZFFG2":{"cuenta":0,"m2tot":0},"ZDRO1":{"cuenta":0,"m2tot":0},"ZDRO2":{"cuenta":0,"m2tot":0},"ZFFW1":{"cuenta":0,"m2tot":0},"ZFFW2":{"cuenta":0,"m2tot":0},"ZSOB1":{"cuenta":0,"m2tot":0},"ZWRD1":{"cuenta":0,"m2tot":0},"ZWRD2":{"cuenta":0,"m2tot":0},"ZSOB2":{"cuenta":0,"m2tot":0},"ZHCR1":{"cuenta":0,"m2tot":0},"ZHCR2":{"cuenta":0,"m2tot":0},"ZTCY1":{"cuenta":0,"m2tot":0},"ZTCY2":{"cuenta":0,"m2tot":0},"ZPNC":{"cuenta":0,"m2tot":0},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0},"CORR_L":{"cuenta":0,"m2tot":0},"ZPICADO":{"cuenta":0,"m2tot":0}}
 
         m2total=0
         npalletstotal=0
@@ -75,7 +192,7 @@ def get_data_inventario(request, *args, **kwargs):
         #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
         filtroentrada=[]
 
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")).order_by('-TRANSACTIONINDEX')[:10]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")).order_by('-TRANSACTIONINDEX')[:10]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
@@ -285,7 +402,10 @@ def invsimple(request):
 
     else:
         #initial = {'name': 'Initial name'}
-        form = PruebaModForm()
+        o=BobInvCic.objects.all().order_by('-pk')[0]
+        initial = {'dato2': o.ubic}
+        form = PruebaModForm(initial=initial)
+
 
     bobinas = reversed(list(BobInvCic.objects.all()))
 

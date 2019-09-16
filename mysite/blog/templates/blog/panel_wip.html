@@ -7,14 +7,14 @@
 <h6 id="npal">Total pallets:</h6>
 
 
-<div class="container">
+<div class="container" >
 
-<div class="table-responsive">
 
-<div class="row" id="parsed_csv_list">
+  <div class="table-responsive">
 
-</div>
-</div>
+        <div class="row"   id="parsed_csv_list">
+        </div>
+  </div>
 
 
 
@@ -190,6 +190,8 @@
 
 </table>
 
+</div>
+
 <button type="button" id="convert">Convert</button>
 
 
@@ -239,10 +241,10 @@ function datosinv(){
 
       for (var i=0; i < cuadros.length; i++)
       {
-      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + "</br>" + datosWIP[cuadros[i][2]]['m2tot'].toFixed(0)+ "m2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
       }//myTable.rows[cuadros[1][1]].cells[cuadros[0][1]].innerHTML = cuadros[1][2] + "</br>" + str(zffg2) ;
 
-      m2.innerHTML="Total m2: "+ String(m2total.toFixed(0))
+      m2.innerHTML="Total m2: "+ String((m2total/1000).toFixed(1))
       npal.innerHTML="Total pallets: "+ String(npalletstotal)
 
       for (var i=0; i < filtroentrada.length; i++)
@@ -324,39 +326,52 @@ datosinv()
 ////// Función que muestra el input paresado
 
 function displayHTMLTable(){
-  var table = "<table class='table table-hover' id='table'>";
+  var table = "<table  class='table1'  id='table' >";
 
-    var rows = 14;
-    var columns = 26;
+    var rows = 15;
+    var columns = 49;
 
     ///
+    table+= "<tr >";
+      for(j=0;j<columns-1;j++){
+        table+= "<td style='font-size: 10px; '  >";
+        //table+= ".";
+        table+= "</th>";
+        }
+    table+= "</tr>";
+    ///
+
     table+= "<tr>";
-
-
-    for(j=0;j<columns-1;j++){
-      table+= "<td style='font-size: 14px;'>";
+    for(j=1;j<columns-22;j++){
+      table+= "<td style='font-size: 10px;'>";
       //table+= ".";
       table+= "</th>";
       }
-
-
     table+= "</tr>";
     ///
 
 
-    for(i=1;i<rows-1;i++){
-    table+= "<tr>";
+    for(i=2;i<8;i++){
+      table+= "<tr>";
+        for(j=0;j<columns-1-31;j++){
+          table+= "<td style='font-size: 10px;'>";
+          //table+= ".";
+          table+= "</th>";
+        }
+      table+= "</tr>";
+    }
 
 
-    for(j=0;j<columns-1-11;j++){
-      table+= "<td style='font-size: 14px;'>";
-      //table+= ".";
-      table+= "</th>";
-      }
 
-
-    table+= "</tr>";
-  }
+    for(i=8;i<rows-1;i++){
+      table+= "<tr>";
+        for(j=0;j<columns-1-12;j++){
+          table+= "<td style='font-size: 10px;'>";
+          //table+= ".";
+          table+= "</th>";
+        }
+      table+= "</tr>";
+    }
 
 
 
@@ -368,22 +383,25 @@ function displayHTMLTable(){
 
 
   //cambiando color de la table:
-  creacuadro(1,5,"ZTCY2",3,5);
-  creacuadro(2,5,"ZTCY1",3,5);
-  creacuadro(3,5,"ZHCR2",3,5);
-  creacuadro(4,5,"ZHCR1",3,5);
-  creacuadro(13,0,"ZSOB2",3,5);
-  creacuadro(14,0,"ZWRD2",3,5);
-  creacuadro(15,0,"ZWRD1",3,5);
-  creacuadro(17,0,"ZSOB1",3,5);
-  creacuadro(18,0,"ZFFW2",3,5);
-  creacuadro(19,0,"ZFFW1",3,5);
-  creacuadro(20,0,"ZDRO2",3,5);
-  creacuadro(21,0,"ZDRO1",3,5);
-  creacuadro(22,0,"ZFFG2",3,5);
-  creacuadro(23,0,"ZFFG1",3,5);
-  creacuadro(23,0,"ZFFG1",3,5);
-  creacuadro(4,9,"ZPNC",3,4);
+  creacuadro(1,6,"ZTCY2",3,5);
+  creacuadro(2,6,"ZTCY1",3,5);
+  creacuadro(3,6,"ZHCR2",3,5);
+  creacuadro(4,6,"ZHCR1",3,5);
+  creacuadro(13,1,"ZSOB2",3,5);
+  creacuadro(14,1,"ZWRD2",3,5);
+  creacuadro(15,1,"ZWRD1",3,5);
+  creacuadro(17,1,"ZSOB1",3,5);
+  creacuadro(18,1,"ZFFW2",3,5);
+  creacuadro(19,1,"ZFFW1",3,5);
+  creacuadro(20,1,"ZDRO2",3,5);
+  creacuadro(21,1,"ZDRO1",3,5);
+  creacuadro(22,1,"ZFFG2",3,5);
+  creacuadro(23,1,"ZFFG1",3,5);
+  creacuadro(23,1,"ZFFG1",3,5);
+  creacuadro(46,0,"CORR_UPPER_Stacker",2,5);
+  creacuadro(47,0,"CORR_L",2,5);
+  creacuadro(4,10,"ZPNC",3,4);
+  creacuadro(34,10,"ZPICADO",4,3);
 
 }
 

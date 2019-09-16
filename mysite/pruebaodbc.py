@@ -19,8 +19,8 @@ def webscrap_mov():
     # browser.set_verbose(2)
 
     print("entrando a página")
-    browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-    #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+    #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+    browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
     #browser.follow_link("login")
     #print(browser.get_current_page())
     browser.select_form()
@@ -103,8 +103,9 @@ def cargaDatos(ultimo):
         print("iniciando consulta")
 
         #consulto los datos del último pallet que se movió menor al máximo transactionindex
+        # Tb filtro por sólos los que son pallets de corrugado = OPERATIONNO = 0
+        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
 
-        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' order by transactionindex asc ")
 
 
 
@@ -113,10 +114,14 @@ def cargaDatos(ultimo):
         #return(cursor[0])
 
         try:
+
             row1=cursor.fetchone()
-            print(row1[8])
+            #print("Tarja:")
+            #print(row1[8])
+            id=row1[4]
 
 
+            print ("iniciando segunda consulta")
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(row1[8]) +"' order by TRANSACTIONINDEX desc")
             #De aquí quiero el número de unidades
             #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
@@ -124,28 +129,44 @@ def cargaDatos(ultimo):
             #    print(row)
             row2=cursor.fetchone()
             unidadespallet=row2[5]
-            print("unidades pallet")
-            print(unidadespallet)
+            #print("unidades pallet")
+            #print(unidadespallet)
 
 
 
-            #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón
-            cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH],[GRADEID],[FLUTE],[SPECIALINSTR],[NUMBEROUT],[NUMBERIN],[ITEMWEIGHT] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
+
+            #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón###
+            # Ojo! Esto lo uso para sacar el transaction index inicial con el que se elimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
+            print("iniciando tercera consulta por el id " + str(row1[3]) )
+            cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
 
             row3=cursor.fetchone()
+            transaction=row3[0]
+            #print("transaction")
+            #print(transaction)
 
+
+            print("inciando cuarta consulta")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
+
+            row4=cursor.fetchone()
             #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
-            ancho=row3[3]
-            alto=row3[4]
-            pesouni=row3[11]
+            ancho=row4[1]
+            alto=row4[2]
+            pesouni=0
 
 
             kgpallet= pesouni* unidadespallet
 
+            print("tarja")
+            print(row1[8])
+            print("ID")
+            print(id)
+
             print("kgpallet")
             print(kgpallet)
 
-            m2uni=ancho*alto/1000000
+            m2uni=ancho*alto
 
             m2pallet= m2uni*unidadespallet
             print("m2pallet")
@@ -165,7 +186,9 @@ def cargaDatos(ultimo):
 
 
             datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni]
+
         except:
+            print("error!")
             row1=[]
             datosextra=[]
 
@@ -183,4 +206,4 @@ def cargaDatos(ultimo):
 while True:
     webscrap_mov()
 
-    sleep(1)
+    sleep(0.1)

@@ -53,12 +53,17 @@
 
     <style>
 
+          table1 {
+              font-family: arial, sans-serif;
+              border-collapse: collapse;
+              width: 100px;
+
+          }
 
           table {
               font-family: arial, sans-serif;
-              border-collapse: collapse;
-              border: none;
-              width: 128%;
+
+
           }
 
           tablee {
@@ -71,11 +76,8 @@
 
 
           td, th {
+            padding: 4px 4px;
 
-              border: 1px solid #dddddd;
-              text-align: left;
-
-              padding: 50px 100px;
           }
 
 
@@ -199,6 +201,10 @@
 
               <li>
                 <a class="nav-link" href="{% url 'panel_wip' %}">Panel WIP</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_movpallets' %}">Panel MovPallets</a>
               </li>
 
               <li>

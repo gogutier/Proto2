@@ -1,0 +1,211 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<h3>Mov Pallets</h3>
+
+<div class="container">
+
+
+
+<canvas id="myChart" style="display= block; width:1000px"></canvas>
+
+<canvas id="myChart2" style=" width:1000px"></canvas>
+
+</div>
+
+<script type="text/javascript">
+
+{% block jquery %}
+
+
+
+var endpoint='/api/get_data_movpallets/';
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      labels = response_data.labels;
+
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+      console.log(labels)
+
+      setChart1();
+      setChart2();
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+    //displayTabla();
+
+}
+
+{% endblock %}
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+datosinv()
+
+window.setInterval(function(){
+  console.log("hola");
+  datosinv();
+}, 30000);
+
+
+
+function setChart1(){
+
+  //generando list de labels
+  labelx=[]
+  m2Inx=[]
+  m2Outx=[]
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+
+        m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
+        m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
+      }
+
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [{
+              label: "Mm2 Ingreso a bodega",
+              data: m2Inx,
+              borderColor: "rgba(0,42,255)",
+              backgroundColor: "rgba(0,42,255)",
+              borderWidth: 0,
+
+
+          },
+          {
+              label: "Mm2 Salida de bodega",
+              data: m2Outx,
+              borderColor: "rgba(0,200,155)",
+              backgroundColor: "rgba(0,200,155)",
+              borderWidth: 0,
+
+
+          }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: false,
+                barPercentage: 1.0,
+                categoryPercentage: 0.75,
+               }],
+              yAxes: [{stacked: false,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+
+function setChart2(){
+
+  //generando list de labels
+  labelx=[]
+  cantidadOutx=[]
+  m2Outx=[]
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+        cantidadOutx.push(labels[i]["cantidadOut"]);
+        m2Outx.push(labels[i]["m2Out"]);
+      }
+
+  var ctx = document.getElementById("myChart2").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: labelx,
+          datasets: [{
+              label: "Mm2 Ingreso a bodega",
+              data: m2Outx,
+              borderColor: "rgba(0,42,255)",
+              backgroundColor: "rgba(0,42,255)",
+              borderWidth: 0,
+              //responsive: true,
+
+          }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            stacked:false,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true }],
+              yAxes: [{stacked: false,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}
