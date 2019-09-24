@@ -3,6 +3,7 @@ import mechanicalsoup
 import argparse
 from getpass import getpass
 from time import time, sleep
+from datetime import datetime
 import pyodbc
 
 
@@ -101,10 +102,93 @@ def cargaDatos(ultimo):
     if flag==1:
 
         print("iniciando consulta")
+        print("supuesto: tabla MVLOAD y FGLOAD no comparten transactionindexes")
 
         #consulto los datos del último pallet que se movió menor al máximo transactionindex
         # Tb filtro por sólos los que son pallets de corrugado = OPERATIONNO = 0
-        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
+
+        #Primero reviso si hay transactioninxes mayores a "ultimo" en la tabla FGLOAD. Si hay, simulo un movimiento de MVload a la ubicación #CORR_UPPER_Stacker o CORR_LOWER_Stacker.
+
+        #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
+        flag0=0
+        sleep(0.1)
+        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EVENTDATETIME],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
+
+
+        row0=cursor.fetchone()
+        print("row0 FGLOAD:")
+        print(row0)
+
+        if row0!=None:
+            row0datetime=row0[10][:11]
+            row0time=row0[11]
+
+            print(row0datetime)
+            print(row0time)
+
+            row0datetime= row0datetime + row0time[0] + row0time[1] + ":" + row0time[2] + row0time[3] + ":" + row0time[4]+ row0time[5]
+            row0datetime= datetime.strptime(row0datetime, '%d-%m-%Y %H:%M:%S')
+            print(row0datetime)
+            workcenter=row0[2]
+            destino=""
+            if workcenter=="CORR_U":
+                destino="CORR_UPPER_Stacker"
+            elif workcenter=="CORR_L":
+                destino="CORR_LOWER_Stacker"
+            else:
+                destino="ZPICADO"
+
+
+
+            row1=[row0[0], row0[1], "0", row0[3], row0[4], row0[5], row0[6], 0, row0[7], row0[8], "CORR" , destino, row0datetime, row0[11]]
+            sleep(0.1)
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
+
+            rowaux=cursor.fetchone()
+                #qué pasa cuando no encuentra row?
+            TIFGLOAD=0
+            TIMVLOAD=0
+
+
+
+            TIFGLOAD=row0[0]
+            if rowaux!= None:
+                TIMVLOAD=rowaux[0]
+            else:
+                TIMVLOAD=999999999999
+
+
+            if row0[3] != "Default":
+                if TIFGLOAD<TIMVLOAD:
+                    flag0=1
+
+                    print("obtenida row1 de FGLOAD!")
+                    print(row1)
+            else:
+                flag0=0
+
+
+
+        if flag0==0:
+            try:
+                print("obteniendo el row1 del MVLOAD")
+                sleep(0.1)
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
+                #Aquí hay que ponerle un TRY probablemente
+                row1=cursor.fetchone()
+
+
+                #compara el transactionidex de fgload vs el de MVLOAD
+
+
+
+                print("Obtenida row1 de MVLOAD!")
+                print(row1)
+            except:
+                print("error!")
+                row1=[]
+                datosextra=[]
+
 
 
 
@@ -115,13 +199,14 @@ def cargaDatos(ultimo):
 
         try:
 
-            row1=cursor.fetchone()
+
             #print("Tarja:")
             #print(row1[8])
             id=row1[4]
 
 
             print ("iniciando segunda consulta")
+            sleep(0.1)
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(row1[8]) +"' order by TRANSACTIONINDEX desc")
             #De aquí quiero el número de unidades
             #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
@@ -138,6 +223,7 @@ def cargaDatos(ultimo):
             #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón###
             # Ojo! Esto lo uso para sacar el transaction index inicial con el que se elimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
             print("iniciando tercera consulta por el id " + str(row1[3]) )
+            sleep(0.1)
             cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
 
             row3=cursor.fetchone()
@@ -147,6 +233,7 @@ def cargaDatos(ultimo):
 
 
             print("inciando cuarta consulta")
+            sleep(0.1)
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
 
             row4=cursor.fetchone()
@@ -206,4 +293,4 @@ def cargaDatos(ultimo):
 while True:
     webscrap_mov()
 
-    sleep(0.1)
+    sleep(0.3)

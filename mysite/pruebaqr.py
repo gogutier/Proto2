@@ -1,7 +1,7 @@
 import pyqrcode
 
-s="Hola q tal"
+s="B01"
 
 url= pyqrcode.create(s)
 
-url.svg("myqr.svg",scale = 8)
+url.svg(s+".svg",scale = 10)

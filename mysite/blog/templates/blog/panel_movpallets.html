@@ -80,12 +80,15 @@ function setChart1(){
   labelx=[]
   m2Inx=[]
   m2Outx=[]
+  m2Prodx=[]
+
   for (var i = 0; i < labels.length; i++)
       {
         labelx.push(labels[i]["label"]);
 
         m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
         m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
+        m2Prodx.push((labels[i]["m2Prod"]/1000).toFixed(1));
       }
 
   var ctx = document.getElementById("myChart").getContext('2d');
@@ -94,19 +97,32 @@ function setChart1(){
       data: {
             labels: labelx,
             datasets: [{
-              label: "Mm2 Ingreso a bodega",
-              data: m2Inx,
-              borderColor: "rgba(0,42,255)",
-              backgroundColor: "rgba(0,42,255)",
+
+                    label: "Mm2 Ingreso a bodega",
+                    data: m2Inx,
+                    borderColor: "rgba(0,42,255)",
+                    backgroundColor: "rgba(0,42,255)",
+                    stack: 'stack 0',
+                    borderWidth: 0,
+
+
+              },{
+
+              label: "Mm2 Producidos sin ingreso",
+              data: m2Prodx,
+              borderColor: "rgba(100,42,155)",
+              backgroundColor: "rgba(100,42,155)",
+              stack: 'stack 0',
               borderWidth: 0,
 
 
           },
-          {
+            {
               label: "Mm2 Salida de bodega",
               data: m2Outx,
               borderColor: "rgba(0,200,155)",
               backgroundColor: "rgba(0,200,155)",
+              stack: 'stack 1',
               borderWidth: 0,
 
 
@@ -124,11 +140,11 @@ function setChart1(){
 
 },
           scales: {
-              xAxes: [{ stacked: false,
+              xAxes: [{ stacked: true,
                 barPercentage: 1.0,
                 categoryPercentage: 0.75,
                }],
-              yAxes: [{stacked: false,
+              yAxes: [{stacked: true,
                       barPercentage: 1.0,
                       categoryPercentage: 1.0,
                   ticks: {

@@ -54,15 +54,22 @@ def get_data_movpallets(request, *args, **kwargs):
 
     #ahpra por cada labe[] le anexo el dato de los m2 de entrada.
 
-
+    listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
     listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC"]
     listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","ZPICADO"]
+
+    filtroproducidoqs=Q()
 
     filtroentradaqs=Q()
     filtrosalidaqs=Q()
 
+    for item in listafiltroproducido:
+        filtroproducidoqs = filtroproducidoqs | Q(DESTINATION=item)
+
     for item in listafiltroentrada:
         filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
+
+
 
     for item in listafiltrosalida:
         filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
@@ -81,6 +88,25 @@ def get_data_movpallets(request, *args, **kwargs):
         labels[i]["m2In"]= m2tot
 
 
+
+        #Producidos pero excluyendo los pallets que ya están en la lista de Entradas
+        filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
+
+
+        for item in filtro:
+            filtro2=filtro2.exclude(LOADID=item.LOADID)
+
+
+        cantidad1=filtro2.count()
+        #sumo los m2 asociados a cada pallets
+        m2tot=0
+        for mov in filtro2:
+            m2tot=m2tot+mov.m2pallet
+
+        labels[i]["cantidadProd"]= cantidad1
+        labels[i]["m2Prod"]= m2tot
+
+
         #Salidas
         filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
         cantidad1=filtro.count()
@@ -95,9 +121,18 @@ def get_data_movpallets(request, *args, **kwargs):
 
 
 
+
+    #este es el último item de cada lista (como termina donde empieza el siguiente no funciona dentro del for)
+
+
+
+
+
+
     #Entrada
     filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
     cantidad1=filtro.count()
+
 
     m2tot=0
     for mov in filtro:
@@ -105,6 +140,27 @@ def get_data_movpallets(request, *args, **kwargs):
 
     labels[len(labels)-1]["cantidadIn"]= cantidad1
     labels[len(labels)-1]["m2In"]= m2tot
+
+
+
+    #Producido
+    filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
+
+
+    for item in filtro:
+        filtro2=filtro2.exclude(LOADID=item.LOADID)
+
+
+
+    cantidad1=filtro2.count()
+
+
+    m2tot=0
+    for mov in filtro2:
+        m2tot=m2tot+mov.m2pallet
+
+    labels[len(labels)-1]["cantidadProd"]= cantidad1
+    labels[len(labels)-1]["m2Prod"]= m2tot
 
 
     #Salida
@@ -170,35 +226,62 @@ def get_data_inventario(request, *args, **kwargs):
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0},"ZFFG2":{"cuenta":0,"m2tot":0},"ZDRO1":{"cuenta":0,"m2tot":0},"ZDRO2":{"cuenta":0,"m2tot":0},"ZFFW1":{"cuenta":0,"m2tot":0},"ZFFW2":{"cuenta":0,"m2tot":0},"ZSOB1":{"cuenta":0,"m2tot":0},"ZWRD1":{"cuenta":0,"m2tot":0},"ZWRD2":{"cuenta":0,"m2tot":0},"ZSOB2":{"cuenta":0,"m2tot":0},"ZHCR1":{"cuenta":0,"m2tot":0},"ZHCR2":{"cuenta":0,"m2tot":0},"ZTCY1":{"cuenta":0,"m2tot":0},"ZTCY2":{"cuenta":0,"m2tot":0},"ZPNC":{"cuenta":0,"m2tot":0},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0},"CORR_L":{"cuenta":0,"m2tot":0},"ZPICADO":{"cuenta":0,"m2tot":0}}
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0},"ZFFG2":{"cuenta":0,"m2tot":0},"ZDRO1":{"cuenta":0,"m2tot":0},"ZDRO2":{"cuenta":0,"m2tot":0},"ZFFW1":{"cuenta":0,"m2tot":0},"ZFFW2":{"cuenta":0,"m2tot":0},"ZSOB1":{"cuenta":0,"m2tot":0},"ZWRD1":{"cuenta":0,"m2tot":0},"ZWRD2":{"cuenta":0,"m2tot":0},"ZSOB2":{"cuenta":0,"m2tot":0},"ZHCR1":{"cuenta":0,"m2tot":0},"ZHCR2":{"cuenta":0,"m2tot":0},"ZTCY1":{"cuenta":0,"m2tot":0},"ZTCY2":{"cuenta":0,"m2tot":0},"ZPNC":{"cuenta":0,"m2tot":0},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0},"ZPICADO":{"cuenta":0,"m2tot":0}}
 
-        m2total=0
-        npalletstotal=0
+        m2totalINV=0
+        npalletstotalINV=0
+
+        m2totalCORR=0
+        npalletstotalCORR=0
+
 
         for calle in datosWIP.keys():
 
             datosWIP[str(calle)]['cuenta']= Pallet.objects.filter(ubic__iexact=str(calle)).count()
-            npalletstotal=npalletstotal+datosWIP[str(calle)]['cuenta']
+            if (calle == "CORR_LOWER_Stacker" or calle == "CORR_UPPER_Stacker"):
+                npalletstotalCORR=npalletstotalCORR+datosWIP[str(calle)]['cuenta']
+            else:
+
+                npalletstotalINV=npalletstotalINV+datosWIP[str(calle)]['cuenta']
+
 
 
             m2aux=0
             for pallet in Pallet.objects.filter(ubic__iexact=str(calle)):
                 m2aux= m2aux+pallet.m2pallet
-                m2total=m2total+pallet.m2pallet
+                if (calle == "CORR_LOWER_Stacker" or calle == "CORR_UPPER_Stacker"):
+                    m2totalCORR=m2totalCORR+pallet.m2pallet
+                else:
+
+                    m2totalINV=m2totalINV+pallet.m2pallet
+
             datosWIP[str(calle)]['m2tot']=m2aux
 
 
         #print(datosWIP)
         #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
+        filtroprod=[]
+
+        filtro0=MovPallets.objects.filter(Q(DESTINATION="CORR_UPPER_Stacker") | Q(DESTINATION="CORR_LOWER_Stacker")).order_by('-TRANSACTIONINDEX')[:10]
+
+        # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
+
+        for mov in filtro0:
+            #movimiento=[tarja, destino, hora]
+            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
+            filtroprod.append(movimiento)
+
+
+
         filtroentrada=[]
 
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")).order_by('-TRANSACTIONINDEX')[:10]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC") ).order_by('-TRANSACTIONINDEX')[:10]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
         for mov in filtro:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtroentrada.append(movimiento)
 
 
@@ -211,17 +294,22 @@ def get_data_inventario(request, *args, **kwargs):
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%Y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtrosalida.append(movimiento)
 
+
+        print()
 
         data = {
         "prueba":prueba,
         "datosWIP":datosWIP,
-        "m2total": m2total,
-        "npalletstotal": npalletstotal,
+        "m2totalINV": m2totalINV,
+        "npalletstotalINV": npalletstotalINV,
+        "m2totalCORR": m2totalCORR,
+        "npalletstotalCORR": npalletstotalCORR,
         "filtroentrada": filtroentrada,
         "filtrosalida": filtrosalida,
+        "filtroprod": filtroprod,
 
         }
         print("Enviando datos inventario")
