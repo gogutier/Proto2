@@ -16,9 +16,65 @@ from datetime import datetime, timedelta
 from io import StringIO
 import pruebawebscrap
 import webscrap2
+import openpyxl
+
+import xlrd
+from openpyxl.workbook import Workbook
+from openpyxl.reader.excel import load_workbook, InvalidFileException
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+
+def open_xls_as_xlsx(filename):
+    # first open using xlrd
+    book = xlrd.open_workbook(filename.file)
+    index = 0
+    nrows, ncols = 0, 0
+    while nrows * ncols == 0:
+        sheet = book.sheet_by_index(index)
+        nrows = sheet.nrows
+        ncols = sheet.ncols
+        index += 1
+
+    # prepare a xlsx sheet
+    book1 = Workbook()
+    sheet1 = book1.get_active_sheet()
+
+    for row in xrange(0, nrows):
+        for col in xrange(0, ncols):
+            sheet1.cell(row=row, column=col).value = sheet.cell_value(row, col)
+
+    return book1
+
+def up_excel(request):
+    if "GET" == request.method:
+        return render(request, 'blog/up_excel.html', {})
+    else:
+        excel_file1 = request.FILES["excel_file"]
+
+        # you may put validations here to check extension or file size
+
+        excel_file2=open_xls_as_xlsx(excel_file1)
+
+        wb = openpyxl.load_workbook(excel_file2)
+
+        # getting a particular sheet by name out of many sheets
+        worksheet = wb["Hoja1"]
+        print(worksheet)
+
+        excel_data = list()
+        # iterating over the rows and
+        # getting value from each cell in row
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            excel_data.append(row_data)
+
+        return render(request, 'blog/up_excel.html', {"excel_data":excel_data})
+
+
 
 def panel_movpallets(request):
     #print("cargando consumos puestos")

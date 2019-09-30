@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from . import views
 
-
+#app_name = "blog"
 
 urlpatterns = [
     url(r'^$',views.Inicio.as_view(),name='Inicio'),
@@ -63,4 +63,5 @@ urlpatterns = [
     url(r'^api/get_data_inventario/$',views.get_data_inventario,name='api-data-inventario'),
     url(r'^panel_movpallets/$',views.panel_movpallets,name='panel_movpallets'),
     url(r'^api/get_data_movpallets/$',views.get_data_movpallets,name='api_data_movpallets'),
+    url(r'^up_excel/$',views.up_excel,name='up_excel'),
 ]
