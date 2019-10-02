@@ -22,7 +22,8 @@ class Pallet(models.Model):
     m2uni=models.FloatField(default=0)
     kguni=models.FloatField(default=0)
     ubic=models.CharField(max_length=32, default="vacio")
-    #ubic=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default="vacio")
+
+    ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default=1)
     fechaultmov=models.DateTimeField(blank=False, default=timezone.now)
     fechacreac=models.DateTimeField(blank=False, default=timezone.now)
     kgpallet=models.FloatField(default=0)
@@ -72,6 +73,7 @@ class MovPallets(models.Model):
     m2uni=models.FloatField(default=0)
     kguni=models.FloatField(default=0)
     ubic=models.CharField(max_length=32, default="vacio")
+    esFGLoad=models.IntegerField(default=0)
 
 
     def __str__(self):

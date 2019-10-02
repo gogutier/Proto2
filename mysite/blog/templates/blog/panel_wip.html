@@ -322,11 +322,15 @@
 var endpoint='/api/get_data_inventario/';
 
 
+{% load staticfiles %}
 
 function datosinv(){
 
   console.log("iniciando ajax datos inv");
   var myTable = document.getElementById('myTable');
+
+  var imagentime ='<img src= {% static "images/time.png" %} alt=""  height=15 width=15></img>'
+  var auxtext = ''
 
   $.ajax({
       method: "GET",
@@ -364,7 +368,17 @@ function datosinv(){
 
       for (var i=0; i < cuadros.length; i++)
       {
-      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
+
+      if (datosWIP[cuadros[i][2]]['dias']>2)
+      {
+        auxtext='</br> ' + imagentime;
+
+      }  else{
+        auxtext='</br>'
+      }
+      //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + cuadros[i][2] + '</a>' + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  +  auxtext + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
+
       }//myTable.rows[cuadros[1][1]].cells[cuadros[0][1]].innerHTML = cuadros[1][2] + "</br>" + str(zffg2) ;
 
       m2.innerHTML= String((m2totalINV/1000).toFixed(1))
@@ -433,7 +447,6 @@ function datosinv(){
 
 
 
-
 var cuadros= [];
 
 
@@ -471,7 +484,7 @@ function displayHTMLTable(){
     var columns = 54;
 
     ///
-    table+= "<tr >";
+    table+= "<tr  style='text-align: center'>";
       for(j=0;j<columns-1;j++){
         table+= "<td style='font-size: 10px;'  >";
         //table+= ".";
@@ -480,7 +493,7 @@ function displayHTMLTable(){
     table+= "</tr>";
     ///
 
-    table+= "<tr>";
+    table+= "<tr style='text-align: center'>";
     for(j=1;j<columns-22;j++){
       table+= "<td style='font-size: 10px;'>";
       //table+= ".";
@@ -491,7 +504,7 @@ function displayHTMLTable(){
 
 
     for(i=2;i<8;i++){
-      table+= "<tr>";
+      table+= "<tr style='text-align: center'>";
         for(j=0;j<columns-1-31;j++){
           table+= "<td style='font-size: 10px;'>";
           //table+= ".";
@@ -503,9 +516,9 @@ function displayHTMLTable(){
 
 
     for(i=8;i<rows-1;i++){
-      table+= "<tr>";
+      table+= "<tr style='text-align: center'>";
         for(j=0;j<columns-1-12;j++){
-          table+= "<td style='font-size: 10px;'>";
+          table+= "<td style='font-size: 10px; '>";
           //table+= ".";
           table+= "</th>";
         }
@@ -546,7 +559,7 @@ function displayHTMLTable(){
 function creacuadro(x,y,texto,a,l){
 
   var myTable = document.getElementById("table");//.getElementsByTagName("td");
-  myTable.rows[y].cells[x].innerHTML = texto + "</br>" + "%";
+  myTable.rows[y].cells[x].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + texto + '</a>' + "</br>" + "%";
   myTable.rows[y].cells[x].style.backgroundColor = "yellow"
 
   myTable.rows[y].cells[x].colSpan = parseInt(a);

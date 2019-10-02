@@ -58,6 +58,7 @@ def webscrap_mov():
         browser["ancho"] = datosextra[4]
         browser["kguni"] = datosextra[5]
         browser["m2uni"] = datosextra[6]
+        browser["esFGLoad"] = datosextra[7]
 
 
 
@@ -82,6 +83,7 @@ def cargaDatos(ultimo):
     print("conectándose a DB..")
     flag=0
 
+
     try:
         conn = pyodbc.connect('Driver={SQL Server};'
                               'Server=192.168.8.41;'
@@ -100,6 +102,8 @@ def cargaDatos(ultimo):
         flag=0
         #cursor.execute('SELECT TOP (10) [TRANSACTIONINDEX], [PLANTID]  FROM [ctidb_transact].[dbo].[CONVERTPROD]')
     if flag==1:
+
+        flagFGLoad=0
 
         print("iniciando consulta")
         print("supuesto: tabla MVLOAD y FGLOAD no comparten transactionindexes")
@@ -161,6 +165,7 @@ def cargaDatos(ultimo):
             if row0[3] != "Default":
                 if TIFGLOAD<TIMVLOAD:
                     flag0=1
+                    flagFGLoad=1
 
                     print("obtenida row1 de FGLOAD!")
                     print(row1)
@@ -272,7 +277,7 @@ def cargaDatos(ultimo):
             print(m2uni)
 
 
-            datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni]
+            datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
 
         except:
             print("error!")

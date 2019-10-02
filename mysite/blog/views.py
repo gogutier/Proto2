@@ -145,7 +145,7 @@ def get_data_movpallets(request, *args, **kwargs):
 
 
 
-        #Producidos pero excluyendo los pallets que ya están en la lista de Entradas
+        #Producidos pero excluyendo los pallets que ya están en la lista de Entradas (acá saco el m2 actualizado de cada pallet, para descartar las producciones que se fueron a cero)
         filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
 
 
@@ -157,7 +157,7 @@ def get_data_movpallets(request, *args, **kwargs):
         #sumo los m2 asociados a cada pallets
         m2tot=0
         for mov in filtro2:
-            m2tot=m2tot+mov.m2pallet
+            m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
 
         labels[i]["cantidadProd"]= cantidad1
         labels[i]["m2Prod"]= m2tot
@@ -166,7 +166,7 @@ def get_data_movpallets(request, *args, **kwargs):
         #Salidas
         filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
         cantidad1=filtro.count()
-        #sumo los m2 asociados a cada pallets
+        #sumo los m2 asociados a cada pallet
         m2tot=0
         for mov in filtro:
             m2tot=m2tot+mov.m2pallet
@@ -179,10 +179,6 @@ def get_data_movpallets(request, *args, **kwargs):
 
 
     #este es el último item de cada lista (como termina donde empieza el siguiente no funciona dentro del for)
-
-
-
-
 
 
     #Entrada
@@ -199,7 +195,7 @@ def get_data_movpallets(request, *args, **kwargs):
 
 
 
-    #Producido
+    #Producido no ingresado
     filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
 
 
@@ -213,7 +209,7 @@ def get_data_movpallets(request, *args, **kwargs):
 
     m2tot=0
     for mov in filtro2:
-        m2tot=m2tot+mov.m2pallet
+        m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
 
     labels[len(labels)-1]["cantidadProd"]= cantidad1
     labels[len(labels)-1]["m2Prod"]= m2tot
@@ -282,7 +278,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0},"ZFFG2":{"cuenta":0,"m2tot":0},"ZDRO1":{"cuenta":0,"m2tot":0},"ZDRO2":{"cuenta":0,"m2tot":0},"ZFFW1":{"cuenta":0,"m2tot":0},"ZFFW2":{"cuenta":0,"m2tot":0},"ZSOB1":{"cuenta":0,"m2tot":0},"ZWRD1":{"cuenta":0,"m2tot":0},"ZWRD2":{"cuenta":0,"m2tot":0},"ZSOB2":{"cuenta":0,"m2tot":0},"ZHCR1":{"cuenta":0,"m2tot":0},"ZHCR2":{"cuenta":0,"m2tot":0},"ZTCY1":{"cuenta":0,"m2tot":0},"ZTCY2":{"cuenta":0,"m2tot":0},"ZPNC":{"cuenta":0,"m2tot":0},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0},"ZPICADO":{"cuenta":0,"m2tot":0}}
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZPICADO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0}}
 
         m2totalINV=0
         npalletstotalINV=0
@@ -294,6 +290,18 @@ def get_data_inventario(request, *args, **kwargs):
         for calle in datosWIP.keys():
 
             datosWIP[str(calle)]['cuenta']= Pallet.objects.filter(ubic__iexact=str(calle)).count()
+            datosWIP[str(calle)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
+            try:
+                datosWIP[str(calle)]['dias']= (datetime.now()-(Pallet.objects.filter(ubic__iexact=str(calle)).earliest('fechacreac').fechacreac.replace(tzinfo=None))).days#- datetime.now()))
+
+
+            except:
+                datosWIP[str(calle)]['dias']=0
+
+            print(str(calle))
+            #print("fecha creación:")
+            print(datosWIP[str(calle)]['dias'])
+
             if (calle == "CORR_LOWER_Stacker" or calle == "CORR_UPPER_Stacker"):
                 npalletstotalCORR=npalletstotalCORR+datosWIP[str(calle)]['cuenta']
             else:
@@ -406,6 +414,7 @@ def carga_mov_pallets(request):
             datoancho=form.cleaned_data["ancho"]
             datokguni=form.cleaned_data["kguni"]
             datom2uni=form.cleaned_data["m2uni"]
+            datoFGLoad=form.cleaned_data["esFGLoad"]
 
             #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
             o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
@@ -429,6 +438,7 @@ def carga_mov_pallets(request):
             o.ancho=datoancho
             o.kguni=datokguni
             o.m2uni=datom2uni
+            o.esFGLoad=datoFGLoad
 
             o.save()
 
@@ -441,9 +451,13 @@ def carga_mov_pallets(request):
             c, created = Pallet.objects.get_or_create(tarja=dato8)
             c.padron=dato3
             c.ubic=dato11
+            #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
+            if datoFGLoad==1:
+                c.fechacreac=dato12
             c.ancho=datoancho
             c.alto=datoalto
             c.unidades=datounidadespallet
+            c.cliente="pendiente"
             c.m2uni=datom2uni
             c.kguni=datokguni
             c.m2pallet=datom2pallet
@@ -576,6 +590,46 @@ def panel_wip(request):
 
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
+
+
+class UbicDetailView(DetailView):
+    context_object_name = 'ubicpallet_detail'
+    model = UbicPallet
+
+    def actualizadatos(self, pk):
+        #referencia = OrdenProg.objects.filter(pk=pk[0])#ojo tmabién puede ser con el get. ahí hay que poner el [0] ya que no acepta más de un resultado
+        referencia = OrdenProg.objects.get(pk=pk)
+        #detalles = DetalleProg.objects.filter(programma = referencia)
+        #ordenprevia = OrdenProg.objects.get(pk=pk).get_previous_by_fecha_programa()
+
+
+
+    def get_context_data(self, **kwargs):
+
+        pk = self.kwargs['pk']# this is the primary key from your URL
+        # your other code
+
+        print(pk)
+
+        #self.actualizadatos(pk)
+
+        context = super().get_context_data(**kwargs)
+        #detalleprog2 = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk), datefinajustada__lte = OrdenProg.objects.get(pk=pk).horizontefin )#.filter(published_date__isnull=True).order_by('-published_date')
+
+        #detalleprogprev = DetalleProg.objects.filter(programma = OrdenProg.objects.get(pk=pk).get_previous_by_fecha_programa(), datefin__lt= OrdenProg.objects.get(pk=pk).fecha_programa, datefinajustada__gte = OrdenProg.objects.get(pk=pk).fecha_programa.date() )
+
+        #context['detalleprog'] = detalleprog2.union(detalleprogprev, all=True).order_by('datefin')
+
+        #context['prodreal'] = ProdReal.objects.filter(datefin__gte=OrdenProg.objects.get(pk=pk).fecha_programa + timedelta(days=-1), datefin__lt=OrdenProg.objects.get(pk=pk).horizontefin + timedelta(days=1)).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
+        #context['maquinas'] = Maquinas.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
+        #context['turnos'] = Turnos.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
+        #context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
+        #context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
+        context['ubic'] = UbicPallet.objects.get(pk=pk)
+        context['m2tot'] = str(UbicPallet.objects.get(pk=pk).m2tot)
+        context['npallets'] = str(UbicPallet.objects.get(pk=pk).npallets)
+        context['pallets'] = Pallet.objects.filter(ubic__iexact=str(UbicPallet.objects.get(pk=pk).calle)).order_by("fechacreac")
+        return context
 
 
 

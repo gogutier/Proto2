@@ -30,7 +30,7 @@ class MovPalletForm(forms.ModelForm): #acà se hace ala form y se summonea del v
         widgets = {
             'EVENTDATETIME': forms.DateInput(attrs={'class':'datepicker'}),
             }
-        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "LOADID", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME", "unidadespallet", "kgpallet", "m2pallet", "alto", "ancho", "kguni", "m2uni"]
+        fields = ['TRANSACTIONINDEX', 'PLANTID', 'WAREHOUSE', 'INTERNALSPECID', "ORDERID", "PARTID", "OPERATIONNO", "UNITTYPE", "LOADID", "UNITNO", "SOURCE", "DESTINATION", "EVENTDATETIME", "EVENTTIME", "unidadespallet", "kgpallet", "m2pallet", "alto", "ancho", "kguni", "m2uni","esFGLoad"]
 
 
 

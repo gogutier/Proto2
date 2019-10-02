@@ -57,6 +57,7 @@ urlpatterns = [
     url(r'^api/get_data_corrplan_cartones/$',views.get_data_corrplan_cartones,name='get_data_corrplan_cartones'),
     url(r'^panel_bpt/$',views.panel_bpt,name='panel_bpt'),
     url(r'^panel_wip/$',views.panel_wip,name='panel_wip'),
+    url(r'^ubicpallet_detail/(?P<pk>\d+)$', views.UbicDetailView.as_view(),name='ubicpallet_detail'),
     url(r'^qr_despacho/new_camion/', views.new_camion, name='new_camion'),
     url(r'^invsimple/$',views.invsimple,name='invsimple'),
     url(r'^carga_mov_pallets/$',views.carga_mov_pallets,name='carga_mov_pallets'),
