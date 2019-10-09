@@ -1,0 +1,214 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<h3>Panel Inventario cíclico</h3>
+
+<h5>Tabla lógica</h5>
+
+<table>
+  <tr>
+    <td></td>
+    <td>Mm2</td>
+    <td></td>
+    <td>n° pallets</td>
+  </tr>
+  <tr>
+    <td>Bodega</td>
+    <td id="m2"></td>
+    <td></td>
+    <td id="npal"></td>
+   </tr>
+   <tr>
+     <td>Stackers</td>
+     <td id="m2CORR"></td>
+     <td></td>
+     <td id="npalCORR"></td>
+
+   </tr>
+</table>
+
+
+
+
+
+
+  <div class="row"   id="parsed_csv_list">
+  </div>
+
+
+
+
+
+
+<script type="text/javascript">
+
+{% block jquery %}
+
+
+
+var endpoint='/api/get_data_inv_ciclico/';
+
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+
+  var auxtext = ''
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      datosWIP = response_data.datosWIP;
+      prueba = response_data.prueba;
+
+
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+
+      displayHTMLTable();
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+
+
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+
+datosinv()
+
+
+window.setInterval(function(){
+  console.log("hola");
+  datosinv();
+
+
+}, 5000);
+
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(){
+  var table = "<table  class='table-responsive'  id='table' >";
+
+
+    ///
+    table+= "<tr  style='text-align: center;'>";
+
+
+        var value;
+        for (var key in datosWIP) {
+          value = datosWIP[key];
+            // your code here...
+
+
+          table+= "<table style='border: 0.5px solid DarkRed;'>";
+
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;' >";
+
+                table+= key //
+
+              table+= "</td>"
+            table+= "</tr>";
+
+
+
+            table+= "<tr >";
+            table+= "<td style='font-size: 14px;' bgcolor='#00FF00' >";
+
+              for (var i=0; i< datosWIP[key]['palletsencontrados'].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsencontrados'][i]
+                table+= "<br>"
+              }
+
+
+              table+= "</td>"
+            table+= "</tr>";
+
+
+
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;'  bgcolor='Orange'>";
+
+              for (var i=0; i< datosWIP[key]['palletsnoencontrados'].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsnoencontrados'][i]
+                table+= "<br>"
+              }
+
+
+            table+= "</td>"
+            table+= "</tr>";
+
+
+            table+= "<tr >";
+            table+= "<td style='font-size: 14px;' bgColor='Red'>";
+
+
+                        for (var i=0; i< datosWIP[key]['palletscti'].length; i++)
+                        {
+
+                          table+= datosWIP[key]['palletscti'][i]
+                          table+= "<br>"
+                        }
+
+
+
+              table+= "</td>"
+            table+= "</tr>";
+
+
+
+            table+= "</table>";
+
+            //console.log(datosWIP[key]['encontrados'])
+
+          }
+
+      table+= "</tr>";
+
+
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+}
+
+{% endblock %}
+</script>
+
+{% endblock %}

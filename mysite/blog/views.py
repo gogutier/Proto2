@@ -83,6 +83,14 @@ def panel_movpallets(request):
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
 
+def panel_inv_ciclico(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_inv_ciclico.html'
+
+    return render(request, template_name, {})#
+
+
+
 def get_data_movpallets(request, *args, **kwargs):
 
     #muestra evolución de últimas horas de cuántos pallets entraron a WIP y cuántos salieron (m2 y unidades)
@@ -386,6 +394,73 @@ def get_data_inventario(request, *args, **kwargs):
 
 
 
+def get_data_inv_ciclico(request, *args, **kwargs):
+
+
+        #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+
+        prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+
+        datosWIP={"ZFFG1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFG2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPNC":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0}}
+
+
+
+        tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+
+
+
+
+
+
+        for calle in datosWIP.keys():
+
+
+            palletstomainv = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)
+            #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
+            palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('pk')
+            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
+            #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
+            palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
+
+
+            lista=[]
+
+            for pallet in palletscti.filter(ubic=calle):
+
+                lista.append(pallet.tarja)
+
+            datosWIP[calle]['palletscti'] = lista
+
+            lista=[]
+
+            for pallet in palletsencontrados.filter(ubic=calle):
+
+                lista.append(pallet.tarja)
+
+            datosWIP[calle]['palletsencontrados'] = lista
+
+
+            lista=[]
+
+            for pallet in palletsnoencontrados.filter(ubic=calle):
+
+                lista.append(pallet.tarja)
+
+            datosWIP[calle]['palletsnoencontrados'] = lista
+
+
+
+        data = {
+        "prueba":prueba,
+        "datosWIP":datosWIP,
+
+
+        }
+        print("Enviando datos inventario")
+        return JsonResponse(data)#http response con el datatype de JS
+
+
 
 def carga_mov_pallets(request):
     template_name = 'blog/carga_mov_pallets.html'
@@ -612,7 +687,7 @@ def invsimple2(request):
 
     else:
         #initial = {'name': 'Initial name'}
-        o=BobInvCic.objects.all().order_by('-pk')[0]
+
         initial = {}
         form = PruebaModForm(initial=initial)
 
@@ -634,11 +709,10 @@ def invsimple2(request):
 
 
 
-    mensajes=str(BobInvCic.objects.all().count())
 
-    print(mensajes)
 
-    return render(request, template_name, {'form':form, 'palletsnoencontrados':palletsnoencontrados, 'palletsencontrados':palletsencontrados, 'tomainv':tomainv,'palletscti':palletscti, "mensajes":mensajes})
+
+    return render(request, template_name, {'form':form, 'palletsnoencontrados':palletsnoencontrados, 'palletsencontrados':palletsencontrados, 'tomainv':tomainv,'palletscti':palletscti, 'cuentaenc': palletsencontrados.count(), 'cuentanoenc': palletsnoencontrados.count(), 'cuentacti':palletscti.count()})
 
 
 

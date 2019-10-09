@@ -66,4 +66,6 @@ urlpatterns = [
     url(r'^panel_movpallets/$',views.panel_movpallets,name='panel_movpallets'),
     url(r'^api/get_data_movpallets/$',views.get_data_movpallets,name='api_data_movpallets'),
     url(r'^up_excel/$',views.up_excel,name='up_excel'),
+    url(r'^panel_inv_ciclico/$',views.panel_inv_ciclico,name='panel_inv_ciclico'),
+    url(r'^api/get_data_inv_ciclico/$',views.get_data_inv_ciclico,name='api-data-inv-ciclico'),
 ]
