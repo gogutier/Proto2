@@ -311,9 +311,9 @@ def get_data_inventario(request, *args, **kwargs):
             except:
                 datosWIP[str(calle)]['dias']=0
 
-            print(str(calle))
+            #print(str(calle))
             #print("fecha creación:")
-            print(datosWIP[str(calle)]['dias'])
+            #print(datosWIP[str(calle)]['dias'])
 
             if (calle == "CORR_LOWER_Stacker" or calle == "CORR_UPPER_Stacker"):
                 npalletstotalCORR=npalletstotalCORR+datosWIP[str(calle)]['cuenta']

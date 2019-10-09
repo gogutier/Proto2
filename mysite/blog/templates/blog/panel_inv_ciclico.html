@@ -1,35 +1,39 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<h3>Panel Inventario cíclico</h3>
+<h4>Panel Inventario cíclico</h4>
 
-<h5>Tabla lógica</h5>
+<br>
 
-<table>
-  <tr>
-    <td></td>
-    <td>Mm2</td>
-    <td></td>
-    <td>n° pallets</td>
+
+<div class="container" >
+
+<h6>Tabla lógica</h6>
+
+<table >
+  <tr style: bgcolor='#00FF00'>
+    <td style='font-size: 10px;' >Pallet OK en inventario</td>
+
   </tr>
-  <tr>
-    <td>Bodega</td>
-    <td id="m2"></td>
-    <td></td>
-    <td id="npal"></td>
-   </tr>
-   <tr>
-     <td>Stackers</td>
-     <td id="m2CORR"></td>
-     <td></td>
-     <td id="npalCORR"></td>
+  <tr style: bgcolor='Orange'>
+    <td style='font-size: 10px;'>Mover pallet a esta ubicación</td>
 
+   </tr>
+   <tr style: bgcolor='Red'>
+     <td style='font-size: 10px;' >Pallet ya no está en esta ubicación. (Enviar a consumo, picado, etc)</td>
    </tr>
 </table>
 
+<br>
+
+</div>
 
 
+<div class="container">
 
+<h6>Tabla Toma de inventario</h6>
+
+<br>
 
 
   <div class="row"   id="parsed_csv_list">
@@ -37,7 +41,7 @@
 
 
 
-
+</div>
 
 
 <script type="text/javascript">
