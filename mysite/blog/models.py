@@ -10,10 +10,30 @@ MAR = "Marzo"
 ABR = "Abril"
 
 
+class TomaInvCic(models.Model):
+
+    fechatomainvcic=models.DateTimeField(blank=False, default=timezone.now)
+    aux1=models.CharField(max_length=16, blank=False, default="0")
+
+    def __str__(self):
+        return (str(self.pk))
+
+
+class PalletCic(models.Model):
+
+    tomainvcic=models.ForeignKey('blog.TomaInvCic', related_name='tomainv_cic', on_delete=models.CASCADE, default=1)
+    tarja=models.CharField(unique=True, max_length=9, blank=False, default="0")
+    ubic=models.CharField(max_length=32, default="vacio")
+    ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet_cic', on_delete=models.CASCADE, default=1)
+    fechatoma=models.DateTimeField(blank=False, default=timezone.now)
+
+    def __str__(self):
+        return (str(self.tarja))
+
 
 class Pallet(models.Model):
 
-    tarja=models.CharField(unique=True, max_length=8, blank=False, default="0")
+    tarja=models.CharField(unique=True, max_length=9, blank=False, default="0")
     padron=models.CharField(max_length=16, default="0")
     cliente=models.CharField(max_length=16, default="0")
     ancho=models.FloatField(default=0)
@@ -22,6 +42,7 @@ class Pallet(models.Model):
     m2uni=models.FloatField(default=0)
     kguni=models.FloatField(default=0)
     ubic=models.CharField(max_length=32, default="vacio")
+    maqruta=models.CharField(max_length=16, default="vacio")
 
     ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default=1)
     fechaultmov=models.DateTimeField(blank=False, default=timezone.now)

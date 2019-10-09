@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -157,7 +157,12 @@ def get_data_movpallets(request, *args, **kwargs):
         #sumo los m2 asociados a cada pallets
         m2tot=0
         for mov in filtro2:
-            m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
+            #print(str(mov) + ".." + str(mov.LOADID) )
+            try:
+                m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
+            except:
+                print("error con " + str(mov) + ".." + str(mov.LOADID) + "!!")
+
 
         labels[i]["cantidadProd"]= cantidad1
         labels[i]["m2Prod"]= m2tot
@@ -452,7 +457,7 @@ def carga_mov_pallets(request):
             c.padron=dato3
             c.ubic=dato11
             #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
-            if datoFGLoad==1:
+            if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado
                 c.fechacreac=dato12
             c.ancho=datoancho
             c.alto=datoalto
@@ -485,8 +490,17 @@ def carga_mov_pallets(request):
             dato11=form.cleaned_data["DESTINATION"]
             dato12=form.cleaned_data["EVENTDATETIME"]
             #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
-            print(dato12)
+
             dato13=form.cleaned_data["EVENTTIME"]
+
+            datounidadespallet=form.cleaned_data["unidadespallet"]
+            datokgpallet=form.cleaned_data["kgpallet"]
+            datom2pallet=form.cleaned_data["m2pallet"]
+            datoalto=form.cleaned_data["alto"]
+            datoancho=form.cleaned_data["ancho"]
+            datokguni=form.cleaned_data["kguni"]
+            datom2uni=form.cleaned_data["m2uni"]
+            datoFGLoad=form.cleaned_data["esFGLoad"]
 
             #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
             o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
@@ -503,7 +517,38 @@ def carga_mov_pallets(request):
             o.DESTINATION=dato11
             o.EVENTDATETIME=dato12
             o.EVENTTIME=dato13
+            o.unidadespallet=datounidadespallet
+            o.kgpallet=datokgpallet
+            o.m2pallet=datom2pallet
+            o.alto=datoalto
+            o.ancho=datoancho
+            o.kguni=datokguni
+            o.m2uni=datom2uni
+            o.esFGLoad=datoFGLoad
+
             o.save()
+
+            #creo la ubicación de inventario en caso de que no exista.
+            a, created = UbicPallet.objects.get_or_create(calle=dato11)
+            a.save()
+
+            #creo el pallet en caso de que no exista. Si ya existe le actualizo la ubicación.
+
+            c, created = Pallet.objects.get_or_create(tarja=dato8)
+            c.padron=dato3
+            c.ubic=dato11
+            #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
+            if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado
+                c.fechacreac=dato12
+            c.ancho=datoancho
+            c.alto=datoalto
+            c.unidades=datounidadespallet
+            c.cliente="pendiente"
+            c.m2uni=datom2uni
+            c.kguni=datokguni
+            c.m2pallet=datom2pallet
+            c.kgpallet=datokgpallet
+            c.save()
 
 
             #form = MovPalletForm()
@@ -521,6 +566,80 @@ def carga_mov_pallets(request):
     #print(mensajes)
 
     return render(request, template_name, {'form':form, "ultimo":ultimotransaction})#,'bobinas':bobinas,"mensajes":mensajes})
+
+
+def invsimple2(request):
+    template_name = 'blog/invsimple2.html'
+
+    datocrudo='I'
+    tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+
+    if request.method == "POST":
+        form = PruebaModForm(request.POST)
+
+        if form.is_valid():
+
+            print("hola")
+
+
+        else:
+            datocrudo=form.data["dato1"]
+
+            initial = {}
+            form = PruebaModForm(initial=initial)
+
+
+
+
+            if datocrudo[:1].upper()=="Z":
+
+                tomainv.aux1=datocrudo.upper()
+                tomainv.save()
+                '''
+
+                '''
+            elif len(datocrudo) <= 7 and len(datocrudo) > 5 and datocrudo.isdigit():
+
+                o, created = PalletCic.objects.get_or_create(tarja=datocrudo)
+                o.ubic= tomainv.aux1.upper()
+                o.tomainvcic= tomainv
+                o.save()
+
+
+
+
+        #return redirect ('res_inventario')
+
+    else:
+        #initial = {'name': 'Initial name'}
+        o=BobInvCic.objects.all().order_by('-pk')[0]
+        initial = {}
+        form = PruebaModForm(initial=initial)
+
+
+    #bobinas = reversed(list(BobInvCic.objects.all()))
+
+
+
+    palletstomainv = PalletCic.objects.filter(ubic=tomainv.aux1.upper(), tomainvcic=tomainv)
+
+    #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
+    palletsnoencontrados=  PalletCic.objects.filter(ubic=tomainv.aux1.upper(), tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=tomainv.aux1.upper())]).order_by('pk')
+
+    palletsencontrados = PalletCic.objects.filter(ubic=tomainv.aux1.upper(), tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
+    #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
+    palletscti= Pallet.objects.filter(ubic=tomainv.aux1.upper()).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
+
+
+
+
+
+    mensajes=str(BobInvCic.objects.all().count())
+
+    print(mensajes)
+
+    return render(request, template_name, {'form':form, 'palletsnoencontrados':palletsnoencontrados, 'palletsencontrados':palletsencontrados, 'tomainv':tomainv,'palletscti':palletscti, "mensajes":mensajes})
+
 
 
 def invsimple(request):

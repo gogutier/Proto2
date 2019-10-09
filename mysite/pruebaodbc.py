@@ -7,7 +7,7 @@ from datetime import datetime
 import pyodbc
 
 
-print("hola")
+#print("hola")
 def webscrap_mov():
 
     print("conectando a browser")
@@ -31,11 +31,11 @@ def webscrap_mov():
     messages = page.find(id="ultimo")
     print(messages.text)
     row, datosextra=cargaDatos(messages.text)
-    print(row)
+    #print(row)
 
     if (row!=None and len(row)>0):
 
-        print("escribiendo datos de transacción en página")
+        #print("escribiendo datos de transacción en página")
         browser["TRANSACTIONINDEX"] = str(row[0])#args.username
         browser["PLANTID"] = str(row[1])#args.username
         browser["WAREHOUSE"] = str(row[2])#args.username
@@ -63,7 +63,7 @@ def webscrap_mov():
 
 
     ##browser["password"] = "plant"#args.password
-        print("submiteando")
+        #print("submiteando")
         resp = browser.submit_selected()
 
         # Uncomment to launch a web browser on the current page:
@@ -80,7 +80,7 @@ def webscrap_mov():
 
 
 def cargaDatos(ultimo):
-    print("conectándose a DB..")
+    #print("conectándose a DB..")
     flag=0
 
 
@@ -106,7 +106,7 @@ def cargaDatos(ultimo):
         flagFGLoad=0
 
         print("iniciando consulta")
-        print("supuesto: tabla MVLOAD y FGLOAD no comparten transactionindexes")
+        #print("supuesto: tabla MVLOAD y FGLOAD no comparten transactionindexes")
 
         #consulto los datos del último pallet que se movió menor al máximo transactionindex
         # Tb filtro por sólos los que son pallets de corrugado = OPERATIONNO = 0
@@ -115,24 +115,24 @@ def cargaDatos(ultimo):
 
         #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
         flag0=0
-        sleep(0.1)
+        sleep(0.01)
         cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EVENTDATETIME],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
 
 
         row0=cursor.fetchone()
-        print("row0 FGLOAD:")
-        print(row0)
+        #print("row0 FGLOAD:")
+        #print(row0)
 
         if row0!=None:
             row0datetime=row0[10][:11]
             row0time=row0[11]
 
-            print(row0datetime)
-            print(row0time)
+            #print(row0datetime)
+            #print(row0time)
 
             row0datetime= row0datetime + row0time[0] + row0time[1] + ":" + row0time[2] + row0time[3] + ":" + row0time[4]+ row0time[5]
             row0datetime= datetime.strptime(row0datetime, '%d-%m-%Y %H:%M:%S')
-            print(row0datetime)
+            #print(row0datetime)
             workcenter=row0[2]
             destino=""
             if workcenter=="CORR_U":
@@ -145,7 +145,7 @@ def cargaDatos(ultimo):
 
 
             row1=[row0[0], row0[1], "0", row0[3], row0[4], row0[5], row0[6], 0, row0[7], row0[8], "CORR" , destino, row0datetime, row0[11]]
-            sleep(0.1)
+            sleep(0.01)
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
 
             rowaux=cursor.fetchone()
@@ -167,8 +167,8 @@ def cargaDatos(ultimo):
                     flag0=1
                     flagFGLoad=1
 
-                    print("obtenida row1 de FGLOAD!")
-                    print(row1)
+                    #print("obtenida row1 de FGLOAD!")
+                    #print(row1)
             else:
                 flag0=0
 
@@ -176,8 +176,8 @@ def cargaDatos(ultimo):
 
         if flag0==0:
             try:
-                print("obteniendo el row1 del MVLOAD")
-                sleep(0.1)
+                #print("obteniendo el row1 del MVLOAD")
+                sleep(0.01)
                 cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
                 #Aquí hay que ponerle un TRY probablemente
                 row1=cursor.fetchone()
@@ -187,8 +187,8 @@ def cargaDatos(ultimo):
 
 
 
-                print("Obtenida row1 de MVLOAD!")
-                print(row1)
+                #print("Obtenida row1 de MVLOAD!")
+                #print(row1)
             except:
                 print("error!")
                 row1=[]
@@ -210,8 +210,8 @@ def cargaDatos(ultimo):
             id=row1[4]
 
 
-            print ("iniciando segunda consulta")
-            sleep(0.1)
+            #print ("iniciando segunda consulta")
+            sleep(0.01)
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(row1[8]) +"' order by TRANSACTIONINDEX desc")
             #De aquí quiero el número de unidades
             #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
@@ -226,9 +226,9 @@ def cargaDatos(ultimo):
 
 
             #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón###
-            # Ojo! Esto lo uso para sacar el transaction index inicial con el que se elimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
-            print("iniciando tercera consulta por el id " + str(row1[3]) )
-            sleep(0.1)
+            # Ojo! Esto lo uso para sacar el transaction index inicial con el que se alimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
+            #print("iniciando tercera consulta por el id " + str(row1[3]) )
+            sleep(0.01)
             cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
 
             row3=cursor.fetchone()
@@ -237,8 +237,8 @@ def cargaDatos(ultimo):
             #print(transaction)
 
 
-            print("inciando cuarta consulta")
-            sleep(0.1)
+            #print("inciando cuarta consulta")
+            sleep(0.01)
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
 
             row4=cursor.fetchone()
@@ -250,31 +250,31 @@ def cargaDatos(ultimo):
 
             kgpallet= pesouni* unidadespallet
 
-            print("tarja")
-            print(row1[8])
-            print("ID")
-            print(id)
+            #print("tarja")
+            #print(row1[8])
+            #print("ID")
+            #print(id)
 
-            print("kgpallet")
-            print(kgpallet)
+            #print("kgpallet")
+            #print(kgpallet)
 
             m2uni=ancho*alto
 
             m2pallet= m2uni*unidadespallet
-            print("m2pallet")
-            print(m2pallet)
+            #print("m2pallet")
+            #print(m2pallet)
 
 
-            print("ancho")
-            print(ancho)
-            print("alto")
-            print(alto)
-            print("unidades")
-            print(unidadespallet)
-            print("pesouni")
-            print(pesouni)
-            print("m2uni")
-            print(m2uni)
+            #print("ancho")
+            #print(ancho)
+            #print("alto")
+            #print(alto)
+            #print("unidades")
+            #print(unidadespallet)
+            #print("pesouni")
+            #print(pesouni)
+            #print("m2uni")
+            #print(m2uni)
 
 
             datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
@@ -298,4 +298,4 @@ def cargaDatos(ultimo):
 while True:
     webscrap_mov()
 
-    sleep(0.3)
+    sleep(0.02)

@@ -4,7 +4,7 @@
 
 
 <div class="container" style="padding:10px 10px;">
-<table class='table table-hover'>
+<table class='table table-hover' id='table'>
 
 <tr style="text-align: center">
   <td  colspan="5"><h3>{{ubic.calle}}</h3></td>
@@ -14,6 +14,7 @@
   <td >Cliente</td>
   <td >Padrón</td>
   <td >Unidades</td>
+  <td >m2</td>
   <td >Fecha Creación</td>
 </tr>
 {% for pallet in pallets %}
@@ -23,6 +24,7 @@
   <td>{{pallet.cliente}}</td>
   <td>{{pallet.padron}}</td>
   <td>{{pallet.unidades}}</td>
+  <td>{{pallet.m2pallet}}</td>
   <td>{{pallet.fechacreac}}</td>
 </tr>
 
@@ -35,6 +37,31 @@
 
 
 </div>
+
+<script type="text/javascript">
+
+updatecuadros()
+
+function updatecuadros()
+  {
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+
+      for (i=2;i<6;i++)
+      {
+
+        if (1)
+        {myTable.rows[i].cells[4].style.color = "Crimson"}
+
+
+      }
+  }
+
+
+
+
+
+</script>
 
 
 {% endblock %}
