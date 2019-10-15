@@ -21,7 +21,8 @@ def conecta_BD():
         print("Conectado a DB :D")
         return(cursor)
 
-    except:
+    except Exception as e:
+        print(e)
         print("error al conectar con DB :(")
 
 def inicia_browser():
@@ -103,7 +104,8 @@ def webscrap_mov(browser, cursor):
         resultado="dato enviado"
         return(resultado)
 
-    except:
+    except Exception as e:
+        print(e)
         print("Desconectado de página :(")
         sleep(0.2)
         exit()
@@ -185,7 +187,8 @@ def cargaDatos(ultimo, cursor):
             #compara el transactionidex de fgload vs el de MVLOAD
             #print("Obtenida row1 de MVLOAD!")
             #print(row1)
-        except:
+        except Exception as e:
+            print(e)
             print("error!")
             sleep(1)
             row1=[]
@@ -260,7 +263,8 @@ def cargaDatos(ultimo, cursor):
         #print(m2uni)
         datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
         print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]))
-    except:
+    except Exception as e:
+        print(e)
         print("error!")
         sleep(1)
         row1=[]
@@ -279,13 +283,15 @@ while True:
         sleep(0.5)
         browser= inicia_browser()
 
-    except:
+    except Exception as e:
+        print(e)
         print("error en conexión a datos :( (a DB o a sitio web))")
         sleep(0.2)
     try:
         while True:
             webscrap_mov(browser,cursor)
 
-    except:
+    except Exception as e:
+        print(e)
         print("error consulta de datos :(")
         sleep(0.5)
