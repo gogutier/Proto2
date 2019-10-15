@@ -9,9 +9,10 @@ def webscrap_corrplan():
     corrplan=[]
     with Display():
         # we can now start Firefox and it will run inside the virtual display
-        binary = FirefoxBinary('/home/gonzalo/Descargas/firefox-17.0.1/firefox/firefox-bin')#esto hay que cambiarlo al exportarlo a pythonanywhere, pasarlo a : "browser = webdriver.Firefox()""
+        binary = FirefoxBinary('/home/gonzalo/Descargas/firefox-17.0.1/firefox/firefox-bin')#esto hay que cambiarlo al exportarlo a pythonanywhere, pasarlo a : "driver = webdriver.Firefox()""
+        driver = webdriver.Firefox()
         #binary = FirefoxBinary('/home/gonzalo/Descargas/firefox-17.0.1/firefox/firefox-bin')
-        driver = webdriver.Firefox(firefox_binary=binary)
+        #driver = webdriver.Firefox(firefox_binary=binary)
 
         # put the rest of our selenium code in a try/finally
         # to make sure we always clean up at the end

@@ -149,16 +149,25 @@ function displayHTMLTable(){
 
             table+= "<tr >";
             table+= "<td style='font-size: 14px;' bgcolor='#00FF00' >";
-
               for (var i=0; i< datosWIP[key]['palletsencontrados'].length; i++)
               {
 
                 table+= datosWIP[key]['palletsencontrados'][i]
                 table+= "<br>"
               }
-
-
               table+= "</td>"
+            table+= "</tr>";
+
+
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;'  bgcolor='Yellow'>";
+              for (var i=0; i< datosWIP[key]['palletsenotracalle'].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsenotracalle'][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
             table+= "</tr>";
 
 
@@ -176,6 +185,9 @@ function displayHTMLTable(){
 
             table+= "</td>"
             table+= "</tr>";
+
+
+
 
 
             table+= "<tr >";

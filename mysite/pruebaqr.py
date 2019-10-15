@@ -1,7 +1,8 @@
 import pyqrcode
 
-s="B01"
+s=("ROLL1A","ROLL1B","ROLL2A","ROLL2B","ROLL3A","ROLL3B","ROLL4A","ROLL4B","ROLL5A","ROLL5B")
 
-url= pyqrcode.create(s)
+for a in s:
+    url= pyqrcode.create(a)
 
-url.svg(s+".svg",scale = 10)
+    url.svg(a+".svg",scale = 30)

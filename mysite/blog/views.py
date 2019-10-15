@@ -417,12 +417,40 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
 
             palletstomainv = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)
-            #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
-            palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('pk')
-            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
+
+
+
+
             #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
             palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
 
+
+
+
+            #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
+            palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('pk')
+            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
+
+
+
+            #hago grupo de calles a excluir
+            palletsCTIenotracalle = Pallet.objects.all().exclude(ubic=calle)
+            tarjasnot=[]
+
+            for aux in palletsCTIenotracalle:
+                tarjasnot.append(aux.tarja)
+
+
+
+
+
+            palletsenotracalle=[]
+
+            for aux in PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv):
+                if aux.tarja in tarjasnot:
+                    palletsenotracalle.append(aux.tarja)
+
+            #palletsnoencontrados= palletsnoencontrados.exclude(tarja__in=[o.tarja for o in palletsenotracalle]).order_by('pk')
 
             lista=[]
 
@@ -445,9 +473,15 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
             for pallet in palletsnoencontrados.filter(ubic=calle):
 
-                lista.append(pallet.tarja)
+                if not(pallet.tarja in palletsenotracalle):
+                    lista.append(pallet.tarja)
 
             datosWIP[calle]['palletsnoencontrados'] = lista
+
+
+
+            datosWIP[calle]['palletsenotracalle'] = palletsenotracalle
+
 
 
 
@@ -484,9 +518,7 @@ def carga_mov_pallets(request):
             dato11=form.cleaned_data["DESTINATION"]
             dato12=form.cleaned_data["EVENTDATETIME"]
             #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
-
             dato13=form.cleaned_data["EVENTTIME"]
-
             datounidadespallet=form.cleaned_data["unidadespallet"]
             datokgpallet=form.cleaned_data["kgpallet"]
             datom2pallet=form.cleaned_data["m2pallet"]
@@ -532,7 +564,7 @@ def carga_mov_pallets(request):
             c.padron=dato3
             c.ubic=dato11
             #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
-            if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado
+            if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
                 c.fechacreac=dato12
             c.ancho=datoancho
             c.alto=datoalto
@@ -652,33 +684,24 @@ def invsimple2(request):
     if request.method == "POST":
         form = PruebaModForm(request.POST)
 
-        if form.is_valid():
 
-            print("hola")
-
-
-        else:
-            datocrudo=form.data["dato1"]
-
-            initial = {}
-            form = PruebaModForm(initial=initial)
+        datocrudo=form.data["dato1"]
+        initial = {}
+        form = PruebaModForm(initial=initial)
 
 
 
+        if datocrudo[:1].upper()=="Z":
+            tomainv.aux1=datocrudo.upper()
+            tomainv.save()
+            '''
 
-            if datocrudo[:1].upper()=="Z":
-
-                tomainv.aux1=datocrudo.upper()
-                tomainv.save()
-                '''
-
-                '''
-            elif len(datocrudo) <= 7 and len(datocrudo) > 5 and datocrudo.isdigit():
-
-                o, created = PalletCic.objects.get_or_create(tarja=datocrudo)
-                o.ubic= tomainv.aux1.upper()
-                o.tomainvcic= tomainv
-                o.save()
+            '''
+        elif len(datocrudo) <= 7 and len(datocrudo) > 5 and datocrudo.isdigit():
+            o, created = PalletCic.objects.get_or_create(tarja=datocrudo)
+            o.ubic= tomainv.aux1.upper()
+            o.tomainvcic= tomainv
+            o.save()
 
 
 
