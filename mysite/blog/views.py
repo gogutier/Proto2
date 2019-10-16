@@ -336,6 +336,9 @@ def get_data_inventario(request, *args, **kwargs):
 
 
         #print(datosWIP)
+
+        ###Estos filtros de útimos movimientos los voy a sacar pq no aportan mucho
+        '''
         #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
         filtroprod=[]
 
@@ -376,6 +379,20 @@ def get_data_inventario(request, *args, **kwargs):
 
 
         print()
+        '''
+
+        #veo de todos los order corrplan, cuál es la suma de m2 asociados a una máquina.
+        auxm2totprog=0
+        auxm2inv=0
+        for order in OrdenCorrplan.objects.filter(maquina=Maquinas.objects.filter(maquina='HCR')[0]):
+            auxm2totprog=auxm2totprog+order.area
+            for pallet in Pallet.objects.all():
+                if pallet.ORDERID == order.order_id:
+                    auxm2inv=auxm2inv+pallet.m2pallet
+        print("area tot Prog TCY: " + str(auxm2totprog))
+        print("area Prog en inv TCY: " + str(auxm2inv))
+
+
 
         data = {
         "prueba":prueba,
@@ -384,9 +401,9 @@ def get_data_inventario(request, *args, **kwargs):
         "npalletstotalINV": npalletstotalINV,
         "m2totalCORR": m2totalCORR,
         "npalletstotalCORR": npalletstotalCORR,
-        "filtroentrada": filtroentrada,
-        "filtrosalida": filtrosalida,
-        "filtroprod": filtroprod,
+        #"filtroentrada": filtroentrada,
+        #"filtrosalida": filtrosalida,
+        #"filtroprod": filtroprod,
 
         }
         print("Enviando datos inventario")
@@ -563,6 +580,7 @@ def carga_mov_pallets(request):
             c, created = Pallet.objects.get_or_create(tarja=dato8)
             c.padron=dato3
             c.ubic=dato11
+            c.ORDERID=dato4
             #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
             if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
                 c.fechacreac=dato12
@@ -576,13 +594,8 @@ def carga_mov_pallets(request):
             c.kgpallet=datokgpallet
             c.save()
 
-
-
-
-            #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
-
-
         else:
+
             dato0=form.cleaned_data["TRANSACTIONINDEX"]
             dato1=form.cleaned_data["PLANTID"]
             dato2=form.cleaned_data["WAREHOUSE"]
@@ -597,9 +610,7 @@ def carga_mov_pallets(request):
             dato11=form.cleaned_data["DESTINATION"]
             dato12=form.cleaned_data["EVENTDATETIME"]
             #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
-
             dato13=form.cleaned_data["EVENTTIME"]
-
             datounidadespallet=form.cleaned_data["unidadespallet"]
             datokgpallet=form.cleaned_data["kgpallet"]
             datom2pallet=form.cleaned_data["m2pallet"]
@@ -644,8 +655,9 @@ def carga_mov_pallets(request):
             c, created = Pallet.objects.get_or_create(tarja=dato8)
             c.padron=dato3
             c.ubic=dato11
+            c.ORDERID=dato4
             #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
-            if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado
+            if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
                 c.fechacreac=dato12
             c.ancho=datoancho
             c.alto=datoalto
@@ -657,6 +669,7 @@ def carga_mov_pallets(request):
             c.kgpallet=datokgpallet
             c.save()
 
+            #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
 
             #form = MovPalletForm()
 

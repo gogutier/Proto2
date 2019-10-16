@@ -34,6 +34,7 @@ class PalletCic(models.Model):
 class Pallet(models.Model):
 
     tarja=models.CharField(unique=True, max_length=9, blank=False, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
     padron=models.CharField(max_length=16, default="0")
     cliente=models.CharField(max_length=16, default="0")
     ancho=models.FloatField(default=0)
