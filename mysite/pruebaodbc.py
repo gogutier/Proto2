@@ -36,8 +36,8 @@ def inicia_browser():
 
         #Ojo que esto antes estaba en el webscrap_mov. Lo puse aquí para ver si funciona más rápido
         print("entrando a página")
-        browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-        #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+        #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+        browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
 
         return(browser)
         # Uncomment for a more verbose output:
@@ -127,17 +127,22 @@ def cargaDatos(ultimo, cursor):
     #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
     flag0=0
     #sleep(0.01)
-    cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EVENTDATETIME],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
+    cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EventDateTime],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
     row0=cursor.fetchone()
     #print("row0 FGLOAD:")
     #print(row0)
     if row0!=None:
-        row0datetime=row0[10][:11]
-        row0time=row0[11]
-        #print(row0datetime)
-        #print(row0time)
-        row0datetime= row0datetime + row0time[0] + row0time[1] + ":" + row0time[2] + row0time[3] + ":" + row0time[4]+ row0time[5]
-        row0datetime= datetime.strptime(row0datetime, '%d-%m-%Y %H:%M:%S')
+        try:
+            row0datetime=row0[10][:11]
+
+            row0time=row0[11]
+            #print(row0datetime)
+            #print(row0time)
+            row0datetime= row0datetime + row0time[0] + row0time[1] + ":" + row0time[2] + row0time[3] + ":" + row0time[4]+ row0time[5]
+            row0datetime= datetime.strptime(row0datetime, '%d-%m-%Y %H:%M:%S')
+        except:
+            row0datetime=datetime.now()
+            row0time='0'
         #print(row0datetime)
         workcenter=row0[2]
         destino=""
@@ -203,7 +208,7 @@ def cargaDatos(ultimo, cursor):
 
         #print("Tarja:")
         #print(row1[8])
-        id=row1[4]
+        #id=row1[4]
 
         #print ("iniciando segunda consulta")
         #sleep(0.01)
