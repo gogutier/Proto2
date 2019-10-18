@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
         ##Inicio el tiempo:
         tini=datetime.now()
-
+        fechfot=timezone.now()
         self.stdout.write("cargando datos corrplan")
 
         foto_corrplan = webscrap2.webscrap_corrplan()
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         durac=str(duracion)
 
-        foto, created =FotoCorrplan.objects.get_or_create(fecha_foto=timezone.now(), usuario_foto="userdefault", tiempo_carga=durac)
+        foto, created =FotoCorrplan.objects.get_or_create(fecha_foto=fechfot, usuario_foto="userdefault", tiempo_carga=durac)
 
         foto.save()
 

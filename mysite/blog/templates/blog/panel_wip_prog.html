@@ -1,0 +1,226 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<h3>Panel WIP</h3>
+
+
+<div class="container" >
+
+
+<button type="button" id="convert">Actualizar</button>
+<h6 id="fechafoto">Cargando...</h6>
+
+</div>
+
+<br><br>
+
+<div class="container" >
+
+<table class='table table-hover' style='font-size: 12px;' id='tabla2'>
+
+<tr>
+  <td style="font-weight:bold">Inventario según máquina programada</td>
+
+
+
+</tr>
+
+<tr>
+  <td></td>
+  <td style="text-align: center">TCY</td>
+  <td style="text-align: center">HCR</td>
+  <td style="text-align: center">WRD</td>
+  <td style="text-align: center">FFW</td>
+  <td style="text-align: center">DRO</td>
+  <td style="text-align: center">FFG</td>
+  <td style="text-align: center">DIM/TAB</td>
+  <td style="text-align: center">Sin Programa</td>
+</tr>
+
+<tr>
+  <td>Inv a Conv</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+<tr>
+  <td>Inv 24h a Conv</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+<tr>
+  <td>Consumo tot 24h Conv</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+<tr>
+  <td>Ratio</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+
+
+</table>
+
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+var endpoint='/api/get_data_inventario_prog/';
+
+
+{% load staticfiles %}
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+
+
+  var imagentime ='<img src= {% static "images/time.png" %} alt=""  height=15 width=15></img>'
+  var auxtext = ''
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      datosCorrplanINV= response_data.datosCorrplanINV;
+      fotocorrplan= response_data.fotocorrplan;
+      invtotwip = response_data.invtotwip;
+
+
+      console.log(datosCorrplanINV)
+
+      var fechafoto = document.getElementById('fechafoto');
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+      var m2 = document.getElementById("m2");//.getElementsByTagName("td");
+      var npal = document.getElementById("npal");//.getElementsByTagName("td");
+
+      var m2CORR = document.getElementById("m2CORR");//.getElementsByTagName("td");
+      var npalCORR = document.getElementById("npalCORR");//.getElementsByTagName("td");
+
+      var tabla2 = document.getElementById("tabla2");//.getElementsByTagName("td");
+
+      fechafoto.innerHTML = "Último corrplan: " + fotocorrplan
+
+      //for (var key in datosCorrplanINV) {}
+
+      tabla2.rows[2].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2inv"]/1000).toFixed(1)
+
+      tabla2.rows[2].cells[8].innerHTML=(invtotwip/1000-(datosCorrplanINV["TCY"]["m2inv"]+datosCorrplanINV["HCR"]["m2inv"]+datosCorrplanINV["WRD"]["m2inv"]+datosCorrplanINV["FFW"]["m2inv"]+datosCorrplanINV["DRO"]["m2inv"]+datosCorrplanINV["FFG"]["m2inv"])/1000).toFixed(1)
+
+      tabla2.rows[3].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2inv24h"]/1000).toFixed(1)
+
+      tabla2.rows[3].cells[8].innerHTML=(invtotwip/1000-(datosCorrplanINV["TCY"]["m2inv24h"]+datosCorrplanINV["HCR"]["m2inv24h"]+datosCorrplanINV["WRD"]["m2inv24h"]+datosCorrplanINV["FFW"]["m2inv24h"]+datosCorrplanINV["DRO"]["m2inv24h"]+datosCorrplanINV["FFG"]["m2inv24h"])/1000).toFixed(1)
+
+
+      tabla2.rows[4].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2Prog24h"]/1).toFixed(1)
+
+
+
+      tabla2.rows[5].cells[1].innerHTML=((datosCorrplanINV["TCY"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[2].innerHTML=((datosCorrplanINV["HCR"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[3].innerHTML=((datosCorrplanINV["WRD"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[4].innerHTML=((datosCorrplanINV["FFW"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[5].innerHTML=((datosCorrplanINV["DRO"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[6].innerHTML=((datosCorrplanINV["FFG"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+
+
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+
+
+window.setInterval(function(){
+  //console.log("hola");
+  //datosinv();
+
+}, 60000);
+
+
+$("#convert").click(function()
+{
+
+//updatecuadros();
+datosinv()
+//displayHTMLTable();
+
+});
+
+
+
+
+
+</script>
+
+{% endblock %}

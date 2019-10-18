@@ -5,6 +5,7 @@ from getpass import getpass
 from time import time, sleep
 from datetime import datetime
 import pyodbc
+import sys
 
 
 def conecta_BD():
@@ -36,8 +37,8 @@ def inicia_browser():
 
         #Ojo que esto antes estaba en el webscrap_mov. Lo puse aquí para ver si funciona más rápido
         print("entrando a página")
-        #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-        browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+        browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+        #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
 
         return(browser)
         # Uncomment for a more verbose output:
@@ -48,7 +49,7 @@ def inicia_browser():
 #print("hola")
 def webscrap_mov(browser, cursor):
     #acá trato de entrar a la página sin tener que iniciar el browser todo el tiempo.
-    try:
+    if 1:
 
         #print("entrando a página")
         #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
@@ -104,11 +105,11 @@ def webscrap_mov(browser, cursor):
         resultado="dato enviado"
         return(resultado)
 
-    except Exception as e:
-        print(e)
-        print("Desconectado de página :(")
+    else: #except Exception as e:
+        #print(e)
+        #print("Desconectado de página :(")
         sleep(0.2)
-        exit()
+
 
 
 
@@ -159,8 +160,14 @@ def cargaDatos(ultimo, cursor):
         #sleep(0.01)
         cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
 
-        rowaux=cursor.fetchone()
-            #qué pasa cuando no encuentra row?
+
+
+        try:
+            rowaux=cursor.fetchone()
+        except:
+            print("error al hacer rowaux=cursor.fetchone()")
+        #print(rowaux)
+
         TIFGLOAD=0
         TIMVLOAD=0
 
@@ -188,13 +195,18 @@ def cargaDatos(ultimo, cursor):
             #sleep(0.01)
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'PLL' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
             #Aquí hay que ponerle un TRY probablemente
-            row1=cursor.fetchone()
+            try:
+                row1=cursor.fetchone()
+            except:
+                print("error al hacer row1=cursor.fetchone()")
+            #print(row1)
             #compara el transactionidex de fgload vs el de MVLOAD
             #print("Obtenida row1 de MVLOAD!")
             #print(row1)
         except Exception as e:
             print(e)
             print("error!")
+            print("Unexpected error:", sys.exc_info()[0])
             sleep(1)
             row1=[]
             datosextra=[]
@@ -204,7 +216,7 @@ def cargaDatos(ultimo, cursor):
     #print("consulta exitosa")
     #print(cursor[0])
     #return(cursor[0])
-    try:
+    if 1:
 
         #print("Tarja:")
         #print(row1[8])
@@ -218,7 +230,12 @@ def cargaDatos(ultimo, cursor):
         #for row in cursor:
         #    print(row)
         row2=cursor.fetchone()
-        unidadespallet=row2[5]
+        if row2:
+            print(row2)
+            unidadespallet=row2[5]
+        else:
+            print("No se encontraron tarjas en FGLOAD para la loadID " + str(row1[8]) )
+            unidadespallet=500
         #print("unidades pallet")
         #print(unidadespallet)
 
@@ -267,10 +284,11 @@ def cargaDatos(ultimo, cursor):
         #print("m2uni")
         #print(m2uni)
         datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
-        print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]))
-    except Exception as e:
-        print(e)
-        print("error!")
+        print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " " + str(row1[11]))
+    else:#except Exception as e:
+        #print(e)
+        print("error al tomar row1!")
+        #print("Unexpected error:", sys.exc_info()[0])
         sleep(1)
         row1=[]
         datosextra=[]
@@ -292,11 +310,11 @@ while True:
         print(e)
         print("error en conexión a datos :( (a DB o a sitio web))")
         sleep(0.2)
-    try:
+    if 1:
         while True:
             webscrap_mov(browser,cursor)
 
-    except Exception as e:
-        print(e)
+    else: #except Exception as e:
+        #print(e)
         print("error consulta de datos :(")
         sleep(0.5)

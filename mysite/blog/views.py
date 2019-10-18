@@ -258,6 +258,77 @@ def get_data_movpallets(request, *args, **kwargs):
     return JsonResponse(data)#http response con el datatype de JS
 
 
+
+def get_data_inventario_prog(request, *args, **kwargs):
+        #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+            #veo de todos los order corrplan, cuál es la suma de m2 asociados a una máquina.
+        datosCorrplanINV={"TCY":{"m2Prog24":0,"m2EnInv":0,"m224h":0, "indice":0},"HCR":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"WRD":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFW":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"DRO":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFG":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0}}
+
+        ahora=timezone.now()
+
+        print("iniciando consulta inv en Corrplan")
+
+        for maq in datosCorrplanINV.keys():
+
+            print(maq)
+            #datosCorrplanINV.[str(maq)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
+            auxm2inv=0
+            auxm2inv24h=0
+
+            auxm2totprog24h=0
+
+
+
+            for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
+                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+                    if pallet.ORDERID == order.order_id:
+                        auxm2inv=auxm2inv+pallet.m2pallet
+
+
+
+            for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=1), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
+                auxm2totprog24h=auxm2totprog24h+order.area
+                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+                    if pallet.ORDERID == order.order_id:
+                        auxm2inv24h=auxm2inv24h+pallet.m2pallet
+
+
+            datosCorrplanINV[str(maq)]['m2Prog24h']=auxm2totprog24h # Toto lo que se va a consumir según corrplan en las prox 24h.
+            datosCorrplanINV[str(maq)]['m2inv24h']=auxm2inv24h # de lo que se va a consumir el 24 horas, lo que sí está en inventario.
+            datosCorrplanINV[str(maq)]['m2inv']=auxm2inv# Todo lo que está en inventario asignado a esa máquina y que esté en corrplan, independiente de cuándo se vaya a consumir.
+
+        invtotwip=0
+
+        #for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8)):
+        for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+        #        if pallet.ORDERID != order.order_id:
+            invtotwip=invtotwip+pallet.m2pallet
+
+
+
+
+
+        print(datosCorrplanINV)
+
+        fotocorrplan = str(FotoCorrplan.objects.all()[0])
+        data = {
+
+        "datosCorrplanINV": datosCorrplanINV,
+        "fotocorrplan": fotocorrplan,
+        "invtotwip": invtotwip,
+
+
+        #"filtroentrada": filtroentrada,
+        #"filtrosalida": filtrosalida,
+        #"filtroprod": filtroprod,
+
+        }
+        print("Enviando datos inventario")
+        return JsonResponse(data)#http response con el datatype de JS
+
+
+
 def get_data_inventario(request, *args, **kwargs):
 
 
@@ -382,25 +453,48 @@ def get_data_inventario(request, *args, **kwargs):
         '''
 
         #veo de todos los order corrplan, cuál es la suma de m2 asociados a una máquina.
-        auxm2totprog=0
-        auxm2inv=0
-        for order in OrdenCorrplan.objects.filter(maquina=Maquinas.objects.filter(maquina='HCR')[0]):
-            auxm2totprog=auxm2totprog+order.area
-            for pallet in Pallet.objects.all():
-                if pallet.ORDERID == order.order_id:
-                    auxm2inv=auxm2inv+pallet.m2pallet
-        print("area tot Prog TCY: " + str(auxm2totprog))
-        print("area Prog en inv TCY: " + str(auxm2inv))
+        datosCorrplanINV={"TCY":{"m2Prog24":0,"m2EnInv":0,"m224h":0, "indice":0},"HCR":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"WRD":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFW":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"DRO":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFG":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0}}
 
+        ahora=timezone.now()
 
+        print("iniciando consulta inv en Corrplan")
+
+        for maq in datosCorrplanINV.keys():
+
+            print(maq)
+            #datosCorrplanINV.[str(maq)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
+            auxm2inv=0
+            auxm2inv24h=0
+            auxm2totprog24h=0
+
+            print(FotoCorrplan.objects.all())
+
+            for order in OrdenCorrplan.objects.filter(fecha_inicio__lte=ahora+timedelta(days=8), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
+                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+                    if pallet.ORDERID == order.order_id:
+                        auxm2inv=auxm2inv+pallet.m2pallet
+
+            for order in OrdenCorrplan.objects.filter(fecha_inicio__lte=ahora+timedelta(days=1), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
+                auxm2totprog24h=auxm2totprog24h+order.area
+                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+                    if pallet.ORDERID == order.order_id:
+                        auxm2inv24h=auxm2inv24h+pallet.m2pallet
+
+            datosCorrplanINV[str(maq)]['m2Prog24h']=auxm2totprog24h # Toto lo que se va a consumir según corrplan en las prox 24h.
+            datosCorrplanINV[str(maq)]['m2inv24h']=auxm2inv24h # de lo que se va a consumir el 24 horas, lo que sí está en inventario.
+            datosCorrplanINV[str(maq)]['m2inv']=auxm2inv# Todo lo que está en inventario asignado a esa máquina y que esté en corrplan, independiente de cuándo se vaya a consumir.
+
+        print(datosCorrplanINV)
 
         data = {
         "prueba":prueba,
+        "datosCorrplanINV": datosCorrplanINV,
         "datosWIP":datosWIP,
         "m2totalINV": m2totalINV,
         "npalletstotalINV": npalletstotalINV,
         "m2totalCORR": m2totalCORR,
         "npalletstotalCORR": npalletstotalCORR,
+
         #"filtroentrada": filtroentrada,
         #"filtrosalida": filtrosalida,
         #"filtroprod": filtroprod,
@@ -818,6 +912,15 @@ def panel_wip(request):
 
 
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+def panel_wip_prog(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_wip_prog.html'
+
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
 
 
 
