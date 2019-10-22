@@ -1,134 +1,152 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<h3>Panel WIP</h3>
-
 
 <div class="container" >
+  <h3>Panel WIP</h3>
+<div class="jumbotron">
 
-<table>
-  <tr>
-    <td></td>
-    <td>Mm2</td>
-    <td></td>
-    <td>n° pallets</td>
-  </tr>
-  <tr>
-    <td>Bodega</td>
-    <td id="m2"></td>
-    <td></td>
-    <td id="npal"></td>
-   </tr>
-   <tr>
-     <td>Stackers</td>
-     <td id="m2CORR"></td>
-     <td></td>
-     <td id="npalCORR"></td>
+<table style='overflow-x:auto;'>
 
-   </tr>
+      <tr>
+          <td valign='top'>
+
+
+                  <table style='overflow-x:auto;'>
+
+                  <tr>
+                    <td>
+                      <div class="row"   id="parsed_csv_list">
+                      </div>
+
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+
+                      <table style='font-size: 12px;'>
+                        <tr>
+                          <td></td>
+                          <td>Mm2</td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Bodega</td>
+                          <td id="m2"></td>
+                          <td></td>
+                          <td id="npal"></td>
+                         </tr>
+                         <tr>
+                           <td>Stackers</td>
+                           <td id="m2CORR"></td>
+                           <td></td>
+                           <td id="npalCORR"></td>
+
+                         </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  </table>
+
+          </td>
+
+          <td valign='top'>
+
+                <table cellspacing='10' class='tablee' style='font-size: 10px; overflow-x:auto;' id='tabla3'  >
+                  <tr>
+                    <td colspan='5' style='font-weight:bold'>Últimas entradas a Bodega</td>
+                  </tr>
+                      <tr>
+                      <td>Tarja</td>
+                      <td>ID</td>
+                      <td>Destino</td>
+                      <td colspan='2'>Fecha </td>
+                      </tr>
+                      <tr>
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2' cellspacing="0"> </td>
+                        </tr>
+                      <tr cellspacing="0">
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2' cellspacing="0"> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                      </tr>
+
+                    <td colspan='5' style='font-weight:bold'>Últimas salidas de Bodega</td>
+                  </tr>
+                  <tr>
+                  <td>Tarja</td>
+                  <td>ID</td>
+                  <td>Destino</td>
+                  <td>Fecha</td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+
+
+                  </table>
+          </td>
+
+    </tr>
+
 </table>
+
+</div>
+</div>
+
+
+
 
 <button type="button" id="convert">Actualizar</button>
-
-</div>
-
-<div class="container" >
-
-
-  <div class="table-responsive">
-
-        <div class="row"   id="parsed_csv_list">
-        </div>
-  </div>
-
-</div>
-<br><br>
-
-<div class="container" >
-
-<table class='table table-hover' style='font-size: 12px;' id='tabla2'>
-
-<tr>
-  <td style="font-weight:bold">Inventario según máquina programada</td>
-
-
-
-</tr>
-
-<tr>
-  <td></td>
-  <td style="text-align: center">TCY</td>
-  <td style="text-align: center">HCR</td>
-  <td style="text-align: center">WRD</td>
-  <td style="text-align: center">FFW</td>
-  <td style="text-align: center">DRO</td>
-  <td style="text-align: center">FFG</td>
-  <td style="text-align: center">DIM/TAB</td>
-  <td style="text-align: center">Sin Programa</td>
-</tr>
-
-<tr>
-  <td>Inv a Conv</td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-</tr>
-
-<tr>
-  <td>Inv 24h a Conv</td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-</tr>
-
-<tr>
-  <td>Consumo tot 24h Conv</td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-</tr>
-
-<tr>
-  <td>Ratio</td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-  <td style="text-align: center"></td>
-</tr>
-
-
-
-</table>
-
-</div>
-
-
-
-
 
 
 <script type="text/javascript">
 
-{% block jquery %}
 
 
 
@@ -157,12 +175,8 @@ function datosinv(){
       npalletstotalINV= response_data.npalletstotalINV;
       m2totalCORR= response_data.m2totalCORR;
       npalletstotalCORR= response_data.npalletstotalCORR;
-      datosCorrplanINV= response_data.datosCorrplanINV;
-      console.log(datosCorrplanINV)
-
-
-      //filtroentrada= response_data.filtroentrada; //este es list of lists
-      //filtrosalida= response_data.filtrosalida; //este es list of lists
+      filtroentrada= response_data.filtroentrada; //este es list of lists
+      filtrosalida= response_data.filtrosalida; //este es list of lists
       //filtroprod= response_data.filtroprod; //este es list of lists
 
       //console.log(datos0["M2ZFFG1"].toFixed(2))
@@ -171,7 +185,8 @@ function datosinv(){
       //console.log(prueba['prueba2']['B'])
       //console.log(m2total)
       //console.log(npalletstotal)
-      //console.log(filtroentrada)
+      console.log(filtroentrada)
+      console.log(filtrosalida)
 
 
       var myTable = document.getElementById("table");//.getElementsByTagName("td");
@@ -186,7 +201,7 @@ function datosinv(){
       for (var i=0; i < cuadros.length; i++)
       {
 
-      if (datosWIP[cuadros[i][2]]['dias']>2)
+      if (datosWIP[cuadros[i][2]]['dias']>3)
       {
         auxtext='</br> ' + imagentime;
 
@@ -194,66 +209,39 @@ function datosinv(){
         auxtext='</br>'
       }
       //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + cuadros[i][2] + '</a>' + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
-      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  +  auxtext + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
+
+      myTable.rows[cuadros[i][1]-1].cells[cuadros[i][0]].innerHTML = auxtext//imagentime
 
       }//myTable.rows[cuadros[1][1]].cells[cuadros[0][1]].innerHTML = cuadros[1][2] + "</br>" + str(zffg2) ;
 
       m2.innerHTML= String((m2totalINV/1000).toFixed(1))
-      npal.innerHTML=String(npalletstotalINV)
+      //npal.innerHTML=String(npalletstotalINV)
 
       m2CORR.innerHTML=String((m2totalCORR/1000).toFixed(1))
-      npalCORR.innerHTML= String(npalletstotalCORR)
+      //npalCORR.innerHTML= String(npalletstotalCORR)
 
 
 
-      //for (var key in datosCorrplanINV) {}
-
-      tabla2.rows[2].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2inv"]/1000).toFixed(1)
-      tabla2.rows[2].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2inv"]/1000).toFixed(1)
-      tabla2.rows[2].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2inv"]/1000).toFixed(1)
-      tabla2.rows[2].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2inv"]/1000).toFixed(1)
-      tabla2.rows[2].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2inv"]/1000).toFixed(1)
-      tabla2.rows[2].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2inv"]/1000).toFixed(1)
-
-      tabla2.rows[3].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2inv24h"]/1000).toFixed(1)
-      tabla2.rows[3].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2inv24h"]/1000).toFixed(1)
-      tabla2.rows[3].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2inv24h"]/1000).toFixed(1)
-      tabla2.rows[3].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2inv24h"]/1000).toFixed(1)
-      tabla2.rows[3].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2inv24h"]/1000).toFixed(1)
-      tabla2.rows[3].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2inv24h"]/1000).toFixed(1)
-
-      tabla2.rows[4].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2Prog24h"]/1).toFixed(1)
-      tabla2.rows[4].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2Prog24h"]/1).toFixed(1)
-      tabla2.rows[4].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2Prog24h"]/1).toFixed(1)
-      tabla2.rows[4].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2Prog24h"]/1).toFixed(1)
-      tabla2.rows[4].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2Prog24h"]/1).toFixed(1)
-      tabla2.rows[4].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2Prog24h"]/1).toFixed(1)
 
 
 
-      tabla2.rows[5].cells[1].innerHTML=((datosCorrplanINV["TCY"]["m2inv24h"]/1000)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)
-      tabla2.rows[5].cells[2].innerHTML=((datosCorrplanINV["HCR"]["m2inv24h"]/1000)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)
-      tabla2.rows[5].cells[3].innerHTML=((datosCorrplanINV["WRD"]["m2inv24h"]/1000)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)
-      tabla2.rows[5].cells[4].innerHTML=((datosCorrplanINV["FFW"]["m2inv24h"]/1000)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)
-      tabla2.rows[5].cells[5].innerHTML=((datosCorrplanINV["DRO"]["m2inv24h"]/1000)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)
-      tabla2.rows[5].cells[6].innerHTML=((datosCorrplanINV["FFG"]["m2inv24h"]/1000)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)
-      /*
       for (var i=0; i < filtroentrada.length; i++)
       {
-      tabla2.rows[2+i].cells[7].innerHTML=filtroentrada[i][0]
-      tabla2.rows[2+i].cells[8].innerHTML=filtroentrada[i][1].substring(0,7)
-      tabla2.rows[2+i].cells[9].innerHTML=filtroentrada[i][2].substring(0,7)
-      tabla2.rows[2+i].cells[10].innerHTML=filtroentrada[i][3]
+      tabla3.rows[2+i].cells[0].innerHTML=filtroentrada[i][0]
+      tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
+      tabla3.rows[2+i].cells[2].innerHTML=filtroentrada[i][2].substring(0,7)
+      tabla3.rows[2+i].cells[3].innerHTML=filtroentrada[i][3]
       }
 
       for (var i=0; i < filtrosalida.length; i++)
       {
-      tabla2.rows[2+i].cells[14+0].innerHTML=filtrosalida[i][0]
-      tabla2.rows[2+i].cells[14+1].innerHTML=filtrosalida[i][1].substring(0,7)
-      tabla2.rows[2+i].cells[14+2].innerHTML=filtrosalida[i][2].substring(0,7)
-      tabla2.rows[2+i].cells[14+3].innerHTML=filtrosalida[i][3]
+      tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0]
+      tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
+      tabla3.rows[9+i].cells[2].innerHTML=filtrosalida[i][2].substring(0,7)
+      tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][3]
       }
-      */
+
 
 
 
@@ -293,21 +281,22 @@ var cuadros= [];
 /// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
 
 displayHTMLTable();
-//datosinv();
+datosinv();
 
 
 window.setInterval(function(){
   console.log("hola");
-  //datosinv();
+  datosinv();
 
-}, 50000);
+}, 5000);
 
 
 $("#convert").click(function()
 {
 
-//updatecuadros();
+
 datosinv()
+//updatecuadros();
 //displayHTMLTable();
 
 });
@@ -315,14 +304,14 @@ datosinv()
 ////// Función que muestra el input paresado
 
 function displayHTMLTable(){
-  var table = "<table  class='table1'  id='table' >";
+  var table = "<table  class='table1'  id='table' style='float: left;' >";
 
     var rows = 15;
-    var columns = 54;
+    var columns = 49;
 
     ///
     table+= "<tr  style='text-align: center'>";
-      for(j=0;j<columns-1;j++){
+      for(j=0;j<columns-24;j++){
         table+= "<td style='font-size: 10px;'  >";
         //table+= ".";
         table+= "</th>";
@@ -331,7 +320,7 @@ function displayHTMLTable(){
     ///
 
     table+= "<tr style='text-align: center'>";
-    for(j=1;j<columns-22;j++){
+    for(j=1;j<columns-23;j++){
       table+= "<td style='font-size: 10px;'>";
       //table+= ".";
       table+= "</th>";
@@ -342,7 +331,7 @@ function displayHTMLTable(){
 
     for(i=2;i<8;i++){
       table+= "<tr style='text-align: center'>";
-        for(j=0;j<columns-1-31;j++){
+        for(j=0;j<columns-38;j++){
           table+= "<td style='font-size: 10px;'>";
           //table+= ".";
           table+= "</th>";
@@ -354,7 +343,7 @@ function displayHTMLTable(){
 
     for(i=8;i<rows-1;i++){
       table+= "<tr style='text-align: center'>";
-        for(j=0;j<columns-1-12;j++){
+        for(j=0;j<columns-20;j++){
           table+= "<td style='font-size: 10px; '>";
           //table+= ".";
           table+= "</th>";
@@ -386,10 +375,10 @@ function displayHTMLTable(){
   creacuadro(22,1,"ZDRO1",3,5);
   creacuadro(23,1,"ZFFG2",3,5);
   creacuadro(24,1,"ZFFG1",3,5);
-  creacuadro(50,0,"CORR_UPPER_Stacker",2,5);
-  creacuadro(51,0,"CORR_LOWER_Stacker",2,5);
+  //creacuadro(50,0,"CORR_UPPER_Stacker",2,5);
+  //creacuadro(51,0,"CORR_LOWER_Stacker",2,5);
   creacuadro(5,10,"ZPNC",3,4);
-  creacuadro(38,10,"ZPICADO",3,3);
+  creacuadro(12,10,"ZPICADO",6,4);
 
 }
 
@@ -402,6 +391,8 @@ function creacuadro(x,y,texto,a,l){
   myTable.rows[y].cells[x].colSpan = parseInt(a);
   myTable.rows[y].cells[x].rowSpan = parseInt(l);
 
+
+  myTable.rows[y-1].cells[x].colSpan = parseInt(a);
   cuadros.push([x,y,texto]);
 
 }
@@ -419,13 +410,16 @@ function updatecuadros(datosWIP){
     //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + random.toString() + "%";
     //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "green"//"yellow";
 
-    if (datosWIP[cuadros[i][2]]['m2tot']/1000<=30)
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000<=datosWIP[cuadros[i][2]]['al1'])
     {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "Chartreuse"}
 
-    if (datosWIP[cuadros[i][2]]['m2tot']/1000>30 && datosWIP[cuadros[i][2]]['m2tot']/1000<40)
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000>datosWIP[cuadros[i][2]]['al1'] && datosWIP[cuadros[i][2]]['m2tot']/1000<=datosWIP[cuadros[i][2]]['al2'])
     {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "yellow"}
 
-    if (datosWIP[cuadros[i][2]]['m2tot']/1000>=50)
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000>datosWIP[cuadros[i][2]]['al2'] && datosWIP[cuadros[i][2]]['m2tot']/1000<=datosWIP[cuadros[i][2]]['al3'])
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "Orange"}
+
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000>datosWIP[cuadros[i][2]]['al3'])
     {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "Crimson"}
 
 
@@ -440,7 +434,7 @@ function updatecuadros(datosWIP){
 
 }
 
-{% endblock %}
+
 </script>
 
 {% endblock %}

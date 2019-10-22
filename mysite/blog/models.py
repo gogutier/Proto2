@@ -157,8 +157,8 @@ class OrdenCorrplan(models.Model):
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
 
     programa=models.ForeignKey('blog.FotoCorrplan', related_name='foto_corrplan', on_delete=models.CASCADE, default=0)#el ondelete te dice què hacer cuabndo se borra la foreignkey. En este caso cascade indica que todas se borren.
-    fecha_entrega=models.DateTimeField(blank=False, default=timezone.now)
-    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now)
+    fecha_entrega=models.DateTimeField(blank=False, default=timezone.now())
+    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now())
     order_id=models.CharField(max_length=15, default="vacio")
     cliente=models.CharField(max_length=15, default="vacio")
     SO=models.CharField(max_length=15, default="vacio")

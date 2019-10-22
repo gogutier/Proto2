@@ -133,8 +133,6 @@ def get_data_movpallets(request, *args, **kwargs):
     for item in listafiltroentrada:
         filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
 
-
-
     for item in listafiltrosalida:
         filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
 
@@ -265,7 +263,7 @@ def get_data_inventario_prog(request, *args, **kwargs):
             #veo de todos los order corrplan, cuál es la suma de m2 asociados a una máquina.
         datosCorrplanINV={"TCY":{"m2Prog24":0,"m2EnInv":0,"m224h":0, "indice":0},"HCR":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"WRD":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFW":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"DRO":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFG":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0}}
 
-        ahora=timezone.now()
+        ahora=datetime.now()
 
         print("iniciando consulta inv en Corrplan")
 
@@ -278,7 +276,10 @@ def get_data_inventario_prog(request, *args, **kwargs):
 
             auxm2totprog24h=0
 
-
+            print("Corrplan 24h entre:")
+            print(ahora)
+            print("y")
+            print(ahora+timedelta(days=1))
 
             for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
                 for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
@@ -311,7 +312,7 @@ def get_data_inventario_prog(request, *args, **kwargs):
 
         print(datosCorrplanINV)
 
-        fotocorrplan = str(FotoCorrplan.objects.all()[0])
+        fotocorrplan = FotoCorrplan.objects.all()[0].fecha_foto.strftime("%m/%d/%Y %H:%M:%S")
         data = {
 
         "datosCorrplanINV": datosCorrplanINV,
@@ -334,35 +335,9 @@ def get_data_inventario(request, *args, **kwargs):
 
         #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
 
-        tcy1= Pallet.objects.filter(ubic__iexact="ZTCY1")
-        ntcy1=tcy1.count()
-
-        m2tcy1=0
-
-        for pallet in tcy1:
-            m2tcy1=m2tcy1+pallet.m2pallet
-
-
-
-        tcy2= Pallet.objects.filter(ubic__iexact="ZTCY2")
-        ntcy2=tcy2.count()
-
-        m2tcy2=0
-        for pallet in tcy2:
-            m2tcy2=m2tcy2+pallet.m2pallet
-
-
-
-
-        m2ZFFG1=212
-        m2ZFFG2=432
-        m2total=3123
-
-
-
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0},"ZPICADO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0}}
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPICADO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45}}
 
         m2totalINV=0
         npalletstotalINV=0
@@ -378,7 +353,6 @@ def get_data_inventario(request, *args, **kwargs):
             try:
                 datosWIP[str(calle)]['dias']= (datetime.now()-(Pallet.objects.filter(ubic__iexact=str(calle)).earliest('fechacreac').fechacreac.replace(tzinfo=None))).days#- datetime.now()))
 
-
             except:
                 datosWIP[str(calle)]['dias']=0
 
@@ -391,8 +365,6 @@ def get_data_inventario(request, *args, **kwargs):
             else:
 
                 npalletstotalINV=npalletstotalINV+datosWIP[str(calle)]['cuenta']
-
-
 
             m2aux=0
             for pallet in Pallet.objects.filter(ubic__iexact=str(calle)):
@@ -409,94 +381,51 @@ def get_data_inventario(request, *args, **kwargs):
         #print(datosWIP)
 
         ###Estos filtros de útimos movimientos los voy a sacar pq no aportan mucho
-        '''
-        #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
-        filtroprod=[]
 
+        #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
+        '''
+        filtroprod=[]
         filtro0=MovPallets.objects.filter(Q(DESTINATION="CORR_UPPER_Stacker") | Q(DESTINATION="CORR_LOWER_Stacker")).order_by('-TRANSACTIONINDEX')[:10]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
-
+        movimiento=[]
         for mov in filtro0:
             #movimiento=[tarja, destino, hora]
             movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtroprod.append(movimiento)
-
+        '''
 
 
         filtroentrada=[]
-
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC") ).order_by('-TRANSACTIONINDEX')[:10]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")).order_by('-TRANSACTIONINDEX')[:4]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
         for mov in filtro:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtroentrada.append(movimiento)
-
 
         #print(filtroentrada)
         filtrosalida=[]
-
-        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO") ).order_by('-TRANSACTIONINDEX')[:10]
-
-        # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
+        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO") ).order_by('-TRANSACTIONINDEX')[:4]
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtrosalida.append(movimiento)
 
 
-        print()
-        '''
-
-        #veo de todos los order corrplan, cuál es la suma de m2 asociados a una máquina.
-        datosCorrplanINV={"TCY":{"m2Prog24":0,"m2EnInv":0,"m224h":0, "indice":0},"HCR":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"WRD":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFW":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"DRO":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFG":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0}}
-
-        ahora=timezone.now()
-
-        print("iniciando consulta inv en Corrplan")
-
-        for maq in datosCorrplanINV.keys():
-
-            print(maq)
-            #datosCorrplanINV.[str(maq)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
-            auxm2inv=0
-            auxm2inv24h=0
-            auxm2totprog24h=0
-
-            print(FotoCorrplan.objects.all())
-
-            for order in OrdenCorrplan.objects.filter(fecha_inicio__lte=ahora+timedelta(days=8), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
-                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
-                    if pallet.ORDERID == order.order_id:
-                        auxm2inv=auxm2inv+pallet.m2pallet
-
-            for order in OrdenCorrplan.objects.filter(fecha_inicio__lte=ahora+timedelta(days=1), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
-                auxm2totprog24h=auxm2totprog24h+order.area
-                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
-                    if pallet.ORDERID == order.order_id:
-                        auxm2inv24h=auxm2inv24h+pallet.m2pallet
-
-            datosCorrplanINV[str(maq)]['m2Prog24h']=auxm2totprog24h # Toto lo que se va a consumir según corrplan en las prox 24h.
-            datosCorrplanINV[str(maq)]['m2inv24h']=auxm2inv24h # de lo que se va a consumir el 24 horas, lo que sí está en inventario.
-            datosCorrplanINV[str(maq)]['m2inv']=auxm2inv# Todo lo que está en inventario asignado a esa máquina y que esté en corrplan, independiente de cuándo se vaya a consumir.
-
-        print(datosCorrplanINV)
-
+        print(filtroentrada)
+        print(filtrosalida)
         data = {
         "prueba":prueba,
-        "datosCorrplanINV": datosCorrplanINV,
         "datosWIP":datosWIP,
         "m2totalINV": m2totalINV,
         "npalletstotalINV": npalletstotalINV,
         "m2totalCORR": m2totalCORR,
-        "npalletstotalCORR": npalletstotalCORR,
-
-        #"filtroentrada": filtroentrada,
-        #"filtrosalida": filtrosalida,
+        "filtroentrada": filtroentrada,
+        "filtrosalida": filtrosalida,
         #"filtroprod": filtroprod,
 
         }
@@ -958,7 +887,7 @@ class UbicDetailView(DetailView):
         #context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
         #context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
         context['ubic'] = UbicPallet.objects.get(pk=pk)
-        context['m2tot'] = str(UbicPallet.objects.get(pk=pk).m2tot)
+        context['m2tot'] = str( round(UbicPallet.objects.get(pk=pk).m2tot, 1) )
         context['npallets'] = str(UbicPallet.objects.get(pk=pk).npallets)
         context['pallets'] = Pallet.objects.filter(ubic__iexact=str(UbicPallet.objects.get(pk=pk).calle)).order_by("fechacreac")
         return context

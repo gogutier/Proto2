@@ -37,8 +37,8 @@ def inicia_browser():
 
         #Ojo que esto antes estaba en el webscrap_mov. Lo puse aquí para ver si funciona más rápido
         print("entrando a página")
-        browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-        #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+        #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+        browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
 
         return(browser)
         # Uncomment for a more verbose output:
@@ -49,7 +49,7 @@ def inicia_browser():
 #print("hola")
 def webscrap_mov(browser, cursor):
     #acá trato de entrar a la página sin tener que iniciar el browser todo el tiempo.
-    if 1:
+    try:
 
         #print("entrando a página")
         #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
@@ -105,10 +105,10 @@ def webscrap_mov(browser, cursor):
         resultado="dato enviado"
         return(resultado)
 
-    else: #except Exception as e:
-        #print(e)
-        #print("Desconectado de página :(")
-        sleep(0.2)
+    except Exception as e:
+        print(e)
+        print("Desconectado de página o no hay movimientos nuevos qué capturar")
+        sleep(20)
 
 
 
