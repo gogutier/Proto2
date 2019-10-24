@@ -37,6 +37,9 @@
 
 <div class="container">
 
+
+
+
 <h6>Tabla Toma de inventario</h6>
 
 
@@ -115,13 +118,50 @@ function datosinv(){
 
 datosinv()
 
+function myFunction(key) {
+  var x = document.getElementById("td1"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+  var x = document.getElementById("td2"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+  var x = document.getElementById("td3"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+  var x = document.getElementById("td4"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+
+}
+
+
+
 
 window.setInterval(function(){
   console.log("hola");
   datosinv();
 
 
-}, 20000);
+}, 30000);
 
 
 ////// Función que muestra el input paresado
@@ -137,6 +177,7 @@ function displayHTMLTable(){
         var value;
         for (var key in datosWIP) {
           value = datosWIP[key];
+          aux='"'+key+'"'
             // your code here...
 
 
@@ -145,7 +186,8 @@ function displayHTMLTable(){
             table+= "<tr>";
             table+= "<td style='font-size: 14px;' >";
 
-                table+= key //
+
+                table+= "<button onclick='myFunction("+aux+")'>"+key+"</button>"
 
               table+= "</td>"
             table+= "</tr>";
@@ -153,26 +195,47 @@ function displayHTMLTable(){
 
 
             table+= "<tr >";
-            table+= "<td style='font-size: 14px;' bgcolor='#00FF00' >";
-              for (var i=0; i< datosWIP[key]['palletsencontrados'].length; i++)
+            table+= "<td style='font-size: 14px; ' bgcolor='#00FF00' >";
+              for (var i=0; i< datosWIP[key]['palletsencontrados'][0].length; i++)
               {
 
-                table+= datosWIP[key]['palletsencontrados'][i]
+                table+= datosWIP[key]['palletsencontrados'][0][i]
                 table+= "<br>"
               }
               table+= "</td>"
+
+              table+= "<td style='font-size: 14px; display: none;' bgcolor='#00FF00' id='td1"+key+"'  >";
+                for (var i=0; i< datosWIP[key]['palletsencontrados'][0].length; i++)
+                {
+
+                  table+= datosWIP[key]['palletsencontrados'][1][i]
+                  table+= "<br>"
+                }
+                table+= "</td>"
+
             table+= "</tr>";
 
 
             table+= "<tr>";
             table+= "<td style='font-size: 14px;'  bgcolor='Yellow'>";
-              for (var i=0; i< datosWIP[key]['palletsenotracalle'].length; i++)
+              for (var i=0; i< datosWIP[key]['palletsenotracalle'][0].length; i++)
               {
 
-                table+= datosWIP[key]['palletsenotracalle'][i]
+                table+= datosWIP[key]['palletsenotracalle'][0][i]
                 table+= "<br>"
               }
             table+= "</td>"
+
+            table+= "<td style='font-size: 14px; display: none;'  bgcolor='Yellow' id='td2"+key+"'>";
+              for (var i=0; i< datosWIP[key]['palletsenotracalle'][0].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsenotracalle'][1][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
+
+
             table+= "</tr>";
 
 
@@ -180,15 +243,25 @@ function displayHTMLTable(){
             table+= "<tr>";
             table+= "<td style='font-size: 14px;'  bgcolor='Orange'>";
 
-              for (var i=0; i< datosWIP[key]['palletsnoencontrados'].length; i++)
+              for (var i=0; i< datosWIP[key]['palletsnoencontrados'][0].length; i++)
               {
 
-                table+= datosWIP[key]['palletsnoencontrados'][i]
+                table+= datosWIP[key]['palletsnoencontrados'][0][i]
                 table+= "<br>"
               }
-
-
             table+= "</td>"
+
+            table+= "<td style='font-size: 14px; display: none;'  bgcolor='Orange' id='td3"+key+"' >";
+
+              for (var i=0; i< datosWIP[key]['palletsnoencontrados'][0].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsnoencontrados'][1][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
+
+
             table+= "</tr>";
 
 
@@ -196,19 +269,31 @@ function displayHTMLTable(){
 
 
             table+= "<tr >";
-            table+= "<td style='font-size: 14px;' bgColor='Red'>";
+            table+= "<td style='font-size: 14px; ' bgColor='Red'>";
 
-
-                        for (var i=0; i< datosWIP[key]['palletscti'].length; i++)
+                        for (var i=0; i< datosWIP[key]['palletscti'][0].length; i++)
                         {
 
-                          table+= datosWIP[key]['palletscti'][i]
+                          table+= datosWIP[key]['palletscti'][0][i]
                           table+= "<br>"
                         }
 
-
-
               table+= "</td>"
+
+
+              table+= "<td style='font-size: 14px; display: none; ' bgColor='Red' id='td4"+key+"'>";
+
+                          for (var i=0; i< datosWIP[key]['palletscti'][0].length; i++)
+                          {
+
+                            table+= datosWIP[key]['palletscti'][1][i]
+                            table+= "<br>"
+                          }
+
+                table+= "</td>"
+
+
+
             table+= "</tr>";
 
 

@@ -39,6 +39,7 @@ def inicia_browser():
         print("entrando a página")
         #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
         browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+        #browser.open("http://192.168.7.32:8080/carga_mov_pallets/")
 
         return(browser)
         # Uncomment for a more verbose output:
@@ -134,14 +135,19 @@ def cargaDatos(ultimo, cursor):
     #print(row0)
     if row0!=None:
         try:
-            row0datetime=row0[10][:11]
+            row0datetime=row0[10]
 
             row0time=row0[11]
             #print(row0datetime)
             #print(row0time)
+            '''
             row0datetime= row0datetime + row0time[0] + row0time[1] + ":" + row0time[2] + row0time[3] + ":" + row0time[4]+ row0time[5]
             row0datetime= datetime.strptime(row0datetime, '%d-%m-%Y %H:%M:%S')
-        except:
+            '''
+        except Exception as e:
+            print(row0)
+            print(e)
+            print("agregando el datetime como now() pq hubo un problema al capturar el row0 de FGLOAD")
             row0datetime=datetime.now()
             row0time='0'
         #print(row0datetime)
@@ -284,7 +290,7 @@ def cargaDatos(ultimo, cursor):
         #print("m2uni")
         #print(m2uni)
         datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
-        print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " " + str(row1[11]))
+        print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
     else:#except Exception as e:
         #print(e)
         print("error al tomar row1!")

@@ -282,7 +282,7 @@ def get_data_inventario_prog(request, *args, **kwargs):
             print(ahora+timedelta(days=1))
 
             for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
-                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2") | Q(ubic="ZPASILLO")):
                     if pallet.ORDERID == order.order_id:
                         auxm2inv=auxm2inv+pallet.m2pallet
 
@@ -290,7 +290,7 @@ def get_data_inventario_prog(request, *args, **kwargs):
 
             for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=1), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
                 auxm2totprog24h=auxm2totprog24h+order.area
-                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2") | Q(ubic="ZPASILLO")):
                     if pallet.ORDERID == order.order_id:
                         auxm2inv24h=auxm2inv24h+pallet.m2pallet
 
@@ -302,7 +302,7 @@ def get_data_inventario_prog(request, *args, **kwargs):
         invtotwip=0
 
         #for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8)):
-        for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2")):
+        for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2") | Q(ubic="ZPASILLO")):
         #        if pallet.ORDERID != order.order_id:
             invtotwip=invtotwip+pallet.m2pallet
 
@@ -442,36 +442,22 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFG2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPNC":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0}}
+        datosWIP={"ZFFG1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFG2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPNC":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPASILLO":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0}}
 
 
 
         tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
 
-
-
-
-
-
         for calle in datosWIP.keys():
 
-
             palletstomainv = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)
-
-
-
 
             #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
             palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
 
-
-
-
             #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
             palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('pk')
             palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
-
-
 
             #hago grupo de calles a excluir
             palletsCTIenotracalle = Pallet.objects.all().exclude(ubic=calle)
@@ -480,46 +466,64 @@ def get_data_inv_ciclico(request, *args, **kwargs):
             for aux in palletsCTIenotracalle:
                 tarjasnot.append(aux.tarja)
 
-
-
-
-
-            palletsenotracalle=[]
+            palletsenotracalle=[[],[]]
 
             for aux in PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv):
                 if aux.tarja in tarjasnot:
-                    palletsenotracalle.append(aux.tarja)
+                    palletsenotracalle[0].append(aux.tarja)
+
+                    try:
+                        palletsenotracalle[1].append(Pallet.objects.filter(tarja=aux.tarja)[0].ORDERID)
+                    except:
+                        #print("hola")
+                        palletsenotracalle[1].append("vacio")
+
 
             #palletsnoencontrados= palletsnoencontrados.exclude(tarja__in=[o.tarja for o in palletsenotracalle]).order_by('pk')
 
-            lista=[]
+            lista=[[],[]]
 
             for pallet in palletscti.filter(ubic=calle):
 
-                lista.append(pallet.tarja)
+                lista[0].append(pallet.tarja)
+
+                try:
+                    lista[1].append(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                except:
+                    #print("hola")
+                    lista[1].append("vacio")
 
             datosWIP[calle]['palletscti'] = lista
 
-            lista=[]
+            lista=[[],[]]
 
             for pallet in palletsencontrados.filter(ubic=calle):
 
-                lista.append(pallet.tarja)
+                lista[0].append(pallet.tarja)
+
+                try:
+                    lista[1].append(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                except:
+                    #print("hola")
+                    lista[1].append("vacio")
 
             datosWIP[calle]['palletsencontrados'] = lista
 
 
-            lista=[]
+            lista=[[],[]]
 
             for pallet in palletsnoencontrados.filter(ubic=calle):
 
                 if not(pallet.tarja in palletsenotracalle):
-                    lista.append(pallet.tarja)
+                    lista[0].append(pallet.tarja)
+
+                try:
+                    lista[1].append(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                except:
+                    #print("hola")
+                    lista[1].append("vacio")
 
             datosWIP[calle]['palletsnoencontrados'] = lista
-
-
-
             datosWIP[calle]['palletsenotracalle'] = palletsenotracalle
 
 
