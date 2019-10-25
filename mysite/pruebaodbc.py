@@ -37,8 +37,8 @@ def inicia_browser():
 
         #Ojo que esto antes estaba en el webscrap_mov. Lo puse aquí para ver si funciona más rápido
         print("entrando a página")
-        #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-        browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+        browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+        #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
         #browser.open("http://192.168.7.32:8080/carga_mov_pallets/")
 
         return(browser)
