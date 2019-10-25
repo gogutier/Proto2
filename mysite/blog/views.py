@@ -453,11 +453,11 @@ def get_data_inv_ciclico(request, *args, **kwargs):
             palletstomainv = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)
 
             #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
-            palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
+            palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('tarja')
 
             #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
-            palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('pk')
-            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
+            palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('tarja')
+            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
 
             #hago grupo de calles a excluir
             palletsCTIenotracalle = Pallet.objects.all().exclude(ubic=calle)
@@ -479,7 +479,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                         palletsenotracalle[1].append("vacio")
 
 
-            #palletsnoencontrados= palletsnoencontrados.exclude(tarja__in=[o.tarja for o in palletsenotracalle]).order_by('pk')
+            #palletsnoencontrados= palletsnoencontrados.exclude(tarja__in=[o.tarja for o in palletsenotracalle]).order_by('tarja')
 
             lista=[[],[]]
 
@@ -517,11 +517,11 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                 if not(pallet.tarja in palletsenotracalle):
                     lista[0].append(pallet.tarja)
 
-                try:
-                    lista[1].append(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
-                except:
-                    #print("hola")
-                    lista[1].append("vacio")
+                    try:
+                        lista[1].append(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                    except:
+                        #print("hola")
+                        lista[1].append("vacio")
 
             datosWIP[calle]['palletsnoencontrados'] = lista
             datosWIP[calle]['palletsenotracalle'] = palletsenotracalle
