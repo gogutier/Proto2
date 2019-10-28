@@ -85,6 +85,22 @@ def panel_movpallets(request):
 
 def panel_inv_ciclico(request):
     #print("cargando consumos puestos")
+    if request.method == "POST":
+        #Crea una nueva TomaInvCic.
+
+        o = TomaInvCic.objects.create()
+
+        o.save()
+
+        tomainvantiguos= TomaInvCic.objects.filter(fechatomainvcic__lt=o.fechatomainvcic)
+        for toma in tomainvantiguos:
+            toma.delete()
+
+        #Borra Las anteriores.
+
+
+
+
     template_name = 'blog/panel_inv_ciclico.html'
 
     return render(request, template_name, {})#
@@ -457,7 +473,6 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
             #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
             palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('tarja')
-            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
 
             #hago grupo de calles a excluir
             palletsCTIenotracalle = Pallet.objects.all().exclude(ubic=calle)
@@ -477,6 +492,12 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                     except:
                         #print("hola")
                         palletsenotracalle[1].append("vacio")
+
+            datosWIP[calle]['palletsenotracalle'] = palletsenotracalle
+
+
+            palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
+
 
 
             #palletsnoencontrados= palletsnoencontrados.exclude(tarja__in=[o.tarja for o in palletsenotracalle]).order_by('tarja')
@@ -512,9 +533,9 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
             lista=[[],[]]
 
-            for pallet in palletsnoencontrados.filter(ubic=calle):
+            for pallet in palletsnoencontrados:
 
-                if not(pallet.tarja in palletsenotracalle):
+                if (pallet.tarja not in palletsenotracalle[0]):
                     lista[0].append(pallet.tarja)
 
                     try:
@@ -524,14 +545,15 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                         lista[1].append("vacio")
 
             datosWIP[calle]['palletsnoencontrados'] = lista
-            datosWIP[calle]['palletsenotracalle'] = palletsenotracalle
 
 
+            ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
 
 
         data = {
         "prueba":prueba,
         "datosWIP":datosWIP,
+        "ultimatoma":ultimatoma,
 
 
         }

@@ -22,10 +22,22 @@ def webscrap_corrplan():
 
         # put the rest of our selenium code in a try/finally
         # to make sure we always clean up at the end
+
+        direccion= "http://192.168.8.42//pagegenerator.dll/Login"
+        direccion2= "http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait="
+        auxdir=0
         try:
             #browser.get('http://www.google.com')
             #driver.get("http://interlink.corrupac.cl/pagegenerator.dll/Login")
-            driver.get("http://192.168.8.42//pagegenerator.dll/Login")
+
+            print("entrando a login")
+
+            try:
+                driver.get(direccion)
+            except:
+                auxdir=1
+                driver.get(direccion2)
+
 
             driver.implicitly_wait(30)
             print (driver.title) #this should print "Google"
@@ -34,7 +46,6 @@ def webscrap_corrplan():
             #elem.send_keys(user)
 
             #print(driver.page_source)
-
             print("ingresando user y pass")
             search_field = driver.find_element_by_id("LoginPh")
             search_field.clear()
@@ -64,9 +75,12 @@ def webscrap_corrplan():
             #print(driver.page_source)
             """
             #driver.get("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait=")
-            driver.get("http://192.168.8.42/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait=")
-            #driver.implicitly_wait(30)
-        
+            if auxdir==0:
+                driver.get("http://192.168.8.42/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait=")
+            else:
+                driver.get("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait=")
+            driver.implicitly_wait(30)
+
             '''
             i=0
             lists= driver.find_elements_by_class_name("even")#tambièn hay de clase even
