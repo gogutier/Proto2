@@ -37,8 +37,8 @@ def inicia_browser():
 
         #Ojo que esto antes estaba en el webscrap_mov. Lo puse aquí para ver si funciona más rápido
         print("entrando a página")
-        browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-        #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
+        #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
+        browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
         #browser.open("http://192.168.7.32:8080/carga_mov_pallets/")
 
         return(browser)
@@ -104,12 +104,13 @@ def webscrap_mov(browser, cursor):
             #<Response [200]>
             #>>> browser.get_url()
         resultado="dato enviado"
-        return(resultado)
+        return(1)
 
     except Exception as e:
         print(e)
         print("Desconectado de página o no hay movimientos nuevos qué capturar")
         sleep(20)
+        return(0)
 
 
 
@@ -222,7 +223,7 @@ def cargaDatos(ultimo, cursor):
     #print("consulta exitosa")
     #print(cursor[0])
     #return(cursor[0])
-    if 1:
+    try:
 
         #print("Tarja:")
         #print(row1[8])
@@ -291,7 +292,7 @@ def cargaDatos(ultimo, cursor):
         #print(m2uni)
         datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
         print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
-    else:#except Exception as e:
+    except Exception as e:
         #print(e)
         print("error al tomar row1!")
         #print("Unexpected error:", sys.exc_info()[0])
@@ -312,15 +313,11 @@ while True:
         sleep(0.5)
         browser= inicia_browser()
 
+        auxok=1
+        while auxok==1:
+            auxok=webscrap_mov(browser,cursor)
+
     except Exception as e:
         print(e)
         print("error en conexión a datos :( (a DB o a sitio web))")
         sleep(0.2)
-    if 1:
-        while True:
-            webscrap_mov(browser,cursor)
-
-    else: #except Exception as e:
-        #print(e)
-        print("error consulta de datos :(")
-        sleep(0.5)

@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -277,45 +277,15 @@ def get_data_inventario_prog(request, *args, **kwargs):
         #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
 
             #veo de todos los order corrplan, cuál es la suma de m2 asociados a una máquina.
-        datosCorrplanINV={"TCY":{"m2Prog24":0,"m2EnInv":0,"m224h":0, "indice":0},"HCR":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"WRD":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFW":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"DRO":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0},"FFG":{"m2Prog":0,"m2EnInv":0,"m224h":0 ,"indice":0}}
 
-        ahora=datetime.now()
+
 
         print("iniciando consulta inv en Corrplan")
 
-        for maq in datosCorrplanINV.keys():
-
-            print(maq)
-            #datosCorrplanINV.[str(maq)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
-            auxm2inv=0
-            auxm2inv24h=0
-
-            auxm2totprog24h=0
-
-            print("Corrplan 24h entre:")
-            print(ahora)
-            print("y")
-            print(ahora+timedelta(days=1))
-
-            for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
-                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2") | Q(ubic="ZPASILLO")):
-                    if pallet.ORDERID == order.order_id:
-                        auxm2inv=auxm2inv+pallet.m2pallet
-
-
-
-            for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=1), maquina=Maquinas.objects.filter(maquina=str(maq))[0]):
-                auxm2totprog24h=auxm2totprog24h+order.area
-                for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2") | Q(ubic="ZPASILLO")):
-                    if pallet.ORDERID == order.order_id:
-                        auxm2inv24h=auxm2inv24h+pallet.m2pallet
-
-
-            datosCorrplanINV[str(maq)]['m2Prog24h']=auxm2totprog24h # Toto lo que se va a consumir según corrplan en las prox 24h.
-            datosCorrplanINV[str(maq)]['m2inv24h']=auxm2inv24h # de lo que se va a consumir el 24 horas, lo que sí está en inventario.
-            datosCorrplanINV[str(maq)]['m2inv']=auxm2inv# Todo lo que está en inventario asignado a esa máquina y que esté en corrplan, independiente de cuándo se vaya a consumir.
 
         invtotwip=0
+
+
 
         #for order in OrdenCorrplan.objects.filter(fecha_inicio__gte=ahora, fecha_inicio__lte=ahora+timedelta(days=8)):
         for pallet in Pallet.objects.filter( Q(ubic="ZFFG1") | Q(ubic="ZFFG2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZTCY1") | Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZHCR1")| Q(ubic="ZHCR2")| Q(ubic="ZSOB1") | Q(ubic="ZSOB2") | Q(ubic="ZPASILLO")):
@@ -326,15 +296,15 @@ def get_data_inventario_prog(request, *args, **kwargs):
 
 
 
+        datosCorrplanINV={"TCY":{"m2Prog24h":DatosWIP_Prog.objects.get(maquina="TCY").m2Prog24h,"m2inv24h":DatosWIP_Prog.objects.get(maquina="TCY").m2inv24h,"m2inv":DatosWIP_Prog.objects.get(maquina="TCY").m2inv},"HCR":{"m2Prog24h":DatosWIP_Prog.objects.get(maquina="HCR").m2Prog24h,"m2inv24h":DatosWIP_Prog.objects.get(maquina="HCR").m2inv24h,"m2inv":DatosWIP_Prog.objects.get(maquina="HCR").m2inv},"WRD":{"m2Prog24h":DatosWIP_Prog.objects.get(maquina="WRD").m2Prog24h,"m2inv24h":DatosWIP_Prog.objects.get(maquina="WRD").m2inv24h,"m2inv":DatosWIP_Prog.objects.get(maquina="WRD").m2inv},"FFW":{"m2Prog24h":DatosWIP_Prog.objects.get(maquina="FFW").m2Prog24h,"m2inv24h":DatosWIP_Prog.objects.get(maquina="FFW").m2inv24h,"m2inv":DatosWIP_Prog.objects.get(maquina="FFW").m2inv},"DRO":{"m2Prog24h":DatosWIP_Prog.objects.get(maquina="DRO").m2Prog24h,"m2inv24h":DatosWIP_Prog.objects.get(maquina="DRO").m2inv24h,"m2inv":DatosWIP_Prog.objects.get(maquina="DRO").m2inv},"FFG":{"m2Prog24h":DatosWIP_Prog.objects.get(maquina="FFG").m2Prog24h,"m2inv24h":DatosWIP_Prog.objects.get(maquina="FFG").m2inv24h,"m2inv":DatosWIP_Prog.objects.get(maquina="FFG").m2inv}}
+
         print(datosCorrplanINV)
 
         fotocorrplan = FotoCorrplan.objects.all()[0].fecha_foto.strftime("%m/%d/%Y %H:%M:%S")
         data = {
-
         "datosCorrplanINV": datosCorrplanINV,
         "fotocorrplan": fotocorrplan,
         "invtotwip": invtotwip,
-
 
         #"filtroentrada": filtroentrada,
         #"filtrosalida": filtrosalida,
@@ -353,7 +323,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPICADO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45}}
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":53},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":20,"al3":30},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},"ZPASILLO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3}}
 
         m2totalINV=0
         npalletstotalINV=0
@@ -413,7 +383,7 @@ def get_data_inventario(request, *args, **kwargs):
 
 
         filtroentrada=[]
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")).order_by('-TRANSACTIONINDEX')[:4]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")| Q(DESTINATION="ZPASILLO") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")).order_by('-TRANSACTIONINDEX')[:4]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
@@ -760,9 +730,8 @@ def invsimple2(request):
 
             '''
         elif len(datocrudo) <= 7 and len(datocrudo) > 5 and datocrudo.isdigit():
-            o, created = PalletCic.objects.get_or_create(tarja=datocrudo)
+            o, created = PalletCic.objects.get_or_create(tarja=datocrudo, tomainvcic=tomainv)
             o.ubic= tomainv.aux1.upper()
-            o.tomainvcic= tomainv
             o.save()
 
 

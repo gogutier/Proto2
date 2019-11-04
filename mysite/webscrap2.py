@@ -1,6 +1,10 @@
 #from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 
 from selenium.webdriver.firefox.options import Options
 
@@ -79,8 +83,12 @@ def webscrap_corrplan():
                 driver.get("http://192.168.8.42/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait=")
             else:
                 driver.get("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID&wait=")
-            driver.implicitly_wait(30)
-
+            #
+            try:
+                myElem = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.ID, 'dataTable_info')))
+                print ("Page is ready!")
+            except TimeoutException:
+                print ("Loading took too much time!")
             '''
             i=0
             lists= driver.find_elements_by_class_name("even")#tambièn hay de clase even
@@ -97,11 +105,14 @@ def webscrap_corrplan():
             '''
 
             table = driver.find_element_by_id('dataTable')
+
             head = table.find_element_by_tag_name('thead')
             body = table.find_element_by_tag_name('tbody')
 
+
             body_rows = body.find_elements_by_tag_name('tr')
             i=0
+
             print("analizando tabla")
             for row in body_rows:
 
@@ -110,7 +121,7 @@ def webscrap_corrplan():
                 data = row.find_elements_by_tag_name('td')
                 file_row = []
                 for datum in data:
-                    print("analizando data")
+                    #print("analizando data")
                     datum_text = datum.text#.encode('utf8')
                     file_row.append(datum_text)
                 corrplan.append(file_row)

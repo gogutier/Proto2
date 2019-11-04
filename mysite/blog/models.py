@@ -9,6 +9,17 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class DatosWIP_Prog(models.Model):
+
+    maquina=models.CharField(max_length=6, unique=True, blank=False, default="0")
+    m2Prog24h=models.FloatField(default=0)
+    m2inv24h=models.FloatField(default=0)
+    m2inv=models.FloatField(default=0)
+    indice=models.FloatField(default=0)
+
+    def __str__(self):
+        return (str(self.maquina))
+
 
 class TomaInvCic(models.Model):
 
@@ -21,7 +32,7 @@ class TomaInvCic(models.Model):
 
 class PalletCic(models.Model):
 
-    tomainvcic=models.ForeignKey('blog.TomaInvCic', related_name='tomainv_cic', on_delete=models.CASCADE, default=1)
+    tomainvcic=models.ForeignKey('blog.TomaInvCic', related_name='tomainv_cic', on_delete=models.CASCADE)
     tarja=models.CharField(unique=True, max_length=9, blank=False, default="0")
     ubic=models.CharField(max_length=32, default="vacio")
     ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet_cic', on_delete=models.CASCADE, default=1)
@@ -139,6 +150,35 @@ class Cartones(models.Model):
 
     def __str__(self):
         return (str(self.carton))
+
+
+class FotoProgCorr(models.Model):
+
+
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
+
+    def __str__(self):
+        return (str(self.fecha_foto))
+
+class IDProgCorr(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+
+    programa=models.ForeignKey('blog.FotoProgCorr', related_name='foto_porgcorr', on_delete=models.CASCADE, default=0)#el ondelete te dice què hacer cuabndo se borra la foreignkey. En este caso cascade indica que todas se borren.
+
+    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now())
+    fecha_fin=models.DateTimeField(blank=False, default=timezone.now())
+
+    order_id=models.CharField(max_length=15, default="vacio")
+
+    ancho=models.IntegerField(default=0)
+    refile=models.IntegerField(default=0)
+    metrosL=models.IntegerField(default=0)
+    carton=models.CharField(max_length=15, default="vacio")
+    color=models.CharField(max_length=15, default="vacio")
+
+    def __str__(self):
+        return (self.order_id)
 
 
 class FotoCorrplan(models.Model):
