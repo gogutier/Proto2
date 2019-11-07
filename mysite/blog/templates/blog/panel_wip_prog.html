@@ -175,12 +175,12 @@ function datosinv(){
       tabla2.rows[4].cells[8].innerHTML=constot24hconv.toFixed(1)
 
 
-      tabla2.rows[5].cells[1].innerHTML=((datosCorrplanINV["TCY"]["m2inv24h"]/100)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
-      tabla2.rows[5].cells[2].innerHTML=((datosCorrplanINV["HCR"]["m2inv24h"]/100)/(datosCorrplanINV["HCR"]["m2Prog24h"]/1)).toFixed(1)+"%"
-      tabla2.rows[5].cells[3].innerHTML=((datosCorrplanINV["WRD"]["m2inv24h"]/100)/(datosCorrplanINV["WRD"]["m2Prog24h"]/1)).toFixed(1)+"%"
-      tabla2.rows[5].cells[4].innerHTML=((datosCorrplanINV["FFW"]["m2inv24h"]/100)/(datosCorrplanINV["FFW"]["m2Prog24h"]/1)).toFixed(1)+"%"
-      tabla2.rows[5].cells[5].innerHTML=((datosCorrplanINV["DRO"]["m2inv24h"]/100)/(datosCorrplanINV["DRO"]["m2Prog24h"]/1)).toFixed(1)+"%"
-      tabla2.rows[5].cells[6].innerHTML=((datosCorrplanINV["FFG"]["m2inv24h"]/100)/(datosCorrplanINV["FFG"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[1].innerHTML=((datosCorrplanINV["TCY"]["m2inv24h"]/10)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[2].innerHTML=((datosCorrplanINV["HCR"]["m2inv24h"]/10)/(datosCorrplanINV["HCR"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[3].innerHTML=((datosCorrplanINV["WRD"]["m2inv24h"]/10)/(datosCorrplanINV["WRD"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[4].innerHTML=((datosCorrplanINV["FFW"]["m2inv24h"]/10)/(datosCorrplanINV["FFW"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[5].innerHTML=((datosCorrplanINV["DRO"]["m2inv24h"]/10)/(datosCorrplanINV["DRO"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[6].innerHTML=((datosCorrplanINV["FFG"]["m2inv24h"]/10)/(datosCorrplanINV["FFG"]["m2Prog24h"]/1)).toFixed(1)+"%"
 
       var ratio24hconv=(invtot24hconv/constot24hconv)
       tabla2.rows[5].cells[8].innerHTML=(ratio24hconv*100).toFixed(1)+"%"

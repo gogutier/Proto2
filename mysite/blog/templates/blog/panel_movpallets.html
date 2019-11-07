@@ -15,7 +15,6 @@
 
 <script type="text/javascript">
 
-{% block jquery %}
 
 
 
@@ -46,7 +45,7 @@ function datosinv(){
       console.log(labels)
 
       setChart1();
-      setChart2();
+
 
 
       },
@@ -60,7 +59,6 @@ function datosinv(){
 
 }
 
-{% endblock %}
 
 
 /// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
@@ -193,7 +191,7 @@ function setChart2(){
       options: {
           title:{
             display:true,
-            responsive:true,
+            responsive:false,
             hoverMode:true,
             stacked:false,
             text:"Movimiento Pallets"

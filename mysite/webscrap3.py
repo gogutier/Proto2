@@ -20,7 +20,7 @@ def webscrap_prog_corr():
     # Uncomment for a more verbose output:
     # browser.set_verbose(2)
 
-    browser.open("http://interlink.corrupac.cl/pagegenerator.dll/Login")
+    browser.open("http://192.168.8.42/pagegenerator.dll/Login")
     #browser.follow_link("login")
     browser.select_form()
     #browser.select_form('formMain')
@@ -54,7 +54,7 @@ def webscrap_prog_corr():
     #Falta hacer que selecciones la opción 800 en plant y luego apriete la el form submit, esto en el explorador al parecer lo hace solo (script?)
 
 
-    browser.open("http://interlink.corrupac.cl/pagegenerator.dll/CorrugatorLineupDryend?AreaLink=1")
+    browser.open("http://192.168.8.42/pagegenerator.dll/CorrugatorLineupDryend?AreaLink=1")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
     #browser.launch_browser()
     #print(browser.get_current_page())
@@ -96,7 +96,8 @@ def webscrap_prog_corr():
     for i in range(2,len(tabla)):
         col=[]
 
-        col.append(tabla[i][0])
+        col.append(tabla[i][0][1:])
+        col.append(tabla[i][2])
         col.append(tabla[i][3])
         col.append(tabla[i][4])
         col.append(tabla[i][5])
@@ -110,6 +111,6 @@ def webscrap_prog_corr():
 
 
     #[el.text for el in sp.find_all(['td', 'th']) if el.text]
-    #print(rows)
+    #print(tabla2)
 
     return(tabla2)

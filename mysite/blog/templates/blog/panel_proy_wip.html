@@ -1,0 +1,189 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<h4>Proyección inventario WIP</h4>
+<h6>Próximas 48h</h6>
+
+<div class="container">
+
+
+
+<canvas id="myChart"  style="width:1000px"></canvas>
+<h6 id="fechafoto">Cargando...</h6>
+</div>
+
+<script type="text/javascript">
+
+
+
+
+var endpoint='/api/get_data_proy_wip/';
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      labels = response_data.labels;
+      fotocorrplan= response_data.fotocorrplan;
+
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+      console.log(labels)
+      var fechafoto = document.getElementById('fechafoto');
+      fechafoto.innerHTML = "Último corrplan: " + fotocorrplan
+
+      setChart1();
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+    //displayTabla();
+
+}
+
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+datosinv()
+
+window.setInterval(function(){
+  console.log("hola");
+  datosinv();
+}, 30000);
+
+
+
+function setChart1(){
+
+  //generando list de labels
+  labelx=[]
+  m2Outx=[]
+  m2Inx=[]
+  m2Invx=[]
+
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+
+        m2Outx.push((labels[i]["M2Conv"]/-1).toFixed(1));
+        m2Inx.push((labels[i]["M2Corr"]/1).toFixed(1));
+        m2Invx.push((labels[i]["M2Inv"]/1).toFixed(1));
+      }
+
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [{
+
+              label: "Mm2 Inventario",
+              data: m2Invx,
+              borderColor: "rgba(100,42,155)",
+              backgroundColor: "rgba(100,42,155)",
+              stack: 'stack 1',
+              borderWidth: 0,
+              fill: false,
+              borderDash: [5,5],
+              type: 'line',
+              barValueSpacing : 0,
+
+
+              },{
+
+                label: "Proyección Conversión",
+                data: m2Outx,
+                borderColor: "rgba(0,42,255)",
+                backgroundColor: "rgba(0,42,255)",
+                stack: 'stack 0',
+                borderWidth: 0,
+                barValueSpacing : 0,
+                barThickness: 70,
+                beginAtZero: true,
+
+
+
+          },
+            {
+              label: "Proyección Corrugado",
+              data: m2Inx,
+              borderColor: "rgba(0,200,155)",
+              backgroundColor: "rgba(0,200,155)",
+              stack: 'stack 0',
+              borderWidth: 0,
+              barValueSpacing : 0,
+              barThickness: 50,
+              beginAtZero: true,
+
+
+
+          }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:false,
+            hoverMode:false,
+            text:"Mm2 inventario proyectado WIP"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: false,
+                barPercentage: 1.0,
+                categoryPercentage: 0.75,
+               }],
+              yAxes: [{stacked: false,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+
+function setChart2(){
+}
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

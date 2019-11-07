@@ -9,6 +9,20 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+
+class Datos_Proy_WIP(models.Model):
+
+    fecha=models.DateTimeField(blank=False, default=timezone.now)
+    turno=models.CharField(max_length=16, blank=False, default="0")
+    label=models.CharField(max_length=16, blank=False, default="0")
+    M2Conv=models.FloatField(default=0)
+    M2Corr=models.FloatField(default=0)
+    M2Inv=models.FloatField(default=0)
+
+
+    def __str__(self):
+        return (str(self.label))
+
 class DatosWIP_Prog(models.Model):
 
     maquina=models.CharField(max_length=6, unique=True, blank=False, default="0")
@@ -174,6 +188,7 @@ class IDProgCorr(models.Model):
     ancho=models.IntegerField(default=0)
     refile=models.IntegerField(default=0)
     metrosL=models.IntegerField(default=0)
+    area=models.FloatField(default=0)
     carton=models.CharField(max_length=15, default="vacio")
     color=models.CharField(max_length=15, default="vacio")
 

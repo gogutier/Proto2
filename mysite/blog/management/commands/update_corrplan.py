@@ -145,4 +145,6 @@ class Command(BaseCommand):
                 self.stdout.write("Datos actualizados")
             except:
                 print("error")
+                sleep(15)
+            sleep(15)
         sleep(3600)

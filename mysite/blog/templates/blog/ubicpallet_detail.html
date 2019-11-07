@@ -10,6 +10,7 @@
   <td  colspan="6"><h3>{{ubic.calle}}</h3></td>
 </tr>
 <tr style="text-align: center">
+  <td>Order ID</td>
   <td >N° pallet</td>
   <td >Cliente</td>
   <td >Padrón</td>
@@ -20,6 +21,7 @@
 {% for pallet in pallets %}
 
 <tr style="text-align: center">
+  <td>{{pallet.ORDERID}}</td>
   <td>{{pallet.tarja}}</td>
   <td>{{pallet.cliente}}</td>
   <td>{{pallet.padron}}</td>
@@ -50,7 +52,7 @@ function updatecuadros()
 
       for (i=2;i<myTable.rows.length;i++)
       {
-        var fechacreac = moment(myTable.rows[i].cells[5].innerHTML, "DD-MM-YYYY HH:mm");
+        var fechacreac = moment(myTable.rows[i].cells[6].innerHTML, "DD-MM-YYYY HH:mm");
         var ahora = moment()
         //console.log(fechacreac)
         //console.log(ahora)
@@ -59,6 +61,7 @@ function updatecuadros()
         {
           myTable.rows[i].cells[4].style.color = "Crimson";
           myTable.rows[i].cells[5].style.color = "Crimson";
+          myTable.rows[i].cells[6].style.color = "Crimson";
         }
 
 

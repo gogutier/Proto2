@@ -70,4 +70,6 @@ urlpatterns = [
     url(r'^up_excel/$',views.up_excel,name='up_excel'),
     url(r'^panel_inv_ciclico/$',views.panel_inv_ciclico,name='panel_inv_ciclico'),
     url(r'^api/get_data_inv_ciclico/$',views.get_data_inv_ciclico,name='api-data-inv-ciclico'),
+    url(r'^panel_proy_wip/$',views.panel_proy_wip,name='panel_proy_wip'),
+    url(r'^api/get_data_proy_wip/$',views.get_data_proy_wip,name='api-data-proy-wip')
 ]

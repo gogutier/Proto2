@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -25,6 +25,28 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
+def panel_proy_wip(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_proy_wip.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+def get_data_proy_wip(request, *args, **kwargs):
+
+    labels=[]
+
+    for dato in Datos_Proy_WIP.objects.all():
+
+        labels.append({"fecha":dato.fecha,"turno":dato.turno, "label": dato.label, "M2Conv":dato.M2Conv, "M2Corr":dato.M2Corr, "M2Inv":dato.M2Inv})
+
+    fotocorrplan = FotoCorrplan.objects.all()[0].fecha_foto.strftime("%m/%d/%Y %H:%M:%S")
+
+    data = {
+    "labels":labels,
+    "fotocorrplan":fotocorrplan,
+            }
+    print("Enviando datos proy wip")
+    return JsonResponse(data)#http response con el datatype de JS
 
 def open_xls_as_xlsx(filename):
     # first open using xlrd
@@ -445,7 +467,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
             palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('tarja')
 
             #hago grupo de calles a excluir
-            palletsCTIenotracalle = Pallet.objects.all().exclude(ubic=calle)
+            palletsCTIenotracalle = Pallet.objects.all().exclude(ubic=calle).order_by('tarja')
             tarjasnot=[]
 
             for aux in palletsCTIenotracalle:
@@ -453,7 +475,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
             palletsenotracalle=[[],[]]
 
-            for aux in PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv):
+            for aux in PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).order_by('tarja'):
                 if aux.tarja in tarjasnot:
                     palletsenotracalle[0].append(aux.tarja)
 
@@ -474,7 +496,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
             lista=[[],[]]
 
-            for pallet in palletscti.filter(ubic=calle):
+            for pallet in palletscti.filter(ubic=calle).order_by('tarja'):
 
                 lista[0].append(pallet.tarja)
 
@@ -488,7 +510,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
             lista=[[],[]]
 
-            for pallet in palletsencontrados.filter(ubic=calle):
+            for pallet in palletsencontrados.filter(ubic=calle).order_by('tarja'):
 
                 lista[0].append(pallet.tarja)
 
@@ -884,7 +906,7 @@ class UbicDetailView(DetailView):
         context['ubic'] = UbicPallet.objects.get(pk=pk)
         context['m2tot'] = str( round(UbicPallet.objects.get(pk=pk).m2tot, 1) )
         context['npallets'] = str(UbicPallet.objects.get(pk=pk).npallets)
-        context['pallets'] = Pallet.objects.filter(ubic__iexact=str(UbicPallet.objects.get(pk=pk).calle)).order_by("fechacreac")
+        context['pallets'] = Pallet.objects.filter(ubic__iexact=str(UbicPallet.objects.get(pk=pk).calle)).order_by("ORDERID")
         return context
 
 
