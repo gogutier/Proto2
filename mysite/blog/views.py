@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -37,7 +37,7 @@ def get_data_proy_wip(request, *args, **kwargs):
 
     for dato in Datos_Proy_WIP.objects.all():
 
-        labels.append({"fecha":dato.fecha,"turno":dato.turno, "label": dato.label, "M2Conv":dato.M2Conv, "M2Corr":dato.M2Corr, "M2Inv":dato.M2Inv})
+        labels.append({"fecha_inicio":dato.fecha_inicio,"fecha_fin":dato.fecha_fin,"turno":dato.turno, "label": dato.label, "M2Conv":dato.M2Conv, "M2Corr":dato.M2Corr, "M2Inv":dato.M2Inv})
 
     fotocorrplan = FotoCorrplan.objects.all()[0].fecha_foto.strftime("%m/%d/%Y %H:%M:%S")
 
@@ -130,160 +130,14 @@ def panel_inv_ciclico(request):
 
 
 def get_data_movpallets(request, *args, **kwargs):
-
-    #muestra evolución de últimas horas de cuántos pallets entraron a WIP y cuántos salieron (m2 y unidades)
-    #entrega datos para armar gráfico.
-    #como referencia, el de WIP.
-
     labels=[]
-    ahora=timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-    for i in range(0,8):
-        #por ahora los voy a ordenar por turno, después por hora.
-        fecha=(ahora-timedelta(days=7-i)).replace(hour= 7)
-        turno="A"
-        label= fecha.strftime("%d-%m") + " " + turno
-        labels.append({"fecha":fecha ,"turno":turno, "label": label})
-
-        fecha=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
-        turno="B"
-        label= fecha.strftime("%d-%m") + " " + turno
-        labels.append({"fecha":fecha ,"turno":turno, "label": label})
-
-        fecha=(ahora-timedelta(days=7-i)).replace(hour= 22)
-        turno="C"
-        label= fecha.strftime("%d-%m") + " " + turno
-        labels.append({"fecha":fecha ,"turno":turno, "label": label})
-
-    #ahpra por cada labe[] le anexo el dato de los m2 de entrada.
-
-    listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
-    listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC"]
-    listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","ZPICADO"]
-
-    filtroproducidoqs=Q()
-
-    filtroentradaqs=Q()
-    filtrosalidaqs=Q()
-
-    for item in listafiltroproducido:
-        filtroproducidoqs = filtroproducidoqs | Q(DESTINATION=item)
-
-    for item in listafiltroentrada:
-        filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
-
-    for item in listafiltrosalida:
-        filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
-
-    for i in range(0,len(labels)-1):
-
-        #Entradas
-        filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
-        cantidad1=filtro.count()
-        #sumo los m2 asociados a cada pallets
-        m2tot=0
-        for mov in filtro:
-            m2tot=m2tot+mov.m2pallet
-
-        labels[i]["cantidadIn"]= cantidad1
-        labels[i]["m2In"]= m2tot
-
-
-
-        #Producidos pero excluyendo los pallets que ya están en la lista de Entradas (acá saco el m2 actualizado de cada pallet, para descartar las producciones que se fueron a cero)
-        filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
-
-
-        for item in filtro:
-            filtro2=filtro2.exclude(LOADID=item.LOADID)
-
-
-        cantidad1=filtro2.count()
-        #sumo los m2 asociados a cada pallets
-        m2tot=0
-        for mov in filtro2:
-            #print(str(mov) + ".." + str(mov.LOADID) )
-            try:
-                m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
-            except:
-                print("error con " + str(mov) + ".." + str(mov.LOADID) + "!!")
-
-
-        labels[i]["cantidadProd"]= cantidad1
-        labels[i]["m2Prod"]= m2tot
-
-
-        #Salidas
-        filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i+1]["fecha"])
-        cantidad1=filtro.count()
-        #sumo los m2 asociados a cada pallet
-        m2tot=0
-        for mov in filtro:
-            m2tot=m2tot+mov.m2pallet
-
-        labels[i]["cantidadOut"]= cantidad1
-        labels[i]["m2Out"]= m2tot
-
-
-
-
-
-    #este es el último item de cada lista (como termina donde empieza el siguiente no funciona dentro del for)
-
-
-    #Entrada
-    filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
-    cantidad1=filtro.count()
-
-
-    m2tot=0
-    for mov in filtro:
-        m2tot=m2tot+mov.m2pallet
-
-    labels[len(labels)-1]["cantidadIn"]= cantidad1
-    labels[len(labels)-1]["m2In"]= m2tot
-
-
-
-    #Producido no ingresado
-    filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
-
-
-    for item in filtro:
-        filtro2=filtro2.exclude(LOADID=item.LOADID)
-
-
-
-    cantidad1=filtro2.count()
-
-
-    m2tot=0
-    for mov in filtro2:
-        m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
-
-    labels[len(labels)-1]["cantidadProd"]= cantidad1
-    labels[len(labels)-1]["m2Prod"]= m2tot
-
-
-    #Salida
-    filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[len(labels)-1]["fecha"])
-    cantidad1=filtro.count()
-
-    m2tot=0
-    for mov in filtro:
-        m2tot=m2tot+mov.m2pallet
-
-    labels[len(labels)-1]["cantidadOut"]= cantidad1
-    labels[len(labels)-1]["m2Out"]= m2tot
-
-
-
-
-
     #estructura: inicio turno en datetime, inicio turno en texto, inicio turno en descripción, m2 ingreso a planta en ese turno, m2 salida de planta en ese turno.
 
     #fecha, label, m2in, m2out
 
     #labels.append((ahora+timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0))
+    for dato in Datos_MovPallets.objects.all():
+        labels.append({"fecha":dato.fecha,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadProd":dato.cantidadProd, "m2Prod":dato.m2Prod, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out})
 
 
 
@@ -405,7 +259,7 @@ def get_data_inventario(request, *args, **kwargs):
 
 
         filtroentrada=[]
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")| Q(DESTINATION="ZPASILLO") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")).order_by('-TRANSACTIONINDEX')[:4]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")| Q(DESTINATION="ZPASILLO") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")| Q(SOURCE="ZPASILLO")).order_by('-TRANSACTIONINDEX')[:4]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
@@ -416,7 +270,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         #print(filtroentrada)
         filtrosalida=[]
-        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO") ).order_by('-TRANSACTIONINDEX')[:4]
+        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO")| Q(DESTINATION="PLL") ).order_by('-TRANSACTIONINDEX')[:4]
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
@@ -953,7 +807,7 @@ def get_data_corrplan_cartones(request, *args, **kwargs):
     #append fecha hoy +1
 
     horizonte=10
-    ahora=timezone.now()
+    ahora=datetime.now()
 
     for i in range(0,horizonte):
         labels.append((ahora+timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0))
@@ -1280,7 +1134,7 @@ def get_data_wip(request, *args, **kwargs):#este hace que se actualice utilizand
     totales=totales
 
 
-    ahora=timezone.now()
+    ahora=datetime.now()
     m2pormaq=[] #agrego el dato de los m2 programados por màquina que hay en las pròximas 24h.
     fotocorr= FotoCorrplan.objects.all().order_by("-fecha_foto")[0]
     #print(fotocorr.fecha_foto)
@@ -1383,7 +1237,7 @@ def get_data_wip_2(request, *args, **kwargs):
 
     print("cargando m2 cargados por màquina")
 
-    ahora=timezone.now()
+    ahora=datetime.now()
     m2pormaq=[] #agrego el dato de los m2 programados por màquina que hay en las pròximas 24h.
     print("a1")
     fotocorr= FotoCorrplan.objects.all().order_by("-fecha_foto")[0]

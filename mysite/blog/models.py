@@ -9,10 +9,32 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class Datos_Inv_WIP(models.Model):
+
+    def __str__(self):
+        return (str(self.label))
+
+class Datos_MovPallets(models.Model):
+
+
+    fecha=models.DateTimeField(blank=False, default=timezone.now)
+    turno=models.CharField(max_length=16, blank=False, default="0")
+    label=models.CharField(max_length=16, blank=False, default="0")
+    cantidadIn=models.IntegerField(default=0)
+    m2In=models.FloatField(default=0)
+    cantidadProd=models.IntegerField(default=0)
+    m2Prod=models.FloatField(default=0)
+    cantidadOut=models.IntegerField(default=0)
+    m2Out=models.FloatField(default=0)
+
+
+    def __str__(self):
+        return (str(self.label))
 
 class Datos_Proy_WIP(models.Model):
 
-    fecha=models.DateTimeField(blank=False, default=timezone.now)
+    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now)
+    fecha_fin=models.DateTimeField(blank=False, default=timezone.now)
     turno=models.CharField(max_length=16, blank=False, default="0")
     label=models.CharField(max_length=16, blank=False, default="0")
     M2Conv=models.FloatField(default=0)
@@ -109,7 +131,7 @@ class MovPallets(models.Model):
     UNITNO=models.CharField(max_length=16, default="0")
     SOURCE=models.CharField(max_length=32,blank=True, default="0")
     DESTINATION=models.CharField(max_length=32, default="0")
-    EVENTDATETIME=models.DateTimeField(blank=False, default=timezone.now)
+    EVENTDATETIME=models.DateTimeField(blank=False, default=datetime.datetime.now())
     EVENTTIME=models.CharField(max_length=16, default="0")
     unidadespallet=models.IntegerField(default=0)
     kgpallet=models.FloatField(default=0)
@@ -124,7 +146,7 @@ class MovPallets(models.Model):
 
 
     def __str__(self):
-        return (str(self.TRANSACTIONINDEX))
+        return (str(self.TRANSACTIONINDEX) + " --- " + str(self.EVENTDATETIME) + " ---  " + str(self.DESTINATION))
 
 
 class BobInvCic(models.Model):
@@ -180,8 +202,8 @@ class IDProgCorr(models.Model):
 
     programa=models.ForeignKey('blog.FotoProgCorr', related_name='foto_porgcorr', on_delete=models.CASCADE, default=0)#el ondelete te dice què hacer cuabndo se borra la foreignkey. En este caso cascade indica que todas se borren.
 
-    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now())
-    fecha_fin=models.DateTimeField(blank=False, default=timezone.now())
+    fecha_inicio=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fecha_fin=models.DateTimeField(blank=False, default=datetime.datetime.now())
 
     order_id=models.CharField(max_length=15, default="vacio")
 
@@ -199,7 +221,7 @@ class IDProgCorr(models.Model):
 class FotoCorrplan(models.Model):
 
 
-    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
     usuario_foto=models.CharField(max_length=15, default="vacio")
     tiempo_carga=models.CharField(max_length=15, default="vacio")
 
@@ -212,8 +234,8 @@ class OrdenCorrplan(models.Model):
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
 
     programa=models.ForeignKey('blog.FotoCorrplan', related_name='foto_corrplan', on_delete=models.CASCADE, default=0)#el ondelete te dice què hacer cuabndo se borra la foreignkey. En este caso cascade indica que todas se borren.
-    fecha_entrega=models.DateTimeField(blank=False, default=timezone.now())
-    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now())
+    fecha_entrega=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fecha_inicio=models.DateTimeField(blank=False, default=datetime.datetime.now())
     order_id=models.CharField(max_length=15, default="vacio")
     cliente=models.CharField(max_length=15, default="vacio")
     SO=models.CharField(max_length=15, default="vacio")
@@ -351,7 +373,7 @@ class ProyMktPadron(models.Model):
 
 class FotoInventario(models.Model):
 
-    fecha_carga=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    fecha_carga=models.DateField(blank=False, default = datetime.datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0))
 
     total_kraft_kg=models.IntegerField(default=0)
     total_blanco_kg=models.IntegerField(default=0)
@@ -402,7 +424,7 @@ class FotoInventario(models.Model):
 
 
 class DiaConv2(models.Model):
-    diaajust=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    diaajust=models.DateField(blank=False, default = datetime.datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0))
     turno=models.ForeignKey('blog.Turnos', blank=False, on_delete=models.CASCADE)
     semana=models.IntegerField(default=0)
     mes=models.IntegerField(default=0)

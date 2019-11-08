@@ -19,8 +19,12 @@ def webscrap_prog_corr():
     )
     # Uncomment for a more verbose output:
     # browser.set_verbose(2)
-
-    browser.open("http://192.168.8.42/pagegenerator.dll/Login")
+    flag=0
+    try:
+        browser.open("http://192.168.8.42/pagegenerator.dll/Login")
+    except:
+        browser.open("http://interlink.corrupac.cl/pagegenerator.dll/Login")
+        flag=1
     #browser.follow_link("login")
     browser.select_form()
     #browser.select_form('formMain')
@@ -53,8 +57,10 @@ def webscrap_prog_corr():
 
     #Falta hacer que selecciones la opción 800 en plant y luego apriete la el form submit, esto en el explorador al parecer lo hace solo (script?)
 
-
-    browser.open("http://192.168.8.42/pagegenerator.dll/CorrugatorLineupDryend?AreaLink=1")
+    if flag==0:
+        browser.open("http://192.168.8.42/pagegenerator.dll/CorrugatorLineupDryend?AreaLink=1")
+    else:
+        browser.open("http://interlink.corrupac.cl/pagegenerator.dll/CorrugatorLineupDryend?AreaLink=1")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
     #browser.launch_browser()
     #print(browser.get_current_page())

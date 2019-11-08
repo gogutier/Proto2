@@ -7,9 +7,9 @@
 
 
 
-<canvas id="myChart"  width:1000px"></canvas>
+<canvas id="myChart"  style="width:1000px"></canvas>
 
-<canvas id="myChart2" style=" width:1000px"></canvas>
+
 
 </div>
 
@@ -68,7 +68,7 @@ datosinv()
 window.setInterval(function(){
   console.log("hola");
   datosinv();
-}, 30000);
+}, 60000);
 
 
 
@@ -120,7 +120,7 @@ function setChart1(){
               data: m2Outx,
               borderColor: "rgba(0,200,155)",
               backgroundColor: "rgba(0,200,155)",
-              stack: 'stack 1',
+              stack: 'stack 0',
               borderWidth: 0,
 
 
@@ -139,7 +139,7 @@ function setChart1(){
 },
           scales: {
               xAxes: [{ stacked: true,
-                barPercentage: 1.0,
+                barPercentage: 0.65,
                 categoryPercentage: 0.75,
                }],
               yAxes: [{stacked: true,
@@ -160,59 +160,6 @@ function setChart1(){
 
 
 
-function setChart2(){
-
-  //generando list de labels
-  labelx=[]
-  cantidadOutx=[]
-  m2Outx=[]
-  for (var i = 0; i < labels.length; i++)
-      {
-        labelx.push(labels[i]["label"]);
-        cantidadOutx.push(labels[i]["cantidadOut"]);
-        m2Outx.push(labels[i]["m2Out"]);
-      }
-
-  var ctx = document.getElementById("myChart2").getContext('2d');
-  var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: labelx,
-          datasets: [{
-              label: "Mm2 Ingreso a bodega",
-              data: m2Outx,
-              borderColor: "rgba(0,42,255)",
-              backgroundColor: "rgba(0,42,255)",
-              borderWidth: 0,
-              //responsive: true,
-
-          }]
-      },
-      options: {
-          title:{
-            display:true,
-            responsive:false,
-            hoverMode:true,
-            stacked:false,
-            text:"Movimiento Pallets"
-          },
-          tooltips: {
-    mode: 'label',
-
-},
-          scales: {
-              xAxes: [{ stacked: true }],
-              yAxes: [{stacked: false,
-                  ticks: {
-                      autoSkip: false,
-                      beginAtZero:true
-                  }
-              }]
-          }
-      }
-  });
-
-}
 
 
 
