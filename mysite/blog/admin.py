@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr, Datos_Proy_WIP,Datos_MovPallets
+from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP,Datos_MovPallets, FiltroEntradaWIP, FiltroSalidaWIP
 
 
 # Register your models here.
@@ -47,3 +47,7 @@ admin.site.register(FotoProgCorr)
 admin.site.register(IDProgCorr)
 admin.site.register(Datos_Proy_WIP)
 admin.site.register(Datos_MovPallets)
+admin.site.register(Datos_Inv_WIP)
+admin.site.register(Foto_Datos_Inv_WIP)
+admin.site.register(FiltroEntradaWIP)
+admin.site.register(FiltroSalidaWIP)

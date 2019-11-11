@@ -69,8 +69,8 @@ function datosinv(){
 datosinv()
 
 window.setInterval(function(){
-  console.log("hola");
-  datosinv();
+  //console.log("hola");
+  //datosinv();
 }, 30000);
 
 
@@ -82,6 +82,7 @@ function setChart1(){
   m2Outx=[]
   m2Inx=[]
   m2Invx=[]
+  m2ProyCorrx=[]
 
   for (var i = 0; i < labels.length; i++)
       {
@@ -90,6 +91,7 @@ function setChart1(){
         m2Outx.push((labels[i]["M2Conv"]/-1).toFixed(1));
         m2Inx.push((labels[i]["M2Corr"]/1).toFixed(1));
         m2Invx.push((labels[i]["M2Inv"]/1).toFixed(1));
+        m2ProyCorrx.push((labels[i]["M2ProyCorr"]/1).toFixed(1));
       }
 
   var ctx = document.getElementById("myChart").getContext('2d');
@@ -113,7 +115,7 @@ function setChart1(){
 
               },{
 
-                label: "Proyección Conversión",
+                label: "Programa Conversión",
                 data: m2Outx,
                 borderColor: "rgba(0,42,255)",
                 backgroundColor: "rgba(0,42,255)",
@@ -127,10 +129,24 @@ function setChart1(){
 
           },
             {
-              label: "Proyección Corrugado",
+              label: "Programa Corrugado",
               data: m2Inx,
               borderColor: "rgba(0,200,155)",
               backgroundColor: "rgba(0,200,155)",
+              stack: 'stack 0',
+              borderWidth: 0,
+              //barValueSpacing : 0,
+              //barThickness: 40,
+              //beginAtZero: true,
+
+
+
+          },
+            {
+              label: "Proyección Corrugado",
+              data: m2ProyCorrx,
+              borderColor: "rgba(150,50,55)",
+              backgroundColor: "rgba(150,50,55)",
               stack: 'stack 0',
               borderWidth: 0,
               //barValueSpacing : 0,

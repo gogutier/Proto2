@@ -143,6 +143,7 @@ class Command(BaseCommand):
 
                     #self.stdout.write(fila[0][4])
                 self.stdout.write("Datos actualizados")
+                sleep(15)
             except:
                 print("error")
                 sleep(15)

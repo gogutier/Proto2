@@ -9,15 +9,63 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
-class Datos_Inv_WIP(models.Model):
+
+class Foto_Datos_Inv_WIP(models.Model):
+
+
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
 
     def __str__(self):
-        return (str(self.label))
+        return (str(self.fecha_foto))
+
+
+class FiltroEntradaWIP(models.Model):
+
+
+    programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwip1', on_delete=models.CASCADE, default=0)
+    LOADID=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+    DESTINATION=models.CharField(max_length=32, default="0")
+    EVENTDATETIME=models.CharField(max_length=32, default="0")
+
+    def __str__(self):
+        return (str(self.LOADID))
+
+
+class FiltroSalidaWIP(models.Model):
+
+
+    programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwip2', on_delete=models.CASCADE, default=0)
+    LOADID=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+    DESTINATION=models.CharField(max_length=32, default="0")
+    EVENTDATETIME=models.CharField(max_length=32, default="0")
+
+
+    def __str__(self):
+        return (str(self.LOADID))
+
+
+class Datos_Inv_WIP(models.Model):
+
+    programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwip', on_delete=models.CASCADE, default=0)
+    sector=models.CharField(max_length=16, blank=False, default="0")
+    cuenta=models.IntegerField(default=0)
+    m2tot=models.FloatField(default=0)
+    indice=models.IntegerField(default=0)
+    dias=models.IntegerField(default=0)
+    al1=models.IntegerField(default=0)
+    al2=models.IntegerField(default=0)
+    al3=models.IntegerField(default=0)
+
+    def __str__(self):
+        return (str(self.sector))
 
 class Datos_MovPallets(models.Model):
 
 
     fecha=models.DateTimeField(blank=False, default=timezone.now)
+    fechafin=models.DateTimeField(blank=False, default=timezone.now)
     turno=models.CharField(max_length=16, blank=False, default="0")
     label=models.CharField(max_length=16, blank=False, default="0")
     cantidadIn=models.IntegerField(default=0)
@@ -26,6 +74,8 @@ class Datos_MovPallets(models.Model):
     m2Prod=models.FloatField(default=0)
     cantidadOut=models.IntegerField(default=0)
     m2Out=models.FloatField(default=0)
+    m2Conv=models.FloatField(default=0)
+    m2Corr=models.FloatField(default=0)
 
 
     def __str__(self):
@@ -40,6 +90,7 @@ class Datos_Proy_WIP(models.Model):
     M2Conv=models.FloatField(default=0)
     M2Corr=models.FloatField(default=0)
     M2Inv=models.FloatField(default=0)
+    M2ProyCorr=models.FloatField(default=0)
 
 
     def __str__(self):
@@ -213,6 +264,16 @@ class IDProgCorr(models.Model):
     area=models.FloatField(default=0)
     carton=models.CharField(max_length=15, default="vacio")
     color=models.CharField(max_length=15, default="vacio")
+
+    UKID=models.CharField(max_length=15, default="vacio")
+    UKID_areaplaca=models.FloatField(default=0)
+    UKID_nplacas=models.IntegerField(default=0)
+    UKID_areatot=models.FloatField(default=0)
+
+    LKID=models.CharField(max_length=15, default="vacio")
+    LKID_areaplaca=models.FloatField(default=0)
+    LKID_nplacas=models.IntegerField(default=0)
+    LKID_areatot=models.FloatField(default=0)
 
     def __str__(self):
         return (self.order_id)

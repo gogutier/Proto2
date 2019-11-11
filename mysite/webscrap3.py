@@ -3,6 +3,7 @@ import mechanicalsoup
 import argparse
 from getpass import getpass
 
+from time import time, sleep
 #parser = argparse.ArgumentParser(description="Interlink.")
 #parser.add_argument("username")
 #args = parser.parse_args()
@@ -103,12 +104,22 @@ def webscrap_prog_corr():
         col=[]
 
         col.append(tabla[i][0][1:])
-        col.append(tabla[i][2])
+        col.append(tabla[i][2][1:])
         col.append(tabla[i][3])
         col.append(tabla[i][4])
         col.append(tabla[i][5])
         col.append(tabla[i][6])
         col.append(tabla[i][7])
+        col.append(tabla[i][8])
+        col.append(tabla[i][11])
+        col.append(tabla[i][12])
+        col.append(tabla[i][13])
+        col.append(tabla[i][28])
+        col.append(tabla[i][31])
+        col.append(tabla[i][32])
+        col.append(tabla[i][33])
+
+
 
         tabla2.append(col)
 
@@ -118,5 +129,6 @@ def webscrap_prog_corr():
 
     #[el.text for el in sp.find_all(['td', 'th']) if el.text]
     #print(tabla2)
+    #sleep(30)
 
     return(tabla2)
