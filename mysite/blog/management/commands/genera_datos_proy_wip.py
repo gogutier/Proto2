@@ -2,8 +2,11 @@ from django.core.management.base import BaseCommand, CommandError
 from blog.models import OrdenCorrplan as OrdenCorrplan
 from blog.models import FotoCorrplan as FotoCorrplan
 from blog.models import FotoProgCorr as FotoProgCorr
+from blog.models import FiltroEntradaWIP as FiltroEntradaWIP
+from blog.models import FiltroSalidaWIP as FiltroSalidaWIP
 from blog.models import Datos_Proy_WIP as Datos_Proy_WIP
 from blog.models import DatosWIP_Prog as DatosWIP_Prog
+#from blog.models import Datos_INV_WIP as Datos_INV_WIP
 from blog.models import MovPallets as MovPallets
 from blog.models import Datos_MovPallets as Datos_MovPallets
 from blog.models import IDProgCorr as IDProgCorr
@@ -406,6 +409,8 @@ class Command(BaseCommand):
 
                     o = Datos_Proy_WIP.objects.create(fecha_inicio=dato['fecha_inicio'],fecha_fin=dato['fecha_fin'],turno=dato['turno'],label=dato['label'],M2Conv=dato['M2Conv'],M2Corr=dato['M2Corr'],M2Inv=dato['M2Inv'],M2ProyCorr=dato['M2ProyCorr'])
                     o.save()
+
+
 
 
             except Exception as e:
