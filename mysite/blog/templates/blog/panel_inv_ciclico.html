@@ -106,20 +106,20 @@ function datosinv(){
 
       //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
       datosWIP = response_data.datosWIP;
-      prueba = response_data.prueba;
+      //prueba = response_data.prueba;
       ultimatoma= response_data.ultimatoma;
+
+      console.log("datosWIP")
+      console.log(datosWIP)
 
       console.log("ultimatoma:")
       console.log(ultimatoma)
 
 
 
+
       //console.log(datos0["M2ZFFG1"].toFixed(2))
 
-      //console.log(prueba['prueba1'][1])
-      //console.log(prueba['prueba2']['B'])
-      //console.log(m2total)
-      //console.log(npalletstotal)
 
       displayHTMLTable();
 
@@ -196,10 +196,10 @@ function myFunction(key) {
 
 window.setInterval(function(){
   console.log("hola");
-  //datosinv();
+  datosinv();
 
 
-}, 30000);
+}, 15000);
 
 
 ////// Función que muestra el input paresado
@@ -231,12 +231,12 @@ function displayHTMLTable(){
             table+= "</tr>";
 
 
-
+            console.log("palletsencontrados")
             table+= "<tr >";
             table+= "<td style='font-size: 14px; ' bgcolor='#00FF00' >";
               for (var i=0; i< datosWIP[key]['palletsencontrados'][0].length; i++)
               {
-
+                console.log(datosWIP[key]['palletsencontrados'][0][i])
                 table+= datosWIP[key]['palletsencontrados'][0][i]
                 table+= "<br>"
               }
@@ -253,12 +253,13 @@ function displayHTMLTable(){
 
             table+= "</tr>";
 
-
+            console.log("pallenotracalle")
             table+= "<tr>";
             table+= "<td style='font-size: 14px;'  bgcolor='Yellow'>";
               for (var i=0; i< datosWIP[key]['palletsenotracalle'][0].length; i++)
               {
 
+                console.log(datosWIP[key]['palletsenotracalle'][0][i])
                 table+= datosWIP[key]['palletsenotracalle'][0][i]
                 table+= "<br>"
               }

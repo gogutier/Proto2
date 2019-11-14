@@ -9,6 +9,61 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class Foto_Inv_Cic_WIP(models.Model):
+
+    fecha_foto=models.DateTimeField(blank=False, default = datetime.datetime.now())
+
+    def __str__(self):
+        return (str(self.fecha_foto))
+
+class Foto_Calles_Inv_Cic_WIP(models.Model):
+
+    foto=models.ForeignKey('blog.Foto_Inv_Cic_WIP', related_name='foto_invcic', on_delete=models.CASCADE, default=0)
+    calle=models.CharField(max_length=16, default="0")
+    #fecha_foto=models.DateTimeField(blank=False, default = datetime.datetime.now())
+
+    def __str__(self):
+        return (str(self.calle))
+
+
+class Foto_Palletscti_Inv_Cic_WIP(models.Model):
+
+    calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip1', on_delete=models.CASCADE, default=0)
+    pallet=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+
+    def __str__(self):
+        return (str(self.pallet))
+
+class Foto_Palletsencontrados_Inv_Cic_WIP(models.Model):
+
+
+    calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip2', on_delete=models.CASCADE, default=0)
+    pallet=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+
+    def __str__(self):
+        return (str(self.pallet))
+
+class Foto_Palletsenotracalle_Inv_Cic_WIP(models.Model):
+
+
+    calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip3', on_delete=models.CASCADE, default=0)
+    pallet=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+
+    def __str__(self):
+        return (str(self.pallet))
+
+class Foto_Palletsnoencontrados_Inv_Cic_WIP(models.Model):
+
+
+    calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip4', on_delete=models.CASCADE, default=0)
+    pallet=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+
+    def __str__(self):
+        return (str(self.pallet))
 
 class Foto_Datos_Inv_WIP(models.Model):
 

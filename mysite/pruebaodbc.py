@@ -316,6 +316,8 @@ while True:
         auxok=1
         while auxok==1:
             auxok=webscrap_mov(browser,cursor)
+            sleep(0.5)
+
 
     except Exception as e:
         print(e)

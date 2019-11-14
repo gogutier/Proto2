@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -325,13 +325,18 @@ def get_data_inv_ciclico(request, *args, **kwargs):
         #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
 
 
-        prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+        #prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
+        tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+        ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
+
+
+        '''
         datosWIP={"ZFFG1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFG2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPNC":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPASILLO":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0}}
 
 
 
-        tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+
 
         for calle in datosWIP.keys():
 
@@ -416,12 +421,55 @@ def get_data_inv_ciclico(request, *args, **kwargs):
             datosWIP[calle]['palletsnoencontrados'] = lista
 
 
-            ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
 
+        '''
+        #### Lo nuevo
+        #'''
+        fotoinv=Foto_Inv_Cic_WIP.objects.all().order_by('-pk')[0]
+
+        datosWIP2={}
+
+
+        for calle in Foto_Calles_Inv_Cic_WIP.objects.filter(foto=fotoinv):
+
+            lista2=[[],[]]
+            datosWIP2[str(calle)]={}
+            datosWIP2[str(calle)]['palletscti']=[[],[]]
+            datosWIP2[str(calle)]['palletsencontrados']=[[],[]]
+            datosWIP2[str(calle)]['palletsnoencontrados']=[[],[]]
+            datosWIP2[str(calle)]['palletsenotracalle']=[[],[]]
+
+            for pallet in Foto_Palletscti_Inv_Cic_WIP.objects.filter(calle=calle):
+                if pallet:
+                    datosWIP2[str(calle)]['palletscti'][0].append(pallet.pallet)
+                    datosWIP2[str(calle)]['palletscti'][1].append(pallet.ORDERID)
+                    print(pallet.pallet)
+                    print(pallet.ORDERID)
+
+            for pallet in Foto_Palletsencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
+                if pallet:
+                    datosWIP2[str(calle)]['palletsencontrados'][0].append(pallet.pallet)
+                    datosWIP2[str(calle)]['palletsencontrados'][1].append(pallet.ORDERID)
+                    print(pallet.pallet)
+                    print(pallet.ORDERID)
+
+            for pallet in Foto_Palletsnoencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
+                if pallet:
+                    datosWIP2[str(calle)]['palletsnoencontrados'][0].append(pallet.pallet)
+                    datosWIP2[str(calle)]['palletsnoencontrados'][1].append(pallet.ORDERID)
+                    print(pallet.pallet)
+                    print(pallet.ORDERID)
+
+            for pallet in Foto_Palletsenotracalle_Inv_Cic_WIP.objects.filter(calle=calle):
+                if pallet:
+                    datosWIP2[str(calle)]['palletsenotracalle'][0].append(pallet.pallet)
+                    datosWIP2[str(calle)]['palletsenotracalle'][1].append(pallet.ORDERID)
+                    print(pallet.pallet)
+                    print(pallet.ORDERID)
+            #'''
 
         data = {
-        "prueba":prueba,
-        "datosWIP":datosWIP,
+        "datosWIP":datosWIP2,
         "ultimatoma":ultimatoma,
 
 
