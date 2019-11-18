@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
 
                 labels=[]
-                ahora=timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0)
+                ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
                 for i in range(0,8):
                     #por ahora los voy a ordenar por turno, después por hora.
                     fecha=(ahora-timedelta(days=7-i)).replace(hour= 7)

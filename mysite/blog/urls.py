@@ -71,5 +71,8 @@ urlpatterns = [
     url(r'^panel_inv_ciclico/$',views.panel_inv_ciclico,name='panel_inv_ciclico'),
     url(r'^api/get_data_inv_ciclico/$',views.get_data_inv_ciclico,name='api-data-inv-ciclico'),
     url(r'^panel_proy_wip/$',views.panel_proy_wip,name='panel_proy_wip'),
-    url(r'^api/get_data_proy_wip/$',views.get_data_proy_wip,name='api-data-proy-wip')
+    url(r'^api/get_data_proy_wip/$',views.get_data_proy_wip,name='api-data-proy-wip'),
+    url(r'^carga_mov_rollos/$',views.carga_mov_rollos,name='carga_mov_rollos'),
+    url(r'^panel_consumo_rollos/$',views.panel_consumo_rollos,name='panel_consumo_rollos'),
+    url(r'^api/get_data_consumo_rollos/$',views.get_data_consumo_rollos,name='api-data-consumo-rollos'),
 ]

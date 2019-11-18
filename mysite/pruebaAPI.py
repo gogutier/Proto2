@@ -9,6 +9,7 @@ import xmltodict
 wsdl = 'http://192.168.8.42/CTIRollstockWebService/ServiceRollStockManagement.svc?wsdl'
 client = zeep.Client(wsdl=wsdl)
 data=(client.service.GetRollStock())
+#data=(client.service.GetRollConsumptions())
 
 
 print(data)

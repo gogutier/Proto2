@@ -1,0 +1,217 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Carga Inventario bobinas</h1>
+</br>
+<h4>Copiar y pegar reporte QAD asdsad</h4>
+
+<form method="POST" class="post-form">
+{% csrf_token %}
+<div class="">
+  {{ form.ultrafile}}
+</div>
+<button type="button" id="convert">Convert</button>
+<div class="botongrabarform" id="botongrabar">
+<button type="submit" class="save btn btn-default">Save</button>
+</div>
+
+</form>
+
+
+<div class="row" id="parsed_csv_list">
+
+</div>
+
+
+
+<script type="text/javascript">
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+$("#convert").click(function()
+{
+  var x = document.getElementById("botongrabarform");//Y esto?
+
+  var hoy = moment();
+
+  //$("#botongrabar").toggle();
+
+  var code = $('#id_ultrafile').val();//toma el dato que se llenó en el form ultrafile (donde se pega la tabla como texto)
+  //var code = esprima.parse(code);
+  //console.log(code);
+  //console.log("convirtiendo....");
+  //reemplazo todas las comas por puntos, para evitar problemas después del parsed_csv_list
+  code=code.replace(/,/g,'.');
+  //code=code.replace(/
+///g,'');
+
+  //
+  code2 = Papa.parse(code,{
+	delimiter: "",	// auto-detect
+	newline: "",	// auto-detect
+	quoteChar: '"',
+	escapeChar: '"',
+	header: false,
+	trimHeaders: false,
+	dynamicTyping: false,
+	preview: 0,
+	encoding: "",
+	worker: false,
+	comments: false,
+	step: undefined,
+	complete: undefined,
+	error: undefined,
+	download: false,
+	skipEmptyLines: true,
+	chunk: undefined,
+	fastMode: undefined,
+	beforeFirstChunk: undefined,
+	withCredentials: undefined,
+	transform: undefined
+});
+  //code3 = JSON.parse(code2);
+
+  code2 = code2.data;
+  console.log(code2);
+
+  tabla=filtrofila(code2)
+
+    for(i=0;i<tabla.length-1;i++)
+      {
+
+              tabla[i].push(";");
+      }
+
+
+
+
+
+    displayHTMLTable(tabla);
+
+    $('#id_ultrafile').val(tabla);//acá es donde se manda al dato al form q se envía al servidor django
+
+
+//}
+
+});
+
+
+
+
+  function filtrofila(tablain)
+    {
+      //modifico la fecha de término de cada fila
+      //columna fecha termino=11
+
+    var usuario =""
+
+    for(i=0;i<=tablain.length-1;i++)
+      {
+
+        if (tablain[i][0].includes("User:"))
+          {
+
+            usuario=tablain[i][0].substring(5)
+
+          }
+        tablain[i].push(usuario);
+      }
+
+
+      for(i=0;i<=tablain.length-1;i++)
+        {
+
+          if (tablain[i][0].includes("User:") | tablain[i][0].includes("Printed")| tablain[i][0]==(""))
+            {
+
+              tablain.splice(i,1);
+              i=i-1;
+
+            }
+
+
+        }
+
+
+    tablaout=tablain;
+    return tablaout;
+    }
+
+
+function filtrocolumna(tablain){
+  //Identifica la columna que quiero rescatar. deben venir en un lista?.
+  //elimina todas los elementos de las columnas que no estén en esa lista.
+  //eliminando columnas que no me interesan
+
+  var listaborrar = [];
+
+  for(i=0;i<=tablain[0].length-1;i++){
+
+    if (!(tablain[0][i]=="ID Rollo" || tablain[0][i]=="ID Grado" || tablain[0][i]=="Peso" || tablain[0][i]=="Fecha Produccion" || tablain[0][i]=="Proveedor" || tablain[0][i]=="Ubicación" || tablain[0][i]=="Categoria" ||tablain[0][i]=="Saldo" ||tablain[0][i]=="Antiguedad" || tablain[0][i]== ";"))
+    //esto después tengo que reemplazarlo por una lista que venga de input
+    {
+
+      listaborrar.push(i);
+      for(j=0;j<=tablain.length-1;j++)
+      {
+      //console.log(j);
+      //matriz3[j].splice(i,1);
+      }
+
+    }
+
+  }
+
+  for(j=0;j<=tablain.length-1;j++)
+    {
+
+    for (i=listaborrar.length-1;i>=0;i--)
+      {
+        //alert("borrando columna: " + listaborrar[i]);
+        tablain[j].splice(listaborrar[i],1);
+        //i=i+1;
+      }
+      //alert("Resultado: " + matriz3[0]);
+    }
+
+
+
+
+
+  tablaout=tablain;
+  return tablaout;
+  }
+
+
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(results){
+  var table = "<table class='table' id='table'>";
+  var data = results;
+  matriz = data;
+
+  for(i=0;i<=data.length-1;i++){
+    table+= "<tr>";
+    var row = data[i];
+    var cells = row.join(",").split(",");
+
+    for(j=0;j<=cells.length-1;j++){
+      table+= "<td>";
+      table+= cells[j];
+      table+= "</th>";
+
+    }
+    table+= "</tr>";
+  }
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+}
+
+
+
+</script>
+
+
+
+{% endblock %}

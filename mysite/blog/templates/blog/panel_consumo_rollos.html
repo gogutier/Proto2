@@ -1,0 +1,302 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<h4>Panel Consumo Rollos</h4>
+
+<div class="container" style="padding:10px 10px;">
+
+<table class='table table-hover' id='table'>
+
+<tr style="text-align: center">
+
+</tr>
+</table>
+</div>
+
+
+
+<div class="row" id="parsed_csv_list">
+</div>
+
+
+<script type="text/javascript">
+
+function displayHTMLTable(){
+
+var table = "<table class='table' >";
+
+
+  empalmadores=[['DB','1A','1B','ROLL1A','ROLL1B'],['SF1M','2A','2B','ROLL1A','ROLL1B'],['SF1L','3A','3B','ROLL1A','ROLL1B'],['SF2M','4A','4B','ROLL1A','ROLL1B'],['SF2L','5A','5B','ROLL1A','ROLL1B']]
+
+  var value;
+  for (var key in labels) {
+
+    table+= '<tr>';
+            table+= '<td>';
+              table+= key;
+            table+= "</td>";
+
+                    table+= '<td>';
+                        table+= '<table>';
+
+                          //En cada uno debo mostrar los rollos que se consumieron en cada link (rollstand)
+
+                        for( var emp in empalmadores)
+                          {
+
+                          table+= '<tr>';
+
+                            table+= '<td>';
+                              table+= empalmadores[emp][0];
+                            table+= '</td>';
+
+                            table+= '<td>';
+                              table+= '<table>';
+
+                                //////////
+                                table+= '<tr>';
+                                  table+= '<td>';
+                                    table+= "Movimientos";
+                                  table+= '</td>';
+                                table+= '</tr>';
+
+                                table+= '<tr>';
+                                  table+= '<td>';
+                                  table+= 'Bobina';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Destino';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'fecha';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Usuario';
+                                  table+= '</td>';
+
+                                for (var i=0 ; i<(labels[key][1]).length ; i++)
+                                {
+                                if(labels[key][1][i]['destino']==empalmadores[emp][3] || labels[key][1][i]['destino']==empalmadores[emp][4])
+                                  {
+                                    table+= '<tr>';
+
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['idrollo'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['destino'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['fecha'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['usuario'];
+                                      table+= '</td>';
+
+                                    table+= '</tr>';
+                                  }
+                                }
+
+                                /////////
+
+
+                              table+= '</table>';
+                            table+= '</td>';
+
+
+                            table+= '<td>';
+                              table+= '<table>';
+
+                                table+= '<tr>';
+                                  table+= '<td>';
+                                    table+= "Consumos";
+                                  table+= '</td>';
+                                table+= '</tr>';
+
+                                table+= '<tr>';
+                                  table+= '<td>';
+                                  table+= 'Bobina';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Grado';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Formato';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'MLUsados';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'MLPelado';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'MLResto';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'link';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Usuario entrega';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Fecha entrega';
+                                  table+= '</td>';
+
+                                table+= '</tr>';
+
+                                for (var i=0 ; i<(labels[key][0]).length ; i++)
+                                {
+                                if(labels[key][0][i]['RollStandID']==empalmadores[emp][1] || labels[key][0][i]['RollStandID']==empalmadores[emp][2])
+                                  {
+                                    table+= '<tr>';
+
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['RollID'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['grado'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['formato'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['mlusados'].toFixed(1);
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['peelwaste'].toFixed(1);
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['mlrestantes'].toFixed(1);
+                                      table+= '</td>';
+
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['RollStandID'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['userentrega'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['fechaentrega'];
+                                      table+= '</td>';
+
+                                    table+= '</tr>';
+                                  }
+
+                                }
+
+
+                              table+= '</table>';
+
+                            table+= '</td>';
+                          table+= '</tr>';
+
+
+
+                        }
+
+
+
+
+                        table+= '</table>';
+                    table+= "</td>";
+    table+= '</tr>';
+
+  }
+
+
+table+= "</table>";
+$("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+}
+
+
+
+var endpoint='/api/get_data_consumo_rollos/';
+
+update()
+
+function update(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      labels = response_data.labels;
+      consumos = response_data.consumos;
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+      console.log(labels)
+      console.log(consumos)
+      displayHTMLTable();
+
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+}
+
+
+
+
+
+</script>
+
+
+{% endblock %}

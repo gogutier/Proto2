@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -24,6 +24,150 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+def get_data_consumo_rollos(request, *args, **kwargs):
+
+
+
+    labels={'15-11 A':([],[]), '15-11 B':([],[]), '15-11 C':([],[]), '16-11 A':([],[]), '16-11 B':([],[]), '16-11 C':([],[])}
+
+    labels={}
+    ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
+    horizonte=3
+    for i in range(0,horizonte+1):
+        #por ahora los voy a ordenar por turno, después por hora.
+        fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 7)
+        fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
+        turno="A"
+        label= fechaini.strftime("%d-%m") + " " + turno
+        #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
+        #print(m2Corr)
+        labels.update({label:([],[],fechaini,fechafin)})#append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
+
+        fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
+        fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22)
+        turno="B"
+        label= fechaini.strftime("%d-%m") + " " + turno
+        #print(m2Corr)
+        labels.update({label:([],[],fechaini,fechafin)})#labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
+        fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 22)
+        fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7)
+        turno="C"
+        label= fechaini.strftime("%d-%m") + " " + turno
+        labels.update({label:([],[],fechaini,fechafin)})#labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
+
+        #print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
+
+    print(labels)
+
+
+    consumos=[]
+
+
+
+
+    for label in labels:
+
+        for mov in MovRollos.objects.filter(fecha__gte=labels[label][2], fecha__lt=labels[label][3]):
+
+            print(mov)
+
+            labels[label][1].append({"idrollo":mov.idrollo,"origen":mov.origen,"destino":mov.destino,"fecha":mov.fecha,"usuario":mov.usuario})
+
+
+
+
+        try:
+            foto=Foto_ConsumoRollos.objects.filter(label=label).order_by('-fecha_foto')[0]
+
+            for consumo in ConsumoRollos.objects.filter(foto=foto).order_by('grado'):
+                #print(consumo)
+                #identifico el último movimiento de ese rollo al empalmador que corresponda:
+
+            #    if entrega:
+            #        labels[label][0].append({"fechaini":consumo.fechaini,"turno":consumo.turno,"RollID":consumo.RollID,"RollStandID":consumo.RollStandID,"formato":consumo.formato, "peso": consumo.peso, "grado":consumo.grado, "mlusados":consumo.mlusados, "mlrestantes":consumo.mlrestantes, "peelwaste":consumo.peelwaste, "fechaentrega":entrega.fecha})
+            #    else:
+
+                #labels[label][0][]['fechaentrega']=1
+                dicc={"fechaini":consumo.fechaini,"turno":consumo.turno,"RollID":consumo.RollID,"RollStandID":consumo.RollStandID,"formato":consumo.formato, "peso": consumo.peso, "grado":consumo.grado, "mlusados":consumo.mlusados, "mlrestantes":consumo.mlrestantes, "peelwaste":consumo.peelwaste, "fechaentrega":0, "userentrega":"N/A"}
+
+                try:
+                    entrega=MovRollos.objects.filter( Q(destino="ROLL1A") | Q(ubic="ROLL1B") | Q(destino="ROLL2A") | Q(ubic="ROLL2B") |Q(destino="ROLL3A") | Q(ubic="ROLL3B") | Q(destino="ROLL4A") | Q(ubic="ROLL4B") | Q(destino="ROLL5A") | Q(ubic="ROLL5B") ).filter(idrollo=consumo.RollID, fecha__gte=labels[label][3]-timedelta(days=5), fecha__lt=labels[label][3]).order_by('-fecha')[0]
+
+
+                    dicc['fechaentrega']=entrega.fecha
+                    dicc['userentrega']=entrega.usuario
+                    print("entrega encontrada!")
+
+                except:
+                    print("entrega no encontrada")
+
+                labels[label][0].append(dicc)
+
+
+        except Exception as e:
+            print(e)
+            print("Error al buscar consumo de rollo para fecha " + label)
+
+
+
+
+    data = {
+    "labels":labels,
+    "consumos":consumos,
+            }
+    print("Enviando datos proy wip")
+    return JsonResponse(data)#http response con el datatype de JS
+
+
+
+
+
+def panel_consumo_rollos(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_consumo_rollos.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+
+def carga_mov_rollos(request):
+    pruebamods = PruebaMod.objects.all()
+
+    template_name = 'blog/carga_mov_rollos.html'
+
+    if request.method == "POST":
+        form = PruebaModForm(request.POST)
+
+        datocrudo=form.data["ultrafile"]
+
+        datoprocesado=datocrudo.split(",;,")
+
+        for i in range (len(datoprocesado)):
+            datoprocesado[i]=datoprocesado[i].split(",")
+
+
+            ####### identifica las columnas y crea los objetos que me interesanself.
+        for dato in datoprocesado:
+
+            print(dato[3])
+            fecha=datetime.strptime(dato[3], "%d-%m-%Y  %H:%M:%S ")
+
+            o, created=MovRollos.objects.get_or_create(idrollo=dato[0],origen=dato[1],destino=dato[2], fecha=fecha, usuario=dato[5])
+            o.save()
+
+
+
+            #for i in range(len(datoprocesado[0])):
+
+
+    else:
+        form = PruebaModForm()
+
+    return render(request, template_name, {'form':form})
+
+
 
 def panel_proy_wip(request):
     #print("cargando consumos puestos")
@@ -327,7 +471,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
         #prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+        tomainv=TomaInvCic.objects.all().order_by('pk')[0]
         ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
 
 
@@ -443,29 +587,29 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                 if pallet:
                     datosWIP2[str(calle)]['palletscti'][0].append(pallet.pallet)
                     datosWIP2[str(calle)]['palletscti'][1].append(pallet.ORDERID)
-                    print(pallet.pallet)
-                    print(pallet.ORDERID)
+                    #print(pallet.pallet)
+                    #print(pallet.ORDERID)
 
             for pallet in Foto_Palletsencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
                 if pallet:
                     datosWIP2[str(calle)]['palletsencontrados'][0].append(pallet.pallet)
                     datosWIP2[str(calle)]['palletsencontrados'][1].append(pallet.ORDERID)
-                    print(pallet.pallet)
-                    print(pallet.ORDERID)
+                    #print(pallet.pallet)
+                    #print(pallet.ORDERID)
 
             for pallet in Foto_Palletsnoencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
                 if pallet:
                     datosWIP2[str(calle)]['palletsnoencontrados'][0].append(pallet.pallet)
                     datosWIP2[str(calle)]['palletsnoencontrados'][1].append(pallet.ORDERID)
-                    print(pallet.pallet)
-                    print(pallet.ORDERID)
+                    #print(pallet.pallet)
+                    #print(pallet.ORDERID)
 
             for pallet in Foto_Palletsenotracalle_Inv_Cic_WIP.objects.filter(calle=calle):
                 if pallet:
                     datosWIP2[str(calle)]['palletsenotracalle'][0].append(pallet.pallet)
                     datosWIP2[str(calle)]['palletsenotracalle'][1].append(pallet.ORDERID)
-                    print(pallet.pallet)
-                    print(pallet.ORDERID)
+                    #print(pallet.pallet)
+                    #print(pallet.ORDERID)
             #'''
 
         data = {

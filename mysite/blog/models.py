@@ -9,6 +9,50 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+
+class Foto_ConsumoRollos(models.Model):
+
+    fecha_foto=models.DateTimeField(blank=False, default = datetime.datetime.now())
+    turno=models.CharField(max_length=16, default="0")
+    label=models.CharField(max_length=16, default="0")
+
+    def __str__(self):
+        return (str(self.label))
+
+class ConsumoRollos(models.Model):
+
+    foto=models.ForeignKey('blog.Foto_ConsumoRollos', related_name='foto_consrollos', on_delete=models.CASCADE, default=0)
+    RollID=models.CharField(max_length=16, default="0")
+    RollStandID=models.CharField(max_length=16, default="0")
+    formato=models.CharField(max_length=16, default="0")
+    peso=models.FloatField(default="0")
+    grado=models.CharField(max_length=16, default="0")
+    diametro=models.FloatField(default="0")
+    mlusados=models.FloatField(default="0")
+    mlrestantes=models.FloatField(default="0")
+    peelwaste=models.FloatField(default="0")
+    turno=models.CharField(max_length=16, default="0")
+    fechaini=models.DateTimeField(blank=False, default = datetime.datetime.now())
+
+
+    def __str__(self):
+        return (str(self.RollID)+" "+str(self.turno) )
+
+
+
+
+
+class MovRollos(models.Model):
+
+    idrollo=models.CharField(max_length=16, default="0")
+    origen=models.CharField(max_length=16, default="0")
+    destino=models.CharField(max_length=16, default="0")
+    fecha=models.DateTimeField(blank=False, default = datetime.datetime.now())
+    usuario=models.CharField(max_length=16, default="0")
+
+    def __str__(self):
+        return (str(self.idrollo) + " " + str(self.fecha) )
+
 class Foto_Inv_Cic_WIP(models.Model):
 
     fecha_foto=models.DateTimeField(blank=False, default = datetime.datetime.now())
