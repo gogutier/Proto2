@@ -23,8 +23,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        if 1:#while(1):
-            if 1:#try:
+        while(1):
+            try:
 
                 ##Calculo los turnos que quiero actualizar.
                 labels=[]
@@ -85,7 +85,7 @@ class Command(BaseCommand):
 
                 #print(consumos)
                 print("TODO LISTOOOO")
-                sleep(10)
-            else:#except:
-
+                sleep(120)
+            except Exception as e:
+                print(e)
                 print("error!")
