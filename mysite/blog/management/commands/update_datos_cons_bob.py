@@ -85,7 +85,7 @@ class Command(BaseCommand):
 
                 #print(consumos)
                 print("TODO LISTOOOO")
-                sleep(120)
+                sleep(360)
             except Exception as e:
                 print(e)
                 print("error!")

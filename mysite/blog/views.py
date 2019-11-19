@@ -89,17 +89,23 @@ def get_data_consumo_rollos(request, *args, **kwargs):
             #    else:
 
                 #labels[label][0][]['fechaentrega']=1
-                dicc={"fechaini":consumo.fechaini,"turno":consumo.turno,"RollID":consumo.RollID,"RollStandID":consumo.RollStandID,"formato":consumo.formato, "peso": consumo.peso, "grado":consumo.grado, "mlusados":consumo.mlusados, "mlrestantes":consumo.mlrestantes, "peelwaste":consumo.peelwaste, "fechaentrega":0, "userentrega":"N/A"}
+                dicc={"fechaini":consumo.fechaini,"turno":consumo.turno,"RollID":consumo.RollID,"RollStandID":consumo.RollStandID,"formato":consumo.formato, "peso": consumo.peso, "grado":consumo.grado, "mlusados":consumo.mlusados, "mlrestantes":consumo.mlrestantes, "peelwaste":consumo.peelwaste, "fechaentrega":0, "userentrega":"N/A" , "destinoentrega":"N/A"}
 
                 try:
-                    entrega=MovRollos.objects.filter( Q(destino="ROLL1A") | Q(ubic="ROLL1B") | Q(destino="ROLL2A") | Q(ubic="ROLL2B") |Q(destino="ROLL3A") | Q(ubic="ROLL3B") | Q(destino="ROLL4A") | Q(ubic="ROLL4B") | Q(destino="ROLL5A") | Q(ubic="ROLL5B") ).filter(idrollo=consumo.RollID, fecha__gte=labels[label][3]-timedelta(days=5), fecha__lt=labels[label][3]).order_by('-fecha')[0]
+                    entrega=MovRollos.objects.filter(destinoaux=consumo.RollStandID[-2], idrollo=consumo.RollID, fecha__gte=labels[label][3]-timedelta(days=2), fecha__lt=labels[label][3]).order_by('-fecha')[0]
 
+                    #print("destino Consumo:")
+                    #print(consumo.RollStandID[-2])
+                    #print("destinoMovPallet:")
+                    #print(entrega.destino[-2])
 
                     dicc['fechaentrega']=entrega.fecha
                     dicc['userentrega']=entrega.usuario
+                    dicc['destinoentrega']=entrega.destino
                     print("entrega encontrada!")
 
-                except:
+                except Exception as e:
+                    print(e)
                     print("entrega no encontrada")
 
                 labels[label][0].append(dicc)
@@ -155,6 +161,8 @@ def carga_mov_rollos(request):
             fecha=datetime.strptime(dato[3], "%d-%m-%Y  %H:%M:%S ")
 
             o, created=MovRollos.objects.get_or_create(idrollo=dato[0],origen=dato[1],destino=dato[2], fecha=fecha, usuario=dato[5])
+            if(len(dato[2])>2):
+                o.destinoaux=dato[2][-2]
             o.save()
 
 
@@ -791,7 +799,7 @@ def carga_mov_pallets(request):
 
     #bobinas = reversed(list(BobInvCic.objects.all()))
 
-    ultimotransaction=str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0])
+    ultimotransaction=str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0].TRANSACTIONINDEX)
 
     #print(mensajes)
 

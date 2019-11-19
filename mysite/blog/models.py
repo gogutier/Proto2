@@ -47,6 +47,7 @@ class MovRollos(models.Model):
     idrollo=models.CharField(max_length=16, default="0")
     origen=models.CharField(max_length=16, default="0")
     destino=models.CharField(max_length=16, default="0")
+    destinoaux=models.CharField(max_length=16, default="0")
     fecha=models.DateTimeField(blank=False, default = datetime.datetime.now())
     usuario=models.CharField(max_length=16, default="0")
 

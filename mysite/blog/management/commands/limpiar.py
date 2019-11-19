@@ -12,11 +12,11 @@ class Command(BaseCommand):
         print("iniciando limpieza mov pallets")
 
         print("iniciando limpieza consumo rollos")
-        Foto_ConsumoRollos.objects.all().delete()
+        #Foto_ConsumoRollos.objects.all().delete()
 
-        #MovPallets.objects.all().delete()
+        MovPallets.objects.all().delete()
         print("iniciando limpieza consumo rollos")
-        ConsumoRollos.objects.all().delete()
+        #ConsumoRollos.objects.all().delete()
 
 
 

@@ -64,7 +64,7 @@ def webscrap_mov(browser, cursor):
         #print("obteniendo el transactionindex más nuevo..")
         page = browser.get_current_page()
         messages = page.find(id="ultimo")
-        print("útlimo:"+ messages.text)
+        print("útlimo TrIndex:"+ messages.text)
         row, datosextra=cargaDatos(messages.text,cursor)#Acá es donde ejecuto la odbc
         #print(row)
         if (row!=None and len(row)>0):
@@ -117,7 +117,7 @@ def webscrap_mov(browser, cursor):
 
 
 def cargaDatos(ultimo, cursor):
-    #print("conectándose a DB..")
+    print("conectándose a DB para encontrar el transactionindex siguiente a " + str(ultimo))
 
 
 
@@ -130,8 +130,10 @@ def cargaDatos(ultimo, cursor):
     #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
     flag0=0
     #sleep(0.01)
+    print("obteniendo el último FGLOAD más cercano..")
     cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EventDateTime],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
     row0=cursor.fetchone()
+    print("FGLOAD obtenido: " + str(row0[0]))
     #print("row0 FGLOAD:")
     #print(row0)
     if row0!=None:
@@ -148,7 +150,7 @@ def cargaDatos(ultimo, cursor):
         except Exception as e:
             print(row0)
             print(e)
-            print("agregando el datetime como now() pq hubo un problema al capturar el row0 de FGLOAD")
+            print("agregando el datetime como now() pq hubo un problema al capturar el row0datetime de FGLOAD")
             row0datetime=datetime.now()
             row0time='0'
         #print(row0datetime)
@@ -165,13 +167,16 @@ def cargaDatos(ultimo, cursor):
 
         row1=[row0[0], row0[1], "0", row0[3], row0[4], row0[5], row0[6], 0, row0[7], row0[8], "CORR" , destino, row0datetime, row0[11]]
         #sleep(0.01)
-        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
+        print("obteniendo el transactionindex de MVLOAD siguiente para "+ str(ultimo))
+        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
 
 
 
         try:
             rowaux=cursor.fetchone()
-        except:
+            print("TI encontado en MVLOAD: " + str(rowaux[0]) )
+        except Exception as e:
+            print(e)
             print("error al hacer rowaux=cursor.fetchone()")
         #print(rowaux)
 
