@@ -8,14 +8,15 @@ from blog.models import Foto_ConsumoRollos as Foto_ConsumoRollos
 class Command(BaseCommand):
     def handle(self, *args, **options):
         print("iniciando limpieza pallets")
-        #Pallet.objects.all().delete()
+        Pallet.objects.all().delete()
         print("iniciando limpieza mov pallets")
+        MovPallets.objects.all().delete()
 
-        print("iniciando limpieza consumo rollos")
+        #print("iniciando limpieza Foto consumo rollos")
         #Foto_ConsumoRollos.objects.all().delete()
 
-        MovPallets.objects.all().delete()
-        print("iniciando limpieza consumo rollos")
+
+        #print("iniciando limpieza consumo rollos")
         #ConsumoRollos.objects.all().delete()
 
 

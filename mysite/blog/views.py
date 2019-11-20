@@ -416,7 +416,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         for mov in filtro:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.ORDERID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE , mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtroentrada.append(movimiento)
 
         #print(filtroentrada)
@@ -425,7 +425,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.ORDERID, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtrosalida.append(movimiento)
 
 

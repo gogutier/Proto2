@@ -31,9 +31,9 @@ class Command(BaseCommand):
         #parser.add_argument('poll_id', nargs='+', type=int)
         poll_id="hola"
 
-    def handle(self, *args, **options):
-        while (1):
-            #########
+
+    def updatemovpallets(self):
+        if 1:#########
             print("actualizo el Movpallets")
             try:
 
@@ -165,8 +165,17 @@ class Command(BaseCommand):
                     o = Datos_MovPallets.objects.create(fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadProd=dato['cantidadProd'],m2Prod=dato['m2Prod'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
                     o.save()
 
-
+            except Exception as e:
+                print(e)
+                print("error")
+                sleep(10)
                 ###########
+
+
+    def updatewipprog(self):
+        if 1:
+            try:
+
                 print("actualizo el update_wip_prog")
 
                 listaCorrplanINV=("TCY","HCR","WRD","FFW","DRO","FFG")
@@ -207,11 +216,9 @@ class Command(BaseCommand):
                 sleep(10)
 
 
-
-
-                ###########
-
-            print("Primero saco el dato del programa de corrugado:")
+    def updateproywip(self):
+        if 1:
+            print("para el cálculo del aproyección primero saco el dato del programa de corrugado:")
             try:
                 prog_corrugado = webscrap3.webscrap_prog_corr()
 
@@ -417,6 +424,24 @@ class Command(BaseCommand):
                 print(e)
                 print("error")
                 sleep(30)
+
+    #def updatepanelwip(self):
+
+    def handle(self, *args, **options):
+        while (1):
+
+            self.updatemovpallets()
+            self.updatewipprog()
+            self.updateproywip()
+
+
+
+
+
+
+                ###########
+
+
             print("Esperando para hacer prox carga masiva de datos")
             sleep(120)
         #print(labels)

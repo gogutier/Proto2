@@ -66,7 +66,7 @@ def webscrap_mov(browser, cursor):
         messages = page.find(id="ultimo")
         print("útlimo TrIndex:"+ messages.text)
         row, datosextra=cargaDatos(messages.text,cursor)#Acá es donde ejecuto la odbc
-        #print(row)
+        print(row)
         if (row!=None and len(row)>0):
             #print("escribiendo datos de transacción en página")
             browser["TRANSACTIONINDEX"] = str(row[0])#args.username
@@ -97,6 +97,11 @@ def webscrap_mov(browser, cursor):
         ##browser["password"] = "plant"#args.password
             #print("submiteando")
             resp = browser.submit_selected()
+
+            '''
+            ESTO Que antes era submit desde la página, ahora lo hago directamente en el program
+            '''
+            
                 # Uncomment to launch a web browser on the current page:
             #browser.launch_browser()
                 #print(browser.open("http://interlink.corrupac.cl"))
@@ -109,7 +114,7 @@ def webscrap_mov(browser, cursor):
     except Exception as e:
         print(e)
         print("Desconectado de página o no hay movimientos nuevos qué capturar")
-        sleep(20)
+        sleep(10)
         return(0)
 
 
@@ -321,7 +326,7 @@ while True:
         auxok=1
         while auxok==1:
             auxok=webscrap_mov(browser,cursor)
-            sleep(0.5)
+            #sleep(0.01)
 
 
     except Exception as e:

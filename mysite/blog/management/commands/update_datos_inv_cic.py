@@ -77,8 +77,8 @@ class Command(BaseCommand):
                                 palletsenotracalle[1].append("vacio")
 
                     datosWIP[calle]['palletsenotracalle'] = palletsenotracalle
-                    print("palletsenotracalle")
-                    print(palletsenotracalle)
+                    #print("palletsenotracalle")
+                    #print(palletsenotracalle)
 
 
                     palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
@@ -100,8 +100,8 @@ class Command(BaseCommand):
                             lista[1].append("vacio")
 
                     datosWIP[calle]['palletscti'] = lista
-                    print('palletscti')
-                    print('datosWIP[calle]["palletscti"]')
+                    #print('palletscti')
+                    #print(datosWIP[calle]["palletscti"])
 
                     lista=[[],[]]
 

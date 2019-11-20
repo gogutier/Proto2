@@ -29,10 +29,10 @@ class Command(BaseCommand):
                 ##Calculo los turnos que quiero actualizar.
                 labels=[]
                 ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-                for i in range(0,7):
+                for i in range(0,3):
                     #por ahora los voy a ordenar por turno, después por hora.
-                    fechaini=(ahora-timedelta(days=7-i)).replace(hour= 7)
-                    fechafin=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
+                    fechaini=(ahora-timedelta(days=3-i)).replace(hour= 7)
+                    fechafin=(ahora-timedelta(days=3-i)).replace(hour= 14, minute=30)
                     turno="A"
                     label= fechaini.strftime("%d-%m") + " " + turno
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
@@ -40,16 +40,16 @@ class Command(BaseCommand):
                     #print(m2Corr)
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
-                    fechaini=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
-                    fechafin=(ahora-timedelta(days=7-i)).replace(hour= 22)
+                    fechaini=(ahora-timedelta(days=3-i)).replace(hour= 14, minute=30)
+                    fechafin=(ahora-timedelta(days=3-i)).replace(hour= 22)
                     turno="B"
                     label= fechaini.strftime("%d-%m") + " " + turno
 
                     #print(m2Corr)
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
-                    fechaini=(ahora-timedelta(days=7-i)).replace(hour= 22)
-                    fechafin=(ahora-timedelta(days=7-i-1)).replace(hour= 7)
+                    fechaini=(ahora-timedelta(days=3-i)).replace(hour= 22)
+                    fechafin=(ahora-timedelta(days=3-i-1)).replace(hour= 7)
                     turno="C"
                     label= fechaini.strftime("%d-%m") + " " + turno
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
@@ -68,7 +68,7 @@ class Command(BaseCommand):
 
 
                     for consumo in consumos:
-                        print(consumo['RollID'])
+                        #print(consumo['RollID'])
 
                         o, created= ConsumoRollos.objects.get_or_create(foto= foto, RollID=consumo['RollID'],RollStandID=consumo['RollStandID'],formato=consumo['formato'],peso=consumo['peso'],grado=consumo['grado'],diametro=consumo['diametro'],mlusados=consumo['mlusados'],mlrestantes=consumo['mlrestantes'], peelwaste=consumo['peelwaste'], turno=label['turno'],fechaini=label['fechaini'])
                         o.save()

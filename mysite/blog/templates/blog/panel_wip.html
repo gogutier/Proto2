@@ -61,10 +61,12 @@
                       <tr>
                       <td>Tarja</td>
                       <td>ID</td>
+                      <td>Origen</td>
                       <td>Destino</td>
                       <td colspan='2'>Fecha </td>
                       </tr>
                       <tr>
+                      <td> </td>
                       <td> </td>
                       <td> </td>
                       <td> </td>
@@ -74,21 +76,25 @@
                       <td> </td>
                       <td> </td>
                       <td> </td>
+                      <td> </td>
                       <td colspan='2' cellspacing="0"> </td>
                         </tr>
                       <tr>
                       <td> </td>
                       <td> </td>
                       <td> </td>
-                      <td colspan='2'> </td>
-                        </tr>
-                      <tr>
-                      <td> </td>
-                      <td> </td>
                       <td> </td>
                       <td colspan='2'> </td>
                         </tr>
                       <tr>
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
                       <td> </td>
                       <td> </td>
                       <td> </td>
@@ -100,6 +106,7 @@
                   <tr>
                   <td>Tarja</td>
                   <td>ID</td>
+                  <td>Origen</td>
                   <td>Destino</td>
                   <td>Fecha</td>
                   </tr>
@@ -107,11 +114,6 @@
                   <td> </td>
                   <td> </td>
                   <td> </td>
-                  <td colspan='2'> </td>
-                  </tr>
-                  <tr>
-                  <td> </td>
-                  <td> </td>
                   <td> </td>
                   <td colspan='2'> </td>
                   </tr>
@@ -119,9 +121,18 @@
                   <td> </td>
                   <td> </td>
                   <td> </td>
+                  <td> </td>
                   <td colspan='2'> </td>
                   </tr>
                   <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
                   <td> </td>
                   <td> </td>
                   <td> </td>
@@ -232,7 +243,8 @@ function datosinv(){
       tabla3.rows[2+i].cells[0].innerHTML=filtroentrada[i][0]
       tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
       tabla3.rows[2+i].cells[2].innerHTML=filtroentrada[i][2].substring(0,7)
-      tabla3.rows[2+i].cells[3].innerHTML=filtroentrada[i][3]
+      tabla3.rows[2+i].cells[3].innerHTML=filtroentrada[i][3].substring(0,7)
+      tabla3.rows[2+i].cells[4].innerHTML=filtroentrada[i][4]
       }
 
       for (var i=0; i < filtrosalida.length; i++)
@@ -240,7 +252,8 @@ function datosinv(){
       tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0]
       tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
       tabla3.rows[9+i].cells[2].innerHTML=filtrosalida[i][2].substring(0,7)
-      tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][3]
+      tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][3].substring(0,7)
+      tabla3.rows[9+i].cells[4].innerHTML=filtrosalida[i][4]
       }
 
 
