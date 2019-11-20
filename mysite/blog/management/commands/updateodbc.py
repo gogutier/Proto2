@@ -23,14 +23,14 @@ class Command(BaseCommand):
         while True:
             try:
 
-                sleep(0.5)
+                #sleep(0.5)
                 cursor= self.conecta_BD()
                 sleep(0.5)
-                browser= self.inicia_browser()
+                #browser= self.inicia_browser()
 
                 auxok=1
                 while auxok==1:
-                    auxok=self.webscrap_mov(browser,cursor)
+                    auxok=self.webscrap_mov(cursor)#browser,cursor)
                     sleep(0.1)
 
 
@@ -81,7 +81,7 @@ class Command(BaseCommand):
 
 
     #print("hola")
-    def webscrap_mov(self, browser, cursor):
+    def webscrap_mov(self,cursor):#(self, browser, cursor):
         #acá trato de entrar a la página sin tener que iniciar el browser todo el tiempo.
         try:
 
@@ -190,10 +190,12 @@ class Command(BaseCommand):
                 o.esFGLoad=datoFGLoad
 
                 o.save()
+                sleep(0.05)
 
                 #creo la ubicación de inventario en caso de que no exista.
                 a, created = UbicPallet.objects.get_or_create(calle=dato11)
                 a.save()
+                sleep(0.05)
 
                 #creo el pallet en caso de que no exista. Si ya existe le actualizo la ubicación.
 
@@ -213,6 +215,7 @@ class Command(BaseCommand):
                 c.m2pallet=datom2pallet
                 c.kgpallet=datokgpallet
                 c.save()
+                sleep(0.06)
 
                 #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
 

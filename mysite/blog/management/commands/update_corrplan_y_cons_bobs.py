@@ -78,6 +78,7 @@ class Command(BaseCommand):
 
                         o, created= ConsumoRollos.objects.get_or_create(foto= foto, RollID=consumo['RollID'],RollStandID=consumo['RollStandID'],formato=consumo['formato'],peso=consumo['peso'],grado=consumo['grado'],diametro=consumo['diametro'],mlusados=consumo['mlusados'],mlrestantes=consumo['mlrestantes'], peelwaste=consumo['peelwaste'], turno=label['turno'],fechaini=label['fechaini'])
                         o.save()
+                        sleep(0.1)
 
 
                     instance=Foto_ConsumoRollos.objects.filter(fecha_foto__lt=foto.fecha_foto, turno=label['label'])
@@ -117,7 +118,7 @@ class Command(BaseCommand):
                 #pasar la fecha comprometida a datetime y guardarla
                 fecha_entrega= datetime.strptime(str(fila[0]), '%d-%m-%Y')
                 #continùa guardando sòlo si la fecha de entrega està dentro del rango establecido.
-                if True:#fecha_entrega < datetime.now() + timedelta(days=10):
+                try:#fecha_entrega < datetime.now() + timedelta(days=10):
                     try:
                         fecha_inicio= datetime.strptime(str(fila[1]), '%d-%m-%Y %H:%M:%S') #ojo, hay que agregarle el timezone, para que no sea "naive"
                     except:
@@ -163,7 +164,7 @@ class Command(BaseCommand):
 
                     ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maq  ) #usò siempre la misma :/
                     ord_corrplan.save()
-                    sleep(0.3)
+                    sleep(0.1)
                     #acà podrìa intenar borrar los foto corrplan antiguos para no acumular tantos datos.
                     ##Agregar la parte que borra todos los corrplans anteriores (se borró)
                     #borrando todas las fotos corrplan anteriores a "foto"
@@ -172,6 +173,10 @@ class Command(BaseCommand):
 
                     cartin, created =Cartones.objects.get_or_create(carton=fila[5])
                     cartin.save()
+                except Exception as e:
+                    print(e)
+                    print("error al copiar una orden de corrplan")
+                    sleep(15)
                 #self.stdout.write(fila[0][4])
             self.stdout.write("Datos actualizados")
             sleep(15)

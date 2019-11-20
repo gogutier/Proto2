@@ -42,6 +42,7 @@ class Command(BaseCommand):
 
                 fotoinvcic, created=Foto_Inv_Cic_WIP.objects.get_or_create(fecha_foto=datetime.now())
                 fotoinvcic.save()
+                sleep(0.05)
 
 
 
@@ -144,6 +145,7 @@ class Command(BaseCommand):
 
                         o =Foto_Palletscti_Inv_Cic_WIP.objects.create( calle=fotocalle, pallet=datosWIP[calle]['palletscti'][0][i] ,ORDERID=datosWIP[calle]['palletscti'][1][i])
                         o.save() #print(pallet[1])
+                        sleep(0.05)
 
 
                     for i in range(0,len(datosWIP[calle]['palletsnoencontrados'][0])):
@@ -158,12 +160,14 @@ class Command(BaseCommand):
 
                         o =Foto_Palletsencontrados_Inv_Cic_WIP.objects.create( calle=fotocalle, pallet=datosWIP[calle]['palletsencontrados'][0][i] ,ORDERID=datosWIP[calle]['palletsencontrados'][1][i])
                         o.save() #print(pallet[1])
+                        sleep(0.05)
 
                     for i in range(0,len(datosWIP[calle]['palletsenotracalle'][0])):
                         #print (str(datosWIP[calle]['palletscti'][0][i]) + " " + str(datosWIP[calle]['palletscti'][1][i]) )
 
                         o =Foto_Palletsenotracalle_Inv_Cic_WIP.objects.create( calle=fotocalle, pallet=datosWIP[calle]['palletsenotracalle'][0][i] ,ORDERID=datosWIP[calle]['palletsenotracalle'][1][i])
                         o.save() #print(pallet[1])
+                        sleep(0.05)
 
 
                     ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
