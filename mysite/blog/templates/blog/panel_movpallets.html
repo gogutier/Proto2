@@ -5,15 +5,52 @@
 
 <div class="container">
 
-
-
 <canvas id="myChart"  style="width:1000px"></canvas>
-
-
 
 </div>
 
+
+
+<div class="container">
+
+<canvas id="myChart2"  style="width:1000px"></canvas>
+
+</div>
+
+
+
+
+<div class="container">
+
+<canvas id="myChart3"  style="width:1000px"></canvas>
+
+</div>
+
+
+
+<div class="container">
+
+<canvas id="myChart4"  style="width:1000px"></canvas>
+
+</div>
+
+
+
+<div class="container">
+
+<canvas id="myChart5"  style="width:1000px"></canvas>
+
+</div>
+
+
+
+
+
+
+
 <script type="text/javascript">
+
+
 
 
 
@@ -34,6 +71,7 @@ function datosinv(){
 
       //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
       labels = response_data.labels;
+      labels2 = response_data.labels2;
 
 
       //console.log(datos0["M2ZFFG1"].toFixed(2))
@@ -42,9 +80,13 @@ function datosinv(){
       //console.log(prueba['prueba2']['B'])
       //console.log(m2total)
       //console.log(npalletstotal)
-      console.log(labels)
+      console.log(labels2)
 
       setChart1();
+      setChart2();
+      setChart3();
+      setChart4();
+      setChart5();
 
 
 
@@ -67,7 +109,7 @@ datosinv()
 
 window.setInterval(function(){
   console.log("hola");
-  datosinv();
+  //datosinv();
 }, 60000);
 
 
@@ -186,10 +228,280 @@ function setChart1(){
 
 
 
+////////////////
+
+function setChart2(){
+
+  //generando list de labels
+  labelx=[]
+  movscorr1=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movscorr1.push((labels2[i]["movscorr1"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart2").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Movimientos salida Stacker Superior",
+            data: movscorr1,
+            borderColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(100,100,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.5,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+///////////////
+
+function setChart3(){
+
+  //generando list de labels
+  labelx=[]
+  movscorr2=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movscorr2.push((labels2[i]["movscorr2"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart3").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Movimientos salida Stacker Inferior",
+            data: movscorr2,
+            borderColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(100,100,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.5,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+////////////////////////
+
+function setChart4(){
+
+  //generando list de labels
+  labelx=[]
+  movsconv1=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movsconv1.push((labels2[i]["movsconv1"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart4").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Movimientos entrada a Conversión (TCY, HCR, WRD)",
+            data: movsconv1,
+            borderColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(100,100,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.5,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
 
 
 
 
+
+
+/////////////////////////////////////////
+
+
+function setChart5(){
+
+  //generando list de labels
+  labelx=[]
+  movsconv2=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movsconv2.push((labels2[i]["movsconv2"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart5").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Movimientos entrada a Conversión (FFW, DRO, FFG)",
+            data: movsconv2,
+            borderColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(100,100,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.5,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+}
 
 
 

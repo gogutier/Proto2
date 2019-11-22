@@ -161,11 +161,23 @@ class Datos_Inv_WIP(models.Model):
     def __str__(self):
         return (str(self.sector))
 
+
+
+class Foto_Datos_MovPallets(models.Model):
+
+
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
+
+    def __str__(self):
+        return (str(self.fecha_foto))
+
 class Datos_MovPallets(models.Model):
 
 
-    fecha=models.DateTimeField(blank=False, default=timezone.now)
-    fechafin=models.DateTimeField(blank=False, default=timezone.now)
+    programa=models.ForeignKey('blog.Foto_Datos_MovPallets', related_name='foto_datosmovpallet', on_delete=models.CASCADE, default=0)
+
+    fecha=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
     turno=models.CharField(max_length=16, blank=False, default="0")
     label=models.CharField(max_length=16, blank=False, default="0")
     cantidadIn=models.IntegerField(default=0)
@@ -180,6 +192,27 @@ class Datos_MovPallets(models.Model):
 
     def __str__(self):
         return (str(self.label))
+
+
+class Datos_MovPallets_B(models.Model):
+
+
+    programa=models.ForeignKey('blog.Foto_Datos_MovPallets', related_name='foto_datosmovpalletB', on_delete=models.CASCADE, default=0)
+
+    fechaini=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    label=models.CharField(max_length=16, blank=False, default="0")
+    movscorr1=models.IntegerField(default=0)
+    movscorr2=models.IntegerField(default=0)
+    movsconv1=models.IntegerField(default=0)
+    movsconv2=models.IntegerField(default=0)
+
+
+    def __str__(self):
+        return (str(self.label))
+
+
+
 
 class Datos_Proy_WIP(models.Model):
 

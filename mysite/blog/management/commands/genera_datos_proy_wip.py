@@ -9,6 +9,8 @@ from blog.models import DatosWIP_Prog as DatosWIP_Prog
 #from blog.models import Datos_INV_WIP as Datos_INV_WIP
 from blog.models import MovPallets as MovPallets
 from blog.models import Datos_MovPallets as Datos_MovPallets
+from blog.models import Datos_MovPallets_B as Datos_MovPallets_B
+from blog.models import Foto_Datos_MovPallets as Foto_Datos_MovPallets
 from blog.models import IDProgCorr as IDProgCorr
 from blog.models import Pallet as Pallet
 from blog.models import Cartones as Cartones
@@ -40,7 +42,13 @@ class Command(BaseCommand):
 
     def updatemovpallets(self):
         if 1:#########
+
+            #CREO UNA nueva foto de movspallets:
+            foto, created =Foto_Datos_MovPallets.objects.get_or_create(fecha_foto=datetime.now())
+            foto.save()
+
             print("actualizo el Movpallets")
+
             try:
 
 
@@ -163,14 +171,49 @@ class Command(BaseCommand):
                 print("completado, guardando el Model")
 
 
-                antiguos= Datos_MovPallets.objects.all().delete()
+                #antiguos= Datos_MovPallets.objects.all().delete()
 
                 #print(labels)
                 for dato in labels:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets.objects.create(fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadProd=dato['cantidadProd'],m2Prod=dato['m2Prod'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadProd=dato['cantidadProd'],m2Prod=dato['m2Prod'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
                     o.save()
+                    sleep(0.05)
 
+
+                #### Ahora calculo los datos de sólo los movimientos..
+
+                labels2=[]
+                ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
+                for i in range(0,288):
+                    #por ahora los voy a ordenar por turno, después por hora.
+                    fechaini=(ahora-timedelta(minutes=(288-i)*5))
+                    fechafin=(ahora-timedelta(minutes=(288-i-1)*5))
+
+
+                    label= (fechaini.strftime("%d-%m %H:%M")+ " a " + fechafin.strftime("%H:%M"))
+                    #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
+                    #m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    #print(m2Corr)
+
+                    #Calculo el n° de movimientos registrados en ese turno:
+
+                    movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movscorr2= MovPallets.objects.filter(Q(SOURCE="CORR_LOWER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2})
+
+                for dato in labels2:
+                    #print(dato['cantidadIn'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'])
+                    o.save()
+                    sleep(0.05)
+
+
+                #Borrar las fotos antiguos..
+                instance=Foto_Datos_MovPallets.objects.filter(fecha_foto__lt=foto.fecha_foto)
+                instance.delete()
             except Exception as e:
                 print(e)
                 print("error")

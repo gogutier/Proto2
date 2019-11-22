@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -283,18 +283,61 @@ def panel_inv_ciclico(request):
 
 def get_data_movpallets(request, *args, **kwargs):
     labels=[]
+    labels2=[]
     #estructura: inicio turno en datetime, inicio turno en texto, inicio turno en descripción, m2 ingreso a planta en ese turno, m2 salida de planta en ese turno.
 
     #fecha, label, m2in, m2out
 
     #labels.append((ahora+timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0))
-    for dato in Datos_MovPallets.objects.all():
+    foto= Foto_Datos_MovPallets.objects.all().order_by('fecha_foto')[0]
+
+
+
+    for dato in Datos_MovPallets.objects.filter(programa=foto):
         labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadProd":dato.cantidadProd, "m2Prod":dato.m2Prod, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv, "m2Corr":dato.m2Corr})
 
+    for dato in Datos_MovPallets_B.objects.filter(programa=foto):
+        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movscorr1":dato.movscorr1, "movscorr2":dato.movscorr2, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2})
 
+
+    #Muestro los movs realizados cada 5 min en 24 horas.
+
+    #Genero labels de cada 5 minutos:
+    '''
+    if 1:
+        if 1:
+            if 1:
+                labels2=[]
+                ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
+                for i in range(0,288):
+                    #por ahora los voy a ordenar por turno, después por hora.
+                    fechaini=(ahora-timedelta(minutes=(288-i)*5))
+                    fechafin=(ahora-timedelta(minutes=(288-i-1)*5))
+
+
+                    label= (fechaini.strftime("%d-%m %H:%M")+ " a " + fechafin.strftime("%H:%M"))
+                    #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
+                    #m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    #print(m2Corr)
+
+                    #Calculo el n° de movimientos registrados en ese turno:
+
+                    movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movscorr2= MovPallets.objects.filter(Q(SOURCE="CORR_LOWER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2})
+
+
+
+                print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
+
+
+    '''
 
     data = {
     "labels":labels,
+    "labels2":labels2,
             }
     print("Enviando datos movpallets")
     return JsonResponse(data)#http response con el datatype de JS

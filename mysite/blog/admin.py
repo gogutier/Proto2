@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP,Datos_MovPallets, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Calles_Inv_Cic_WIP, Foto_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
+from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP,Datos_MovPallets, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Calles_Inv_Cic_WIP, Foto_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Foto_Datos_MovPallets
 
 
 # Register your models here.
@@ -60,3 +60,4 @@ admin.site.register(Foto_Palletsenotracalle_Inv_Cic_WIP)
 admin.site.register(MovRollos)
 admin.site.register(ConsumoRollos)
 admin.site.register(Foto_ConsumoRollos)
+admin.site.register(Foto_Datos_MovPallets)
