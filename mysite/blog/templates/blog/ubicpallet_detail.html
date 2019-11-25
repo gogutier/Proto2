@@ -17,6 +17,7 @@
   <td >Unidades</td>
   <td >m2</td>
   <td >Fecha Creación</td>
+  <td >Ruta estándar</td>
 </tr>
 {% for pallet in pallets %}
 
@@ -28,6 +29,7 @@
   <td>{{pallet.unidades|floatformat:"0"}}</td>
   <td>{{pallet.m2pallet|floatformat:"1"}}</td>
   <td>{{pallet.fechacreac|date:'d-m-Y H:i'}}</td>
+  <td>{{pallet.maqruta}}</td>
 </tr>
 
 

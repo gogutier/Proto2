@@ -478,6 +478,8 @@ class Command(BaseCommand):
 
     def updateconsbobs(self):
         if 1:
+            print("iniciando carga de consumo de rollos")
+            sleep(5)
             try:
 
                 ##Calculo los turnos que quiero actualizar.
@@ -509,11 +511,14 @@ class Command(BaseCommand):
                     label= fechaini.strftime("%d-%m") + " " + turno
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
-                print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
+
 
                 for label in labels:
+                    print("busco el consumo en cada turno: ")
                     print(label['label'])
                     consumos=pruebaAPIRollCons.cargaconsbob(label['fechaini'],label['fechafin'])
+
+                    print(consumos)
 
 
                     foto, created =Foto_ConsumoRollos.objects.get_or_create(fecha_foto=ahora, label=label['label'], turno=label['turno'])
@@ -523,27 +528,27 @@ class Command(BaseCommand):
 
 
                     for consumo in consumos:
-                        #print(consumo['RollID'])
+                        print(consumo['RollID'])
 
                         o, created= ConsumoRollos.objects.get_or_create(foto= foto, RollID=consumo['RollID'],RollStandID=consumo['RollStandID'],formato=consumo['formato'],peso=consumo['peso'],grado=consumo['grado'],diametro=consumo['diametro'],mlusados=consumo['mlusados'],mlrestantes=consumo['mlrestantes'], peelwaste=consumo['peelwaste'], turno=label['turno'],fechaini=label['fechaini'])
                         o.save()
                         sleep(0.1)
 
 
-                    instance=Foto_ConsumoRollos.objects.filter(fecha_foto__lt=foto.fecha_foto, turno=label['label'])
+                    instance=Foto_ConsumoRollos.objects.filter(fecha_foto__lt=foto.fecha_foto, label=label['label'])
                     instance.delete()
 
                     sleep(2)
 
             except Exception as e:
                 print(e)
-                print("error!!!")
+                print("error al consumir bobinas!!!")
                 sleep(15)
 
 
 
             #print(consumos)
-            print("TODO LISTOOOO")
+            print("TODO LISTOOOO, consumos bobinas actualizados!")
             sleep(120)
 
     def updatecorrplan(self):
@@ -611,14 +616,21 @@ class Command(BaseCommand):
                         print(fila[11])
                     #maquina = ("pendiente") #pendiente de sacar en base a la ruta (ùltim màquina de la ruta?)
 
-                    ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maq  ) #usò siempre la misma :/
-                    ord_corrplan.save()
-                    sleep(0.1)
+                    flagok=0
+                    while flagok==0:
+                        try:
+                            ord_corrplan, created =OrdenCorrplan.objects.get_or_create(programa=foto, fecha_entrega=fecha_entrega, fecha_inicio=fecha_inicio, order_id=order_id, cliente=cliente, SO=SO, carton=carton, padron=padron, cant_ord=cant_ord, cant_corr=cant_corr, medida=medida, area=area, ruta=ruta, estado=estado, comprometida=comprometida, maquina=maq  ) #usò siempre la misma :/
+                            ord_corrplan.save()
+                            flagok=1
+                            sleep(0.1)
+                        except Exception as e:
+                            print(e)
+                            print("error al guardar fila corrplan en sistema")
+
                     #acà podrìa intenar borrar los foto corrplan antiguos para no acumular tantos datos.
                     ##Agregar la parte que borra todos los corrplans anteriores (se borró)
                     #borrando todas las fotos corrplan anteriores a "foto"
-                    instance=FotoCorrplan.objects.filter(fecha_foto__lt=foto.fecha_foto)
-                    instance.delete()
+
 
                     cartin, created =Cartones.objects.get_or_create(carton=fila[5])
                     cartin.save()
@@ -626,6 +638,9 @@ class Command(BaseCommand):
                     print(e)
                     print("error al copiar una orden de corrplan")
                     sleep(15)
+
+                instance=FotoCorrplan.objects.filter(fecha_foto__lt=foto.fecha_foto)
+                instance.delete()
                 #self.stdout.write(fila[0][4])
             self.stdout.write("Datos actualizados")
             sleep(15)
@@ -633,7 +648,6 @@ class Command(BaseCommand):
             print(e)
             print("error")
             sleep(15)
-
 
 
 
@@ -650,11 +664,7 @@ class Command(BaseCommand):
             self.updatecorrplan()
 
 
-
-
-
-
-                ###########
+            ###########
 
 
             print("Esperando para hacer prox carga masiva de datos")

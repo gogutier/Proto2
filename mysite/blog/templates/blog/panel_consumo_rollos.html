@@ -27,7 +27,7 @@ function displayHTMLTable(){
 var table = "<table class='table' >";
 
 
-  empalmadores=[['DB','1A','1B','ROLL1A','ROLL1B'],['SF1M','2A','2B','ROLL1A','ROLL1B'],['SF1L','3A','3B','ROLL1A','ROLL1B'],['SF2M','4A','4B','ROLL1A','ROLL1B'],['SF2L','5A','5B','ROLL1A','ROLL1B']]
+  empalmadores=[['DB','1A','1B','ROLL1A','ROLL1B'],['SF1M','2A','2B','ROLL2A','ROLL2B'],['SF1L','3A','3B','ROLL3A','ROLL3B'],['SF2M','4A','4B','ROLL4A','ROLL4B'],['SF2L','5A','5B','ROLL5A','ROLL5B']]
 
   var value;
   for (var key in labels) {
@@ -256,6 +256,72 @@ var table = "<table class='table' >";
                                       }
 
                                     table+= '</tr>';
+                                  }
+
+                                }
+
+                                for (var i=0 ; i<(labels[key][1]).length ; i++)
+                                {
+                                if(labels[key][1][i]['destino']==empalmadores[emp][3] || labels[key][1][i]['destino']==empalmadores[emp][4])
+                                  {
+
+                                    table+= '<tr>';
+
+
+                                      table+= '<td style="font-weight:bold">';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['idrollo'];
+                                      table+= '</td>';
+
+                                      table+= '<td >';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= "N/A";
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= "N/A";
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= "N/A";
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= "N/A";
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= "N/A";
+                                      table+= '</td>';
+
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= "N/A";
+                                      table+= '</td>';
+
+
+                                      table+= '<td style="font-weight:bold">';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['usuario'];;
+                                      table+= '</td>';
+
+                                      table+= '<td style="font-weight:bold">';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['destino'];;
+                                      table+= '</td>';
+
+                                      table+= '<td style="font-weight:bold">';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][1][i]['fecha'];;
+                                      table+= '</td>';
+
+                                    table+= '</tr>';
+
                                   }
 
                                 }

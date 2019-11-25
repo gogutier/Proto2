@@ -13,8 +13,8 @@ def cargaconsbob(fechaini, fechafin):
 
     A= fechaini.strftime("%m-%d-%Y %H:%M")
     B= fechafin.strftime("%m-%d-%Y %H:%M")
-    print(A)
-    print(B)
+    #print(A)
+    #print(B)
     AA ='11-18-2019 14:30'
     BB ='11-18-2019 22:30'
     data=(client.service.GetRollConsumptionDetails('<CTI><RollStorage><Plant><ID>800</ID></Plant></RollStorage></CTI>', A, B) )#('800',A,B))
@@ -24,6 +24,7 @@ def cargaconsbob(fechaini, fechafin):
     doc = xmltodict.parse(data, process_namespaces=True)
     #print(doc['CTI'])
     #print(len(doc['CTI']['RollConsumption']))
+    #(doc['CTI']['RollConsumption'])
 
     lista=[]
     flag1consumo=0
@@ -34,13 +35,17 @@ def cargaconsbob(fechaini, fechafin):
         #print(len(doc['CTI']))
         try:
             print(doc['CTI']['RollConsumption']['RollID'])
+            print("Flag será 1, significa que sólo hay una bobina consumida en ese rango de fecha")
             flag1consumo=1
         except:
             flag1consumo=0
+            #print(doc['CTI']['RollConsumption'])
+            print("Flag será 0")
+
 
         if flag1consumo==0:
             for i in doc['CTI']['RollConsumption']:#range(0,len(doc['CTI']['RollConsumption'])-1 ):
-                print(i['RollID'])
+                #print(i['RollID'])
 
                 RollID=i['RollID']
                 RollStandID=i['RollStandID']
@@ -51,6 +56,12 @@ def cargaconsbob(fechaini, fechafin):
                 mlusados=i['LinealUsed']['#text']
                 mlrestantes=i['LinealLeft']['#text']
                 peelwaste=i['PeelWasteLineal']['#text']
+
+                rollo={'RollID':RollID,'RollStandID':RollStandID, 'formato':formato, 'peso':peso , 'grado':grado, 'diametro':diametro, 'mlusados':mlusados, 'mlrestantes':mlrestantes,'peelwaste':peelwaste}
+                #print(doc['CTI']['Roll'][i]['ID'])
+                print("rollo: ")
+                print(rollo)
+                lista.append(rollo)
 
         elif flag1consumo==1:
             #print(doc['CTI']['RollConsumption']['RollID'])
@@ -75,10 +86,11 @@ def cargaconsbob(fechaini, fechafin):
             #print(doc['CTI']['RollConsumption'][3]['RollStorageDetails']['Plant']['Warehouse']['Location']['ID'])
             rollo={'RollID':RollID,'RollStandID':RollStandID, 'formato':formato, 'peso':peso , 'grado':grado, 'diametro':diametro, 'mlusados':mlusados, 'mlrestantes':mlrestantes,'peelwaste':peelwaste}
             #print(doc['CTI']['Roll'][i]['ID'])
-
+            print("rollo: ")
+            print(rollo)
             lista.append(rollo)
 
-        #print(lista)
+        print(lista)
     except Exception as e:
         print(e)
         print("no se encontró consumo de rollos en ese turno")

@@ -36,6 +36,7 @@ class Command(BaseCommand):
 
             except Exception as e:
                 print(e)
+                print("Unexpected error:", sys.exc_info()[0])
                 print("error en conexión a datos :( (a DB o a sitio web))")
                 sleep(0.2)
 
@@ -57,6 +58,7 @@ class Command(BaseCommand):
 
         except Exception as e:
             print(e)
+            print("Unexpected error:", sys.exc_info()[0])
             print("error al conectar con DB :(")
 
     def inicia_browser(self):
@@ -83,12 +85,9 @@ class Command(BaseCommand):
     #print("hola")
     def webscrap_mov(self,cursor):#(self, browser, cursor):
         #acá trato de entrar a la página sin tener que iniciar el browser todo el tiempo.
-        try:
-
+        if 1:#try:
             #print("entrando a página")
             #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-
-
             #browser.open("http://127.0.0.1:8000/carga_mov_pallets/")
             #browser.follow_link("login")
             #print(browser.get_current_page())
@@ -99,6 +98,8 @@ class Command(BaseCommand):
             ####messages = page.find(id="ultimo")
             ultim=str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0].TRANSACTIONINDEX)
             print("útlimo TrIndex:"+ ultim)
+
+
             row, datosextra=self.cargaDatos(ultim,cursor)#Acá es donde ejecuto la odbc
             #print(row)
             if (row!=None and len(row)>0):
@@ -164,6 +165,9 @@ class Command(BaseCommand):
                 datokguni=datosextra[5]#form.cleaned_data["kguni"]
                 datom2uni=datosextra[6]#form.cleaned_data["m2uni"]
                 datoFGLoad=datosextra[7]#form.cleaned_data["esFGLoad"]
+                datocliente=datosextra[8]#form.cleaned_data["esFGLoad"]
+                datofechacreacionpallet=datosextra[9]#form.cleaned_data["esFGLoad"]
+                datomaqruta=datosextra[10]#form.cleaned_data["esFGLoad"]
 
                 #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
                 o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
@@ -204,12 +208,13 @@ class Command(BaseCommand):
                 c.ubic=dato11
                 c.ORDERID=dato4
                 #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
-                if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
-                    c.fechacreac=dato12
+                ##Esto lo borro para ver si ahora revisa la fecha de creación cada vez que se mueve un pallet#### if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
+                c.fechacreac=datofechacreacionpallet
                 c.ancho=datoancho
                 c.alto=datoalto
                 c.unidades=datounidadespallet
-                c.cliente="pendiente"
+                c.cliente=datocliente
+                c.maqruta=datomaqruta
                 c.m2uni=datom2uni
                 c.kguni=datokguni
                 c.m2pallet=datom2pallet
@@ -235,8 +240,9 @@ class Command(BaseCommand):
             resultado="dato enviado"
             return(1)
 
-        except Exception as e:
+        else:#except Exception as e:
             print(e)
+            print("Unexpected error:", sys.exc_info()[0])
             print("Desconectado de página o no hay movimientos nuevos qué capturar")
             sleep(10)
             return(0)
@@ -259,14 +265,18 @@ class Command(BaseCommand):
         #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
         flag0=0
         #sleep(0.01)
-        print("obteniendo el último FGLOAD más cercano..")
+        print("obteniendo el último FGLOAD mayor más cercano a " + ultimo)
         cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EventDateTime],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
-        row0=cursor.fetchone()
-        print("FGLOAD obtenido: " + str(row0[0]))
+        try:
+            row0=cursor.fetchone()
+            print("FGLOAD obtenido: " + str(row0[0]))
+        except:
+            print("no se encontraron FLGLOADs mayores")
         #print("row0 FGLOAD:")
         #print(row0)
         if row0!=None:
             try:
+                print("tomando info del FGLOAD encontrado..")
                 row0datetime=row0[10]
 
                 row0time=row0[11]
@@ -276,28 +286,30 @@ class Command(BaseCommand):
                 row0datetime= row0datetime + row0time[0] + row0time[1] + ":" + row0time[2] + row0time[3] + ":" + row0time[4]+ row0time[5]
                 row0datetime= datetime.strptime(row0datetime, '%d-%m-%Y %H:%M:%S')
                 '''
+
+            #print(row0datetime)
+                workcenter=row0[2]
+                destino=""
+                if workcenter=="CORR_U":
+                    destino="CORR_UPPER_Stacker"
+                elif workcenter=="CORR_L":
+                    destino="CORR_LOWER_Stacker"
+                else:
+                    destino="ZPICADO"
+
             except Exception as e:
                 print(row0)
                 print(e)
                 print("agregando el datetime como now() pq hubo un problema al capturar el row0datetime de FGLOAD")
                 row0datetime=datetime.now()
                 row0time='0'
-            #print(row0datetime)
-            workcenter=row0[2]
-            destino=""
-            if workcenter=="CORR_U":
-                destino="CORR_UPPER_Stacker"
-            elif workcenter=="CORR_L":
-                destino="CORR_LOWER_Stacker"
-            else:
-                destino="ZPICADO"
 
 
 
             row1=[row0[0], row0[1], "0", row0[3], row0[4], row0[5], row0[6], 0, row0[7], row0[8], "CORR" , destino, row0datetime, row0[11]]
             #sleep(0.01)
             print("obteniendo el transactionindex de MVLOAD siguiente para "+ str(ultimo))
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND OPERATIONNO = 0 order by transactionindex asc ")
 
 
 
@@ -306,6 +318,7 @@ class Command(BaseCommand):
                 print("TI encontado en MVLOAD: " + str(rowaux[0]) )
             except Exception as e:
                 print(e)
+                print("Unexpected error:", sys.exc_info()[0])
                 print("error al hacer rowaux=cursor.fetchone()")
             #print(rowaux)
 
@@ -323,18 +336,19 @@ class Command(BaseCommand):
                 if TIFGLOAD<TIMVLOAD:
                     flag0=1
                     flagFGLoad=1
-                    #print("obtenida row1 de FGLOAD!")
+                    print("obtenida row1 de FGLOAD!")
                     #print(row1)
             else:
                 flag0=0
 
 
 
-        if flag0==0:
+        if flag0==0: #si es un dato que saco de la MVLOAD..
             try:
-                #print("obteniendo el row1 del MVLOAD")
+                print("obteniendo el row1 del MVLOAD")
                 #sleep(0.01)
-                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +"  AND DESTINATION <> 'XTCY' AND DESTINATION <> 'XFFG' AND DESTINATION <> 'XFFW' AND DESTINATION <> 'XDRO' AND DESTINATION <> 'XHCR' AND DESTINATION <> 'XWRD' AND OPERATIONNO = 0 order by transactionindex asc ")
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND OPERATIONNO = 0 order by transactionindex asc ")
+
                 #Aquí hay que ponerle un TRY probablemente
                 try:
                     row1=cursor.fetchone()
@@ -342,8 +356,8 @@ class Command(BaseCommand):
                     print("error al hacer row1=cursor.fetchone()")
                 #print(row1)
                 #compara el transactionidex de fgload vs el de MVLOAD
-                #print("Obtenida row1 de MVLOAD!")
-                #print(row1)
+                print("Obtenida row1 de MVLOAD!")
+                print(row1[0])
             except Exception as e:
                 print(e)
                 print("error!")
@@ -360,12 +374,15 @@ class Command(BaseCommand):
         try:
 
             #print("Tarja:")
-            #print(row1[8])
+            tarjax=row1[8]
+            orderidx=row1[4]
             #id=row1[4]
 
-            #print ("iniciando segunda consulta")
+            print ("iniciando segunda consulta")
             #sleep(0.01)
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(row1[8]) +"' order by TRANSACTIONINDEX desc")
+            print("saco el FGLOAD de esa Tarja")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(tarjax) +"' order by TRANSACTIONINDEX desc")
+            print("segunda consulta satisfactoria")
             #De aquí quiero el número de unidades
             #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
             #for row in cursor:
@@ -375,8 +392,52 @@ class Command(BaseCommand):
                 print(row2)
                 unidadespallet=row2[5]
             else:
-                print("No se encontraron tarjas en FGLOAD para la loadID " + str(row1[8]) )
+                print("No se encontraron tarjas en FGLOAD para la loadID " + str(trajax) )
                 unidadespallet=500
+
+            print("Saco la fecha de creación de ese pallet. (EL FGLOAD más antguo que tenga ese pallet)")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [ORDERID], [LOADID], [EventDateTime] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(tarjax) +"' order by TRANSACTIONINDEX asc")
+            row2B=cursor.fetchone()
+            if row2B:
+                print(row2B)
+                fechacreacionpallet=row2B[3]
+                print("fecha de creacióm obtenida!")
+            else:
+                print("No se encontraron tarjas en FGLOAD para la loadID " + str(row1[8]) )
+                fechacreacionpallet=datetime.now()
+            #print("unidades pallet")
+
+            print("Obtengo el cliente de buscando el cliente en la tabla ORDERS_INFO para el ID: " + str(orderidx))
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO]  where ORDERID ='"+ str(orderidx) +"' order by TRANSACTIONINDEX asc")
+
+            TI_Orders_Info="X"
+            row2C=cursor.fetchone()
+            if row2C:
+
+                cliente=row2C[3]
+                print("cliente obtenido!")
+                print(row2C[3])
+                TI_Orders_Info=row2C[0]
+
+            else:
+                print("No se encontraron tarjas en CONVERTIONOPINFO para la orderid " + str(orderidx) )
+                cliente="vacío"
+
+
+            print("Obtengo la máquina en ruta de tabla ORDERS_INFO para el Transactionindex: " + str(TI_Orders_Info))
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[WORKCENTERID],[ROUTINGNO],[OPERATIONNO],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where Transactionindex='"+ str(TI_Orders_Info) +"' order by TRANSACTIONINDEX desc")
+
+            row2D=cursor.fetchone()
+            if row2D:
+
+                maqruta=row2D[1]
+                print("maqruta obtenido!")
+                print(row2D[1])
+
+            else:
+                print("No se encontraron tarjas en ORDERS_INFO para la orderid " + str(TI_Orders_Info) )
+                maqruta="vacío"
+            #print("unidades pallet")
             #print("unidades pallet")
             #print(unidadespallet)
 
@@ -424,11 +485,12 @@ class Command(BaseCommand):
             #print(pesouni)
             #print("m2uni")
             #print(m2uni)
-            datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad]
+            datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
             print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
         except Exception as e:
-            #print(e)
+            print(e)
             print("error al tomar row1!")
+            print("Unexpected error:", sys.exc_info()[0])
             #print("Unexpected error:", sys.exc_info()[0])
             sleep(1)
             row1=[]

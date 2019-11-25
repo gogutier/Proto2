@@ -29,14 +29,13 @@ def get_data_consumo_rollos(request, *args, **kwargs):
 
 
 
-    labels={'15-11 A':([],[]), '15-11 B':([],[]), '15-11 C':([],[]), '16-11 A':([],[]), '16-11 B':([],[]), '16-11 C':([],[])}
 
     labels={}
     ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
     horizonte=3
     for i in range(0,horizonte+1):
         #por ahora los voy a ordenar por turno, después por hora.
-        fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 7)
+        fechaini=(ahora-timedelta(days=horizonte-i) ).replace(hour= 7)
         fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
         turno="A"
         label= fechaini.strftime("%d-%m") + " " + turno
@@ -56,6 +55,7 @@ def get_data_consumo_rollos(request, *args, **kwargs):
         label= fechaini.strftime("%d-%m") + " " + turno
         labels.update({label:([],[],fechaini,fechafin)})#labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
+        #Cada label corresponde a un turno, incluye una lista de movimientos y otra lista independiente de consumo de rollos.
         #print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
 
     print(labels)
@@ -72,16 +72,22 @@ def get_data_consumo_rollos(request, *args, **kwargs):
 
             print(mov)
 
-            labels[label][1].append({"idrollo":mov.idrollo,"origen":mov.origen,"destino":mov.destino,"fecha":mov.fecha,"usuario":mov.usuario})
+            #Acá actualmente estoy mostrando todos los rollos que se entregaron ese turno. Ahora sólo quiero mostrar los rollos que se entregaron pero que no tienen un consumo asociado en ese u otros turnos posteriores.
+            #labels[label][1].append({"idrollo":mov.idrollo,"origen":mov.origen,"destino":mov.destino,"fecha":mov.fecha,"usuario":mov.usuario})
+            movsinconsumo=ConsumoRollos.objects.filter( fechaini__gte=labels[label][2], RollID=mov.idrollo).count()
+            if movsinconsumo==0:
+                labels[label][1].append({"idrollo":mov.idrollo,"origen":mov.origen,"destino":mov.destino,"fecha":mov.fecha,"usuario":mov.usuario})
 
 
 
 
         try:
+            print("consultando consumos para " + label)
             foto=Foto_ConsumoRollos.objects.filter(label=label).order_by('-fecha_foto')[0]
 
+
             for consumo in ConsumoRollos.objects.filter(foto=foto).order_by('grado'):
-                #print(consumo)
+                print(consumo)
                 #identifico el último movimiento de ese rollo al empalmador que corresponda:
 
             #    if entrega:
@@ -108,11 +114,12 @@ def get_data_consumo_rollos(request, *args, **kwargs):
                     print(e)
                     print("entrega no encontrada")
 
+                print("consumo encontrado para " + label +": " + str(dicc))
                 labels[label][0].append(dicc)
 
 
         except Exception as e:
-            print(e)
+            #print(e)
             print("Error al buscar consumo de rollo para fecha " + label)
 
 
@@ -433,23 +440,6 @@ def get_data_inventario(request, *args, **kwargs):
 
             datosWIP[str(calle)]['m2tot']=m2aux
 
-
-        #print(datosWIP)
-
-        ###Estos filtros de útimos movimientos los voy a sacar pq no aportan mucho
-
-        #acá mando el filtro de los últimos 10 movimientos de entrada a bodega.
-        '''
-        filtroprod=[]
-        filtro0=MovPallets.objects.filter(Q(DESTINATION="CORR_UPPER_Stacker") | Q(DESTINATION="CORR_LOWER_Stacker")).order_by('-TRANSACTIONINDEX')[:10]
-
-        # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
-        movimiento=[]
-        for mov in filtro0:
-            #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
-            filtroprod.append(movimiento)
-        '''
 
 
         filtroentrada=[]
