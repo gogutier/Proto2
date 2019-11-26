@@ -44,7 +44,8 @@ var table = "<table class='table' >";
 
                         for( var emp in empalmadores)
                           {
-
+                            if(labels[key][0].length>0 || labels[key][1].length>0)
+                          {
                           table+= '<tr>';
 
                             table+= '<td>';
@@ -336,12 +337,14 @@ var table = "<table class='table' >";
 
                         }
 
-
+}
 
 
                         table+= '</table>';
                     table+= "</td>";
     table+= '</tr>';
+
+
 
   }
 

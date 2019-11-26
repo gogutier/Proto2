@@ -408,7 +408,7 @@ class Command(BaseCommand):
             #print("unidades pallet")
 
             print("Obtengo el cliente de buscando el cliente en la tabla ORDERS_INFO para el ID: " + str(orderidx))
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO]  where ORDERID ='"+ str(orderidx) +"' order by TRANSACTIONINDEX asc")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO]  where ORDERID ='"+ str(orderidx) +"' order by TRANSACTIONINDEX desc")#**** Si aquí le pongo el DESC mejora? creo que si (lo cambié en el local pero no en el servidor productivo)
 
             TI_Orders_Info="X"
             row2C=cursor.fetchone()
