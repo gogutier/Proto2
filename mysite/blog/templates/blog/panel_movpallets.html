@@ -14,7 +14,37 @@
 <canvas id="myChart"  style="width:900px"></canvas>
 </td>
 
-<td id="ratiobalance">50%</td>
+<td>
+  <table>
+
+
+  <tr>
+    <td style='font-size: 30px;'>Balance WIP</td>
+    </tr>
+    <tr>
+      <td>
+        <br>
+      </td>
+
+    </tr>
+    <tr>
+      <td>Corrugado/Conversión</td>
+      </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance">.</td>
+  </tr>
+
+
+  <tr>
+    <td>In/Out grúas</td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance2">.</td>
+  </tr>
+
+</table>
+</td>
+
 </tr>
 
 </table>
@@ -95,12 +125,13 @@ function datosinv(){
       console.log(labels2)
 
       var ratio = document.getElementById("ratiobalance");//.getElementsByTagName("td");
-
+      var ratio2 = document.getElementById("ratiobalance2");//
       //Aquí calculo el ratio ratiobalance
 
       sumconv=0
       sumcorr=0
       aux=0
+      aux1=0
 
       diastrabajados=0
 
@@ -116,21 +147,71 @@ function datosinv(){
 
       for (var i = 0; i < labels.length; i++)
           {
+            aux1=0
 
           if (labels[i]["m2Conv"]!=0)///(labels.length);
             {
-              aux+=(labels[i]["m2Corr"]/labels[i]["m2Conv"])/diastrabajados
+              aux1=(labels[i]["m2Corr"]/labels[i]["m2Conv"])-1
+              if (aux1>0)
+              {
+
+                aux+=(1-aux1)/diastrabajados
+
+              }
+              else
+              {
+                aux+=(labels[i]["m2Corr"]/labels[i]["m2Conv"])/diastrabajados
+              }
             }
 
           }
-          aux2=aux-1
-          if (aux2>0)
+
+
+      ratio.innerHTML= String((aux*100).toFixed(1))+"%"
+
+
+      ///////////
+
+      sumconv=0
+      sumcorr=0
+      aux=0
+      aux1=0
+
+      diastrabajados=0
+
+      for (var i = 0; i < labels.length; i++)
           {
-            aux=1-aux2
+
+            if (labels[i]["m2In"]!=0 && labels[i]["m2Out"]!=0 )
+            {
+              diastrabajados+=1
+            }
 
           }
 
-      ratio.innerHTML= String((aux*100).toFixed(1))+"%"
+      for (var i = 0; i < labels.length; i++)
+          {
+            aux1=0
+
+          if (labels[i]["m2Out"]!=0)///(labels.length);
+            {
+              aux1=(labels[i]["m2In"]/labels[i]["m2Out"])-1
+              if (aux1>0)
+              {
+
+                aux+=(1-aux1)/diastrabajados
+
+              }
+              else
+              {
+                aux+=(labels[i]["m2In"]/labels[i]["m2Out"])/diastrabajados
+              }
+            }
+
+          }
+
+
+      ratio2.innerHTML= String((aux*100).toFixed(1))+"%"
 
 
 
