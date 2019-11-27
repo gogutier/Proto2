@@ -34,92 +34,22 @@ var table = "<table class='table' >";
 
     table+= '<tr>';
             table+= '<td>';
-              table+= key;
+              //table+= key;
+              aux='"'+key+'"'
+              table+= "<button onclick='myFunction("+aux+")'>"+key+"</button>"
             table+= "</td>";
 
-                    table+= '<td>';
+                    table+= "<td style='display: none;' id='td1"+key+"'>";
                         table+= '<table>';
 
                           //En cada uno debo mostrar los rollos que se consumieron en cada link (rollstand)
 
-                        for( var emp in empalmadores)
-                          {
+
                             if(labels[key][0].length>0 || labels[key][1].length>0)
                           {
                           table+= '<tr>';
 
-                            table+= '<td>';
-                              table+= empalmadores[emp][0] +" ("+ empalmadores[emp][1]+ " y "+empalmadores[emp][2]+")"  ;
-                              table+= "<br>"  ;
-                              table+= key  ;
 
-                            table+= '</td>';
-
-                            table+= '<td>';
-                              table+= '<table>';
-
-                                //////////
-                                /*
-                                table+= '<tr>';
-                                  table+= '<td>';
-                                    table+= "Movimientos";
-                                  table+= '</td>';
-                                table+= '</tr>';
-
-                                table+= '<tr>';
-                                  table+= '<td>';
-                                  table+= 'Bobina';
-                                  table+= '</td>';
-
-                                  table+= '<td>';
-                                  table+= 'Destino';
-                                  table+= '</td>';
-
-                                  table+= '<td>';
-                                  table+= 'fecha';
-                                  table+= '</td>';
-
-                                  table+= '<td>';
-                                  table+= 'Usuario';
-                                  table+= '</td>';
-
-                                for (var i=0 ; i<(labels[key][1]).length ; i++)
-                                {
-                                if(labels[key][1][i]['destino']==empalmadores[emp][3] || labels[key][1][i]['destino']==empalmadores[emp][4])
-                                  {
-                                    table+= '<tr>';
-
-
-                                      table+= '<td>';
-                                      //console.log(labels[key][i]['RollID'])
-                                      table+= labels[key][1][i]['idrollo'];
-                                      table+= '</td>';
-
-                                      table+= '<td>';
-                                      //console.log(labels[key][i]['RollID'])
-                                      table+= labels[key][1][i]['destino'];
-                                      table+= '</td>';
-
-                                      table+= '<td>';
-                                      //console.log(labels[key][i]['RollID'])
-                                      table+= labels[key][1][i]['fecha'];
-                                      table+= '</td>';
-
-                                      table+= '<td>';
-                                      //console.log(labels[key][i]['RollID'])
-                                      table+= labels[key][1][i]['usuario'];
-                                      table+= '</td>';
-
-                                    table+= '</tr>';
-                                  }
-                                }
-
-                                */
-                                /////////
-
-
-                              table+= '</table>';
-                            table+= '</td>';
 
 
                             table+= '<td>';
@@ -177,8 +107,7 @@ var table = "<table class='table' >";
 
                                 for (var i=0 ; i<(labels[key][0]).length ; i++)
                                 {
-                                if(labels[key][0][i]['RollStandID']==empalmadores[emp][1] || labels[key][0][i]['RollStandID']==empalmadores[emp][2])
-                                  {
+
                                     table+= '<tr>';
 
 
@@ -257,13 +186,13 @@ var table = "<table class='table' >";
                                       }
 
                                     table+= '</tr>';
-                                  }
+
 
                                 }
 
                                 for (var i=0 ; i<(labels[key][1]).length ; i++)
                                 {
-                                if(labels[key][1][i]['destino']==empalmadores[emp][3] || labels[key][1][i]['destino']==empalmadores[emp][4])
+                                if(labels[key][1][i]['destino']=='ROLL1A' || labels[key][1][i]['destino']=='ROLL1B' || labels[key][1][i]['destino']=='ROLL2A' || labels[key][1][i]['destino']=='ROLL2B' || labels[key][1][i]['destino']=='ROLL3A' || labels[key][1][i]['destino']=='ROLL3B'  || labels[key][1][i]['destino']=='ROLL4A' || labels[key][1][i]['destino']=='ROLL4B'  || labels[key][1][i]['destino']=='ROLL5A' || labels[key][1][i]['destino']=='ROLL5B' )
                                   {
 
                                     table+= '<tr>';
@@ -336,8 +265,20 @@ var table = "<table class='table' >";
 
 
                         }
+                        else{
 
-}
+                          table+= '<tr>';
+
+
+
+
+                            table+= '<td>';
+                              table+="Sin consumos"
+                            table+= '</td>';
+                        table+= '</tr>';
+                        }
+
+
 
 
                         table+= '</table>';
@@ -399,6 +340,20 @@ function update(){
 
 }
 
+
+
+
+function myFunction(key) {
+  var x = document.getElementById("td1"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+
+}
 
 
 

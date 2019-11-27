@@ -3,9 +3,21 @@
 {% block content %}
 <h3>Mov Pallets</h3>
 
+
 <div class="container">
 
-<canvas id="myChart"  style="width:1000px"></canvas>
+<table>
+
+<tr>
+
+<td>
+<canvas id="myChart"  style="width:900px"></canvas>
+</td>
+
+<td id="ratiobalance">50%</td>
+</tr>
+
+</table>
 
 </div>
 
@@ -81,6 +93,47 @@ function datosinv(){
       //console.log(m2total)
       //console.log(npalletstotal)
       console.log(labels2)
+
+      var ratio = document.getElementById("ratiobalance");//.getElementsByTagName("td");
+
+      //Aquí calculo el ratio ratiobalance
+
+      sumconv=0
+      sumcorr=0
+      aux=0
+
+      diastrabajados=0
+
+      for (var i = 0; i < labels.length; i++)
+          {
+
+            if (labels[i]["m2Conv"]!=0 && labels[i]["m2Corr"]!=0 )
+            {
+              diastrabajados+=1
+            }
+
+          }
+
+      for (var i = 0; i < labels.length; i++)
+          {
+
+          if (labels[i]["m2Conv"]!=0)///(labels.length);
+            {
+              aux+=(labels[i]["m2Corr"]/labels[i]["m2Conv"])/diastrabajados
+            }
+
+          }
+          aux2=aux-1
+          if (aux2>0)
+          {
+            aux=1-aux2
+
+          }
+
+      ratio.innerHTML= String((aux*100).toFixed(1))+"%"
+
+
+
 
       setChart1();
       setChart2();

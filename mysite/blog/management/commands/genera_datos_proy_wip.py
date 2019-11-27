@@ -54,7 +54,7 @@ class Command(BaseCommand):
 
                 labels=[]
                 ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-                for i in range(0,8):
+                for i in range(0,7):
                     #por ahora los voy a ordenar por turno, después por hora.
                     fecha=(ahora-timedelta(days=7-i)).replace(hour= 7)
                     fechafin=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
@@ -185,10 +185,15 @@ class Command(BaseCommand):
 
                 labels2=[]
                 ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
-                for i in range(0,288):
+                for i in range(0,300):
                     #por ahora los voy a ordenar por turno, después por hora.
-                    fechaini=(ahora-timedelta(minutes=(288-i)*5))
-                    fechafin=(ahora-timedelta(minutes=(288-i-1)*5))
+                    print("rango movpallet detalle:")
+
+
+                    fechaini=(ahora+timedelta(hours=1)-timedelta(minutes=(300-i)*5))
+                    fechafin=(ahora+timedelta(hours=1)-timedelta(minutes=(300-i-1)*5))
+
+                    print(fechaini)
 
 
                     label= (fechaini.strftime("%d-%m %H:%M")+ " a " + fechafin.strftime("%H:%M"))
@@ -203,7 +208,7 @@ class Command(BaseCommand):
                     movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2})
-
+                    print(movsconv2)
                 for dato in labels2:
                     #print(dato['cantidadIn'])
                     o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'])
@@ -485,11 +490,11 @@ class Command(BaseCommand):
                 ##Calculo los turnos que quiero actualizar.
                 labels=[]
                 ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-                horizonte=3
+                horizonte=4
                 for i in range(0,horizonte):
                     #por ahora los voy a ordenar por turno, después por hora.
-                    fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 7)
-                    fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
+                    fechaini=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 7)
+                    fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
                     turno="A"
                     label= fechaini.strftime("%d-%m") + " " + turno
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
@@ -497,16 +502,16 @@ class Command(BaseCommand):
                     #print(m2Corr)
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
-                    fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
-                    fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22)
+                    fechaini=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
+                    fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 22)
                     turno="B"
                     label= fechaini.strftime("%d-%m") + " " + turno
 
                     #print(m2Corr)
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
-                    fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 22)
-                    fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7)
+                    fechaini=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 22)
+                    fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i-1)).replace(hour= 7)
                     turno="C"
                     label= fechaini.strftime("%d-%m") + " " + turno
                     labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
@@ -516,9 +521,11 @@ class Command(BaseCommand):
                 for label in labels:
                     print("busco el consumo en cada turno: ")
                     print(label['label'])
+                    print(label['fechaini'])
+                    print(label['fechafin'])
                     consumos=pruebaAPIRollCons.cargaconsbob(label['fechaini'],label['fechafin'])
 
-                    print(consumos)
+                    #print(consumos)
 
 
                     foto, created =Foto_ConsumoRollos.objects.get_or_create(fecha_foto=ahora, label=label['label'], turno=label['turno'])

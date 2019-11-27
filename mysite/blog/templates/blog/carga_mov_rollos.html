@@ -2,16 +2,21 @@
 {% block content %}
 <h1>Carga Inventario bobinas</h1>
 </br>
-<h4>Copiar y pegar reporte QAD asdsad</h4>
+<h6>1. Ingresar a reporte movimiento de rollos en Report Manager</h6>
+<h6>2. Filtrar por rango de fechas. Se generará un reporte.</h6>
+<h6>3. Guardar reporte como "Excel sólo datos". Se guardará en un archivo excel.</h6>
+<h6>4. Abrir el archivo genreado y copiar toda la hoja.</h6>
+<h6>5. Pegar hoja en cuadro inferior y presionar "Convertir". Mostrará los datos obtenidos tabulados.</h6>
+<h6>6. Presionar "Guardar".</h6>
 
 <form method="POST" class="post-form">
 {% csrf_token %}
 <div class="">
   {{ form.ultrafile}}
 </div>
-<button type="button" id="convert">Convert</button>
+<button type="button" id="convert">Convertir datos</button>
 <div class="botongrabarform" id="botongrabar">
-<button type="submit" class="save btn btn-default">Save</button>
+<button type="submit" style='display: none;' class="save btn btn-default" id="grabar">Grabar</button>
 </div>
 
 </form>
@@ -32,6 +37,12 @@ $("#convert").click(function()
   var x = document.getElementById("botongrabarform");//Y esto?
 
   var hoy = moment();
+
+  var convert = document.getElementById("convert");
+  var grabar = document.getElementById("grabar");
+  convert.style.display = "none"
+
+  grabar.style.display = "block"
 
   //$("#botongrabar").toggle();
 

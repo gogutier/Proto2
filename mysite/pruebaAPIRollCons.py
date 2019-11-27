@@ -34,7 +34,7 @@ def cargaconsbob(fechaini, fechafin):
         print("************* Imprimiendo cada dict asociado a un consumo: *****************")
         #print(len(doc['CTI']))
         try:
-            print(doc['CTI']['RollConsumption']['RollID'])
+            aux=(doc['CTI']['RollConsumption']['RollID'])
             print("Flag será 1, significa que sólo hay una bobina consumida en ese rango de fecha")
             flag1consumo=1
         except:
@@ -90,7 +90,7 @@ def cargaconsbob(fechaini, fechafin):
             print(rollo)
             lista.append(rollo)
 
-        print(lista)
+        #print(lista)
     except Exception as e:
         print(e)
         print("no se encontró consumo de rollos en ese turno")
