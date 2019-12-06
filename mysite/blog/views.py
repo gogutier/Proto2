@@ -32,7 +32,7 @@ def get_data_consumo_rollos(request, *args, **kwargs):
 
     labels={}
     ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-    horizonte=3
+    horizonte=35
     for i in range(0,horizonte+1):
         #por ahora los voy a ordenar por turno, después por hora.
         fechaini=(ahora-timedelta(days=horizonte-i) ).replace(hour= 7)
@@ -64,6 +64,7 @@ def get_data_consumo_rollos(request, *args, **kwargs):
     consumos=[]
 
 
+    #Obtengo la foto de consumo de rollos más reciente:
 
 
     for label in labels:
@@ -71,10 +72,11 @@ def get_data_consumo_rollos(request, *args, **kwargs):
         for mov in MovRollos.objects.filter(fecha__gte=labels[label][2], fecha__lt=labels[label][3]):
 
             print(mov)
+            foto=Foto_ConsumoRollos.objects.filter(label=label).order_by('-fecha_foto')[0]
 
             #Acá actualmente estoy mostrando todos los rollos que se entregaron ese turno. Ahora sólo quiero mostrar los rollos que se entregaron pero que no tienen un consumo asociado en ese u otros turnos posteriores.
             #labels[label][1].append({"idrollo":mov.idrollo,"origen":mov.origen,"destino":mov.destino,"fecha":mov.fecha,"usuario":mov.usuario})
-            movsinconsumo=ConsumoRollos.objects.filter( fechaini__gte=labels[label][2], RollID=mov.idrollo).count()
+            movsinconsumo=ConsumoRollos.objects.filter(foto=foto, fechaini__gte=labels[label][2], RollID=mov.idrollo).count()
             if movsinconsumo==0:
                 labels[label][1].append({"idrollo":mov.idrollo,"origen":mov.origen,"destino":mov.destino,"fecha":mov.fecha,"usuario":mov.usuario})
 
@@ -400,13 +402,29 @@ def get_data_inventario(request, *args, **kwargs):
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPASILLO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45}}
-
         m2totalINV=0
         npalletstotalINV=0
 
         m2totalCORR=0
         npalletstotalCORR=0
+
+
+        m2maqruta={"TCY":0, "HCR":0, "WRD":0, "FFG":0, "DRO":0, "FFW":0, "Otros":0}
+
+        for ruta in m2maqruta.keys():
+
+            filt= Pallet.objects.filter(maqruta=str(ruta)).filter(Q(ubic="ZPNC") | Q(ubic="ZHCR1") | Q(ubic="ZHCR2")| Q(ubic="ZTCY1")| Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZSOB1")| Q(ubic="ZSOB2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZFFG1")| Q(ubic="ZFFG2")| Q(ubic="ZPNC")| Q(ubic="ZPASILLO") )
+            totm2=0
+            for pallet in filt:
+                totm2=totm2 + pallet.m2pallet
+            m2maqruta[ruta]= totm2
+
+
+
+
+        '''        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPASILLO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45}}
+
+
 
 
         for calle in datosWIP.keys():
@@ -464,34 +482,40 @@ def get_data_inventario(request, *args, **kwargs):
 
         #"filtroprod": filtroprod,
 
+        '''
+
         ##################################
         #Lo nuevo:
 
-        '''
+
 
         filtroentrada=[]
         filtrosalida=[]
 
-        for mov in FiltroEntradaWIP.objects.all():
+        #Selecciono la foto más reciente:
+        fotoinv=Foto_Datos_Inv_WIP.objects.all().order_by('-pk')[0]
+
+
+        for mov in FiltroEntradaWIP.objects.filter(programa=fotoinv):
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.ORDERID, mov.DESTINATION, mov.EVENTDATETIME]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME]
             filtroentrada.append(movimiento)
 
-        for mov in FiltroSalidaWIP.objects.all():
+        for mov in FiltroSalidaWIP.objects.filter(programa=fotoinv):
             #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.ORDERID, mov.DESTINATION, mov.EVENTDATETIME]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME]
             filtrosalida.append(movimiento)
 
         datosWIP={}
-        for dato in Datos_Inv_WIP.objects.all():
+        for dato in Datos_Inv_WIP.objects.filter(programa=fotoinv):
 
             datosWIP.update( {dato.sector:{"cuenta":dato.cuenta,"m2tot":dato.m2tot,"indice":dato.indice,"dias":dato.dias,"al1":dato.al1,"al2":dato.al2,"al3":dato.al3} })
-        '''
+
 
         data = {
-        "prueba":prueba,
+        "m2maqruta":m2maqruta,
         "datosWIP":datosWIP,
-        "m2totalINV": m2totalINV,
+        "m2totalINV": fotoinv.m2totalINV,
         "npalletstotalINV": npalletstotalINV,
         "m2totalCORR": m2totalCORR,
         "filtroentrada": filtroentrada,

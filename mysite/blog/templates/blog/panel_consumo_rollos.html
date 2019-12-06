@@ -28,18 +28,306 @@ var table = "<table class='table' >";
 
 
   empalmadores=[['DB','1A','1B','ROLL1A','ROLL1B'],['SF1M','2A','2B','ROLL2A','ROLL2B'],['SF1L','3A','3B','ROLL3A','ROLL3B'],['SF2M','4A','4B','ROLL4A','ROLL4B'],['SF2L','5A','5B','ROLL5A','ROLL5B']]
-
   var value;
+
+/*Copia versión antigua...
+for (var key in labels) {
+
+  table+= '<tr>';
+          table+= '<td>';
+            //table+= key;
+            aux='"'+key+'"'
+            table+= "<button onclick='myFunction("+aux+")'>"+key+"</button>"
+          table+= "</td>";
+
+                  table+= "<td style='display: none;' id='td1"+key+"'>";
+                      table+= '<table>';
+
+                        //En cada uno debo mostrar los rollos que se consumieron en cada link (rollstand)
+
+
+                          if(labels[key][0].length>0 || labels[key][1].length>0)
+                        {
+                        table+= '<tr>';
+
+
+
+
+                          table+= '<td>';
+                            table+= '<table>';
+
+                              table+= '<tr>';
+                                table+= '<td>';
+                                  table+= "Consumos";
+                                table+= '</td>';
+                              table+= '</tr>';
+
+                              table+= '<tr>';
+
+                                table+= '<td>';
+                                table+= 'FechaTurno';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'Turno';
+                                table+= '</td>';
+
+
+                                table+= '<td>';
+                                table+= 'Bobina';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'Grado';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'Formato';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'MLUsados';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'MLPelado';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'MLResto';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'link';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'Usuario entrega';
+                                table+= '</td>';
+
+                                table+= '<td>';
+                                table+= 'Destino rollo';
+                                table+= '</td>';
+
+
+                                table+= '<td>';
+                                table+= 'Fecha entrega rollo';
+                                table+= '</td>';
+
+                              table+= '</tr>';
+
+                              for (var i=0 ; i<(labels[key][0]).length ; i++)
+                              {
+
+                                  table+= '<tr>';
+
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= key;
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= key[key.length-1];
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['RollID'];
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['grado'];
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['formato'];
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['mlusados'].toFixed(1);
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['peelwaste'].toFixed(1);
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['mlrestantes'].toFixed(1);
+                                    table+= '</td>';
+
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['RollStandID'];
+                                    table+= '</td>';
+
+
+                                    if(labels[key][0][i]['userentrega']!='N/A')
+                                    {
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['userentrega'];
+                                    table+= '</td>';
+
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['destinoentrega'];
+                                    table+= '</td>';
+
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][0][i]['fechaentrega'];
+                                    table+= '</td>';
+                                    }
+                                    else
+                                    {
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['userentrega'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['destinoentrega'];
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= labels[key][0][i]['fechaentrega'];
+                                      table+= '</td>';
+
+
+                                    }
+
+                                  table+= '</tr>';
+
+
+                              }
+
+                              for (var i=0 ; i<(labels[key][1]).length ; i++)
+                              {
+                              if(labels[key][1][i]['destino']=='ROLL1A' || labels[key][1][i]['destino']=='ROLL1B' || labels[key][1][i]['destino']=='ROLL2A' || labels[key][1][i]['destino']=='ROLL2B' || labels[key][1][i]['destino']=='ROLL3A' || labels[key][1][i]['destino']=='ROLL3B'  || labels[key][1][i]['destino']=='ROLL4A' || labels[key][1][i]['destino']=='ROLL4B'  || labels[key][1][i]['destino']=='ROLL5A' || labels[key][1][i]['destino']=='ROLL5B' )
+                                {
+
+                                  table+= '<tr>';
+
+
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][1][i]['idrollo'];
+                                    table+= '</td>';
+
+                                    table+= '<td >';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= "N/A";
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= "N/A";
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= "N/A";
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= "N/A";
+                                    table+= '</td>';
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= "N/A";
+                                    table+= '</td>';
+
+
+                                    table+= '<td>';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= "N/A";
+                                    table+= '</td>';
+
+
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][1][i]['usuario'];;
+                                    table+= '</td>';
+
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][1][i]['destino'];;
+                                    table+= '</td>';
+
+                                    table+= '<td style="font-weight:bold">';
+                                    //console.log(labels[key][i]['RollID'])
+                                    table+= labels[key][1][i]['fecha'];;
+                                    table+= '</td>';
+
+                                  table+= '</tr>';
+
+                                }
+
+                              }
+
+
+                            table+= '</table>';
+
+                          table+= '</td>';
+                        table+= '</tr>';
+
+
+
+                      }
+                      else{
+
+                        table+= '<tr>';
+
+
+
+
+                          table+= '<td>';
+                            table+="Sin consumos"
+                          table+= '</td>';
+                      table+= '</tr>';
+                      }
+
+
+
+
+                      table+= '</table>';
+                  table+= "</td>";
+  table+= '</tr>';
+
+
+
+}
+
+
+*/
+
+
+
+
   for (var key in labels) {
 
-    table+= '<tr>';
+        table+= '<tr>';
+
+
             table+= '<td>';
               //table+= key;
               aux='"'+key+'"'
               table+= "<button onclick='myFunction("+aux+")'>"+key+"</button>"
             table+= "</td>";
 
-                    table+= "<td style='display: none;' id='td1"+key+"'>";
+                    table+= "<td style='display: block;' id='td1"+key+"'>";
                         table+= '<table>';
 
                           //En cada uno debo mostrar los rollos que se consumieron en cada link (rollstand)
@@ -59,9 +347,33 @@ var table = "<table class='table' >";
                                   table+= '<td>';
                                     table+= "Consumos";
                                   table+= '</td>';
+
+
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+                                  table+= '<td>';table+= '</td>';
+
                                 table+= '</tr>';
 
                                 table+= '<tr>';
+
+                                  table+= '<td>';
+                                  table+= 'FechaTurno';
+                                  table+= '</td>';
+
+                                  table+= '<td>';
+                                  table+= 'Turno';
+                                  table+= '</td>';
+
+
                                   table+= '<td>';
                                   table+= 'Bobina';
                                   table+= '</td>';
@@ -110,6 +422,16 @@ var table = "<table class='table' >";
 
                                     table+= '<tr>';
 
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= key;
+                                      table+= '</td>';
+
+                                      table+= '<td>';
+                                      //console.log(labels[key][i]['RollID'])
+                                      table+= key[key.length-1];
+                                      table+= '</td>';
 
                                       table+= '<td>';
                                       //console.log(labels[key][i]['RollID'])
@@ -275,6 +597,18 @@ var table = "<table class='table' >";
                             table+= '<td>';
                               table+="Sin consumos"
                             table+= '</td>';
+
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>';table+= '</td>';
+                            table+= '<td>.';table+= '</td>';
                         table+= '</tr>';
                         }
 

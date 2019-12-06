@@ -8,11 +8,33 @@
 
 <table style='overflow-x:auto;'>
 
+
+
+
+
       <tr>
+
           <td valign='top'>
 
 
                   <table style='overflow-x:auto;'>
+
+                    <tr>
+                      <td>
+
+                        <table style='font-size: 26px;'>
+                          <tr>
+
+                            <td id="m2"></td>
+                            <td>Mm2</td>
+                            <td id="npal"></td>
+                           </tr>
+
+                        </table>
+                      </td>
+                    </tr>
+
+
 
                   <tr>
                     <td>
@@ -21,32 +43,58 @@
 
                     </td>
                   </tr>
+
+
+
                   <tr>
                     <td>
-
-                      <table style='font-size: 12px;'>
+                      <table id='tablamaqruta'>
                         <tr>
+                          <td><br></td>
+                        </tr>
+                        <tr style='font-size: 12px;'>
+                          <td>DRO</td>
+                          <td>HCR</td>
+                          <td>WRD</td>
                           <td></td>
-                          <td>Mm2</td>
+                          <td>TCY</td>
+                          <td>FFG</td>
+                          <td>FFW</td>
                           <td></td>
+                          <td>Otros</td>
+
+                        </tr>
+                        <tr style='font-size: 12px;'>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td></td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td></td>
+                          <td>0</td>
                           <td></td>
                         </tr>
-                        <tr>
-                          <td>Bodega</td>
-                          <td id="m2"></td>
-                          <td></td>
-                          <td id="npal"></td>
-                         </tr>
-                         <tr>
-                           <td>Stackers</td>
-                           <td id="m2CORR"></td>
-                           <td></td>
-                           <td id="npalCORR"></td>
 
-                         </tr>
+                        <tr style='font-size: 18px;'>
+                          <td align='center' colspan="3">0</td>
+                          <td></td>
+                          <td align='center' colspan="3">0</td>
+                          <td></td>
+                          <td>0</td>
+
+                        </tr>
+
+
+
                       </table>
+
                     </td>
+
                   </tr>
+
+
 
                   </table>
 
@@ -59,81 +107,81 @@
                     <td colspan='5' style='font-weight:bold'>Últimas entradas a Bodega</td>
                   </tr>
                       <tr>
-                      <td>Tarja</td>
-                      <td>ID</td>
+                      <td>Tarja/ID</td>
+
                       <td>Origen</td>
                       <td>Destino</td>
                       <td colspan='2'>Fecha </td>
                       </tr>
                       <tr>
                       <td> </td>
-                      <td> </td>
+
                       <td> </td>
                       <td> </td>
                       <td colspan='2' cellspacing="0"> </td>
                         </tr>
                       <tr cellspacing="0">
                       <td> </td>
-                      <td> </td>
+
                       <td> </td>
                       <td> </td>
                       <td colspan='2' cellspacing="0"> </td>
                         </tr>
                       <tr>
                       <td> </td>
-                      <td> </td>
-                      <td> </td>
-                      <td> </td>
-                      <td colspan='2'> </td>
-                        </tr>
-                      <tr>
-                      <td> </td>
-                      <td> </td>
+
                       <td> </td>
                       <td> </td>
                       <td colspan='2'> </td>
                         </tr>
                       <tr>
                       <td> </td>
+
                       <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+
                       <td> </td>
                       <td> </td>
                       <td colspan='2'> </td>
                       </tr>
 
                     <td colspan='5' style='font-weight:bold'>Últimas salidas de Bodega</td>
-                  </tr>
+
                   <tr>
-                  <td>Tarja</td>
-                  <td>ID</td>
+                  <td>Tarja/ID</td>
+
                   <td>Origen</td>
                   <td>Destino</td>
                   <td>Fecha</td>
                   </tr>
                   <tr>
                   <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td colspan='2'> </td>
-                  </tr>
-                  <tr>
-                  <td> </td>
-                  <td> </td>
+
                   <td> </td>
                   <td> </td>
                   <td colspan='2'> </td>
                   </tr>
                   <tr>
                   <td> </td>
-                  <td> </td>
+
                   <td> </td>
                   <td> </td>
                   <td colspan='2'> </td>
                   </tr>
                   <tr>
                   <td> </td>
+
                   <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+
                   <td> </td>
                   <td> </td>
                   <td colspan='2'> </td>
@@ -181,7 +229,7 @@ function datosinv(){
 
       //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
       datosWIP = response_data.datosWIP;
-      prueba = response_data.prueba;
+      m2maqruta = response_data.m2maqruta;
       m2totalINV= response_data.m2totalINV;
       npalletstotalINV= response_data.npalletstotalINV;
       m2totalCORR= response_data.m2totalCORR;
@@ -194,11 +242,25 @@ function datosinv(){
 
       //console.log(prueba['prueba1'][1])
       //console.log(prueba['prueba2']['B'])
-      //console.log(m2total)
+      console.log(m2maqruta)
       //console.log(datosWIP)
       //console.log(filtroentrada)
       //console.log(filtrosalida)
 
+      var tablamaqruta = document.getElementById("tablamaqruta");//.getElementsByTagName("td");
+
+      tablamaqruta.rows[2].cells[0].innerHTML=(m2maqruta["DRO"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[1].innerHTML=(m2maqruta["HCR"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[2].innerHTML=(m2maqruta["WRD"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[4].innerHTML=(m2maqruta["TCY"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[5].innerHTML=(m2maqruta["FFW"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[6].innerHTML=(m2maqruta["FFG"]/1000).toFixed(1)
+      var otros=(m2totalINV-(m2maqruta["FFG"]+m2maqruta["FFW"]+m2maqruta["TCY"]+m2maqruta["DRO"]+m2maqruta["HCR"]+m2maqruta["WRD"]))
+      tablamaqruta.rows[2].cells[8].innerHTML=(otros/1000).toFixed(1)
+
+      tablamaqruta.rows[3].cells[0].innerHTML=((m2maqruta["DRO"]+m2maqruta["HCR"]+m2maqruta["WRD"])/(m2totalINV/100)).toFixed(1)+"%"
+      tablamaqruta.rows[3].cells[2].innerHTML=((m2maqruta["TCY"]+m2maqruta["FFG"]+m2maqruta["FFW"])/(m2totalINV/100)).toFixed(1)+"%"
+      tablamaqruta.rows[3].cells[4].innerHTML=((otros)/(m2totalINV/100)).toFixed(1)+"%"
 
       var myTable = document.getElementById("table");//.getElementsByTagName("td");
       var m2 = document.getElementById("m2");//.getElementsByTagName("td");
@@ -230,7 +292,7 @@ function datosinv(){
       m2.innerHTML= String((m2totalINV/1000).toFixed(1))
       //npal.innerHTML=String(npalletstotalINV)
 
-      m2CORR.innerHTML=String((m2totalCORR/1000).toFixed(1))
+
       //npalCORR.innerHTML= String(npalletstotalCORR)
 
 
@@ -240,20 +302,20 @@ function datosinv(){
 
       for (var i=0; i < filtroentrada.length; i++)
       {
-      tabla3.rows[2+i].cells[0].innerHTML=filtroentrada[i][0]
-      tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
-      tabla3.rows[2+i].cells[2].innerHTML=filtroentrada[i][2].substring(0,7)
-      tabla3.rows[2+i].cells[3].innerHTML=filtroentrada[i][3].substring(0,7)
-      tabla3.rows[2+i].cells[4].innerHTML=filtroentrada[i][4]
+      tabla3.rows[2+i].cells[0].innerHTML=filtroentrada[i][0] + "<br>" + filtroentrada[i][1]
+      //tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
+      tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][2].substring(0,7)
+      tabla3.rows[2+i].cells[2].innerHTML=filtroentrada[i][3].substring(0,7)
+      tabla3.rows[2+i].cells[3].innerHTML=filtroentrada[i][4]
       }
 
       for (var i=0; i < filtrosalida.length; i++)
       {
-      tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0]
-      tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
-      tabla3.rows[9+i].cells[2].innerHTML=filtrosalida[i][2].substring(0,7)
-      tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][3].substring(0,7)
-      tabla3.rows[9+i].cells[4].innerHTML=filtrosalida[i][4]
+      tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0] + "<br>" + filtroentrada[i][1]
+    //  tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
+      tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][2].substring(0,7)
+      tabla3.rows[9+i].cells[2].innerHTML=filtrosalida[i][3].substring(0,7)
+      tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][4]
       }
 
 

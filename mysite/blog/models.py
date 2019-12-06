@@ -114,6 +114,7 @@ class Foto_Datos_Inv_WIP(models.Model):
 
 
     fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
+    m2totalINV = models.FloatField(default=0)
 
     def __str__(self):
         return (str(self.fecha_foto))
@@ -125,6 +126,7 @@ class FiltroEntradaWIP(models.Model):
     programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwip1', on_delete=models.CASCADE, default=0)
     LOADID=models.CharField(max_length=16, default="0")
     ORDERID=models.CharField(max_length=16, default="0")
+    SOURCE=models.CharField(max_length=32, default="0")
     DESTINATION=models.CharField(max_length=32, default="0")
     EVENTDATETIME=models.CharField(max_length=32, default="0")
 
@@ -138,6 +140,7 @@ class FiltroSalidaWIP(models.Model):
     programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwip2', on_delete=models.CASCADE, default=0)
     LOADID=models.CharField(max_length=16, default="0")
     ORDERID=models.CharField(max_length=16, default="0")
+    SOURCE=models.CharField(max_length=32, default="0")
     DESTINATION=models.CharField(max_length=32, default="0")
     EVENTDATETIME=models.CharField(max_length=32, default="0")
 
