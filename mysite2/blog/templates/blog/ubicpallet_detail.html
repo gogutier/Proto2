@@ -1,0 +1,80 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+
+<div class="container" style="padding:10px 10px;">
+<table class='table table-hover' id='table'>
+
+<tr style="text-align: center">
+  <td  colspan="6"><h3>{{ubic.calle}}</h3></td>
+</tr>
+<tr style="text-align: center">
+  <td>Order ID</td>
+  <td >N° pallet</td>
+  <td >Cliente</td>
+  <td >Padrón</td>
+  <td >Unidades</td>
+  <td >m2</td>
+  <td >Fecha Creación</td>
+  <td >Ruta estándar</td>
+</tr>
+{% for pallet in pallets %}
+
+<tr style="text-align: center">
+  <td>{{pallet.ORDERID}}</td>
+  <td>{{pallet.tarja}}</td>
+  <td>{{pallet.cliente}}</td>
+  <td>{{pallet.padron}}</td>
+  <td>{{pallet.unidades|floatformat:"0"}}</td>
+  <td>{{pallet.m2pallet|floatformat:"1"}}</td>
+  <td>{{pallet.fechacreac|date:'d-m-Y H:i'}}</td>
+  <td>{{pallet.maqruta}}</td>
+</tr>
+
+
+{% endfor %}
+
+
+
+</table>
+
+
+</div>
+
+<script type="text/javascript">
+
+updatecuadros()
+
+function updatecuadros()
+  {
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+
+
+      for (i=2;i<myTable.rows.length;i++)
+      {
+        var fechacreac = moment(myTable.rows[i].cells[6].innerHTML, "DD-MM-YYYY HH:mm");
+        var ahora = moment()
+        //console.log(fechacreac)
+        //console.log(ahora)
+        //console.log(fechacreac.diff(ahora, 'days'))
+        if (ahora.diff(fechacreac, 'days')>3)
+        {
+          myTable.rows[i].cells[4].style.color = "Crimson";
+          myTable.rows[i].cells[5].style.color = "Crimson";
+          myTable.rows[i].cells[6].style.color = "Crimson";
+        }
+
+
+      }
+  }
+
+
+
+
+
+</script>
+
+
+{% endblock %}

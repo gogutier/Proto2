@@ -7,17 +7,23 @@ from blog.models import Foto_ConsumoRollos as Foto_ConsumoRollos
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        '''
         print("iniciando limpieza pallets")
         Pallet.objects.all().delete()
         print("iniciando limpieza mov pallets")
         MovPallets.objects.all().delete()
-
+        '''
         #print("iniciando limpieza Foto consumo rollos")
         #Foto_ConsumoRollos.objects.all().delete()
 
-
+        print("mobver pallets corrugado a Z01")
+        for pallet in Pallet.objects.filter(ubic="CORR_UPPER_Stacker"):
+            pallet.ubic="Z01"
+        for pallet in Pallet.objects.filter(ubic="CORR_LOWER_Stacker"):
+            pallet.ubic="Z01"
         #print("iniciando limpieza consumo rollos")
         #ConsumoRollos.objects.all().delete()
+
 
 
 

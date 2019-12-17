@@ -1,0 +1,37 @@
+<h3>Toma inventario</h3>
+
+<h5>N° Tarimas: {{mensajes}}</h5>
+
+
+{% block content %}
+
+<form name="myform2" method="POST" class="post-form" id="theFormID">
+{% csrf_token %}
+
+  <td>{{ form.dato1 }}</td>
+  <td>{{ form.dato2 }}</td>
+
+  <button type="submit" class="save btn btn-default">Save</button>
+
+</form>
+
+<body OnLoad="document.myform2.dato1.focus();">
+
+<table>
+
+  <td>Bobina</td>
+  <td>Ubicación</td>
+
+{% for bobina in bobinas %}
+
+<tr>
+  <td>{{bobina}}</td>
+  <td>{{bobina.ubic}}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+{% endblock content %}

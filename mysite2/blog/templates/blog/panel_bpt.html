@@ -1,0 +1,140 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<h3>Panel BPT!!</h3>
+
+
+<div class="container">
+
+<div class="table-responsive">
+
+<div class="row" id="parsed_csv_list">
+
+</div>
+</div>
+
+<button type="button" id="convert">Convert</button>
+
+
+<script type="text/javascript">
+
+var cuadros= [];
+
+cuadros.push([1,0,"PAT1"] );
+cuadros.push([1,4,"PAT2"] );
+cuadros.push([3,0,"C2"] );
+cuadros.push([3,4,"E"] );
+cuadros.push([5,8,"C1"] );
+cuadros.push([5,4,"B1"] );
+cuadros.push([5,0,"B2"] );
+cuadros.push([7,0,"A"] );
+cuadros.push([8,14,"PLL"] );
+cuadros.push([8,12,"RP "] );
+
+
+console.log(cuadros);
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+displayHTMLTable();
+
+$("#convert").click(function()
+{
+
+updatecuadros();
+//displayHTMLTable();
+
+});
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(){
+  var table = "<table class='table table-hover' id='table'>";
+
+    var rows = 17;
+    var columns = 13;
+
+  for(i=0;i<rows-1;i++){
+    table+= "<tr>";
+
+
+    for(j=0;j<columns-1;j++){
+      table+= "<td style='font-size: 15px;'>";
+      //table+= ".";
+      table+= "</th>";
+
+    }
+    table+= "</tr>";
+  }
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+  //cambiando color de la table:
+  creacuadro(1,0,"PAT1",3,3);
+  creacuadro(1,4,"PAT2",3,3);
+  creacuadro(3,0,"C2",3,3);
+  creacuadro(3,4,"E",3,3);
+  creacuadro(5,8,"C1",3,5);
+  creacuadro(5,4,"B1",3,7);
+  creacuadro(5,0,"B2",3,3);
+  creacuadro(7,0,"A",3,3);
+  creacuadro(8,14,"PLL",3,2);
+  creacuadro(8,12,"RP ",2,2);
+
+
+}
+
+function creacuadro(x,y,texto,a,l){
+
+  var myTable = document.getElementById("table");//.getElementsByTagName("td");
+  myTable.rows[y].cells[x].innerHTML = texto + "</br>" + "%";
+  myTable.rows[y].cells[x].style.backgroundColor = "yellow"
+
+  myTable.rows[y].cells[x].colSpan = parseInt(a);
+  myTable.rows[y].cells[x].rowSpan = parseInt(l);
+
+}
+
+
+
+function updatecuadros(){
+
+  for (var i=0; i < cuadros.length; i++)
+  {
+
+    var random = Math.floor((Math.random() * 100) + 1);
+    console.log(random)
+
+    var myTable = document.getElementById("table");//.getElementsByTagName("td");
+    myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + random.toString() + "%";
+    myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "green"//"yellow";
+
+    if (random<=70)
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "green"}
+
+    if (random>70 && random<90)
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "yellow"}
+
+    if (random>90)
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "red"}
+
+
+    /*
+    var myTable = document.getElementById("table");//.getElementsByTagName("td");
+    myTable.rows[y].cells[x].innerHTML = texto + "</br>" + "%";
+    myTable.rows[y].cells[x].style.backgroundColor = "green"//"yellow";
+    myTable.rows[y].cells[x].colSpan = parseInt(a);
+    myTable.rows[y].cells[x].rowSpan = parseInt(l);
+    */
+  }
+
+}
+
+
+</script>
+
+{% endblock %}

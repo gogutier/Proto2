@@ -1,0 +1,358 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<h4>Panel Inventario cíclico</h4>
+
+<br>
+
+
+<div class="container">
+
+<h6>Tabla lógica</h6>
+
+<table >
+  <tr style: bgcolor='#00FF00'>
+    <td style='font-size: 10px;' >Pallet OK en inventario</td>
+
+  </tr>
+  <tr style: bgcolor='Yellow'>
+    <td style='font-size: 10px;'>Pallet se ingresó a otra ubicación de bodega</td>
+
+   </tr>
+
+   <tr style: bgcolor='Orange'>
+     <td style='font-size: 10px;'>Faltó ingreso de pallet</td>
+
+    </tr>
+
+   <tr style: bgcolor='Red'>
+     <td style='font-size: 10px;' >Faltó salida de pallet </td>
+   </tr>
+</table>
+
+<br>
+
+</div>
+
+
+<div class="container">
+
+
+<table>
+
+<tr>
+  <td><button type="button" id="actualiza">Actualizar</button></td>
+  <td><h6 id="ultimatoma">Cargando datos inv..</h6></td>
+  <td><td>
+    <td><td>
+      <td><td>
+        <td><td>
+
+  <td>
+  <form name="myform2" method="POST" class="post-form" id="theFormID">
+  {% csrf_token %}
+
+    <button type="submit" class="save btn btn-default">Nueva Toma Inv</button>
+
+  </form>
+  </td>
+
+</tr>
+
+</table>
+
+
+
+  <div class="row"   id="parsed_csv_list">
+  </div>
+
+
+
+</div>
+
+
+<script type="text/javascript">
+
+  $("#actualiza").click(function()
+  {
+
+  var ultima = document.getElementById("ultimatoma");
+
+  ultima.innerHTML = "Actualizando..."
+
+  datosinv();
+  //displayHTMLTable();
+
+  });
+
+
+
+
+var endpoint='/api/get_data_inv_ciclico/';
+
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+
+  var auxtext = ''
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      datosWIP = response_data.datosWIP;
+      //prueba = response_data.prueba;
+      ultimatoma= response_data.ultimatoma;
+
+      console.log("datosWIP")
+      console.log(datosWIP)
+
+      console.log("ultimatoma:")
+      console.log(ultimatoma)
+
+
+
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+
+      displayHTMLTable();
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+
+      var ultima = document.getElementById("ultimatoma");
+
+      ultima.innerHTML = "Última toma inventario: " + ultimatoma
+
+
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+
+datosinv()
+
+function myFunction(key) {
+  var x = document.getElementById("td1"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+  var x = document.getElementById("td2"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+  var x = document.getElementById("td3"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+  var x = document.getElementById("td4"+key);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+
+
+
+}
+
+
+
+
+window.setInterval(function(){
+  console.log("hola");
+  datosinv();
+
+
+}, 60000);
+
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(){
+  var table = "<table  class='table-responsive'  id='table' >";
+
+
+    ///
+    table+= "<tr  style='text-align: center;'>";
+
+
+        var value;
+        for (var key in datosWIP) {
+          value = datosWIP[key];
+          aux='"'+key+'"'
+            // your code here...
+
+
+          table+= "<table style='border: 0.5px solid DarkRed;'>";
+
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;' >";
+
+
+                table+= "<button onclick='myFunction("+aux+")'>"+key+"</button>"
+
+              table+= "</td>"
+            table+= "</tr>";
+
+
+            console.log("palletsencontrados")
+            table+= "<tr >";
+            table+= "<td style='font-size: 14px; ' bgcolor='#00FF00' >";
+              for (var i=0; i< datosWIP[key]['palletsencontrados'][0].length; i++)
+              {
+                console.log(datosWIP[key]['palletsencontrados'][0][i])
+                table+= datosWIP[key]['palletsencontrados'][0][i]
+                table+= "<br>"
+              }
+              table+= "</td>"
+
+              table+= "<td style='font-size: 14px; display: none;' bgcolor='#00FF00' id='td1"+key+"'  >";
+                for (var i=0; i< datosWIP[key]['palletsencontrados'][0].length; i++)
+                {
+
+                  table+= datosWIP[key]['palletsencontrados'][1][i]
+                  table+= "<br>"
+                }
+                table+= "</td>"
+
+            table+= "</tr>";
+
+            console.log("pallenotracalle")
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;'  bgcolor='Yellow'>";
+              for (var i=0; i< datosWIP[key]['palletsenotracalle'][0].length; i++)
+              {
+
+                console.log(datosWIP[key]['palletsenotracalle'][0][i])
+                table+= datosWIP[key]['palletsenotracalle'][0][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
+
+            table+= "<td style='font-size: 14px; display: none;'  bgcolor='Yellow' id='td2"+key+"'>";
+              for (var i=0; i< datosWIP[key]['palletsenotracalle'][0].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsenotracalle'][1][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
+
+
+            table+= "</tr>";
+
+
+
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;'  bgcolor='Orange'>";
+
+              for (var i=0; i< datosWIP[key]['palletsnoencontrados'][0].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsnoencontrados'][0][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
+
+            table+= "<td style='font-size: 14px; display: none;'  bgcolor='Orange' id='td3"+key+"' >";
+
+              for (var i=0; i< datosWIP[key]['palletsnoencontrados'][0].length; i++)
+              {
+
+                table+= datosWIP[key]['palletsnoencontrados'][1][i]
+                table+= "<br>"
+              }
+            table+= "</td>"
+
+
+            table+= "</tr>";
+
+
+
+
+
+            table+= "<tr >";
+            table+= "<td style='font-size: 14px; ' bgColor='Red'>";
+
+                        for (var i=0; i< datosWIP[key]['palletscti'][0].length; i++)
+                        {
+
+                          table+= datosWIP[key]['palletscti'][0][i]
+                          table+= "<br>"
+                        }
+
+              table+= "</td>"
+
+
+              table+= "<td style='font-size: 14px; display: none; ' bgColor='Red' id='td4"+key+"'>";
+
+                          for (var i=0; i< datosWIP[key]['palletscti'][0].length; i++)
+                          {
+
+                            table+= datosWIP[key]['palletscti'][1][i]
+                            table+= "<br>"
+                          }
+
+                table+= "</td>"
+
+
+
+            table+= "</tr>";
+
+
+
+            table+= "</table>";
+
+            //console.log(datosWIP[key]['encontrados'])
+
+          }
+
+      table+= "</tr>";
+
+
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+}
+
+</script>
+
+{% endblock %}

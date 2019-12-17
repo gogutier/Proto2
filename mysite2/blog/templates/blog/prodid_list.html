@@ -1,0 +1,39 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Lista de órdenes programadas de producción</h1>
+<div class="centerstage">
+  <script>
+    alert("hola q ase");
+  </script>
+
+{% if lista_a_mostrar %}
+  <h2>Lista de producciones:</h2>
+  {% for prod in lista_a_mostrar %}
+
+  <div class="post">
+    <h4>
+
+
+      <a >{{ prod.orderid }}</a>
+      <a >{{ prod.workcenter }}</a>
+      <a >{{ prod.create_date }}</a>
+    </h4>
+
+  </div>
+
+  {% endfor %}
+
+{% else %}
+<h2>Mmm algo extraño sucede :S</h2>
+{% endif %}
+
+</div>
+<script type="text/javascript">
+  document.write("holaaaaaaEEEEaaa"+ "<br>");
+  document.write("qaseee");
+</script>
+
+<script src="blog/intro.js">
+
+</script>
+{% endblock %}

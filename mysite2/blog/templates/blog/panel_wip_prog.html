@@ -1,0 +1,234 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+
+
+<div class="container" >
+
+<h4>Panel WIP-Prog</h4>
+
+<div class="jumbotron">
+
+<table class='table table-hover' style='font-size: 12px;' id='tabla2'>
+
+<tr>
+  <td colspan='5'style='font-size: 18px; font-weight:bold'>Inventario según máquina programada</td>
+
+</tr>
+
+<tr>
+  <td></td>
+  <td style="text-align: center">TCY</td>
+  <td style="text-align: center">HCR</td>
+  <td style="text-align: center">WRD</td>
+  <td style="text-align: center">FFW</td>
+  <td style="text-align: center">DRO</td>
+  <td style="text-align: center">FFG</td>
+  <td style="text-align: center">DIM/TAB</td>
+  <td style="text-align: center; font-weight:bold">Total</td>
+  <td style="text-align: center">Ratio</td>
+
+</tr>
+
+<tr>
+  <td>Inv con programa (Mm2)</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center; font-weight:bold"></td>
+  <td style="text-align: center"></td>
+
+</tr>
+
+<tr>
+  <td>Inv 24h a Conv (Mm2)</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center; font-weight:bold"></td>
+  <td style="text-align: center"></td>
+
+</tr>
+
+<tr>
+  <td>Prog 24h Conv (Mm2)</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center; font-weight:bold"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+<tr>
+  <td>Ratio</td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center"></td>
+  <td style="text-align: center; font-weight:bold"></td>
+  <td style="text-align: center"></td>
+</tr>
+
+
+
+</table>
+
+
+
+
+<button type="button" id="convert">Actualizar</button>
+<br>
+<h6 id="fechafoto">Cargando...</h6>
+
+</div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+
+
+
+var endpoint='/api/get_data_inventario_prog/';
+
+
+{% load staticfiles %}
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+
+
+  var imagentime ='<img src= {% static "images/time.png" %} alt=""  height=15 width=15></img>'
+  var auxtext = ''
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      datosCorrplanINV= response_data.datosCorrplanINV;
+      fotocorrplan= response_data.fotocorrplan;
+      invtotwip = response_data.invtotwip;
+      console.log(datosCorrplanINV)
+      var fechafoto = document.getElementById('fechafoto');
+      var tabla2 = document.getElementById("tabla2");//.getElementsByTagName("td");
+
+      fechafoto.innerHTML = "Último corrplan: " + fotocorrplan
+
+      //for (var key in datosCorrplanINV) {}
+
+      tabla2.rows[0].cells[0].innerHTML="Inv: "+(invtotwip/1000).toFixed(1)
+
+      tabla2.rows[2].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2inv"]/1000).toFixed(1)
+      tabla2.rows[2].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2inv"]/1000).toFixed(1)
+
+      var invtotaconv=((datosCorrplanINV["TCY"]["m2inv"]+datosCorrplanINV["HCR"]["m2inv"]+datosCorrplanINV["WRD"]["m2inv"]+datosCorrplanINV["FFW"]["m2inv"]+datosCorrplanINV["DRO"]["m2inv"]+datosCorrplanINV["FFG"]["m2inv"])/1000)
+      tabla2.rows[2].cells[8].innerHTML=invtotaconv.toFixed(1)
+      //tabla2.rows[2].cells[9].innerHTML=(invtotwip/1000-(datosCorrplanINV["TCY"]["m2inv"]+datosCorrplanINV["HCR"]["m2inv"]+datosCorrplanINV["WRD"]["m2inv"]+datosCorrplanINV["FFW"]["m2inv"]+datosCorrplanINV["DRO"]["m2inv"]+datosCorrplanINV["FFG"]["m2inv"])/1000).toFixed(1)
+      tabla2.rows[2].cells[9].innerHTML=((invtotaconv/invtotwip*1000)*100).toFixed(1)+"%"
+
+      tabla2.rows[3].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2inv24h"]/1000).toFixed(1)
+      tabla2.rows[3].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2inv24h"]/1000).toFixed(1)
+
+
+      var invtot24hconv=((datosCorrplanINV["TCY"]["m2inv24h"]+datosCorrplanINV["HCR"]["m2inv24h"]+datosCorrplanINV["WRD"]["m2inv24h"]+datosCorrplanINV["FFW"]["m2inv24h"]+datosCorrplanINV["DRO"]["m2inv24h"]+datosCorrplanINV["FFG"]["m2inv24h"])/1000)
+      tabla2.rows[3].cells[8].innerHTML=invtot24hconv.toFixed(1)
+      //tabla2.rows[3].cells[9].innerHTML=(invtotwip/1000-(datosCorrplanINV["TCY"]["m2inv24h"]+datosCorrplanINV["HCR"]["m2inv24h"]+datosCorrplanINV["WRD"]["m2inv24h"]+datosCorrplanINV["FFW"]["m2inv24h"]+datosCorrplanINV["DRO"]["m2inv24h"]+datosCorrplanINV["FFG"]["m2inv24h"])/1000).toFixed(1)
+      tabla2.rows[3].cells[9].innerHTML=((invtot24hconv/invtotwip*1000)*100).toFixed(1)+"%"
+
+      tabla2.rows[4].cells[1].innerHTML=(datosCorrplanINV["TCY"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[2].innerHTML=(datosCorrplanINV["HCR"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[3].innerHTML=(datosCorrplanINV["WRD"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[4].innerHTML=(datosCorrplanINV["FFW"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[5].innerHTML=(datosCorrplanINV["DRO"]["m2Prog24h"]/1).toFixed(1)
+      tabla2.rows[4].cells[6].innerHTML=(datosCorrplanINV["FFG"]["m2Prog24h"]/1).toFixed(1)
+
+      var constot24hconv=((datosCorrplanINV["TCY"]["m2Prog24h"]+datosCorrplanINV["HCR"]["m2Prog24h"]+datosCorrplanINV["WRD"]["m2Prog24h"]+datosCorrplanINV["FFW"]["m2Prog24h"]+datosCorrplanINV["DRO"]["m2Prog24h"]+datosCorrplanINV["FFG"]["m2Prog24h"]))
+      tabla2.rows[4].cells[8].innerHTML=constot24hconv.toFixed(1)
+
+
+      tabla2.rows[5].cells[1].innerHTML=((datosCorrplanINV["TCY"]["m2inv24h"]/10)/(datosCorrplanINV["TCY"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[2].innerHTML=((datosCorrplanINV["HCR"]["m2inv24h"]/10)/(datosCorrplanINV["HCR"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[3].innerHTML=((datosCorrplanINV["WRD"]["m2inv24h"]/10)/(datosCorrplanINV["WRD"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[4].innerHTML=((datosCorrplanINV["FFW"]["m2inv24h"]/10)/(datosCorrplanINV["FFW"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[5].innerHTML=((datosCorrplanINV["DRO"]["m2inv24h"]/10)/(datosCorrplanINV["DRO"]["m2Prog24h"]/1)).toFixed(1)+"%"
+      tabla2.rows[5].cells[6].innerHTML=((datosCorrplanINV["FFG"]["m2inv24h"]/10)/(datosCorrplanINV["FFG"]["m2Prog24h"]/1)).toFixed(1)+"%"
+
+      var ratio24hconv=(invtot24hconv/constot24hconv)
+      tabla2.rows[5].cells[8].innerHTML=(ratio24hconv*100).toFixed(1)+"%"
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+fechafoto.innerHTML = "Cargando.."
+datosinv()
+
+window.setInterval(function(){
+  console.log("hola");
+  //datosinv();
+
+}, 120000);
+
+
+$("#convert").click(function()
+{
+
+//updatecuadros();
+fechafoto.innerHTML = "Cargando.."
+datosinv()
+//displayHTMLTable();
+
+});
+
+
+
+
+
+</script>
+
+{% endblock %}

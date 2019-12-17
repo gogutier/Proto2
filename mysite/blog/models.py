@@ -113,7 +113,7 @@ class Foto_Palletsnoencontrados_Inv_Cic_WIP(models.Model):
 class Foto_Datos_Inv_WIP(models.Model):
 
 
-    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
     m2totalINV = models.FloatField(default=0)
 
     def __str__(self):
@@ -209,6 +209,9 @@ class Datos_MovPallets_B(models.Model):
     movscorr2=models.IntegerField(default=0)
     movsconv1=models.IntegerField(default=0)
     movsconv2=models.IntegerField(default=0)
+    movsapnc=models.IntegerField(default=0)
+    movsapicado=models.IntegerField(default=0)
+    movsdevbodega=models.IntegerField(default=0)
 
 
     def __str__(self):
@@ -219,8 +222,8 @@ class Datos_MovPallets_B(models.Model):
 
 class Datos_Proy_WIP(models.Model):
 
-    fecha_inicio=models.DateTimeField(blank=False, default=timezone.now)
-    fecha_fin=models.DateTimeField(blank=False, default=timezone.now)
+    fecha_inicio=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fecha_fin=models.DateTimeField(blank=False, default=datetime.datetime.now())
     turno=models.CharField(max_length=16, blank=False, default="0")
     label=models.CharField(max_length=16, blank=False, default="0")
     M2Conv=models.FloatField(default=0)
@@ -246,7 +249,7 @@ class DatosWIP_Prog(models.Model):
 
 class TomaInvCic(models.Model):
 
-    fechatomainvcic=models.DateTimeField(blank=False, default=timezone.now)
+    fechatomainvcic=models.DateTimeField(blank=False, default=datetime.datetime.now())
     aux1=models.CharField(max_length=16, blank=False, default="0")
 
     def __str__(self):
@@ -259,7 +262,7 @@ class PalletCic(models.Model):
     tarja=models.CharField(unique=True, max_length=9, blank=False, default="0")
     ubic=models.CharField(max_length=32, default="vacio")
     ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet_cic', on_delete=models.CASCADE, default=1)
-    fechatoma=models.DateTimeField(blank=False, default=timezone.now)
+    fechatoma=models.DateTimeField(blank=False, default=datetime.datetime.now())
 
     def __str__(self):
         return (str(self.tarja))
@@ -280,8 +283,8 @@ class Pallet(models.Model):
     maqruta=models.CharField(max_length=16, default="vacio")
 
     ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default=1)
-    fechaultmov=models.DateTimeField(blank=False, default=timezone.now)
-    fechacreac=models.DateTimeField(blank=False, default=timezone.now)
+    fechaultmov=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fechacreac=models.DateTimeField(blank=False, default=datetime.datetime.now())
     kgpallet=models.FloatField(default=0)
     m2pallet=models.FloatField(default=0)
 
@@ -378,7 +381,7 @@ class Cartones(models.Model):
 class FotoProgCorr(models.Model):
 
 
-    fecha_foto=models.DateTimeField(unique=True, blank=False, default = timezone.now)
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
 
     def __str__(self):
         return (str(self.fecha_foto))
@@ -464,7 +467,7 @@ class Camion(models.Model):
     Rut=models.CharField(max_length=15, default="vacio")
     Transportista=models.CharField(max_length=25, default="vacio")
 
-    dia=models.DateField(max_length=10, default=timezone.now)
+    dia=models.DateField(max_length=10, default=datetime.datetime.now())
 
     def __str__(self):
         return (self.Patente)
@@ -508,7 +511,7 @@ class InfoWIP(models.Model):
     PiTotal=models.FloatField(default=0)
 
 
-    fechamuestra= models.DateTimeField(blank=False, default = timezone.now)#.replace(hour= 0, minute=0, second=0, microsecond=0))
+    fechamuestra= models.DateTimeField(blank=False, default = datetime.datetime.now())#.replace(hour= 0, minute=0, second=0, microsecond=0))
 
 
     def __str__(self):
@@ -518,7 +521,7 @@ class InfoWIP(models.Model):
 class ProyMkt(models.Model):
 
     #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
-    fechaproy= models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    fechaproy= models.DateField(blank=False, default = datetime.datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0))
 
 
     def __str__(self):
@@ -694,7 +697,7 @@ class OrderInfo(models.Model):
     qOrd=models.IntegerField(default=0)
     blanksrequired=models.IntegerField(default=0)
     blankstocorr=models.IntegerField(default=0)
-    fechacarga=models.DateField(blank=False, default = timezone.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    fechacarga=models.DateField(blank=False, default = datetime.datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0))
     clave=models.CharField(max_length=100, default=".")
     def __str__(self):
         return (self.orderId)

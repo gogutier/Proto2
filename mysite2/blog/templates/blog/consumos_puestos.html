@@ -1,0 +1,428 @@
+{% extends "blog/base.html" %}
+
+
+
+<script type="text/javascript">
+
+
+
+  {% block jquery %}
+
+
+
+  var endpoint='/api/get_data_corrplan_cartones/';
+
+
+
+
+
+  function setChart(){
+
+
+    var f0 = moment.parseZone(labels[0]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');//esto lo puedo necesitar al momento de pasar al servidor en pythonanywhere
+    var f1 = moment.parseZone(labels[1]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f2 = moment.parseZone(labels[2]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f3 = moment.parseZone(labels[3]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f4 = moment.parseZone(labels[4]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f5 = moment.parseZone(labels[5]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f6 = moment.parseZone(labels[6]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    var f7 = moment.parseZone(labels[7]).format('DD/MM/YY')//.tz('America/Santiago').format('DD/MM/YY');
+    //var f5 = moment.parseZone(labels[5]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    //var f6 = moment.parseZone(datos6["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    //var f7 = moment.parseZone(datos7["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    //var f8 = moment.parseZone(datos8["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    //var f9 = moment.parseZone(datos9["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+
+
+
+    var  labels2 = [f0,f1,f2,f3,f4,f5,f6,f7]; //valores de eje Y // Poner fecha en que se capturó cada dato.
+
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels2,
+            datasets: [{
+                label: 'FFG',
+                //data: [datos9["M2FFG"],datos8["M2FFG"],datos7["M2FFG"],datos6["M2FFG"],datos5["M2FFG"],datos4["M2FFG"],datos3["M2FFG"],datos2["M2FFG"],datos1["M2FFG"],datos0["M2FFG"]],
+                data: metros2FFG,
+                  borderColor: "rgba(0,42,255)",
+                  backgroundColor: "rgba(0,42,255)",
+                //[
+                    //'rgba(255, 99, 132, 0.2)',
+                    //'rgba(54, 162, 235, 0.2)',
+                    //'rgba(255, 206, 86, 0.2)',
+                    //'rgba(75, 192, 192, 0.2)',
+                    //'rgba(153, 102, 255, 0.2)',
+                    //'rgba(255, 159, 64, 0.2)'
+                //],
+                //borderColor:
+                // [
+                    //'rgba(255,99,132,1)',
+                    //'rgba(54, 162, 235, 1)',
+                    //'rgba(255, 206, 86, 1)',
+                    //'rgba(75, 192, 192, 1)',
+                    //'rgba(153, 102, 255, 1)',
+                    //'rgba(255, 159, 64, 1)'
+                //],
+                borderWidth: 0,
+                //responsive: true,
+
+            },{
+
+              label: 'FFW',
+              data: metros2FFW,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(255,42,0)",
+                borderWidth: 0
+
+            },{
+
+              label: 'TCY',
+              data: metros2TCY,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(155,50,50)",
+                borderWidth: 0
+
+            },{
+
+              label: 'DRO',
+              data: metros2DRO,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(55,201,30)",
+                borderWidth: 0
+
+            },{
+
+              label: 'WRD',
+              data: metros2WRD,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(25,220,250)",
+                borderWidth: 0
+
+            },{
+
+              label: 'HCR',
+              data: metros2HCR,
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(255,200,0)",
+                borderWidth: 0
+
+            }]
+        },
+        options: {
+            title:{
+              display:true,
+              text:"Gráfico ordenes puestas prox dias"
+            },
+            tooltips: {
+      mode: 'label',
+      callbacks: {
+          label: function(tooltipItem, data) {
+              var corporation = data.datasets[tooltipItem.datasetIndex].label;
+              var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+              var total = 0;
+              for (var i = 0; i < data.datasets.length; i++)
+                  {total += data.datasets[i].data[tooltipItem.index];}
+              //return ["Total : " + total ,corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+
+              if (tooltipItem.datasetIndex == 0) {
+                  return ["Total : " + total ,corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+
+
+              } else {
+                return [ corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+
+              }
+          }
+      }
+  },
+            scales: {
+                xAxes: [{ stacked: true }],
+                yAxes: [{stacked: true,
+                    ticks: {
+                        autoSkip: false,
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+    //defino las variables que utilizará la tabla desde antes. Luego el actualiza las va renovando cada x tiempo
+
+
+
+    displayTabla();
+
+    function displayTabla(results){
+
+      console.log("llenando tabla");
+
+      var table = "<table class='table table-hover' id='myTable'>";
+
+
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+''+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'FFG' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'FFW' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'TCY' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'DRO' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'WRD' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'HCR' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'DIM' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'CORR' + '<h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5>' + 'Total' + '<h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+'Mm2 hasta fin mes'+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5><h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+'Mm2 prox mes'+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5><h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+
+      table+= "</table>";
+
+
+
+
+      $("#parsed_csv_list").html(table);
+
+
+      }
+
+
+
+
+      window.setInterval(function(){
+        console.log("hola");
+        datoscorrplan();
+
+      }, 60000);
+
+
+
+
+    datoscorrplan();
+
+    function datoscorrplan(){
+
+      console.log("iniciando");
+      var myTable = document.getElementById('myTable');
+      console.log("iniciando ajax");
+      $.ajax({
+
+
+          method: "GET",
+          url: endpoint,
+          success: function(response_data){
+          labels = response_data.labels; //aCÁ RECIBO UN ARRAY DE DATOS
+          datos0 = response_data.datos0; //ACÁ RECIBO UN DICCIONARIO
+          defaults = response_data.defaults; //ACÁ RECIBO UN DICCIONARIO
+          metros2FFG = response_data.metros2FFG; //ACÁ RECIBO UN DICCIONARIO
+          metros2FFW = response_data.metros2FFW; //ACÁ RECIBO UN DICCIONARIO
+          metros2TCY= response_data.metros2TCY; //ACÁ RECIBO UN DICCIONARIO
+          metros2DRO = response_data.metros2DRO; //ACÁ RECIBO UN DICCIONARIO
+          metros2WRD = response_data.metros2WRD; //ACÁ RECIBO UN DICCIONARIO
+          metros2HCR = response_data.metros2HCR; //ACÁ RECIBO UN DICCIONARIO
+          fecha_foto = response_data.fecha_foto;
+          console.log("datos ajax: ");
+          console.log(labels);
+          console.log(metros2FFG);
+          console.log(fecha_foto);
+
+
+
+          //totales = response_data.totales;
+
+
+          //myTable.rows[1].cells[1].innerHTML = datos0["M2FFG"].toFixed(2)//datos0[0][2].toFixed(1);//FFG
+
+
+          //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
+
+
+          //fechamoment=moment.parseZone(datos0["fechamuestra"])
+          //fecha="Última actualización: ";
+          //fecha+= fechamoment.tz('America/Santiago').format('LLL');
+
+
+          setChart();
+
+          //$("#fechaupdate").html(fecha);
+
+          },
+          error: function(error_data){
+            console.log("error");
+            console.log(error_data);
+          }
+
+        })
+
+
+        console.log("actualizado valores antiguos");
+        //displayTabla();
+
+
+
+
+    }
+
+
+
+    $("#actualiza").click(function()
+    {
+
+
+    });
+
+
+
+  {% endblock %}
+</script>
+
+
+
+
+{% block content %}
+
+<h1>Consumos Puestos</h1>
+<div class="container">
+<!--//<button type="button" id="actualiza">Actualiza</button>-->
+<!--<div class="jumbotron ">//jumbotron hace qel jondo sea gris?-->
+
+<div class="table-responsive">
+
+
+<div class="row" id="parsed_csv_list">
+
+  </div>
+
+
+</div>
+
+<canvas id="myChart" style="display= block; width:1000px"></canvas>
+
+<!--</div>-->
+
+
+
+  <h7 class="float-right" id="fechaupdate"></h7>
+
+  <div class="clearfix"></div>
+
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+</script>
+
+{% endblock %}

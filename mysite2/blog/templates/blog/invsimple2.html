@@ -1,0 +1,98 @@
+<h4>Toma inventario n°{{tomainv}}</h4>
+
+<h5>Inventario sector {{tomainv.aux1}}</h5>
+
+
+{% block content %}
+
+<form name="myform2" method="POST" class="post-form" id="theFormID">
+{% csrf_token %}
+
+  <td>{{ form.dato1 }}</td>
+
+
+  <button type="submit" class="save btn btn-default">Save</button>
+
+</form>
+
+<body OnLoad="document.myform2.dato1.focus();">
+
+  <table>
+    <tr>
+      <td></td>
+      <td bgcolor="#00FF00">{{cuentaenc}}</td>
+      <td bgcolor="Orange">{{cuentanoenc}}</td>
+      <td></td>
+      <td bgcolor="Red">{{cuentacti}}</td>
+    </tr>
+  </table>
+
+<table>
+  <tr>
+    <td>Pallets:</td>
+  </tr>
+
+</table>
+
+  <table  bgcolor="#00FF00">
+
+
+{% for pallet in palletsencontrados %}
+
+<tr>
+
+  <td>{{pallet.tarja}}</td>
+
+</tr>
+
+
+
+{% endfor %}
+
+
+</table>
+
+
+    <table  bgcolor="Orange">
+
+<tr>
+
+
+</tr>
+
+{% for pallet in palletsnoencontrados %}
+      <tr>
+        <td>{{pallet}}</td>
+
+      </tr>
+{% endfor %}
+
+    </table>
+
+
+
+    <table  bgcolor="Red">
+
+<tr>
+
+
+
+</tr>
+
+
+    {% for pallet in palletscti %}
+
+    <tr>
+      <td>{{pallet.tarja}}</td>
+
+    </tr>
+
+
+    {% endfor %}
+
+    </table>
+
+
+
+
+{% endblock content %}

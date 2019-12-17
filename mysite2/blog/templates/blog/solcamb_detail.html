@@ -1,0 +1,30 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+  <h1 class="posttitle loader">{{solcamb.title}}</h1>
+  {% if solcamb.published_date %}
+    <div class="date postdate">
+      {{solcamb.published_date}}
+    </div>
+    {% else %}
+    <a class="btn btn-default">Publish</a>
+    {% endif %}
+    <b>bold text</b>
+
+
+    {% if  user.is_authenticated %}
+      <a class='btn btn-primary' href="{% url 'post_edit' pk=solcamb.pk %}">
+        <span class='glyphicon glyphicon-pencil'> </span>
+      </a>
+      <a class='btn btn-primary' href="{% url 'post_remove' pk=solcamb.pk %}">
+        <span class='glyphicon glyphicon-remove'> </span>
+      </a>
+    {% endif %}
+
+<hr>
+<a class='btn btn-primary btn-comment' href="{% url 'add_comment_to_post' pk=solcamb.pk %}">Ingresar comentario</a>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,516 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<div class="container" >
+  <h3>Panel WIP</h3>
+<div class="jumbotron">
+
+<table style='overflow-x:auto;'>
+
+
+
+
+
+      <tr>
+
+          <td valign='top'>
+
+
+                  <table style='overflow-x:auto;'>
+
+                    <tr>
+                      <td>
+
+                        <table style='font-size: 26px;'>
+                          <tr>
+
+                            <td id="m2"></td>
+                            <td>Mm2</td>
+                            <td id="npal"></td>
+                           </tr>
+
+                        </table>
+                      </td>
+                    </tr>
+
+
+
+                  <tr>
+                    <td>
+                      <div class="row"   id="parsed_csv_list">
+                      </div>
+
+                    </td>
+                  </tr>
+
+
+
+                  <tr>
+                    <td>
+                      <table id='tablamaqruta'>
+                        <tr>
+                          <td><br></td>
+                        </tr>
+                        <tr style='font-size: 12px;'>
+                          <td>DRO</td>
+                          <td>HCR</td>
+                          <td>WRD</td>
+                          <td></td>
+                          <td>TCY</td>
+                          <td>FFG</td>
+                          <td>FFW</td>
+                          <td></td>
+                          <td>Otros</td>
+
+                        </tr>
+                        <tr style='font-size: 12px;'>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td></td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td></td>
+                          <td>0</td>
+                          <td></td>
+                        </tr>
+
+                        <tr style='font-size: 18px;'>
+                          <td align='center' colspan="3">0</td>
+                          <td></td>
+                          <td align='center' colspan="3">0</td>
+                          <td></td>
+                          <td>0</td>
+
+                        </tr>
+
+
+
+                      </table>
+
+                    </td>
+
+                  </tr>
+
+
+
+                  </table>
+
+          </td>
+
+          <td valign='top'>
+
+                <table cellspacing='10' class='tablee' style='font-size: 10px; overflow-x:auto;' id='tabla3'  >
+                  <tr>
+                    <td colspan='5' style='font-weight:bold'>Últimas entradas a Bodega</td>
+                  </tr>
+                      <tr>
+                      <td>Tarja/ID</td>
+
+                      <td>Origen</td>
+                      <td>Destino</td>
+                      <td colspan='2'>Fecha </td>
+                      </tr>
+                      <tr>
+                      <td> </td>
+
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2' cellspacing="0"> </td>
+                        </tr>
+                      <tr cellspacing="0">
+                      <td> </td>
+
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2' cellspacing="0"> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                        </tr>
+                      <tr>
+                      <td> </td>
+
+                      <td> </td>
+                      <td> </td>
+                      <td colspan='2'> </td>
+                      </tr>
+
+                    <td colspan='5' style='font-weight:bold'>Últimas salidas de Bodega</td>
+
+                  <tr>
+                  <td>Tarja/ID</td>
+
+                  <td>Origen</td>
+                  <td>Destino</td>
+                  <td>Fecha</td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+                  <tr>
+                  <td> </td>
+
+                  <td> </td>
+                  <td> </td>
+                  <td colspan='2'> </td>
+                  </tr>
+
+
+                  </table>
+          </td>
+
+    </tr>
+
+</table>
+
+</div>
+</div>
+
+
+
+
+<button type="button" id="convert">Actualizar</button>
+
+
+<script type="text/javascript">
+
+
+
+
+var endpoint='/api/get_data_inventario/';
+
+
+{% load staticfiles %}
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  var imagentime ='<img src= {% static "images/time.png" %} alt=""  height=15 width=15></img>'
+  var auxtext = ''
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      datosWIP = response_data.datosWIP;
+      m2maqruta = response_data.m2maqruta;
+      m2totalINV= response_data.m2totalINV;
+      npalletstotalINV= response_data.npalletstotalINV;
+      m2totalCORR= response_data.m2totalCORR;
+      npalletstotalCORR= response_data.npalletstotalCORR;
+      filtroentrada= response_data.filtroentrada; //este es list of lists
+      filtrosalida= response_data.filtrosalida; //este es list of lists
+      //filtroprod= response_data.filtroprod; //este es list of lists
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      console.log(m2maqruta)
+      //console.log(datosWIP)
+      //console.log(filtroentrada)
+      //console.log(filtrosalida)
+
+      var tablamaqruta = document.getElementById("tablamaqruta");//.getElementsByTagName("td");
+
+      tablamaqruta.rows[2].cells[0].innerHTML=(m2maqruta["DRO"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[1].innerHTML=(m2maqruta["HCR"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[2].innerHTML=(m2maqruta["WRD"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[4].innerHTML=(m2maqruta["TCY"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[5].innerHTML=(m2maqruta["FFW"]/1000).toFixed(1)
+      tablamaqruta.rows[2].cells[6].innerHTML=(m2maqruta["FFG"]/1000).toFixed(1)
+      var otros=(m2totalINV-(m2maqruta["FFG"]+m2maqruta["FFW"]+m2maqruta["TCY"]+m2maqruta["DRO"]+m2maqruta["HCR"]+m2maqruta["WRD"]))
+      tablamaqruta.rows[2].cells[8].innerHTML=(otros/1000).toFixed(1)
+
+      tablamaqruta.rows[3].cells[0].innerHTML=((m2maqruta["DRO"]+m2maqruta["HCR"]+m2maqruta["WRD"])/(m2totalINV/100)).toFixed(1)+"%"
+      tablamaqruta.rows[3].cells[2].innerHTML=((m2maqruta["TCY"]+m2maqruta["FFG"]+m2maqruta["FFW"])/(m2totalINV/100)).toFixed(1)+"%"
+      tablamaqruta.rows[3].cells[4].innerHTML=((otros)/(m2totalINV/100)).toFixed(1)+"%"
+
+      var myTable = document.getElementById("table");//.getElementsByTagName("td");
+      var m2 = document.getElementById("m2");//.getElementsByTagName("td");
+      var npal = document.getElementById("npal");//.getElementsByTagName("td");
+
+      var m2CORR = document.getElementById("m2CORR");//.getElementsByTagName("td");
+      var npalCORR = document.getElementById("npalCORR");//.getElementsByTagName("td");
+
+      var tabla2 = document.getElementById("tabla2");//.getElementsByTagName("td");
+
+      for (var i=0; i < cuadros.length; i++)
+      {
+
+      if (datosWIP[cuadros[i][2]]['dias']>3)
+      {
+        //console.log(datosWIP[cuadros[i][2]])
+        auxtext='</br> ' + imagentime;
+
+      }  else{
+        auxtext='</br>'
+      }
+      //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + cuadros[i][2] + '</a>' + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
+
+      myTable.rows[cuadros[i][1]-1].cells[cuadros[i][0]].innerHTML = auxtext//imagentime
+
+      }//myTable.rows[cuadros[1][1]].cells[cuadros[0][1]].innerHTML = cuadros[1][2] + "</br>" + str(zffg2) ;
+
+      m2.innerHTML= String((m2totalINV/1000).toFixed(1))
+      //npal.innerHTML=String(npalletstotalINV)
+
+
+      //npalCORR.innerHTML= String(npalletstotalCORR)
+
+
+
+
+
+
+      for (var i=0; i < filtroentrada.length; i++)
+      {
+      tabla3.rows[2+i].cells[0].innerHTML=filtroentrada[i][0] + "<br>" + filtroentrada[i][1]
+      //tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][1]
+      tabla3.rows[2+i].cells[1].innerHTML=filtroentrada[i][2].substring(0,7)
+      tabla3.rows[2+i].cells[2].innerHTML=filtroentrada[i][3].substring(0,7)
+      tabla3.rows[2+i].cells[3].innerHTML=filtroentrada[i][4]
+      }
+
+      for (var i=0; i < filtrosalida.length; i++)
+      {
+      tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0] + "<br>" + filtroentrada[i][1]
+    //  tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
+      tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][2].substring(0,7)
+      tabla3.rows[9+i].cells[2].innerHTML=filtrosalida[i][3].substring(0,7)
+      tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][4]
+      }
+
+
+
+
+
+
+      //myTable.rows[1].cells[1].innerHTML = datos0["M2FFG"].toFixed(2)//datos0[0][2].toFixed(1);//FFG
+      //myTable.rows[1].cells[2].innerHTML = datos0["M2FFW"].toFixed(2)//datos0[2][2].toFixed(1);//FFW
+
+      //myTable.rows[1].cells[9].innerHTML = totales[1].toFixed(1);//Total
+
+      //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
+
+      //setChart();Acá es donde se crearía el gráfico
+      updatecuadros(datosWIP);
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+var cuadros= [];
+
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+displayHTMLTable();
+datosinv();
+
+
+window.setInterval(function(){
+  console.log("hola");
+  datosinv();
+
+}, 30000);
+
+
+$("#convert").click(function()
+{
+
+
+datosinv()
+//updatecuadros();
+//displayHTMLTable();
+
+});
+
+////// Función que muestra el input paresado
+
+function displayHTMLTable(){
+  var table = "<table  class='table1'  id='table' style='float: left;' >";
+
+    var rows = 15;
+    var columns = 49;
+
+    ///
+    table+= "<tr  style='text-align: center'>";
+      for(j=0;j<columns-24;j++){
+        table+= "<td style='font-size: 10px;'  >";
+        //table+= ".";
+        table+= "</th>";
+        }
+    table+= "</tr>";
+    ///
+
+    table+= "<tr style='text-align: center'>";
+    for(j=1;j<columns-23;j++){
+      table+= "<td style='font-size: 10px;'>";
+      //table+= ".";
+      table+= "</th>";
+      }
+    table+= "</tr>";
+    ///
+
+
+    for(i=2;i<8;i++){
+      table+= "<tr style='text-align: center'>";
+        for(j=0;j<columns-38;j++){
+          table+= "<td style='font-size: 10px;'>";
+          //table+= ".";
+          table+= "</th>";
+        }
+      table+= "</tr>";
+    }
+
+
+
+    for(i=8;i<rows-1;i++){
+      table+= "<tr style='text-align: center'>";
+        for(j=0;j<columns-20;j++){
+          table+= "<td style='font-size: 10px; '>";
+          //table+= ".";
+          table+= "</th>";
+        }
+      table+= "</tr>";
+    }
+
+
+
+
+
+  table+= "</table>";
+  $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+  //cambiando color de la table:
+  creacuadro(2,6,"ZTCY2",3,5);
+  creacuadro(3,6,"ZTCY1",3,5);
+  creacuadro(4,6,"ZHCR2",3,5);
+  creacuadro(5,6,"ZHCR1",3,5);
+  creacuadro(14,1,"ZSOB2",3,5);
+  creacuadro(15,1,"ZWRD2",3,5);
+  creacuadro(16,1,"ZWRD1",3,5);
+  creacuadro(18,1,"ZSOB1",3,5);
+  creacuadro(19,1,"ZFFW2",3,5);
+  creacuadro(20,1,"ZFFW1",3,5);
+  creacuadro(21,1,"ZDRO2",3,5);
+  creacuadro(22,1,"ZDRO1",3,5);
+  creacuadro(23,1,"ZFFG2",3,5);
+  creacuadro(24,1,"ZFFG1",3,5);
+  //creacuadro(50,0,"CORR_UPPER_Stacker",2,5);
+  //creacuadro(51,0,"CORR_LOWER_Stacker",2,5);
+  creacuadro(5,10,"ZPNC",3,4);
+  creacuadro(12,10,"ZPASILLO",6,4);
+
+}
+
+function creacuadro(x,y,texto,a,l){
+
+  var myTable = document.getElementById("table");//.getElementsByTagName("td");
+  myTable.rows[y].cells[x].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + texto + '</a>' + "</br>" + "%";
+  myTable.rows[y].cells[x].style.backgroundColor = "yellow"
+
+  myTable.rows[y].cells[x].colSpan = parseInt(a);
+  myTable.rows[y].cells[x].rowSpan = parseInt(l);
+
+
+  myTable.rows[y-1].cells[x].colSpan = parseInt(a);
+  cuadros.push([x,y,texto]);
+
+}
+
+
+
+function updatecuadros(datosWIP){
+
+  for (var i=0; i < cuadros.length; i++)
+  {
+
+    var random = Math.floor((Math.random() * 100) + 1);
+
+    var myTable = document.getElementById("table");//.getElementsByTagName("td");
+    //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = cuadros[i][2] + "</br>" + random.toString() + "%";
+    //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "green"//"yellow";
+
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000<=datosWIP[cuadros[i][2]]['al1'])
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "Chartreuse"}
+
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000>datosWIP[cuadros[i][2]]['al1'] && datosWIP[cuadros[i][2]]['m2tot']/1000<=datosWIP[cuadros[i][2]]['al2'])
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "yellow"}
+
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000>datosWIP[cuadros[i][2]]['al2'] && datosWIP[cuadros[i][2]]['m2tot']/1000<=datosWIP[cuadros[i][2]]['al3'])
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "Orange"}
+
+    if (datosWIP[cuadros[i][2]]['m2tot']/1000>datosWIP[cuadros[i][2]]['al3'])
+    {myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].style.backgroundColor = "Crimson"}
+
+
+    /*
+    var myTable = document.getElementById("table");//.getElementsByTagName("td");
+    myTable.rows[y].cells[x].innerHTML = texto + "</br>" + "%";
+    myTable.rows[y].cells[x].style.backgroundColor = "green"//"yellow";
+    myTable.rows[y].cells[x].colSpan = parseInt(a);
+    myTable.rows[y].cells[x].rowSpan = parseInt(l);
+    */
+  }
+
+}
+
+
+</script>
+
+{% endblock %}

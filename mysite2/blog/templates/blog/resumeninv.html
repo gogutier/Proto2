@@ -1,0 +1,461 @@
+{% extends "blog/base.html" %}
+
+
+{% block content %}
+
+
+<h4>Resumen Inventario</h4>
+
+
+<table class='table' cellspacing="0" cellpadding="0" >
+<tr>
+
+
+
+<td style='border: none;'>
+
+  <div class="row" id="parsed_csv_list" >
+  </div>
+
+</td>
+<td style='border: none; width:600;'></td>
+<td style='border: none; width:600;'></td>
+
+<td style='border: none;'>
+<canvas id="myChart2" width="600" height="400" ></canvas>
+</td>
+
+
+
+
+</tr>
+
+<tr>
+
+<td colspan='4'>
+  <canvas id="myChart3" width="300" height="100" ></canvas>
+</td>
+
+</tr>
+
+</table>
+</div>
+
+<script>
+
+
+var labels=[]
+{% for inv in inventarios %}
+labels.unshift("{{inv.fecha_carga}}")
+{% endfor %}
+
+var default_items=[123, 124, 432]
+var sumatot=0;
+var sumaret=0;
+var sumasald=0;
+var sumasaldun=0;
+
+
+
+sumatot=sumatot+{{fotoinv.total_kraft_kg}};
+sumatot=sumatot+{{fotoinv.total_blanco_kg}};
+sumatot=sumatot+{{fotoinv.total_CPP_kg}};
+sumatot=sumatot+{{fotoinv.total_otros_kg}};
+
+sumaret=sumaret+{{fotoinv.kraft_retenidos_kg}};
+sumaret=sumaret+{{fotoinv.blanco_retenidos_kg}};
+sumaret=sumaret+{{fotoinv.CPP_retenidos_kg}};
+sumaret=sumaret+{{fotoinv.otros_retenidos_kg}};
+
+sumasald=sumasald+{{fotoinv.kraft_saldos_kg}};
+sumasald=sumasald+{{fotoinv.blanco_saldos_kg}};
+sumasald=sumasald+{{fotoinv.CPP_saldos_kg}};
+sumasald=sumasald+{{fotoinv.otros_saldos_kg}};
+
+sumasaldun=sumasaldun+{{fotoinv.kraft_saldos_un}};
+sumasaldun=sumasaldun+{{fotoinv.blanco_saldos_un}};
+sumasaldun=sumasaldun+{{fotoinv.CPP_saldos_un}};
+sumasaldun=sumasaldun+{{fotoinv.otros_saldos_un}};
+
+
+//Tabla resumen del útlimo Inventario
+var table = "<table class='table' id='table' style='table-layout: fixed; width: 400px; float:left; '>";
+table+= "<tr >";
+  table+= "<td colspan='2' style='text-align: center'>";
+  table+= "{{fotoinv.fecha_carga}}"
+  table+= "</td>";
+table+= "</tr>";
+
+table+= "<tr >";
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= ""
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Disponible"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Retenido"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Saldos"
+  table+= "</td>";
+
+
+table+= "</tr>";
+
+table+= "<tr>";
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Total"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (sumatot/1000).toFixed(0).toLocaleString("en");
+  table+= " Tn";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (sumaret/1000).toFixed(0).toLocaleString("en");
+  table+= " Tn";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (sumasald/1000).toFixed(0).toLocaleString("en");
+  table+= " Tn";
+  table+= " (" + (sumasaldun).toString();
+  table+= " un)";
+  table+= "</td>";
+
+table+= "</tr>";
+
+table+= "<tr>";
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Kraft"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.total_kraft_kg}}/sumatot)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.kraft_retenidos_kg}}/sumaret)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.kraft_saldos_kg}}/sumasald)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+
+table+= "</tr>";
+
+table+= "<tr>";
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Blanco"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.total_blanco_kg}}/sumatot)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.blanco_retenidos_kg}}/sumaret)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.blanco_saldos_kg}}/sumasald)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+
+table+= "</tr>";
+
+table+= "<tr>";
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "CPP"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.total_CPP_kg}}/sumatot)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.CPP_retenidos_kg}}/sumaret)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.CPP_saldos_kg}}/sumasald)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+
+table+= "</tr>";
+
+table+= "<tr>";
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= "Otros"
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.total_otros_kg}}/sumatot)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.otros_retenidos_kg}}/sumaret)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+  table+= "<td style='font-size: 15px; padding: 15px 5px;'>";
+  table+= (({{fotoinv.otros_saldos_kg}}/sumasald)*100).toFixed(1);
+  table+= "%";
+  table+= "</td>";
+
+
+
+table+= "</tr>";
+
+
+
+
+
+
+table+= "</table>";
+$("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+
+
+window.onload = function() {
+  //var ctx = document.getElementById('myChart').getContext('2d');
+  //window.myPie = new Chart(ctx, config);
+
+  var ctx2 = document.getElementById('myChart2').getContext('2d');
+  window.myPie2 = new Chart(ctx2, config2);
+
+  var ctx3 = document.getElementById('myChart3').getContext('2d');
+  window.myPie3 = new Chart(ctx3, config3);
+};
+
+
+
+    var Kraft = [];
+    var Blanco = [];
+    var CPP = [];
+    var Otros = [];
+    var aux=0;
+
+    {% for inv in inventarios %}
+
+      Kraft.unshift( ({{inv.total_kraft_kg}}/1000) );
+      Blanco.unshift( ({{inv.total_blanco_kg}}/1000));
+      CPP.unshift( ({{inv.total_CPP_kg}}/1000));
+      Otros.unshift( ({{inv.total_otros_kg}}/1000) );
+
+    {% endfor %}
+
+    var config2 = {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Kraft',
+            data: Kraft,
+              backgroundColor: "rgba(10,70,190,0.5)",
+            //[
+                //'rgba(255, 99, 132, 0.2)',
+                //'rgba(54, 162, 235, 0.2)',
+                //'rgba(255, 206, 86, 0.2)',
+                //'rgba(75, 192, 192, 0.2)',
+                //'rgba(153, 102, 255, 0.2)',
+                //'rgba(255, 159, 64, 0.2)'
+            //],
+            //borderColor:
+            // [
+                //'rgba(255,99,132,1)',
+                //'rgba(54, 162, 235, 1)',
+                //'rgba(255, 206, 86, 1)',
+                //'rgba(75, 192, 192, 1)',
+                //'rgba(153, 102, 255, 1)',
+                //'rgba(255, 159, 64, 1)'
+            //],
+            borderWidth: 0
+        },{
+
+          label: 'Blanco',
+          data: Blanco,
+          backgroundColor:
+              "rgba(82,154,190,0.5)",
+            borderWidth: 0
+
+        },{
+
+          label: 'CPP',
+          data: CPP,
+          backgroundColor:
+              "rgba(200,150,50,0.5)",
+            borderWidth: 0
+
+        },{
+
+          label: 'Otros',
+          data: Otros,
+          backgroundColor:
+              "rgba(180,100,50,0.5)",
+            borderWidth: 0
+
+        }]
+    },
+    options: {
+        title:{
+          display:true,
+          text:"Evolución inventario"
+        },
+        tooltips: {
+  mode: 'label',
+  callbacks: {
+      label: function(tooltipItem, data) {
+          var corporation = data.datasets[tooltipItem.datasetIndex].label;
+          var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+          var total = 0;
+          for (var i = 0; i < data.datasets.length; i++)
+              total += data.datasets[i].data[tooltipItem.index];
+          if (tooltipItem.datasetIndex != data.datasets.length - 1) {
+              return [corporation + " : " + valor.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+          } else {
+              return [ corporation + " : " + valor.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'), "Total : " + total.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+          }
+      }
+  }
+},
+        scales: {
+            xAxes: [{ stacked: true }],
+            yAxes: [{stacked: true,
+                ticks: {
+                    autoSkip: false,
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+  };
+
+
+
+
+  var meses_1 = [];
+  var meses_3 = [];
+  var meses_6 = [];
+
+  var aux=0;
+  {% for inv in inventarios %}
+  aux=0;
+  aux= {{inv.kraft_1_meses_kg}} + {{inv.blanco_1_meses_kg}} + {{inv.CPP_1_meses_kg}} + {{inv.otros_1_meses_kg}}
+  meses_1.push( (aux/1000) );
+
+  aux=0;
+  aux= {{inv.kraft_3_meses_kg}} + {{inv.blanco_3_meses_kg}} + {{inv.CPP_3_meses_kg}} + {{inv.otros_3_meses_kg}}
+  meses_3.push( (aux/1000) );
+
+  aux=0;
+  aux= {{inv.kraft_6_meses_kg}} + {{inv.blanco_6_meses_kg}} + {{inv.CPP_6_meses_kg}} + {{inv.otros_6_meses_kg}}
+  meses_6.push( (aux/1000) );
+
+
+  {% endfor %}
+
+
+
+  var config3 = {
+  type: 'bar',
+  data: {
+      labels: labels,
+      datasets: [{
+          label: '1 mes',
+          data: meses_1,
+            backgroundColor: "rgba(10,70,190,0.5)",
+          //[
+              //'rgba(255, 99, 132, 0.2)',
+              //'rgba(54, 162, 235, 0.2)',
+              //'rgba(255, 206, 86, 0.2)',
+              //'rgba(75, 192, 192, 0.2)',
+              //'rgba(153, 102, 255, 0.2)',
+              //'rgba(255, 159, 64, 0.2)'
+          //],
+          //borderColor:
+          // [
+              //'rgba(255,99,132,1)',
+              //'rgba(54, 162, 235, 1)',
+              //'rgba(255, 206, 86, 1)',
+              //'rgba(75, 192, 192, 1)',
+              //'rgba(153, 102, 255, 1)',
+              //'rgba(255, 159, 64, 1)'
+          //],
+          borderWidth: 0
+      },{
+
+        label: '3 meses',
+        data: meses_3,
+        backgroundColor:
+            "rgba(82,154,190,0.5)",
+          borderWidth: 0
+
+      },{
+
+        label: '6 meses',
+        data: meses_6,
+        backgroundColor:
+            "rgba(120,100,50,0.5)",
+          borderWidth: 0
+
+      }]
+  },
+  options: {
+      title:{
+        display:true,
+        text:"Stock mayor a un mes (TN)"
+      },
+      tooltips: {
+mode: 'label',
+callbacks: {
+    label: function(tooltipItem, data) {
+        var corporation = data.datasets[tooltipItem.datasetIndex].label;
+        var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+        var total = 0;
+        for (var i = 0; i < data.datasets.length; i++)
+            total += data.datasets[i].data[tooltipItem.index];
+        if (tooltipItem.datasetIndex != data.datasets.length - 1) {
+            return [corporation + " : " + valor.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+        } else {
+            return [ corporation + " : " + valor.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'), "Total : " + total.toFixed(0).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+        }
+    }
+}
+},
+      scales: {
+          xAxes: [{ stacked: false }],
+          yAxes: [{stacked: false,
+              ticks: {
+                  autoSkip: false,
+                  beginAtZero:true
+              }
+          }]
+      }
+  }
+};
+
+
+</script>
+
+
+
+{% endblock content %}

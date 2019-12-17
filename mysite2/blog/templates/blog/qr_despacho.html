@@ -1,0 +1,49 @@
+{% extends "blog/base.html" %}
+{% load qr_code %}
+{% block content %}
+<h2>Ingresar datos transportista</h2>
+<a href="{% url 'new_camion' %}" ><span class="glyphicon glyphicon-plus">Crear nuevo camión</span></a>
+
+<div class="container" style="padding:10px 10px;">
+
+
+{% if camiones %}
+  <table>
+    <tr>
+
+    <td>
+      <h5>Transportista</h5>
+    </td>
+
+    <td>
+      <h5>Patentes</h5>
+    </td>
+    </tr>
+
+    {% for transportista in transportistas %}
+      <tr>
+
+      <td>
+        <h6>{{transportista}}</h6>
+      </td>
+      <td>
+            {% for camion in camiones %}
+            {% if camion.Transportista == transportista %}
+            <a style="text-align: center;" href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
+            <br>
+            {% endif %}
+            {% endfor %}
+
+      </td>
+
+
+    </tr>
+  {% endfor %}
+  </table>
+
+
+{% endif %}
+
+</div>
+
+{% endblock %}

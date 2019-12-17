@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-
+from blog.models import OrdenCorrplan as OrdenCorrplan
+from blog.models import FotoProgCorr as FotoProgCorr
 from blog.models import FotoCorrplan as FotoCorrplan
 from blog.models import TomaInvCic as TomaInvCic
 from blog.models import PalletCic as PalletCic
@@ -10,6 +11,8 @@ from blog.models import ConsumoRollos as ConsumoRollos
 from blog.models import Foto_ConsumoRollos as Foto_ConsumoRollos
 from blog.models import Foto_Datos_MovPallets as Foto_Datos_MovPallets
 from blog.models import IDProgCorr as IDProgCorr
+from blog.models import Cartones as Cartones
+from blog.models import Maquinas as Maquinas
 from blog.models import Foto_Inv_Cic_WIP as Foto_Inv_Cic_WIP
 from blog.models import Foto_Calles_Inv_Cic_WIP as Foto_Calles_Inv_Cic_WIP
 from blog.models import Foto_Palletscti_Inv_Cic_WIP as Foto_Palletscti_Inv_Cic_WIP
@@ -376,8 +379,9 @@ class Command(BaseCommand):
 
         while (1):
 
+            self.update_datos_inv_cic()
+            self.update_datos_inv_cic()
             self.updateconsbobs()
             self.update_datos_inv_cic()
-
+            self.update_datos_inv_cic()
             self.updatecorrplan()
-            sleep(120)

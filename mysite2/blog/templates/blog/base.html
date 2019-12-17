@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Prototipo Corrupac</title>
+
+    <!-- JQery //Ajax -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- BootStrap----->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Medium Style Editor----->
+
+    <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8">
+
+
+    <script src="{% static 'js/moment-with-locales.js' %}"></script>
+    <script src="{% static 'js/moment-duration-format.min.js' %}"></script>
+    <script src="{% static 'js/moment-timezone-with-data-10-year-range.js' %}"></script>
+    <script src="{% static 'js/papaparse.min.js' %}"></script>
+    <!--<script src="{% static 'js/alasql.min.js' %}"></script> -->
+    <!--<script src="{% static 'js/xlsx.core.min.js' %}"></script> -->
+    <!--<script src="{% static 'js/date.format.js' %}"></script> -->
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+
+
+
+    <!-- Custom CCS----->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+
+    <!-- Fonts----->
+    <!--<link href="https://fonts.googleapis.com/css?family=Lora|Stalinist+One" rel="stylesheet">-->
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans" rel="stylesheet">
+
+    <!-- Ojo esto sirve para que se ejecute el block jquery o algo así----->
+    <script>
+      $(document).ready(function(){
+        {% block jquery %}{% endblock %}
+        })
+
+
+    </script>
+
+    <style>
+
+          table1 {
+              font-family: arial, sans-serif;
+              border-collapse: collapse;
+              width: 100px;
+
+          }
+
+          table {
+              font-family: arial, sans-serif;
+
+
+          }
+
+          tablee {
+              font-family: arial, sans-serif;
+
+              border-spacing:0; /* Removes the cell spacing via CSS */
+              border-collapse: collapse;
+
+          }
+
+
+
+          td, th {
+            padding: 4px 4px;
+
+          }
+
+
+
+#navbarNav
+{
+	margin-top:1px
+}
+
+#navbarNav ul
+{
+	list-style:none;
+	position:relative;
+	float:left;
+	margin:0;
+	padding:0
+}
+
+#navbarNav ul a
+{
+	display:block;
+	color:#333;
+	text-decoration:none;
+	font-weight:700;
+	font-size:18px;
+	line-height:32px;
+	padding:0 15px;
+
+}
+
+#navbarNav ul li
+{
+	position:relative;
+	float:left;
+	margin:0;
+	padding:0
+}
+
+#navbarNav ul li.current-menu-item
+{
+	background:#ddd
+}
+
+#navbarNav ul li:hover
+{
+	background:#e3f6f6
+}
+
+#navbarNav ul ul
+{
+	display:none;
+	position:absolute;
+	top:100%;
+	left:0;
+	background:#fff;
+	padding:0
+}
+
+#navbarNav ul ul li
+{
+	float:none;
+	width:200px
+}
+
+#navbarNav ul ul a
+{
+	line-height:120%;
+	padding:10px 15px
+}
+
+#navbarNav ul ul ul
+{
+	top:0;
+	left:100%
+}
+
+#navbarNav ul li:hover > ul
+{
+	display:block
+}
+
+
+    </style>
+
+
+  </head>
+  <body>
+
+
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar navbar-expand-lg  techfont custom-navbar  bg-light" id="navbarNav">
+      <div class="container">
+
+
+      <div class="nav navbar-nav" id="navbarNav">
+        <ul>
+
+          <li><a class="nav-link" >Inicio</a>
+            <ul>
+              <!--
+              <li>
+              <a class="nav-link" href="{% url 'res_conv_v2' %}">Cumpl. Conv.</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'res_corr' %}">Cumpl. Corr.</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'res_pareados' %}">Pareados</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'placas_wip' %}">Placas WIP</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'panel_bpt' %}">Panel BPT</a>
+              </li>               -->
+
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_wip' %}">Panel WIP</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_wip_prog' %}">Panel WIP/Prog</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_proy_wip' %}">Proyección WIP</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_movpallets' %}">Panel MovPallets</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_inv_ciclico' %}">Panel Inv. Cíclico</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'carga_mov_rollos' %}">Carga Mov Rollos</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'panel_consumo_rollos' %}">Panel Consumo Rollos</a>
+              </li>
+              <!--
+              <li>
+                <a class="nav-link" href="{% url 'qr_despacho' %}">QR despacho</a>
+              </li>
+
+
+              <li>
+                <a class="nav-link" href="{% url 'carga_mov_pallets' %}">Carga Mov Pallets</a>
+              </li>
+
+
+              <li>
+                <a class="nav-link" href="{% url 'get_corrplan' %}">Get_corrplan</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'consumos_puestos' %}">Consumos_puestos</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'cump_proto' %}">Cump_Proto</a>
+              </li>
+               -->
+
+            </ul>
+
+          </li>
+
+<!--
+          <li><a href="#">KPI</a>
+            <ul>
+              <li>
+                <a class="nav-link" href="{% url 'kpi_conv_res' %}">Resumen Conv</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'resumen_inv' %}">Resumen inventario</a>
+              </li>
+            </ul>
+
+          </li>
+
+ -->
+        </ul>
+
+      </div>
+
+
+        <ul class= 'nav navbar-nav navbar-right' >
+
+
+          <!--
+          <li>
+            <a class="nav-link" href="{% url 'OCI_create' %}">OCI</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'appointment_create' %}">appointment</a>
+          </li>
+
+          <li>
+            <a class="nav-link" href="{% url 'book_normal' %}">Book Normal</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'book_normal_model' %}">Book Normal Model</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'book_authors_model' %}">Book Authors Model</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'post_new' %}">NewPost</a>
+          </li>
+
+          <li>
+            <a class="nav-link" href="{% url 'post_draft_list' %}">Draft</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'prueba_ultimate' %}">PRUEBA ULTIMATE</a>
+          </li>
+        -->
+
+        {% if user.is_authenticated %}
+
+
+
+
+
+
+          <li>
+            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+          </li>
+          <li>
+            <a>Welcome {{user.username}}</a>
+          </li>
+
+
+          <li><a href="#">Inventario</a>
+            <ul>
+              <li>
+                <a class="nav-link" href="{% url 'carga_inventario' %}">Carga inventario</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'kpi_conv' %}">Calcula KPI Conv</a>
+              </li>
+
+            </ul>
+          </li>
+
+          <li><a href="#">Carga datos Conv</a>
+            <ul>
+              <li>
+                <a class="nav-link" href="{% url 'carga_orderinfo' %}">Carga OrderInfo</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'carga_maestrop' %}">Carga Maestro Padrón</a>
+              </li>
+
+              <li>
+                <a class="nav-link" href="{% url 'carga_prog' %}">Carga prog. Conversión</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'carga_prod_real' %}">Carga prod. Conversión</a>
+              </li>
+            </ul>
+          </li>
+
+
+
+          <li><a href="#">Carga datos Corr</a>
+            <ul>
+              <li>
+                <a class="nav-link" href="{% url 'carga_prog_corr' %}">Carga prog. Corrugado</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'carga_prod_corr' %}">Carga prod. Corrugado</a>
+              </li>
+            </ul>
+          </li>
+
+
+    <li><a href="#">Proyección</a>
+            <ul>
+              <li>
+                <a class="nav-link" href="{% url 'carga_proyeccion' %}">Carga proy MKT</a>
+              </li>
+            </ul>
+          </li>
+
+            {% else %}
+            <li>
+              <a class='nav navbar-right'href="{% url 'login' %}"><span class='glyphicon glyphicon-user'>Login</span></a>
+            </li>
+
+
+
+          {% endif %}
+
+        </ul>
+
+
+    </nav>
+
+    <!-- content -->
+
+    <div class="content container">
+      <div class="row">
+        <div class="col-mid-8">
+          <div class="blog_posts">
+            {% block content %}
+            {% endblock %}
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+
+    {% block javascript %}{% endblock %}
+
+  </body>
+
+
+</html>

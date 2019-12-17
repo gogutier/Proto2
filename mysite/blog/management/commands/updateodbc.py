@@ -194,12 +194,12 @@ class Command(BaseCommand):
                 o.esFGLoad=datoFGLoad
 
                 o.save()
-                sleep(0.05)
+                sleep(0.01)
 
                 #creo la ubicación de inventario en caso de que no exista.
                 a, created = UbicPallet.objects.get_or_create(calle=dato11)
                 a.save()
-                sleep(0.05)
+                sleep(0.01)
 
                 #creo el pallet en caso de que no exista. Si ya existe le actualizo la ubicación.
 
@@ -220,7 +220,7 @@ class Command(BaseCommand):
                 c.m2pallet=datom2pallet
                 c.kgpallet=datokgpallet
                 c.save()
-                sleep(0.06)
+                sleep(0.01)
 
                 #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
 
@@ -373,7 +373,7 @@ class Command(BaseCommand):
         #return(cursor[0])
         try:
 
-            #print("Tarja:")
+            print("Tarja: "+row1[8])
             tarjax=row1[8]
             orderidx=row1[4]
             #id=row1[4]
@@ -407,10 +407,10 @@ class Command(BaseCommand):
                 fechacreacionpallet=datetime.now()
             #print("unidades pallet")
 
-            print("Obtengo el cliente de buscando el cliente en la tabla ORDERS_INFO para el ID: " + str(orderidx))
+            print("Obtengo el cliente en la tabla ORDERS_INFO para el ID: " + str(orderidx))
             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO]  where ORDERID ='"+ str(orderidx) +"' order by TRANSACTIONINDEX desc")#**** Si aquí le pongo el DESC mejora? creo que si (lo cambié en el local pero no en el servidor productivo)
 
-            TI_Orders_Info="X"
+            TI_Orders_Info=1000
             row2C=cursor.fetchone()
             if row2C:
 
@@ -423,43 +423,54 @@ class Command(BaseCommand):
                 print("No se encontraron tarjas en CONVERTIONOPINFO para la orderid " + str(orderidx) )
                 cliente="vacío"
 
+            if row2C:
+                print("Obtengo la máquina en ruta de tabla ORDERS_INFO para el Transactionindex: " + str(TI_Orders_Info))
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[WORKCENTERID],[ROUTINGNO],[OPERATIONNO],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where Transactionindex='"+ str(TI_Orders_Info) +"' order by TRANSACTIONINDEX desc")
 
-            print("Obtengo la máquina en ruta de tabla ORDERS_INFO para el Transactionindex: " + str(TI_Orders_Info))
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[WORKCENTERID],[ROUTINGNO],[OPERATIONNO],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where Transactionindex='"+ str(TI_Orders_Info) +"' order by TRANSACTIONINDEX desc")
+                row2D=cursor.fetchone()
+                if row2D:
 
-            row2D=cursor.fetchone()
-            if row2D:
+                    maqruta=row2D[1]
+                    print("maqruta obtenido!")
+                    print(row2D[1])
 
-                maqruta=row2D[1]
-                print("maqruta obtenido!")
-                print(row2D[1])
-
+                else:
+                    print("No se encontraron tarjas en ORDERS_INFO para el Transactionindex " + str(TI_Orders_Info) )
+                    maqruta="vacío"
             else:
-                print("No se encontraron tarjas en ORDERS_INFO para la orderid " + str(TI_Orders_Info) )
                 maqruta="vacío"
-            #print("unidades pallet")
-            #print("unidades pallet")
-            #print(unidadespallet)
+                #print("unidades pallet")
+                #print("unidades pallet")
+                #print(unidadespallet)
 
 
             #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón###
             # Ojo! Esto lo uso para sacar el transaction index inicial con el que se alimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
-            #print("iniciando tercera consulta por el id " + str(row1[3]) )
+            print("iniciando tercera consulta por el padron " + str(row1[3]) )
             #sleep(0.01)
-            cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
-            row3=cursor.fetchone()
-            transaction=row3[0]
-            #print("transaction")
-            #print(transaction)
 
-            #print("inciando cuarta consulta")
-            #sleep(0.01)
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
-            row4=cursor.fetchone()
-            #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
-            ancho=row4[1]
-            alto=row4[2]
-            pesouni=0
+            if (str(row1[3])!="Default"):
+                print("el Padron "+str(row1[3]) +" no es Default")
+                cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
+                row3=cursor.fetchone()
+                transaction=row3[0]
+                print("transaction: " + str(transaction))
+                #print(transaction)
+
+                print("inciando cuarta consulta")
+                #sleep(0.01)
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
+                row4=cursor.fetchone()
+                #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
+                ancho=row4[1]
+                alto=row4[2]
+                pesouni=0
+            else:
+                print("el ID sí es default")
+                row4=[0,0,0,0]
+                ancho=0
+                alto=0
+                pesouni=0
 
             kgpallet= pesouni* unidadespallet
             #print("tarja")
@@ -487,9 +498,10 @@ class Command(BaseCommand):
             #print(m2uni)
             datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
             print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
+            print("fin consulta")
         except Exception as e:
             print(e)
-            print("error al tomar row1!")
+            print("error al tomar rows!")
             print("Unexpected error:", sys.exc_info()[0])
             #print("Unexpected error:", sys.exc_info()[0])
             sleep(1)

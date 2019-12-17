@@ -1,0 +1,583 @@
+{% extends "blog/base.html" %}
+
+
+
+<script type="text/javascript">
+
+
+
+  {% block jquery %}
+
+
+
+  var endpoint='/api/data_wip/';
+  var endpoint2='/api/data_wip_2/';
+
+
+
+
+  function setChart(){
+
+
+    var f0 = moment.parseZone(datos0["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f1 = moment.parseZone(datos1["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f2 = moment.parseZone(datos2["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f3 = moment.parseZone(datos3["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f4 = moment.parseZone(datos4["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f5 = moment.parseZone(datos5["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f6 = moment.parseZone(datos6["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f7 = moment.parseZone(datos7["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f8 = moment.parseZone(datos8["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+    var f9 = moment.parseZone(datos9["fechamuestra"]).tz('America/Santiago').format('DD/MM/YY hh:mm');
+
+
+
+    var  labels = [f9,f8,f7,f6,f5,f4,f3,f2,f1,f0]; //valores de eje Y // Poner fecha en que se capturó cada dato.
+
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'FFG',
+                data: [datos9["M2FFG"],datos8["M2FFG"],datos7["M2FFG"],datos6["M2FFG"],datos5["M2FFG"],datos4["M2FFG"],datos3["M2FFG"],datos2["M2FFG"],datos1["M2FFG"],datos0["M2FFG"]],
+                  borderColor: "rgba(0,42,255)",
+                  backgroundColor: "rgba(0,42,255)",
+                //[
+                    //'rgba(255, 99, 132, 0.2)',
+                    //'rgba(54, 162, 235, 0.2)',
+                    //'rgba(255, 206, 86, 0.2)',
+                    //'rgba(75, 192, 192, 0.2)',
+                    //'rgba(153, 102, 255, 0.2)',
+                    //'rgba(255, 159, 64, 0.2)'
+                //],
+                //borderColor:
+                // [
+                    //'rgba(255,99,132,1)',
+                    //'rgba(54, 162, 235, 1)',
+                    //'rgba(255, 206, 86, 1)',
+                    //'rgba(75, 192, 192, 1)',
+                    //'rgba(153, 102, 255, 1)',
+                    //'rgba(255, 159, 64, 1)'
+                //],
+                borderWidth: 0,
+                //responsive: true,
+
+            },{
+
+              label: 'FFW',
+              data: [datos9["M2FFW"],datos8["M2FFW"],datos7["M2FFW"],datos6["M2FFW"],datos5["M2FFW"],datos4["M2FFW"],datos3["M2FFW"],datos2["M2FFW"],datos1["M2FFW"],datos0["M2FFW"]],
+              borderColor: "rgba(255,42,0)",
+              backgroundColor: "rgba(255,42,0)",
+                borderWidth: 0
+
+            },{
+
+              label: 'TCY',
+              data: [datos9["M2TCY"],datos8["M2TCY"],datos7["M2TCY"],datos6["M2TCY"],datos5["M2TCY"],datos4["M2TCY"],datos3["M2TCY"],datos2["M2TCY"],datos1["M2TCY"],datos0["M2TCY"]],
+              borderColor: "rgba(0,204,0)",
+              backgroundColor: "rgba(0,204,0)",
+                borderWidth: 0
+
+            },{
+
+              label: 'DRO',
+              data: [datos9["M2DRO"],datos8["M2DRO"],datos7["M2DRO"],datos6["M2DRO"],datos5["M2DRO"],datos4["M2DRO"],datos3["M2DRO"],datos2["M2DRO"],datos1["M2DRO"],datos0["M2DRO"]],
+              borderColor: "rgba(51,255,255)",
+              backgroundColor: "rgba(51,255,255)",
+                borderWidth: 0
+
+            },{
+
+              label: 'WRD',
+              data: [datos9["M2WRD"],datos8["M2WRD"],datos7["M2WRD"],datos6["M2WRD"],datos5["M2WRD"],datos4["M2WRD"],datos3["M2WRD"],datos2["M2WRD"],datos1["M2WRD"],datos0["M2WRD"]],
+              borderColor: "rgba(255,255,25)",
+              backgroundColor: "rgba(255,255,25)",
+              borderWidth: 0
+
+            },{
+
+              label: 'HCR',
+              data: [datos9["M2HCR"],datos8["M2HCR"],datos7["M2HCR"],datos6["M2HCR"],datos5["M2HCR"],datos4["M2HCR"],datos3["M2HCR"],datos2["M2HCR"],datos1["M2HCR"],datos0["M2HCR"]],
+              borderColor: "rgba(55,60,204)",
+              backgroundColor: "rgba(55,60,255)",
+                borderWidth: 0
+
+            },{
+              label: 'DIM',
+              data: [datos9["M2DIM"],datos8["M2DIM"],datos7["M2DIM"],datos6["M2DIM"],datos5["M2DIM"],datos4["M2DIM"],datos3["M2DIM"],datos2["M2DIM"],datos1["M2DIM"],datos0["M2DIM"]],
+              borderColor: "rgba(135,25,105)",
+              backgroundColor: "rgba(135,25,105)",
+              borderWidth: 0
+
+            },{
+
+              label: 'CORR',
+              data: [datos9["M2CORR"],datos8["M2CORR"],datos7["M2CORR"],datos6["M2CORR"],datos5["M2CORR"],datos4["M2CORR"],datos3["M2CORR"],datos2["M2CORR"],datos1["M2CORR"],datos0["M2CORR"]],
+              borderColor: "rgba(155,155,125)",
+              backgroundColor: "rgba(155,155,125)",
+              borderWidth: 0
+
+            }]
+        },
+        options: {
+            title:{
+              display:true,
+              text:"Gráfico inventrio en WIP"
+            },
+            tooltips: {
+      mode: 'label',
+      callbacks: {
+          label: function(tooltipItem, data) {
+              var corporation = data.datasets[tooltipItem.datasetIndex].label;
+              var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+              var total = 0;
+              for (var i = 0; i < data.datasets.length; i++)
+                  {total += data.datasets[i].data[tooltipItem.index];}
+              if (tooltipItem.datasetIndex == 0) {
+                  return ["Total : " + total ,corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+
+
+              } else {
+                return [ corporation + " : " + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')];
+
+              }
+          }
+      }
+  },
+            scales: {
+                xAxes: [{ stacked: true }],
+                yAxes: [{stacked: true,
+                    ticks: {
+                        autoSkip: false,
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+    //defino las variables que utilizará la tabla desde antes. Luego el actualiza las va renovando cada x tiempo
+
+
+
+    displayTabla();
+
+    function displayTabla(results){
+
+      console.log("llenando tabla");
+
+      var table = "<table class='table table-hover' id='myTable'>";
+
+
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+''+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'FFG' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'FFW' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'TCY' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'DRO' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'WRD' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'HCR' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'PNC*' + '<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 >' + 'CORR' + '<h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5>' + 'Total' + '<h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+'Mm2 Actual'+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5><h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+'Consumo +24h'+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5><h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+
+      table+= "<tr>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4>'+'Limite Mm2'+'<h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= "</td>";
+      table+= '<td style="text-align: center">';
+      table+= '<h4 ><h4>';
+      table+= "</td>";
+      table+= '<td>';
+      table+= '<h5><h5>';
+      table+= "</td>";
+      table+= '</tr>';
+
+
+      table+= "</table>";
+
+
+
+
+      $("#parsed_csv_list").html(table);
+
+
+      }
+
+
+
+
+        window.setInterval(function(){
+          console.log("hola");
+          datoswip_2();
+          }, 60000);
+
+
+
+
+    datoswip_2();
+
+    function datoswip_2(){
+
+      console.log("iniciando");
+      var myTable = document.getElementById('myTable');
+
+      $.ajax({
+          method: "GET",
+          url: endpoint2,
+          success: function(response_data){
+          datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+          datos1 = response_data.datos1; //ACÁ RECIBO UN DICCIONARIO
+          datos2 = response_data.datos2; //ACÁ RECIBO UN DICCIONARIO
+          datos3 = response_data.datos3; //ACÁ RECIBO UN DICCIONARIO
+          datos4 = response_data.datos4; //ACÁ RECIBO UN DICCIONARIO
+          datos5 = response_data.datos5; //ACÁ RECIBO UN DICCIONARIO
+          datos6 = response_data.datos6; //ACÁ RECIBO UN DICCIONARIO
+          datos7 = response_data.datos7; //ACÁ RECIBO UN DICCIONARIO
+          datos8 = response_data.datos8; //ACÁ RECIBO UN DICCIONARIO
+          datos9 = response_data.datos9; //ACÁ RECIBO UN DICCIONARIO
+          m2pormaq = response_data.m2pormaq; //ACÁ RECIBO UN array
+
+          //console.log(m2pormaq)
+          //totales = response_data.totales;
+
+
+          myTable.rows[1].cells[1].innerHTML = datos0["M2FFG"].toFixed(2)//datos0[0][2].toFixed(1);//FFG
+          myTable.rows[1].cells[2].innerHTML = datos0["M2FFW"].toFixed(2)//datos0[2][2].toFixed(1);//FFW
+          myTable.rows[1].cells[3].innerHTML = datos0["M2TCY"].toFixed(2)//datos0[1][2].toFixed(1);//TCY
+          myTable.rows[1].cells[4].innerHTML = datos0["M2DRO"].toFixed(2)//datos0[3][2].toFixed(1);//DRO
+          myTable.rows[1].cells[5].innerHTML = datos0["M2WRD"].toFixed(2)//datos0[4][2].toFixed(1);//WRD
+          myTable.rows[1].cells[6].innerHTML = datos0["M2HCR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[7].innerHTML = datos0["M2DIM"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[8].innerHTML = datos0["M2CORR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[9].innerHTML = datos0["M2Total"].toFixed(2);//Total
+
+
+          myTable.rows[2].cells[1].innerHTML = (m2pormaq[0]).toFixed(2);//FFG
+          myTable.rows[2].cells[2].innerHTML = (m2pormaq[1]).toFixed(2);;//FFW
+          myTable.rows[2].cells[3].innerHTML = (m2pormaq[2]).toFixed(2);;//TCY
+          myTable.rows[2].cells[4].innerHTML = (m2pormaq[3]).toFixed(2);;//DRO
+          myTable.rows[2].cells[5].innerHTML = (m2pormaq[4]).toFixed(2);;//WRD
+          myTable.rows[2].cells[6].innerHTML = (m2pormaq[5]).toFixed(2);;//HCR
+          //myTable.rows[2].cells[7].innerHTML = 0;;//dim
+          //myTable.rows[2].cells[8].innerHTML = 0.toFixed(1);;//corr
+          myTable.rows[2].cells[9].innerHTML = (m2pormaq[0]+m2pormaq[1]+m2pormaq[2]+m2pormaq[3]+m2pormaq[4]+m2pormaq[5]).toFixed(1);;//Total
+
+
+
+
+          myTable.rows[3].cells[1].innerHTML = 138//datos0[0][2].toFixed(1);//FFG
+          myTable.rows[3].cells[2].innerHTML = 122//datos0["M2FFW"].toFixed(2)//datos0[2][2].toFixed(1);//FFW
+          myTable.rows[3].cells[3].innerHTML = 103//datos0["M2TCY"].toFixed(2)//datos0[1][2].toFixed(1);//TCY
+          myTable.rows[3].cells[4].innerHTML = 103//datos0["M2DRO"].toFixed(2)//datos0[3][2].toFixed(1);//DRO
+          myTable.rows[3].cells[5].innerHTML = 81//datos0["M2WRD"].toFixed(2)//datos0[4][2].toFixed(1);//WRD
+          myTable.rows[3].cells[6].innerHTML = 122//datos0["M2HCR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[3].cells[7].innerHTML = 73//datos0["M2DIM"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[3].cells[8].innerHTML = datos0["M2CORR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[3].cells[9].innerHTML = datos0["M2Total"].toFixed(2);//Total
+
+          //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
+
+
+          fechamoment=moment.parseZone(datos0["fechamuestra"])
+          fecha="Última actualización: ";
+          fecha+= fechamoment.tz('America/Santiago').format('LLL');
+
+
+          setChart();
+
+          $("#fechaupdate").html(fecha);
+
+          },
+          error: function(error_data){
+            console.log("error");
+            console.log(error_data);
+          }
+
+        })
+
+
+        console.log("actualizado valores antiguos");
+        //displayTabla();
+
+
+
+
+    }
+
+
+
+    function datoswip(){
+
+      console.log("iniciando");
+      var myTable = document.getElementById('myTable');
+
+      $.ajax({
+          method: "GET",
+          url: endpoint,
+          success: function(response_data){
+          datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+          datos1 = response_data.datos1; //ACÁ RECIBO UN DICCIONARIO
+          datos2 = response_data.datos2; //ACÁ RECIBO UN DICCIONARIO
+          datos3 = response_data.datos3; //ACÁ RECIBO UN DICCIONARIO
+          datos4 = response_data.datos4; //ACÁ RECIBO UN DICCIONARIO
+          datos5 = response_data.datos5; //ACÁ RECIBO UN DICCIONARIO
+          datos6 = response_data.datos6; //ACÁ RECIBO UN DICCIONARIO
+          datos7 = response_data.datos7; //ACÁ RECIBO UN DICCIONARIO
+          datos8 = response_data.datos8; //ACÁ RECIBO UN DICCIONARIO
+          datos9 = response_data.datos9; //ACÁ RECIBO UN DICCIONARIO
+
+
+          totales = response_data.totales;
+          console.log("datos0:");
+          console.log(datos0);
+          console.log(totales);
+
+          console.log("datos1:");
+          console.log(datos1);
+          console.log(datos1["M2DRO"]);
+
+
+          myTable.rows[1].cells[1].innerHTML = datos0["M2FFG"].toFixed(2)//datos0[0][2].toFixed(1);//FFG
+          myTable.rows[1].cells[2].innerHTML = datos0["M2FFW"].toFixed(2)//datos0[2][2].toFixed(1);//FFW
+          myTable.rows[1].cells[3].innerHTML = datos0["M2TCY"].toFixed(2)//datos0[1][2].toFixed(1);//TCY
+          myTable.rows[1].cells[4].innerHTML = datos0["M2DRO"].toFixed(2)//datos0[3][2].toFixed(1);//DRO
+          myTable.rows[1].cells[5].innerHTML = datos0["M2WRD"].toFixed(2)//datos0[4][2].toFixed(1);//WRD
+          myTable.rows[1].cells[6].innerHTML = datos0["M2HCR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[7].innerHTML = datos0["M2DIM"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[8].innerHTML = datos0["M2CORR"].toFixed(2)//datos0[5][2].toFixed(1);//HCR
+          myTable.rows[1].cells[9].innerHTML = totales[1].toFixed(1);//Total
+
+
+          myTable.rows[2].cells[1].innerHTML = (datos0["M2FFG"]/(1661/68)).toFixed(1);//FFG
+          myTable.rows[2].cells[2].innerHTML = (datos0["M2FFW"]/(1813/68)).toFixed(1);//FFW
+          myTable.rows[2].cells[3].innerHTML = (datos0["M2TCY"]/(1138/68)).toFixed(1);//TCY
+          myTable.rows[2].cells[4].innerHTML = (datos0["M2DRO"]/(2042/68)).toFixed(1);//DRO
+          myTable.rows[2].cells[5].innerHTML = (datos0["M2WRD"]/(1378/68)).toFixed(1);//WRD
+          myTable.rows[2].cells[6].innerHTML = (datos0["M2HCR"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[7].innerHTML = (datos0["M2DIM"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[8].innerHTML = (datos0["M2CORR"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[9].innerHTML = (totales[1]/(9423/68)).toFixed(1);//Total
+
+
+          myTable.rows[2].cells[1].innerHTML = (datos0["M2FFG"]/(1661/68)).toFixed(1);//FFG
+          myTable.rows[2].cells[2].innerHTML = (datos0["M2FFW"]/(1813/68)).toFixed(1);//FFW
+          myTable.rows[2].cells[3].innerHTML = (datos0["M2TCY"]/(1138/68)).toFixed(1);//TCY
+          myTable.rows[2].cells[4].innerHTML = (datos0["M2DRO"]/(2042/68)).toFixed(1);//DRO
+          myTable.rows[2].cells[5].innerHTML = (datos0["M2WRD"]/(1378/68)).toFixed(1);//WRD
+          myTable.rows[2].cells[6].innerHTML = (datos0["M2HCR"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[7].innerHTML = (datos0["M2DIM"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[8].innerHTML = (datos0["M2CORR"]/(1388/68)).toFixed(1);//HCR
+          myTable.rows[2].cells[9].innerHTML = (totales[1]/(9423/68)).toFixed(1);//Total
+
+          //función llenar tabla (colores, traducir a turnos de carga seg+un promedio de m2 por turno de cada máquina)
+
+          setChart();
+
+          },
+          error: function(error_data){
+            console.log("error");
+            console.log(error_data);
+          }
+
+        })
+
+
+        console.log("actualizado");
+        //displayTabla();
+
+
+
+
+    }
+
+
+
+    $("#actualiza").click(function()
+    {
+      datoswip_2();
+
+    });
+
+
+
+  {% endblock %}
+</script>
+
+
+
+
+{% block content %}
+
+<h1>Placas WIP</h1>
+<div class="container">
+<!--//<button type="button" id="actualiza">Actualiza</button>-->
+<!--<div class="jumbotron ">//jumbotron hace qel jondo sea gris?-->
+
+<div class="table-responsive">
+
+
+<div class="row" id="parsed_csv_list">
+
+  </div>
+
+
+</div>
+
+<canvas id="myChart" style="display= block; width:1000px"></canvas>
+
+<!--</div>-->
+
+
+
+  <h7 class="float-right" id="fechaupdate"></h7>
+
+  <div class="clearfix"></div>
+
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+</script>
+
+{% endblock %}

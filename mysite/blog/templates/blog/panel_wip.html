@@ -283,7 +283,7 @@ function datosinv(){
         auxtext='</br>'
       }
       //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + cuadros[i][2] + '</a>' + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
-      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2].substring(0,7)  + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
 
       myTable.rows[cuadros[i][1]-1].cells[cuadros[i][0]].innerHTML = auxtext//imagentime
 
@@ -417,9 +417,9 @@ function displayHTMLTable(){
 
 
 
-    for(i=8;i<rows-1;i++){
+    for(i=8;i<rows-3;i++){
       table+= "<tr style='text-align: center'>";
-        for(j=0;j<columns-20;j++){
+        for(j=0;j<columns-18;j++){
           table+= "<td style='font-size: 10px; '>";
           //table+= ".";
           table+= "</th>";
@@ -427,7 +427,15 @@ function displayHTMLTable(){
       table+= "</tr>";
     }
 
-
+        for(i=rows-3;i<rows-1;i++){
+          table+= "<tr style='text-align: center'>";
+            for(j=0;j<columns-8;j++){
+              table+= "<td style='font-size: 10px; '>";
+              //table+= ".";
+              table+= "</th>";
+            }
+          table+= "</tr>";
+        }
 
 
 
@@ -451,17 +459,18 @@ function displayHTMLTable(){
   creacuadro(22,1,"ZDRO1",3,5);
   creacuadro(23,1,"ZFFG2",3,5);
   creacuadro(24,1,"ZFFG1",3,5);
-  //creacuadro(50,0,"CORR_UPPER_Stacker",2,5);
-  //creacuadro(51,0,"CORR_LOWER_Stacker",2,5);
-  creacuadro(5,10,"ZPNC",3,4);
-  creacuadro(12,10,"ZPASILLO",6,4);
+  creacuadro(5,10,"ZPNC",3,2);
+  creacuadro(12,10,"ZPASILLO",6,2);
+  creacuadro(39,13,"CORR_UPPER_Stacker",2,2);
+  creacuadro(40,13,"CORR_LOWER_Stacker",2,2);
+  //creacuadro(27,1,"CORR_LOWER_Stacker",3,5);
 
 }
 
 function creacuadro(x,y,texto,a,l){
 
   var myTable = document.getElementById("table");//.getElementsByTagName("td");
-  myTable.rows[y].cells[x].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + texto + '</a>' + "</br>" + "%";
+  myTable.rows[y].cells[x].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + texto.substring(0,7) + '</a>' + "</br>" + "%";
   myTable.rows[y].cells[x].style.backgroundColor = "yellow"
 
   myTable.rows[y].cells[x].colSpan = parseInt(a);

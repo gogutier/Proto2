@@ -221,6 +221,19 @@ function displayHTMLTable(){
 
           table+= "<table style='border: 0.5px solid DarkRed;'>";
 
+
+            table+= "<tr>";
+            table+= "<td style='font-size: 14px;' >";
+                table+= ((datosWIP[key]['palletsencontrados'][0].length)/(datosWIP[key]['palletsenotracalle'][0].length+datosWIP[key]['palletsnoencontrados'][0].length+datosWIP[key]['palletscti'][0].length)).toFixed(2) + "%"
+                //table+= "<br>"
+
+                //table+= ((datosWIP[key]['palletsenotracalle'][0].length+datosWIP[key]['palletsnoencontrados'][0].length+datosWIP[key]['palletscti'][0].length)).toFixed(1) + "%"
+            table+= "</td>"
+            table+= "</tr>";
+
+
+
+
             table+= "<tr>";
             table+= "<td style='font-size: 14px;' >";
 

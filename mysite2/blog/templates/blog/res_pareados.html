@@ -1,0 +1,184 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Pareados</h1>
+<h4>Resumen día conv pareados</h4>
+
+
+<div class="row" id="tablamensual">
+</div>
+
+
+<script type="text/javascript">
+
+displayHTMLTable();
+
+var count1=0;
+var estado="Alerta!"
+var fechaprev = "ini";
+
+function displayHTMLTable(results){
+
+var table = "<table class='table' >";
+
+  table+= '<tr bgcolor="#dddddd">';
+    table+= "<td>";
+    table+=  "SO";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "Cliente";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "ID";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "Padron";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "Fecha Ter";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "Alerta";
+  table+= "</tr>";
+
+  {% for orderinfo in orderinfos %}
+  {% if orderinfo.SOPosition == 2  %}
+
+
+  count1=0;
+  fechaprev="ini";
+  flag=0;
+
+
+
+              {% for orderinfo2 in orderinfos %}
+
+              {% if orderinfo2.SO == orderinfo.SO %}
+
+
+                    {% for detalle in detalles %}
+
+                      {% if detalle.orderId == orderinfo2.orderId %}
+
+
+                      count1=count1+1;
+
+                      {% endif %}
+
+                    {% endfor %}
+
+
+
+              {% endif %}
+              {% endfor %}
+
+
+              if(count1>0)
+            {
+
+
+
+                table+= "<tr>";
+                table+= '<td colspan="7" style="text-align: center">';
+                table+= '<h5 ></h5>';
+                table+= '</td>';
+                table+= '</tr>';
+
+                fechaprev=="ini";
+
+              {% for orderinfo2 in orderinfos %}
+
+              {% if orderinfo2.SO == orderinfo.SO %}
+
+              table+= '<tr>';
+
+
+              table+= "<td>"
+              table+= "{{orderinfo2.SO}} "
+              table+= "</td>"
+
+              table+= "<td>"
+              table+= "{{orderinfo2.cliente}}"
+              table+= "</td>"
+
+              table+= "<td>"
+              table+= "{{orderinfo2.orderId}} "
+              table+= "</td>"
+
+              table+= "<td>"
+              table+= "{{orderinfo2.padron}}"
+              table+= "</td>"
+
+              //table+= "<td>"
+              //table+= "{{orderinfo2.SOPosition}}"
+              //table+= "</td>"
+              flag=0;
+                    {% for detalle in detalles %}
+
+
+
+                        {% if detalle.orderId == orderinfo2.orderId %}
+                        table+= "<td>"
+                        table+= moment.parseZone('{{ detalle.datefinajustada.isoformat|safe}}').format("DD-MM-YY")
+                        table+= "</td>"
+
+                        flag=1;
+
+
+                          if ( (fechaprev == moment.parseZone('{{ detalle.datefinajustada.isoformat|safe}}').format("DD-MM-YY")) || (fechaprev=="ini"))
+                          {
+                            estado="OK";
+                          }
+                          if(estado=="Alerta!")
+                          {table+= '<td bgcolor="#FFA500">';}
+                          else{table+= '<td>'}
+
+                        table+= estado;
+
+                        table+= "</td>"
+
+                        fechaprev= moment.parseZone('{{ detalle.datefinajustada.isoformat|safe}}').format("DD-MM-YY")
+
+                        count1=count1+1;
+                        estado="Alerta!"
+
+
+
+                        {% endif %}
+
+
+
+                    {% endfor %}
+
+                    if(flag==0)
+                    {
+
+                      table+= "<td>"
+                      table+= "-"
+                      table+= "</td>"
+
+                      table+= "<td bgcolor='#FF0000'>"
+                      table+= "Alerta!"
+                      table+= "</td>"
+
+                    }
+                  table+= "</tr>";
+
+
+              {% endif %}
+              {% endfor %}
+
+            }
+
+            count1=0;
+
+  {% endif %}
+  {% endfor %}
+
+table+= "</table>";
+$("#tablamensual").html(table); //Descomentar esto para ver la tabla grande
+}
+
+
+</script>
+
+{% endblock %}

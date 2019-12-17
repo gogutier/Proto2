@@ -1,0 +1,416 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>KPI Conversión</h1>
+<h4>Resumen días abarcados</h4>
+</br>
+
+<div class="container" style="padding:10px 10px;">
+
+<div class="row" id="tablamensual">
+</div>
+
+<div class="row" id="parsed_csv_list">
+</div>
+
+</div>
+
+
+<script type="text/javascript">
+
+console.log("iniciando importación datos cumplimiento conversión..")
+
+displayHTMLTablamensual();
+displayHTMLTable("hola");
+
+
+function displayHTMLTablamensual(results){
+
+{% for mes in meses %}
+{% for maquina in maquinas %}
+
+var sum{{mes.mescorto}}prog{{maquina}}m2= 0
+var sum{{mes.mescorto}}prod{{maquina}}m2 = 0
+var sum{{mes.mescorto}}prod2{{maquina}}m2 = 0
+
+var sum{{mes.mescorto}}prog{{maquina}} = 0
+var sum{{mes.mescorto}}prod{{maquina}} = 0
+var sum{{mes.mescorto}}prod2{{maquina}} = 0
+
+
+{% endfor %}
+{% endfor %}
+
+
+
+
+{% if diaconvs %}
+{% for dia in diaconvs %}
+{% for mes in meses %}
+{% if dia.mes == mes.mesnum %}
+
+//console.log(moment.parseZone("{{dia.diaajust.isoformat|safe}}").month());
+
+  sum{{mes.mescorto}}progFFG=sum{{mes.mescorto}}progFFG + {{dia.progIdFFG}}; //suma de las Ids programadas en el mes  para cada máquina
+  sum{{mes.mescorto}}progFFW=sum{{mes.mescorto}}progFFW + {{dia.progIdFFW}};
+  sum{{mes.mescorto}}progTCY=sum{{mes.mescorto}}progTCY + {{dia.progIdTCY}};
+  sum{{mes.mescorto}}progHCR=sum{{mes.mescorto}}progHCR + {{dia.progIdHCR}};
+  sum{{mes.mescorto}}progWRD=sum{{mes.mescorto}}progWRD + {{dia.progIdWRD}};
+  sum{{mes.mescorto}}progDRO=sum{{mes.mescorto}}progDRO + {{dia.progIdDRO}};
+
+  sum{{mes.mescorto}}prodFFG=sum{{mes.mescorto}}prodFFG + {{dia.prodIdFFG}};//suma de lo producido dentro del día y turno programado
+  sum{{mes.mescorto}}prodFFW=sum{{mes.mescorto}}prodFFW + {{dia.prodIdFFW}};
+  sum{{mes.mescorto}}prodTCY=sum{{mes.mescorto}}prodTCY + {{dia.prodIdTCY}};
+  sum{{mes.mescorto}}prodHCR=sum{{mes.mescorto}}prodHCR + {{dia.prodIdHCR}};
+  sum{{mes.mescorto}}prodWRD=sum{{mes.mescorto}}prodWRD + {{dia.prodIdWRD}};
+  sum{{mes.mescorto}}prodDRO=sum{{mes.mescorto}}prodDRO + {{dia.prodIdDRO}};
+
+  sum{{mes.mescorto}}prod2FFG=sum{{mes.mescorto}}prod2FFG + {{dia.prod2IdFFG}};//suma de todo lo producido (dentro y fuera de programa)
+  sum{{mes.mescorto}}prod2FFW=sum{{mes.mescorto}}prod2FFW + {{dia.prod2IdFFW}};
+  sum{{mes.mescorto}}prod2TCY=sum{{mes.mescorto}}prod2TCY + {{dia.prod2IdTCY}};
+  sum{{mes.mescorto}}prod2HCR=sum{{mes.mescorto}}prod2HCR + {{dia.prod2IdHCR}};
+  sum{{mes.mescorto}}prod2WRD=sum{{mes.mescorto}}prod2WRD + {{dia.prod2IdWRD}};
+  sum{{mes.mescorto}}prod2DRO=sum{{mes.mescorto}}prod2DRO + {{dia.prod2IdDRO}};
+
+/////////////////////
+
+  sum{{mes.mescorto}}progFFGm2=sum{{mes.mescorto}}progFFGm2 + {{dia.progM2FFG}}; //suma de las Ids programadas en el mes  para cada máquina
+  sum{{mes.mescorto}}progFFWm2=sum{{mes.mescorto}}progFFWm2 + {{dia.progM2FFW}};
+  sum{{mes.mescorto}}progTCYm2=sum{{mes.mescorto}}progTCYm2 + {{dia.progM2TCY}};
+  sum{{mes.mescorto}}progHCRm2=sum{{mes.mescorto}}progHCRm2 + {{dia.progM2HCR}};
+  sum{{mes.mescorto}}progWRDm2=sum{{mes.mescorto}}progWRDm2 + {{dia.progM2WRD}};
+  sum{{mes.mescorto}}progDROm2=sum{{mes.mescorto}}progDROm2 + {{dia.progM2DRO}};
+
+  sum{{mes.mescorto}}prodFFGm2=sum{{mes.mescorto}}prodFFGm2 + {{dia.prodM2FFG}};//suma de lo producido dentro del día y turno programado
+  sum{{mes.mescorto}}prodFFWm2=sum{{mes.mescorto}}prodFFWm2 + {{dia.prodM2FFW}};
+  sum{{mes.mescorto}}prodTCYm2=sum{{mes.mescorto}}prodTCYm2 + {{dia.prodM2TCY}};
+  sum{{mes.mescorto}}prodHCRm2=sum{{mes.mescorto}}prodHCRm2 + {{dia.prodM2HCR}};
+  sum{{mes.mescorto}}prodWRDm2=sum{{mes.mescorto}}prodWRDm2 + {{dia.prodM2WRD}};
+  sum{{mes.mescorto}}prodDROm2=sum{{mes.mescorto}}prodDROm2 + {{dia.prodM2DRO}};
+
+  sum{{mes.mescorto}}prod2FFGm2=sum{{mes.mescorto}}prod2FFGm2 + {{dia.prod2M2FFG}};//suma de todo lo producido (dentro y fuera de programa)
+  sum{{mes.mescorto}}prod2FFWm2=sum{{mes.mescorto}}prod2FFWm2 + {{dia.prod2M2FFW}};
+  sum{{mes.mescorto}}prod2TCYm2=sum{{mes.mescorto}}prod2TCYm2 + {{dia.prod2M2TCY}};
+  sum{{mes.mescorto}}prod2HCRm2=sum{{mes.mescorto}}prod2HCRm2 + {{dia.prod2M2HCR}};
+  sum{{mes.mescorto}}prod2WRDm2=sum{{mes.mescorto}}prod2WRDm2 + {{dia.prod2M2WRD}};
+  sum{{mes.mescorto}}prod2DROm2=sum{{mes.mescorto}}prod2DROm2 + {{dia.prod2M2DRO}};
+
+
+{% endif %}
+
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+var table = "<table class='table' >";
+
+  table+= '<tr bgcolor="#dddddd">';
+    table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+    table+=  "Mes";
+    table+= "</td>";
+    {% for maquina in maquinas %}
+    table+= "<td>";
+    table+=  "{{maquina}}";
+    table+= "</td>";
+    {% endfor %}
+  table+= "</tr>";
+
+{% for mes in meses%}
+
+  table+= "<tr>"
+    table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+    table+= "{{mes}}";
+    table+= "</td>";
+
+    {% for maquina in maquinas %}
+    table+= "<td>";
+    table+= "<table class='table'>";
+    table+= "<tr class='tr' bgcolor='#dddffd'  >"
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      table+= "Prog";
+      table+= "</td>";
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      table+= "%On_Time";
+      table+= "</td>"
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      table+= "%Total";
+      table+= "</td>";
+    table+= "</tr>"
+    table+= "<tr class='tr'>"
+
+      var prog;
+      var prod1;
+      var prod2;
+
+      prog=sum{{mes.mescorto}}prog{{maquina}};
+      prod1= Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+      prod2= Math.floor(100*sum{{mes.mescorto}}prod2{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>"; //suma de las IDs programadas
+      table+= prog//Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+      table+= "</td>";
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        if(prog!=0)
+        {
+          table+= prod1;
+          table+= "%"
+        }
+        else
+        {
+          table+= '-';
+        }
+
+      table+= "</td>";
+
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      if(prog!=0)
+      {
+        table+= prod2;
+        table+= "%"
+      }
+      else
+      {
+        table+= '-';
+      }
+
+      table+= "</td>";
+
+    table+= "</tr>"
+
+
+
+    table+= "<tr class='tr'>"
+
+      var prog;
+      var prod1;
+      var prod2;
+
+      prog= ((sum{{mes.mescorto}}prog{{maquina}}m2)/1000).toFixed(1);
+      prod1= Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}m2/sum{{mes.mescorto}}prog{{maquina}}m2);
+      prod2= Math.floor(100*sum{{mes.mescorto}}prod2{{maquina}}m2/sum{{mes.mescorto}}prog{{maquina}}m2);
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>"; //suma de las IDs programadas
+      table+= prog//Math.floor(100*sum{{mes.mescorto}}prod{{maquina}}/sum{{mes.mescorto}}prog{{maquina}});
+      //table+= "Mm2"
+      table+= "</td>";
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        if(prog!=0)
+        {
+          table+= prod1;
+          table+= "%"
+        }
+        else
+        {
+          table+= '-';
+        }
+
+      table+= "</td>";
+
+
+      table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+      if(prog!=0)
+      {
+        table+= prod2;
+        table+= "%"
+      }
+      else
+      {
+        table+= '-';
+      }
+
+      table+= "</td>";
+
+    table+= "</tr>"
+
+
+
+
+    table+= "</table>";
+    table+= "</td>";
+    {% endfor %}
+
+  table+= "</tr>"
+
+  {% endfor %}
+
+
+table+= "</table>";
+$("#tablamensual").html(table); //Descomentar esto para ver la tabla grande
+}
+
+
+
+
+
+
+
+function displayHTMLTable(results){
+
+var table = "<table class='table' >";
+
+  table+= '<tr bgcolor="#dddddd">';
+    table+= "<td>";
+    table+=  "Día";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "FFG";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "FFW";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "TCY";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "HCR";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "WRD";
+    table+= "</td>";
+    table+= "<td>";
+    table+=  "DRO";
+    table+= "</th>";
+  table+= "</tr>";
+
+
+
+  {% if diaconvs %}
+
+
+
+
+  {% for dia in diaconvs %}
+
+
+
+  table+= "<tr>";
+    table+= "<td>";
+    table+=  "{{dia}}";
+    table+= "</th>";
+
+
+  var progIdFFG = {{dia.progIdFFG}}
+  var prodIdFFG = {{dia.prodIdFFG}}
+  var prod2IdFFG = {{dia.prod2IdFFG}}
+  var progM2FFG = {{dia.progM2FFG}}
+  var prodM2FFG = {{dia.prodM2FFG}}
+  var prod2M2FFG = {{dia.prod2M2FFG}}
+
+
+  var progIdFFW = {{dia.progIdFFW}}
+  var prodIdFFW = {{dia.prodIdFFW}}
+  var prod2IdFFW = {{dia.prod2IdFFW}}
+  var progM2FFW = {{dia.progM2FFW}}
+  var prodM2FFW = {{dia.prodM2FFW}}
+  var prod2M2FFW = {{dia.prod2M2FFW}}
+
+
+  var progIdTCY = {{dia.progIdTCY}}
+  var prodIdTCY = {{dia.prodIdTCY}}
+  var prod2IdTCY = {{dia.prod2IdTCY}}
+  var progM2TCY = {{dia.progM2TCY}}
+  var prodM2TCY = {{dia.prodM2TCY}}
+  var prod2M2TCY = {{dia.prod2M2TCY}}
+
+
+  var progIdHCR = {{dia.progIdHCR}}
+  var prodIdHCR = {{dia.prodIdHCR}}
+  var prod2IdHCR = {{dia.prod2IdHCR}}
+  var progM2HCR = {{dia.progM2HCR}}
+  var prodM2HCR = {{dia.prodM2HCR}}
+  var prod2M2HCR = {{dia.prod2M2HCR}}
+
+
+
+  var progIdWRD = {{dia.progIdWRD}}
+  var prodIdWRD = {{dia.prodIdWRD}}
+  var prod2IdWRD = {{dia.prod2IdWRD}}
+  var progM2WRD = {{dia.progM2WRD}}
+  var prodM2WRD = {{dia.prodM2WRD}}
+  var prod2M2WRD = {{dia.prod2M2WRD}}
+
+
+  var progIdDRO = {{dia.progIdDRO}}
+  var prodIdDRO = {{dia.prodIdDRO}}
+  var prod2IdDRO = {{dia.prod2IdDRO}}
+  var progM2DRO = {{dia.progM2DRO}}
+  var prodM2DRO = {{dia.prodM2DRO}}
+  var prod2M2DRO = {{dia.prod2M2DRO}}
+
+  {% for maquina in maquinas %}
+
+    table+= "<td>";
+
+
+      table+= "<table class='table'>";
+      table+= "<tr class='tr' bgcolor='#dddffd'  >"
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        table+= "Prog";
+        table+= "</td>";
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        table+= "On_time";
+        table+= "</td>"
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        table+= "Total";
+        table+= "</td>";
+      table+= "</tr>"
+
+      table+= "<tr class='tr'>"
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        table+= progId{{maquina}};
+        table+= "</td>";
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        table+= prodId{{maquina}};
+        table+= "</td>"
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        table+= prod2Id{{maquina}};
+        table+= "</td>";
+      table+= "</tr>"
+
+
+      table+= "<tr class='tr'>"
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+          summ2=(progM2{{maquina}}/1000).toFixed(1);
+          table+= summ2;
+        table+= "</td>";
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+        summ2=(prodM2{{maquina}}/1000).toFixed(1);
+        table+= summ2;
+        table+= "</td>"
+        table+= "<td style='font-size: 11px; padding: 4px 4px;'>";
+          summ2=(prod2M2{{maquina}}/1000).toFixed(1);
+          table+= summ2;
+        table+= "</td>";
+      table+= "</tr>"
+
+
+
+      table+= "</table>";
+
+
+
+    table+= "</td>";
+
+    {% endfor %}
+
+  table+= "</tr>";
+
+
+
+  {% endfor %}
+  {% endif %}
+
+
+
+table+= "</table>";
+$("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+}
+
+</script>
+
+
+
+
+{% endblock %}

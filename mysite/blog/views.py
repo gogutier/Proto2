@@ -1605,7 +1605,7 @@ def cump_proto(request):
     print("carga datos iniciada")
     template_name = 'blog/cump_proto.html'
 
-    ini= timezone.now()
+    ini= datetime.now()
 
     producciones = ProdRealCorr.objects.filter(datefinajustada__gte=ini.replace(hour= 0, minute=0, second=0, microsecond=0)-timedelta(days=50)).order_by('datefin') #Post.objects.filter(published_date__isnull=True).order_by('create_date')
     #turnos = Turnos.objects.all()
@@ -1615,7 +1615,7 @@ def cump_proto(request):
     MLprodreal = []
     trims = []
     for i in range(0,50):
-        fecha=(timezone.now()-timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0)
+        fecha=(datetime.now()-timedelta(days=i)).replace(hour= 0, minute=0, second=0, microsecond=0)
         dias.append( fecha.strftime("%d-%m-%y"))
         Prods=ProdRealCorr.objects.filter(datefinajustada=fecha).order_by('datefin')
         metros=0
@@ -3621,7 +3621,7 @@ class PostListView(ListView):
 
 
     def get_queryset(self):
-        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')#sql query
+        return Post.objects.filter(published_date__lte=datetime.now()).order_by('-published_date')#sql query
 
 class PostDetailView(DetailView):
     model = Post

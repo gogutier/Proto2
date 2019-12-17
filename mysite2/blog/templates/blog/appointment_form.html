@@ -1,0 +1,36 @@
+{% extends "blog/base.html" %}
+{% block content %}
+  <h1>New appointmenttt</h1>
+  <form class="post-form" method="POST">
+    {% csrf_token %}
+    <!-->
+
+
+    <-->
+
+    <div class="fieldWrapper">
+      <label for="id_distance">Mileage claim:</label>
+       <input id="id_distance" type="text" name="Titla" maxlength="20" />
+       {{form.as_p}}
+    </div>
+    <button type="submit" class='save btn btn-default'>Grabar</button>
+
+  </form>
+  <button type="submit" id="submit-file2" class="btn btn-primary">Poblarrr</button>
+
+
+
+  <script>
+
+    //document.getElementById("Locaion").value = <"hola q ase">;
+
+    ///var editor = new MediumEditor('.editable');
+    $('#submit-file2').on("click",function(e){
+      e.preventDefault();
+
+    $("#id_Location").val("latitude");
+
+    });
+  </script>
+
+{% endblock %}

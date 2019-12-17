@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+{% block content %}
+  <h1>Nueva OC Importación</h1>
+  <form class="post-form" method="POST">
+    {% csrf_token %}
+    {{form.as_table}}
+    <button type="submit" class='save btn btn-default'>Grabar</button>
+  </form>
+
+  <a class="nav-link" href="{% url 'carga_csv_1' %}">Carga Csv</a>
+  <br>
+  <a class="nav-link" href="{% url 'carga_csv_2' %}">Carga Csv2</a>
+
+
+  <script>
+    var editor = new MediumEditor('.editable');
+  </script>
+
+{% endblock %}

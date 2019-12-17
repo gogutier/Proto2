@@ -1,0 +1,62 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Cumplimiento corr proto</h1>
+<h4>Resumen semana corr proto</h4>
+
+<div class="row" id="tablamensual">
+</div>
+
+<script type="text/javascript">
+
+  var today  = moment(new Date());
+
+  displayHTMLTable();
+
+  function displayHTMLTable(results){
+
+
+  var table = "<table class='table'>";
+
+  table+= '<tr bgcolor="#dddddd">';
+  table+= "<td>";
+  table+=  "Día";
+
+{% for dia in dias %}
+
+    table+= "<td>";
+
+
+    table+=  "{{dia}}";
+
+
+    table+= "</td>";
+
+  {% endfor %}
+  table+= "</tr>";
+
+  table+= "<tr>";
+
+    table+= "<td>";
+      table+= "ML Prod";
+    table+= "</td>";
+
+    {% for mlprod in MLprodreal %}
+
+    table+= "<td>";
+    table+=  "{{mlprod}}";
+    table+= "</td>";
+
+    {% endfor %}
+
+  table+= "</tr>";
+
+
+  table+= "</table>";
+
+  $("#tablamensual").html(table); //Descomentar esto para ver la tabla grande
+  }
+
+</script>
+
+
+{% endblock %}

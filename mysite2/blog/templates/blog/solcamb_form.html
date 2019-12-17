@@ -1,0 +1,708 @@
+{% extends "blog/base.html" %}
+{% block content %}
+  <h1>Nueva solicitud de cambio</h1>
+  <br>
+
+  <div class="container" style="padding:10px 10px;">
+      <h1>Read CSV file using JavaScript</h1>
+  	<div class="well">
+  		<div class="row">
+  		<form class="form-inline">
+  			<div class="form-group">
+  			  <label for="files">Upload a CSV formatted file:</label>
+  			  <input type="file" id="files" class="form-control" accept=".csv" required />
+  			</div>
+  			<div class="form-group">
+  			 <button type="submit" id="submit-file" class="btn btn-primary">Upload File</button>
+  			 </div>
+
+  		</form>
+  		</div>
+
+      <div class="container" style="padding:10px 10px;">
+          <h1>Read XLSX file using JavaScript</h1>
+        <div class="well">
+          <div class="row">
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="files">Upload a XLSX formatted file:</label>
+              <input type="file" id="files2" class="form-control" accept=".xlsx" required />
+            </div>
+            <div class="form-group">
+             <button type="submit" id="submit-file2" class="btn btn-primary">Subir Excel</button>
+             </div>
+
+          </form>
+          </div>
+
+
+
+  			<div class="row" id="parsed_csv_list">
+
+  		  </div>
+        <br>
+        <h3>Tabla procesada</h3>
+        <br>
+        <div class="row" id="tablaproc"  style="width: 500px; border: #999999 1px solid;">
+
+        </div>
+        <br>
+        <h3>Tabla ocupación máquina</h3>
+        <br>
+        <div class="row" id="tablaoc"  style="width: 500px; border: #999999 1px solid;">
+
+        </div>
+
+
+  	</div>
+    </div>
+
+
+<br>
+
+
+
+
+<script type="text/javascript">
+
+var matriz
+var matriz2 =[[1,1],[1,1]]
+var matriz3
+
+$('#submit-file2').on("click",function(e){
+
+e.preventDefault();
+  //$('#files')
+  alert("HOLA Q ASE");
+
+  console.log($('#files2'));
+  alasql('select * from xlsx("cities.xlsx",{headers:true, sheetid:"Sheet1", range:"A1:B6"})',
+           [],function(data) {
+                console.log(data);
+                });
+
+});
+
+
+$('#submit-file2').on("click",function(e){
+
+e.preventDefault();
+  //$('#files')
+  alert("HOLA Q ASE");
+
+  console.log($('#files2'));
+  alasql('select * from xlsx("cities.xlsx",{headers:true, sheetid:"Sheet1", range:"A1:B6"})',
+           [],function(data) {
+                console.log(data);
+                });
+
+});
+
+
+  $('#submit-file').on("click",function(e){
+  	e.preventDefault();
+
+  	$('#files').parse({//acá toma la información del CSV
+  		config: {
+  			//delimiter: ";",
+
+  			complete: displayHTMLTable, //la función a la que se llama una vez se haya completado el parsing
+        delimiter: ";",  // auto-detect
+        //newline: "",    // auto-detect
+        //header: true,
+        //dynamicTyping: false,
+        //preview: 0,
+        //encoding: "",
+        //worker: false,
+        //comments: false,
+        //step: undefined,
+        //complete: undefined,
+        //error: undefined,
+        //download: false,
+        //skipEmptyLines: true,
+        //chunk: undefined,
+        //fastMode: undefined
+  		},
+  		before: function(file, inputElem)
+  		{
+  			console.log("Parsing file...", file);
+  		},
+  		error: function(err, file)
+  		{
+  			console.log("ERROR:", err, file);
+  		},
+  		complete: function()
+  		{
+  			console.log("Done with all files");
+  		}
+  	});
+
+
+
+
+
+
+
+  });
+
+  function transformamatriz(){
+
+    var colinicio;
+    var colfin;
+
+    matriz3=matriz2;
+    var dimensions = [ matriz3.length, matriz3[0].length ];
+    var listaborrar = [];
+
+    //eliminando columnas que no me interesan
+    for(i=0;i<=matriz3[0].length-1;i++){
+
+
+
+      //if (matriz3[0][i]=="Duracion" || matriz3[0][i]=="Dia Inicio" || matriz3[0][i]=="Maquina" || matriz3[0][i]=="SETUPSTARTDATE" || matriz3[0][i]=="RUNENDDATE" || matriz3[0][i]=="WORKCENTERID" ){
+if (matriz3[0][i]=="SETUPSTARTDATE" || matriz3[0][i]=="RUNENDDATE" || matriz3[0][i]=="WORKCENTERID" )
+{
+        //alert(matriz3[0][i]);
+
+      }else{
+        //borra la columnas
+          listaborrar.push(i);
+          for(j=0;j<=matriz3.length-1;j++){
+
+          //console.log(j);
+
+          //matriz3[j].splice(i,1);
+
+
+
+          }
+
+
+      }
+
+    }
+
+    //alert(listaborrar);
+    //acá elimino todas las columnas en la matriz 3 que aparezcan en la lista borrar.
+
+    for(j=0;j<=matriz3.length-1;j++){
+
+    for (i=listaborrar.length-1;i>=0;i--){
+
+
+      //alert("borrando columna: " + listaborrar[i]);
+
+
+
+        matriz3[j].splice(listaborrar[i],1);
+
+      }
+      //alert("Resultado: " + matriz3[0]);
+
+
+    }
+
+
+    //alert(matriz3);
+    matriz2=matriz3;
+    // cambia el tipo de objeto de la primera columna a date
+
+
+    //acá recorre las columnas y les cambia el formato según corresponda. Guanrdo al indicacdor de columna de los campos que me interesan
+    for (i=1;i<=matriz2.length-1;i++)
+    {
+
+      //asegura que la matriz sea rectangular//
+      if (matriz2[0].length!=matriz2[i].length)
+      {
+        matriz2.splice(i,1);
+      }else {
+
+
+      for (j=1;j<=matriz2[0].length-1;j++)
+      {
+            if(matriz2[0][j]=="Dia Inicio")
+            {
+              matriz2[i][j] = moment(matriz2[i][1]).format('L');
+            }
+
+            if(matriz2[0][j]=="Duracion")
+            {
+              console.log(matriz2.length);
+              console.log(matriz2[0].length);
+              console.log(matriz2[i].length);
+              console.log(matriz2[i][j]);
+              matriz2[i][j] = tohora(matriz2[i][j]);//duracion
+            }
+
+
+            if(matriz2[0][j]=="SETUPSTARTDATE")
+            {
+
+              colinicio=j;//duracion
+            }
+
+
+            if(matriz2[0][j]=="RUNENDDATE")
+            {
+
+              colfin=j;//duracion
+            }
+
+
+        }
+      }
+      }
+
+      //Agrego la columna de duración calculada en base a el setupstartdate y al RUNENDDATE
+      matriz2[0].push("Duración Calculada");
+      for(j=1;j<=matriz2.length-1;j++){
+        var duracion;
+
+
+        var m1 =moment(matriz2[j][colfin].substring(0,19));
+        var m2= moment(matriz2[j][colinicio].substring(0,19));
+
+        var diff = ( m1.diff(m2) );
+
+        console.log("moment1: " + m1 );
+        console.log("moment2: " + m2 );
+
+        console.log(diff.format("d [day] h [hrs]"));
+        console.log(diff);
+        console.log(moment.duration(diff).format("d [day] h [hrs]"));
+
+        duracion = (diff/3600000);
+
+        //moment(diaini).format('L')<s
+
+        matriz2[j].push(duracion);
+
+      }
+
+      //////////////////// Agrego columna ade Día Inicio2 en base a la fecha y hora del startdate (acá se podría ajustar según lo horarios de fin de turno, etc)
+
+
+
+      matriz2[0].push("DiaInicio2");
+      for(j=1;j<=matriz2.length-1;j++){
+
+
+        matriz2[j].push(moment(matriz2[j][colinicio]).format('L'));
+
+      }
+
+      for (j=0;j<=matriz2[0].length-1;j++) //POr qué no camibia el length con el último push?????
+      {
+        console.log("largo: " + matriz2[0].length);
+        console.log(j);
+        console.log(matriz2[0][j]);
+      }
+
+}
+
+  function tohora(ds){
+
+    var hour = ds.split(":")[0],
+    minute = ds.split(":")[1],
+    segs = ds.split(":")[2];
+
+    horas = Number(hour);
+    minutos = Number(minute)/60;
+    segundos = Number(segs)/3600;
+
+    return (horas+minutos+segundos);
+
+
+    /*
+    var hour = ds.split(":")[0],
+    minute = ds.split(":")[1],
+    last_part = ds.split(":")[2],
+    second = second_part.split(" ")[0],
+    last_part2 = second_part.split(" ")[1],
+    day = last_part2.split("/")[0],
+    month =  last_part2.split("/")[1],
+    year =  last_part2.split("/")[2];
+  */
+
+  }
+
+
+  function muestra_ocupacion(diaini, diafin){
+
+    var matrizocu =[["Fecha"],["Total"],["TCY"],["FFG"],["FFW"],["HCR"],["WRD"],["DRO"]];
+
+    /*
+    matrizocu[0].push(moment(diaini).format('L'));
+    matrizocu[1].push(0);
+    matrizocu[2].push(0);
+    matrizocu[3].push(0);
+    matrizocu[4].push(0);
+    */
+    var counter = 0;
+    var diainicio2 = 0;
+    var durcalc = 0;
+    //moment().format('L');
+
+
+    while (diaini<diafin || counter>100){
+
+
+      //alert(moment(diaini));
+
+
+      matrizocu[0].push(moment(diaini).format('L'));
+      matrizocu[1].push(0);
+      matrizocu[2].push(0);
+      matrizocu[3].push(0);
+      matrizocu[4].push(0);
+      matrizocu[5].push(0);
+      matrizocu[6].push(0);
+      matrizocu[7].push(0);
+
+      //console.log("matrizocu: " + matrizocu);
+
+      //Busco las columnas que me interesan de la matriz2 y las guardo
+
+
+      for (j=0;j<=matriz2[0].length-1;j++)
+      {
+        //console.log(matriz2[0][j]);
+            if(matriz2[0][j]=="DiaInicio2")
+            {
+              diainicio2 = j;
+            }
+
+            if(matriz2[0][j]=="Duración Calculada")
+            {
+            durcalc = j;
+          }
+
+      }
+
+
+
+
+
+      for (i=1;i<=matriz2.length-1;i++)
+      {
+        //suma todas las horas que coinciden con ese día en la
+        //console.log(diainicio2);
+        //console.log("¿es igual "+ moment(matriz2[i][diainicio2]).format('L') + " a " + moment(diaini).format('L') + "?" );
+        if (moment(matriz2[i][diainicio2]).format('L')==moment(diaini).format('L'))
+        {
+          //console.log("coincide " + moment(matriz2[i][0]).format('L'));
+          //suma horas asociadas a esa producción
+          //console.log("matrizocu[0]:" + matrizocu[0]);
+          //console.log("matriz2[0]:" + matriz2[i]);
+
+
+          //matrizocu[1][matrizocu[0].length-1]= +((matrizocu[1][matrizocu[0].length-1] + matriz2[i][0]).toFixed(2));
+
+          //suma las horas asociadas a cada máquina dentro de ese día.
+
+
+          for(k=1;k<=matrizocu.length-1;k++) //desde j=1 para saltarse la fila de títulos
+          {
+            //console.log("k= " + k);
+
+
+            //console.log(matrizocu);
+
+            //busca la columna que se quiere usar como criterio para asignar cada producción a un día.
+
+            for(j=0;j<=matriz2[0].length-1;j++)
+            {
+              if(matriz2[0][j]=="WORKCENTERID") //Busca el campo de máquina
+              {
+              //console.log("es igual " + matriz2[i][j] + " a " + matrizocu[k][0] + " ?");
+                if (matriz2[i][j]==matrizocu[k][0])
+                {
+                  //console.log("Sí lo es!!!");
+
+                  //Busca el campo de duración (como número de horas)
+                  for(r=0;r<=matriz2[0].length-1;r++)
+                  {
+                    if(matriz2[0][r]=="Duración Calculada")//"Duración Calculada")
+                    {
+                      console.log("sumando " + matrizocu[k][matrizocu[k].length-1]  + " + " +  (matriz2[i][r]).toFixed(2));
+                      matrizocu[k][matrizocu[k].length-1]= +((matrizocu[k][matrizocu[k].length-1] + matriz2[i][r]).toFixed(2));
+                    }
+                  }
+                }
+            }
+
+            }
+
+
+        }
+
+
+      }else{
+
+
+      }
+
+
+      }
+
+
+
+
+      counter++;
+      diaini.setDate(diaini.getDate() + 1);
+
+    }
+    counter=0;
+
+    //alert(matrizocu);
+
+    var table = "<table class='table' id='table'>";
+
+    for(i=0;i<matrizocu.length;i++){
+      table+= "<tr>";
+      var row = matrizocu[i];
+      var cells = row.join(",").split(",");
+
+
+
+
+
+      for(j=0;j<cells.length;j++){
+
+        //console.log(cells[j]);
+
+        if(j==0 || i==0){
+
+          table+= "<td>";
+
+        }else{
+
+
+                if(cells[j]>20)
+                {
+                  table+= "<td bgcolor='red'>";
+
+                }else if(16<cells[j] && cells[j]<20){
+                  //table+= "<td class='green'>";
+                  table+= "<td bgcolor='yellow'>";
+                }else{
+                  table+= "<td bgcolor='green'>";
+                }
+
+        }
+
+        table+= cells[j];
+        table+= "</th>";
+
+
+
+      }
+      table+= "</tr>";
+    }
+    table+= "</table>";
+    $("#tablaoc").html(table);
+
+
+
+
+
+
+
+
+    //toma los datos de la matriz3 y suma las horas por día.
+
+    //genera tabla resumen por horas día de menor a mayor.
+
+
+  }
+
+
+  function muestraresumen(){ //acá tiene que mostrar el resumen de horas ocupadas por día.
+    var table = "<table class='table' id='table'>";
+
+    transformamatriz();
+
+    for(i=0;i<matriz2.length;i++){
+      table+= "<tr>";
+      var row = matriz2[i];
+      var cells = row.join(",").split(",");
+
+
+
+      for(j=0;j<cells.length;j++){
+
+        table+= "<td bgcolor='green'>";
+        table+= cells[j];
+        table+= "</th>";
+      }
+      table+= "</tr>";
+    }
+    table+= "</table>";
+    //$("#tablaproc").html(table);
+
+
+
+  }
+
+  function displayHTMLTable(results){
+  	var table = "<table class='table' id='table'>";
+  	var data = results.data;
+    matriz = data;
+
+    hola();
+
+
+  	for(i=0;i<data.length;i++){
+  		table+= "<tr>";
+  		var row = data[i];
+  		var cells = row.join(",").split(",");
+
+  		for(j=0;j<cells.length;j++){
+  			table+= "<td>";
+  			table+= cells[j];
+  			table+= "</th>";
+
+        matriz2[i][j]= cells[j];
+
+
+  		}
+  		table+= "</tr>";
+  	}
+  	table+= "</table>";
+  	$("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+     //alert(matriz2);
+     muestraresumen();
+
+     ini = new Date ( "2018-08-12 07:00:00");
+     fin = new Date ( "2018-10-30 07:00:00");
+     muestra_ocupacion(ini,fin);
+  }
+
+  function hola(){
+
+    alert ("hola");//crea un nuevo arreglo 2d con las dimensiones definidas
+    //alert (matriz);
+    for(i=0;i<matriz.length;i++){
+      var row = matriz[i];
+      var cells = row.join(",").split(",");
+    }
+    matriz2 = createArray(matriz.length, cells.length);
+
+
+  }
+
+
+
+  function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+
+
+
+</script>
+
+  <br>
+  <form>
+
+    <fieldset>
+      <label>Ingresar contenido</label>
+      <p>
+      <textarea name="mytextarea" id="textocambios" rows="8" cols="180">Ingresar cambios aquí</textarea>
+      </p>
+      <input type="submit" id="submittexto"   value="OKA">
+      <button type="button" id="submittexto"  value="acá">convert</button>
+
+
+    </fieldset>
+    <input type="text" id="numero1">
+    <input type="text" id="numero2">
+    <input type="button" value="OKI" onclick="suma(document.getElementByID('numero1').value,document.getElementByID('numero2').value)">
+  </form>
+  <br>
+
+  <textarea rows="4" cols="50" id="code">var answer = 6 * 7;</textarea>
+  <br>
+  <button type="button" id="convert">Convert</button>
+  <p id="result">Result</p>
+
+  <script>
+
+  $("#convert").click(function() {
+    var code = $('#code').val();
+    //var code = esprima.parse(code);
+    var result = (code + " Hola q ase");
+    $('#result').html(result);
+    });
+
+  function MyFunc(text){
+
+    var texto = text;
+    alert(texto);
+
+  }
+
+var suma = function(num1,num2){
+    var num1 = parseInt(document.getElementById("numero1").value);
+    var num2 = parseFloat(document.getElementById("numero2").value);
+    var resultado = num1+num2;
+    return resultado;
+    }
+
+</script>
+
+
+
+  <table border="1">
+  {% for field in form.visible_fields %}
+
+    <tr>
+      <th>{{ field.label_tag }}</th>
+      <td>
+        {{ field.errors }}
+        {{ field }}
+        {{ field.help_text }}
+        {% if field.value != None %}
+        <!--value="{{ field.value|stringformat:'s'}}"-->
+
+        {% endif %}
+        {% if field.value == None %}
+          value="{{ field.value|stringformat:'s'}}"
+          field.value="SR"
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+</table>
+
+
+  <br>
+  <form class="solcamb-form" method="POST">
+    {% csrf_token %}
+    <table border="1">
+      {{form.as_table}}
+    </table>
+
+
+    <br>
+    <button type="submit" class='save btn btn-default'>Save</button>
+  </form>
+
+  <script>
+    var editor = new MediumEditor('.editable');
+  </script>
+
+
+{% endblock %}
