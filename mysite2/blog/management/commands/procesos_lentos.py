@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-
+from blog.models import OrdenCorrplan as OrdenCorrplan
 from blog.models import FotoCorrplan as FotoCorrplan
 from blog.models import TomaInvCic as TomaInvCic
 from blog.models import PalletCic as PalletCic

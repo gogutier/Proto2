@@ -360,7 +360,7 @@ class Command(BaseCommand):
                 print(row1[0])
             except Exception as e:
                 print(e)
-                print("error!")
+                print("error al obtener el row1 de MVLOAD!")
                 print("Unexpected error:", sys.exc_info()[0])
                 sleep(1)
                 row1=[]
@@ -392,7 +392,7 @@ class Command(BaseCommand):
                 print(row2)
                 unidadespallet=row2[5]
             else:
-                print("No se encontraron tarjas en FGLOAD para la loadID " + str(trajax) )
+                print("No se encontraron tarjas en FGLOAD para la loadID " + str(tarjax) )
                 unidadespallet=500
 
             print("Saco la fecha de creación de ese pallet. (EL FGLOAD más antguo que tenga ese pallet)")

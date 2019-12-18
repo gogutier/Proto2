@@ -47,7 +47,62 @@ class Command(BaseCommand):
     def update_datos_wip(self):
 
         print("iniciando cálculo de inventario en WIP")
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":53},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":20,"al3":30},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},"ZPASILLO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3}}
+        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":53},
+        "ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},
+        "ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},
+        "ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
+        "ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},
+        "ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},
+        "ZTCY1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":20,"al3":30},
+        "CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},
+        "CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},
+        "C01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "C02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "C03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C08":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C09":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C10":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C11":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C12":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "C13":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+        "B01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":13,"al3":44},
+        "B03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B08":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B09":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B10":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B11":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B12":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B13":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B14":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "B15":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+        "E01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "E02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "E03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "E04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "A07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+        "PLL":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":5,"al2":10,"al3":20}}
 
         m2totalINV=0
         npalletstotalINV=0
@@ -65,6 +120,7 @@ class Command(BaseCommand):
 
             except:
                 datosWIP[str(calle)]['dias']=0
+                print("errorn no se encontraron días en calle")
 
             #print(str(calle))
             #print("fecha creación:")
@@ -91,7 +147,7 @@ class Command(BaseCommand):
 
 
         filtroentrada=[]
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")| Q(DESTINATION="ZPASILLO") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")| Q(SOURCE="ZPASILLO")).order_by('-TRANSACTIONINDEX')[:4]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="PLL") | Q(DESTINATION="PT10")).exclude( Q(SOURCE="PLL") | Q(SOURCE="PT10")).order_by('-TRANSACTIONINDEX')[:4]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
@@ -102,7 +158,7 @@ class Command(BaseCommand):
 
         #print(filtroentrada)
         filtrosalida=[]
-        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO")| Q(DESTINATION="PLL") ).order_by('-TRANSACTIONINDEX')[:4]
+        filtro2=MovPallets.objects.filter(Q(DESTINATION="Truck") | Q(DESTINATION="AN1") | Q(DESTINATION="AN2")| Q(DESTINATION="AN3")| Q(DESTINATION="AN4")| Q(DESTINATION="AN5") | Q(DESTINATION="AN6")| Q(DESTINATION="AN7") | Q(DESTINATION="AN8")| Q(DESTINATION="AN9") ).order_by('-TRANSACTIONINDEX')[:4]
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
@@ -163,10 +219,11 @@ class Command(BaseCommand):
 
                 labels=[]
                 ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-                for i in range(0,7):
+                horizonte=7
+                for i in range(0,horizonte):
                     #por ahora los voy a ordenar por turno, después por hora.
-                    fecha=(ahora-timedelta(days=7-i)).replace(hour= 7)
-                    fechafin=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
+                    fecha=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 7)
+                    fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
                     turno="A"
                     label= fecha.strftime("%d-%m") + " " + turno
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
@@ -174,16 +231,16 @@ class Command(BaseCommand):
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
-                    fecha=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
-                    fechafin=(ahora-timedelta(days=7-i)).replace(hour= 22)
+                    fecha=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
+                    fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 22)
                     turno="B"
                     label= fecha.strftime("%d-%m") + " " + turno
                     m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
-                    fecha=(ahora-timedelta(days=7-i)).replace(hour= 22)
-                    fechafin=(ahora-timedelta(days=7-i-1)).replace(hour= 7)
+                    fecha=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 22)
+                    fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i-1)).replace(hour= 7)
                     turno="C"
                     label= fecha.strftime("%d-%m") + " " + turno
                     m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
@@ -600,10 +657,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         while (1):
 
-            self.updatemovpallets()
             self.update_datos_wip()
-            self.updatewipprog()
-            self.updateproywip()
+            self.updatemovpallets()
+
+            #self.updatewipprog()
+            #self.updateproywip()
 
 
 
@@ -611,5 +669,5 @@ class Command(BaseCommand):
 
 
             print("Esperando para hacer prox carga masiva de datos")
-            sleep(10)
+            sleep(3)
         #print(labels)

@@ -75,4 +75,5 @@ urlpatterns = [
     url(r'^carga_mov_rollos/$',views.carga_mov_rollos,name='carga_mov_rollos'),
     url(r'^panel_consumo_rollos/$',views.panel_consumo_rollos,name='panel_consumo_rollos'),
     url(r'^api/get_data_consumo_rollos/$',views.get_data_consumo_rollos,name='api-data-consumo-rollos'),
+    url(r'^resumen_entrada_pll/$',views.resumen_entrada_pll,name='resumen_entrada_pll'),
 ]

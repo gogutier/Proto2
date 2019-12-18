@@ -263,7 +263,7 @@ class Command(BaseCommand):
 
             operation=0
 
-            destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03')
+            destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03','B04','B05','B06','B07','B08','B09','B10','B11','B12','B13','B14','B15','B16','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','A01','A02','A03','A04','A05','A06','A07','A08','E01','E02','E03','E04','PAT1','PAT2','PAT3')
             destinotxt=""
             for dest in destinobpt:
                 destinotxt+= "Destination='"+ dest +"'"+ " or "
@@ -322,7 +322,7 @@ class Command(BaseCommand):
                 print(row2)
                 unidadespallet=row2[5]
             else:
-                print("No se encontraron tarjas en FGLOAD para la loadID " + str(trajax) )
+                print("No se encontraron tarjas en FGLOAD para la loadID " + str(tarjax) )
                 unidadespallet=500
 
             print("Saco la fecha de creación de ese pallet. (EL FGLOAD más antguo que tenga ese pallet)")
@@ -378,10 +378,10 @@ class Command(BaseCommand):
             # Ojo! Esto lo uso para sacar el transaction index inicial con el que se alimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
             print("iniciando tercera consulta por el padron " + str(row1[3]) )
             #sleep(0.01)
-
+            numberout=1
             if (str(row1[3])!="Default"):
                 print("el Padron "+str(row1[3]) +" no es Default")
-                cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
+                cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH],[NUMBERIN],[NUMBEROUT] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
                 row3=cursor.fetchone()
                 transaction=row3[0]
 
@@ -390,7 +390,9 @@ class Command(BaseCommand):
 
                 print("inciando cuarta consulta")
                 #sleep(0.01)
+
                 try:
+
                     #OJOOOOO, aquí tengo que asegurarme de consultar el ancho y alto de la CAJA en caso de que el operationno sea distinto de cero.
                     if operation==0:
                         print("operation number es 0 placas")
@@ -399,14 +401,22 @@ class Command(BaseCommand):
                         #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
                         ancho=row4[1]
                         alto=row4[2]
+
                         pesouni=0
                     else:
                         print("operation number es mayor a cero (cajas)")
-
-                        ancho=int(row3[3])/1000
-                        alto=int(row3[4])/1000
+                        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[INPUTWIDTH],[INPUTLENGTH],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
+                        row4=cursor.fetchone()
                         pesouni=0
-                except:
+                        ancho=row4[1]
+                        alto=row4[2]
+                        numberout=row4[3]
+                        if numberout<=0:
+                            numberout=1
+                except Exception as e:
+                    print(e)
+                    print("error al tomar ancho y alto y nomberout!")
+                    print("Unexpected error:", sys.exc_info()[0])
                     ancho=0
                     alto=0
                     pesouni=0
@@ -426,18 +436,19 @@ class Command(BaseCommand):
             #print("kgpallet")
             #print(kgpallet)
 
-            m2uni=ancho*alto
-            m2pallet= m2uni*unidadespallet
-            #print("m2pallet")
-            #print(m2pallet)
+            m2uni=ancho*alto/numberout
+            m2pallet=m2uni*unidadespallet
+            pesouni=0
+            print("m2pallet")
+            print(m2pallet)
 
 
-            #print("ancho")
-            #print(ancho)
-            #print("alto")
-            #print(alto)
-            #print("unidades")
-            #print(unidadespallet)
+            print("ancho")
+            print(ancho)
+            print("alto")
+            print(alto)
+            print("unidades")
+            print(unidadespallet)
             #print("pesouni")
             #print(pesouni)
             #print("m2uni")
@@ -446,6 +457,7 @@ class Command(BaseCommand):
             datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
             print("obtención de último movimiento actualizada")
             print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
+            print(" ")
         except Exception as e:
             print(e)
             print("error al tomar rows!")

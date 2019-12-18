@@ -1,0 +1,49 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+
+<div class="container" style="padding:10px 10px;">
+<table class='table table-hover' id='table'>
+
+<tr style="text-align: center">
+  <td  colspan="6"><h3>{{ubic.calle}}</h3></td>
+</tr>
+<tr style="text-align: center">
+  <td>Order ID</td>
+  <td >N° pallet</td>
+  <td >Cliente</td>
+  <td >Padrón</td>
+  <td >Unidades</td>
+  <td >m2</td>
+  <td >Fecha Ingreso a BPT</td>
+  <td >Ruta estándar</td>
+</tr>
+{% for movpallet in movpallets %}
+
+<tr style="text-align: center">
+  <td>{{movpallet.ORDERID}}</td>
+  <td>{{movpallet.LOADID}}</td>
+  <td>{{movpallet.cliente}}</td>
+  <td>{{movpallet.INTERNALSPECID}}</td>
+  <td>{{movpallet.unidadespallet|floatformat:"0"}}</td>
+  <td>{{movpallet.m2pallet|floatformat:"1"}}</td>
+  <td>{{movpallet.EVENTDATETIME|date:'d-m-Y H:i'}}</td>
+  <td>{{movpallet.maqruta}}</td>
+</tr>
+
+
+{% endfor %}
+
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+{% endblock %}

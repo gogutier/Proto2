@@ -1,7 +1,7 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<h3>Mov Pallets</h3>
+<h3>Movimiento Pallets BPT</h3>
 
 
 <div class="container">
@@ -275,7 +275,7 @@ function setChart1(){
       data: {
             labels: labelx,
             datasets: [
-
+/*
             {
 
             label: "Mm2 Corrugados",
@@ -298,17 +298,11 @@ function setChart1(){
             borderWidth: 0,
 
 
-            },{
-
-                    label: "Mm2 Ingreso a bodega",
-                    data: m2Inx,
-                    borderColor: "rgba(0,42,255)",
-                    backgroundColor: "rgba(0,42,255)",
-                    stack: 'stack 1',
-                    borderWidth: 0,
+            },
 
 
-              },{
+
+              {
 
               label: "Mm2 Producidos sin ingreso",
               data: m2Prodx,
@@ -319,8 +313,21 @@ function setChart1(){
 
 
           },
+          */
+
+          {
+
+                  label: "Mm2 Ingreso a bodega BPT",
+                  data: m2Inx,
+                  borderColor: "rgba(0,42,255)",
+                  backgroundColor: "rgba(0,42,255)",
+                  stack: 'stack 1',
+                  borderWidth: 0,
+
+
+            },
             {
-              label: "Mm2 Salida de bodega",
+              label: "Mm2 Salida de bodega BPT",
               data: m2Outx,
               borderColor: "rgba(0,200,155)",
               backgroundColor: "rgba(0,200,155)",

@@ -242,8 +242,8 @@ function datosinv(){
 
       //console.log(prueba['prueba1'][1])
       //console.log(prueba['prueba2']['B'])
-      console.log(m2maqruta)
-      //console.log(datosWIP)
+      //console.log(m2maqruta)
+      console.log(datosWIP)
       //console.log(filtroentrada)
       //console.log(filtrosalida)
 
@@ -277,15 +277,15 @@ function datosinv(){
       if (datosWIP[cuadros[i][2]]['dias']>3)
       {
         //console.log(datosWIP[cuadros[i][2]])
-        auxtext='</br> ' + imagentime;
+        auxtext= imagentime;
 
       }  else{
-        auxtext='</br>'
+        auxtext=''
       }
       //myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + cuadros[i][2] + '</a>' + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" ;
-      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  + "</br>" + "</br>" + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + "</br>" + datosWIP[cuadros[i][2]]['cuenta']+ " pll" + '</a>' ;
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]].innerHTML = '<a href="/ubicpallet_detail/'+ datosWIP[cuadros[i][2]]['indice'] +'" style="color:black">'  + cuadros[i][2]  + "    " + (datosWIP[cuadros[i][2]]['m2tot']/1000).toFixed(1)+ "Mm2" + '</a>' ;
 
-      myTable.rows[cuadros[i][1]-1].cells[cuadros[i][0]].innerHTML = auxtext//imagentime
+      myTable.rows[cuadros[i][1]].cells[cuadros[i][0]-1].innerHTML = auxtext//imagentime
 
       }//myTable.rows[cuadros[1][1]].cells[cuadros[0][1]].innerHTML = cuadros[1][2] + "</br>" + str(zffg2) ;
 
@@ -382,47 +382,18 @@ datosinv()
 function displayHTMLTable(){
   var table = "<table  class='table1'  id='table' style='float: left;' >";
 
-    var rows = 15;
-    var columns = 49;
-
-    ///
-    table+= "<tr  style='text-align: center'>";
-      for(j=0;j<columns-24;j++){
-        table+= "<td style='font-size: 10px;'  >";
-        //table+= ".";
-        table+= "</th>";
-        }
-    table+= "</tr>";
-    ///
-
-    table+= "<tr style='text-align: center'>";
-    for(j=1;j<columns-23;j++){
-      table+= "<td style='font-size: 10px;'>";
-      //table+= ".";
-      table+= "</th>";
-      }
-    table+= "</tr>";
-    ///
+    var rows = 30;
+    var columns = 27;
 
 
-    for(i=2;i<8;i++){
+
+
+    for(i=0;i<rows-1;i++){
       table+= "<tr style='text-align: center'>";
-        for(j=0;j<columns-38;j++){
-          table+= "<td style='font-size: 10px;'>";
-          //table+= ".";
-          table+= "</th>";
-        }
-      table+= "</tr>";
-    }
-
-
-
-    for(i=8;i<rows-1;i++){
-      table+= "<tr style='text-align: center'>";
-        for(j=0;j<columns-20;j++){
+        for(j=0;j<columns;j++){
           table+= "<td style='font-size: 10px; '>";
           //table+= ".";
-          table+= "</th>";
+          table+= "</td>";
         }
       table+= "</tr>";
     }
@@ -434,34 +405,73 @@ function displayHTMLTable(){
   table+= "</table>";
   $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
 
-
+  creacuadro(22,24,"PLL",7,3);
 
   //cambiando color de la table:
-  creacuadro(2,6,"ZTCY2",3,5);
-  creacuadro(3,6,"ZTCY1",3,5);
-  creacuadro(4,6,"ZHCR2",3,5);
-  creacuadro(5,6,"ZHCR1",3,5);
-  creacuadro(14,1,"ZSOB2",3,5);
-  creacuadro(15,1,"ZWRD2",3,5);
-  creacuadro(16,1,"ZWRD1",3,5);
-  creacuadro(18,1,"ZSOB1",3,5);
-  creacuadro(19,1,"ZFFW2",3,5);
-  creacuadro(20,1,"ZFFW1",3,5);
-  creacuadro(21,1,"ZDRO2",3,5);
-  creacuadro(22,1,"ZDRO1",3,5);
-  creacuadro(23,1,"ZFFG2",3,5);
-  creacuadro(24,1,"ZFFG1",3,5);
+  creacuadro(10,22,"C01",5,1);
+  creacuadro(10,21,"C02",5,1);
+  creacuadro(10,20,"C03",5,1);
+  creacuadro(10,19,"C04",5,1);
+  creacuadro(10,18,"C05",5,1);
+  creacuadro(10,17,"C06",5,1);
+  //creacuadro(1,36,"C01",5,1);
+  creacuadro(10,15,"C07",5,1);
+  creacuadro(10,14,"C08",5,1);
+//  creacuadro(10,34,"C01",5,1);
+//  creacuadro(10,33,"C01",5,1);
+  creacuadro(10,13,"E01",5,1);
+  creacuadro(10,12,"E02",5,1);
+  creacuadro(10,11,"E03",5,1);
+  creacuadro(10,10,"E04",5,1);
+
+
+
+  creacuadro(10,6,"C09",5,1);//27
+  creacuadro(10,5,"C10",5,1);
+  creacuadro(10,4,"C11",5,1);
+  creacuadro(10,3,"C12",5,1);
+  creacuadro(10,2,"C13",5,1);
+
+
+  creacuadro(18,17,"B01",7,1);
+  creacuadro(18,16,"B03",7,1);
+  creacuadro(18,15,"B02",7,1);
+  creacuadro(18,14,"B04",7,1);
+  creacuadro(18,13,"B05",7,1);
+  creacuadro(18,12,"B06",7,1);
+  creacuadro(18,11,"B07",7,1);
+  creacuadro(18,10,"B08",7,1);
+
+  creacuadro(22,7,"B09",5,1);
+  creacuadro(18,6,"B10",5,1);
+  creacuadro(18,5,"B11",5,1);
+  creacuadro(18,4,"B12",5,1);
+  creacuadro(18,3,"B13",5,1);
+  creacuadro(18,2,"B14",5,1);
+  creacuadro(18,1,"B15",5,1);
+
+
   //creacuadro(50,0,"CORR_UPPER_Stacker",2,5);
   //creacuadro(51,0,"CORR_LOWER_Stacker",2,5);
-  creacuadro(5,10,"ZPNC",3,4);
-  creacuadro(12,10,"ZPASILLO",6,4);
+
+  //LAS "A"
+
+  creacuadro(26,7,"A01",5,1);
+  creacuadro(22,6,"A02",5,1);
+  creacuadro(22,5,"A03",5,1);
+  creacuadro(22,4,"A04",5,1);
+  creacuadro(22,3,"A05",5,1);
+  creacuadro(22,2,"A06",5,1);
+  creacuadro(22,1,"A07",5,1);
+
+
 
 }
 
 function creacuadro(x,y,texto,a,l){
 
   var myTable = document.getElementById("table");//.getElementsByTagName("td");
-  myTable.rows[y].cells[x].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + texto + '</a>' + "</br>" + "%";
+  myTable.rows[y].cells[x].innerHTML = '<a href="{% url "ubicpallet_detail" pk=1 %}" >' + texto + '</a>' + "    " + "%";
   myTable.rows[y].cells[x].style.backgroundColor = "yellow"
 
   myTable.rows[y].cells[x].colSpan = parseInt(a);

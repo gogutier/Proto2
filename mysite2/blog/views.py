@@ -25,6 +25,20 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
+
+def resumen_entrada_pll(request):
+
+    print("carga datos iniciada")
+    template_name = 'blog/resumen_entrada_pll.html'
+    ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
+    movpallets= MovPallets.objects.filter(DESTINATION="PLL", EVENTDATETIME__gte= ahora-timedelta(days=3), EVENTDATETIME__lt=ahora+timedelta(days=1)).order_by("-EVENTDATETIME")
+
+    print("carga datos completada")
+
+    return render(request, template_name, {'movpallets':movpallets})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
 def get_data_consumo_rollos(request, *args, **kwargs):
 
 
