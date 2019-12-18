@@ -46,55 +46,6 @@
 
 
 
-                  <tr>
-                    <td>
-                      <table id='tablamaqruta'>
-                        <tr>
-                          <td><br></td>
-                        </tr>
-                        <tr style='font-size: 12px;'>
-                          <td>DRO</td>
-                          <td>HCR</td>
-                          <td>WRD</td>
-                          <td></td>
-                          <td>TCY</td>
-                          <td>FFG</td>
-                          <td>FFW</td>
-                          <td></td>
-                          <td>Otros</td>
-
-                        </tr>
-                        <tr style='font-size: 12px;'>
-                          <td>0</td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td></td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td>0</td>
-                          <td></td>
-                          <td>0</td>
-                          <td></td>
-                        </tr>
-
-                        <tr style='font-size: 18px;'>
-                          <td align='center' colspan="3">0</td>
-                          <td></td>
-                          <td align='center' colspan="3">0</td>
-                          <td></td>
-                          <td>0</td>
-
-                        </tr>
-
-
-
-                      </table>
-
-                    </td>
-
-                  </tr>
-
-
 
                   </table>
 
@@ -229,7 +180,7 @@ function datosinv(){
 
       //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
       datosWIP = response_data.datosWIP;
-      m2maqruta = response_data.m2maqruta;
+
       m2totalINV= response_data.m2totalINV;
       npalletstotalINV= response_data.npalletstotalINV;
       m2totalCORR= response_data.m2totalCORR;
@@ -242,25 +193,11 @@ function datosinv(){
 
       //console.log(prueba['prueba1'][1])
       //console.log(prueba['prueba2']['B'])
-      //console.log(m2maqruta)
+  
       console.log(datosWIP)
       //console.log(filtroentrada)
       //console.log(filtrosalida)
 
-      var tablamaqruta = document.getElementById("tablamaqruta");//.getElementsByTagName("td");
-
-      tablamaqruta.rows[2].cells[0].innerHTML=(m2maqruta["DRO"]/1000).toFixed(1)
-      tablamaqruta.rows[2].cells[1].innerHTML=(m2maqruta["HCR"]/1000).toFixed(1)
-      tablamaqruta.rows[2].cells[2].innerHTML=(m2maqruta["WRD"]/1000).toFixed(1)
-      tablamaqruta.rows[2].cells[4].innerHTML=(m2maqruta["TCY"]/1000).toFixed(1)
-      tablamaqruta.rows[2].cells[5].innerHTML=(m2maqruta["FFW"]/1000).toFixed(1)
-      tablamaqruta.rows[2].cells[6].innerHTML=(m2maqruta["FFG"]/1000).toFixed(1)
-      var otros=(m2totalINV-(m2maqruta["FFG"]+m2maqruta["FFW"]+m2maqruta["TCY"]+m2maqruta["DRO"]+m2maqruta["HCR"]+m2maqruta["WRD"]))
-      tablamaqruta.rows[2].cells[8].innerHTML=(otros/1000).toFixed(1)
-
-      tablamaqruta.rows[3].cells[0].innerHTML=((m2maqruta["DRO"]+m2maqruta["HCR"]+m2maqruta["WRD"])/(m2totalINV/100)).toFixed(1)+"%"
-      tablamaqruta.rows[3].cells[2].innerHTML=((m2maqruta["TCY"]+m2maqruta["FFG"]+m2maqruta["FFW"])/(m2totalINV/100)).toFixed(1)+"%"
-      tablamaqruta.rows[3].cells[4].innerHTML=((otros)/(m2totalINV/100)).toFixed(1)+"%"
 
       var myTable = document.getElementById("table");//.getElementsByTagName("td");
       var m2 = document.getElementById("m2");//.getElementsByTagName("td");
@@ -357,14 +294,14 @@ var cuadros= [];
 /// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
 
 displayHTMLTable();
-datosinv();
+//datosinv();
 
 
 window.setInterval(function(){
   console.log("hola");
   datosinv();
 
-}, 30000);
+}, 60000);
 
 
 $("#convert").click(function()

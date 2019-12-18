@@ -423,16 +423,6 @@ def get_data_inventario(request, *args, **kwargs):
         npalletstotalCORR=0
 
 
-        m2maqruta={"TCY":0, "HCR":0, "WRD":0, "FFG":0, "DRO":0, "FFW":0, "Otros":0}
-
-        for ruta in m2maqruta.keys():
-
-            filt= Pallet.objects.filter(maqruta=str(ruta)).filter(Q(ubic="ZPNC") | Q(ubic="ZHCR1") | Q(ubic="ZHCR2")| Q(ubic="ZTCY1")| Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZSOB1")| Q(ubic="ZSOB2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZFFG1")| Q(ubic="ZFFG2")| Q(ubic="ZPNC")| Q(ubic="ZPASILLO") )
-            totm2=0
-            for pallet in filt:
-                totm2=totm2 + pallet.m2pallet
-            m2maqruta[ruta]= totm2
-
 
 
 
@@ -527,7 +517,7 @@ def get_data_inventario(request, *args, **kwargs):
 
 
         data = {
-        "m2maqruta":m2maqruta,
+
         "datosWIP":datosWIP,
         "m2totalINV": fotoinv.m2totalINV,
         "npalletstotalINV": npalletstotalINV,

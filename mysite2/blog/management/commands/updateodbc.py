@@ -44,6 +44,7 @@ class Command(BaseCommand):
 
     def conecta_BD(self):
         try:
+            print("Iniciando conexión a BD")
             conn = pyodbc.connect('Driver={SQL Server};'
                                   'Server=192.168.8.41;'
                                   'UID=cti;'
@@ -460,7 +461,7 @@ class Command(BaseCommand):
             print(" ")
         except Exception as e:
             print(e)
-            print("error al tomar rows!")
+            print("error al tomar row1 del nuevo movpallet!")
             print("Unexpected error:", sys.exc_info()[0])
             #print("Unexpected error:", sys.exc_info()[0])
             sleep(1)

@@ -47,20 +47,7 @@ class Command(BaseCommand):
     def update_datos_wip(self):
 
         print("iniciando cálculo de inventario en WIP")
-        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":53},
-        "ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},
-        "ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":25,"al2":30,"al3":35},
-        "ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":36,"al2":45,"al3":52},
-        "ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},
-        "ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":30,"al2":38,"al3":45},
-        "ZTCY1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
-        "ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":20,"al3":30},
+        datosWIP={
         "CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},
         "CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},
         "C01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
