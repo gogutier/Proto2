@@ -2,15 +2,11 @@
 
 {% block content %}
 
-<div class="container" >
-  <h3>Panel WIP</h3>
+<div class="container">
+  <h3>Panel BPT</h3>
 <div class="jumbotron">
 
 <table style='overflow-x:auto;'>
-
-
-
-
 
       <tr>
 
@@ -54,6 +50,14 @@
           <td valign='top'>
 
                 <table cellspacing='10' class='tablee' style='font-size: 10px; overflow-x:auto;' id='tabla3'  >
+                  <tr>
+                    <button type="button" id="convert">Actualizar</button>
+                    <br>
+                    <br>
+                      <a href="/busqueda_pallet_bpt/"> <b>BUSCAR PALLET</b> </a>
+                    <br>
+                    <br>
+                  </tr>
                   <tr>
                     <td colspan='5' style='font-weight:bold'>Últimas entradas a Bodega</td>
                   </tr>
@@ -152,11 +156,11 @@
 
 
 
-<button type="button" id="convert">Actualizar</button>
+
+
 
 
 <script type="text/javascript">
-
 
 
 
@@ -173,9 +177,23 @@ function datosinv(){
   var imagentime ='<img src= {% static "images/time.png" %} alt=""  height=15 width=15></img>'
   var auxtext = ''
 
+/*
   $.ajax({
-      method: "GET",
+    url: endpoint,
+    type: "POST",
+    data: {name: 'hola', age: 'q hace', csrfmiddlewaretoken: csrf_value},
+    success:function(response){},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){}
+    });
+
+*/
+  $.ajax({
+      method: "POST",
+      //type: "POST",
+      //data: {name: 'hola', age: 'q hace', csrfmiddlewaretoken: csrf_value},
       url: endpoint,
+      data: {name: 'hola', age: 'q hace'},
       success: function(response_data){
 
       //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
@@ -193,7 +211,7 @@ function datosinv(){
 
       //console.log(prueba['prueba1'][1])
       //console.log(prueba['prueba2']['B'])
-  
+
       console.log(datosWIP)
       //console.log(filtroentrada)
       //console.log(filtrosalida)
@@ -295,24 +313,21 @@ var cuadros= [];
 
 displayHTMLTable();
 //datosinv();
-
+datosinv()
 
 window.setInterval(function(){
   console.log("hola");
   datosinv();
 
-}, 60000);
+}, 36000);
 
 
 $("#convert").click(function()
 {
 
-
 datosinv()
-//updatecuadros();
-//displayHTMLTable();
-
 });
+
 
 ////// Función que muestra el input paresado
 

@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
+from django.views.generic.base import TemplateView
 from django.utils import timezone
 from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,7 @@ from django.urls import reverse_lazy
 from blog.forms import PostForm, CommentForm, ContactForm, AppointmentForm, OCImportacionForm, ProdIDForm, BookFormset, BookModelFormset, PruebaModForm, MinutaForm, QRForm, MovPalletForm
 from django.views.generic import (TemplateView,ListView,CreateView,DetailView, UpdateView, DeleteView, View)
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import csv
 from datetime import datetime, timedelta
 from io import StringIO
@@ -24,6 +26,49 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+@csrf_exempt
+def get_data_busqueda_pallet_bpt(request, *args, **kwargs):
+
+     #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+
+        cliente=(request.POST['cliente'])
+        padron=(request.POST['padron'])
+        orderID=(request.POST['orderID'])
+        prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+
+        listacalles=("PLL","A01","A02","A03","A04","A05","A06","A07","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","C01","C01","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","E01","E02","E03","E04")
+        filtrocalleqs=Q()
+        for calle in listacalles:
+            filtrocalleqs = filtrocalleqs | Q(ubic=calle)
+
+        if orderID!="":
+            resultado= Pallet.objects.filter(filtrocalleqs).filter(ORDERID=orderID).values()
+        elif cliente!="":
+            resultado= Pallet.objects.filter(filtrocalleqs).filter(cliente__icontains=cliente).order_by("-fechacreac")
+            if padron!="":
+                resultado=  resultado.filter(padron__icontains=padron).order_by("-fechacreac")
+
+
+                print("hola")
+
+
+            resultado=resultado.values()
+
+        data = {
+        "resultado":list(resultado),
+
+
+        }
+        print("Enviando datos inventario")
+        return JsonResponse(data)#http response con el datatype de JS
+
+def busqueda_pallet_bpt(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/busqueda_pallet_bpt.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
 
 def resumen_entrada_pll(request):
@@ -374,6 +419,7 @@ def get_data_inventario_prog(request, *args, **kwargs):
 
 
 
+
         print("iniciando consulta inv en Corrplan")
 
 
@@ -409,12 +455,16 @@ def get_data_inventario_prog(request, *args, **kwargs):
         return JsonResponse(data)#http response con el datatype de JS
 
 
-
+#class (TemplateView):
+@csrf_exempt
 def get_data_inventario(request, *args, **kwargs):
 
      #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
 
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+
+        print(request.POST['name'])
+        print(request.POST['age'])
 
         m2totalINV=0
         npalletstotalINV=0

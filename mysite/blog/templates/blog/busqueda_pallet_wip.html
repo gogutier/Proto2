@@ -1,0 +1,168 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+
+<div class="container" style="padding:10px 10px;">
+<table class='table table-hover' id='table'>
+
+<tr style="text-align: center">
+  <td  colspan="6"><h3>Búsqueda de pallets WIP</h3></td>
+  <td colspan="6">
+
+  <form>
+    Cliente:
+    <input id="cliente" type="text" name="cliente">
+    <a></a>
+
+    Padrón:
+    <input id="padron" type="text" name="padrón">
+    <br>
+    <br>
+    ID:
+    <input id="ID" type="text" name="ID">
+
+  </form>
+
+  </td>
+  <td>
+    <br>
+    <button type="button" id="convert">Actualizar</button>
+  </td>
+</table>
+
+</div>
+
+<div class="row"   id="parsed_csv_list">
+</div>
+
+<script type="text/javascript">
+
+
+
+  var endpoint='/api/get_data_busqueda_pallet_wip/';
+
+
+  {% load staticfiles %}
+
+  function datosinv(){
+
+    console.log("iniciando ajax datos de búsqueda");
+
+    var cliente= $("#cliente").val()
+    console.log(cliente)
+    var padron= $("#padron").val()
+    var orderID= $("#ID").val()
+
+    $.ajax({
+        method: "POST",
+        url: endpoint,
+        data: {
+           cliente:cliente,//.getElementsByTagName("td");,
+           padron:padron,//.getElementsByTagName("td");,
+           orderID:orderID//.getElementsByTagName("td");,
+        },
+        success: function(response_data){
+
+          resultado = response_data.resultado;
+          console.log("respuesta recibida");
+          displayHTMLTable();
+
+
+        },
+        error: function(error_data){
+          console.log("error en AJAX");
+          console.log(error_data);
+        }
+
+      })
+
+
+
+};
+
+
+
+  $("#convert").click(function()
+  {
+  datosinv()
+
+  });
+
+  $('#cliente').keypress(function(e){
+    if(e.keyCode==13)
+    $('#convert').click();
+  });
+
+  $('#padron').keypress(function(e){
+    if(e.keyCode==13)
+    $('#convert').click();
+  });
+
+  $('#ID').keypress(function(e){
+    if(e.keyCode==13)
+    $('#convert').click();
+  });
+
+  function displayHTMLTable(){
+
+
+    console.log("generando tabla")
+
+    var table = "<table  class='table table-hover'  id='table' style='float: left;' >";
+
+
+
+      table+= "<tr style='text-align: center'>";
+
+        table+= "<td >Tarja</td>";
+        table+= "<td>Order ID</td>";
+        table+= "<td >Cliente</td>";
+        table+= "<td >Padrón</td>";
+        table+= "<td >M2</td>";
+        table+= "<td >Fecha Creación</td>";
+        table+= "<td >Ubic</td>";
+
+
+      table+= "</tr>";
+
+      for (var key in resultado){
+        value = resultado[key];
+        table+= "<tr style='text-align: center'>";
+
+            table+= "<td>";
+            table+= (resultado[key]['tarja']);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key]['ORDERID']);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key]['cliente']);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key]['padron']);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key]['m2pallet'].toFixed(1));
+            table+= "</td>";
+            table+= "<td>";
+            table+= moment(resultado[key]['fechacreac']).format('DD-MM-YY HH:mm');
+            table+= "</td>";
+            table+= "<td >";
+            table+= (resultado[key]['ubic']);
+            table+= "</td>";
+            //moment(myTable.rows[i].cells[6].innerHTML, "DD-MM-YYYY HH:mm");
+            //moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
+
+        table+= "</tr>";
+      }
+
+
+    table+= "</table>";
+    $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+  }
+  </script>
+
+
+  {% endblock %}

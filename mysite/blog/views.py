@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from blog.forms import PostForm, CommentForm, ContactForm, AppointmentForm, OCImportacionForm, ProdIDForm, BookFormset, BookModelFormset, PruebaModForm, MinutaForm, QRForm, MovPalletForm
 from django.views.generic import (TemplateView,ListView,CreateView,DetailView, UpdateView, DeleteView, View)
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import csv
 from datetime import datetime, timedelta
 from io import StringIO
@@ -24,11 +25,62 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+@csrf_exempt
+def get_data_busqueda_pallet_wip(request, *args, **kwargs):
+
+        #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+
+        cliente=(request.POST['cliente'])
+        padron=(request.POST['padron'])
+        orderID=(request.POST['orderID'])
+        prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+
+        listacalles=("ZPICADO","ZPNC","ZFFG1","ZFFG2","ZDRO1","ZDRO2","ZFFW1","ZFFW2","ZSOB1","ZWRD1","ZWRD2","ZSOB2","ZHCR1","ZHCR2","ZTCY1","ZTCY2","CORR_UPPER_Stacker","CORR_UPPER_Stacker")
+        filtrocalleqs=Q()
+        for calle in listacalles:
+            filtrocalleqs = filtrocalleqs | Q(ubic=calle)
+
+        if orderID!="":
+            resultado= Pallet.objects.filter(filtrocalleqs).filter(ORDERID=orderID).values()
+        elif cliente!="":
+            resultado= Pallet.objects.filter(filtrocalleqs).filter(cliente__icontains=cliente).order_by("-fechacreac")
+            if padron!="":
+                resultado=  resultado.filter(padron__icontains=padron).order_by("-fechacreac")
+
+
+
+
+            resultado=resultado.values()
+
+        data = {
+        "resultado":list(resultado),
+
+
+        }
+        print("Enviando datos inventario")
+        return JsonResponse(data)#http response con el datatype de JS
+
+def busqueda_pallet_wip(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/busqueda_pallet_wip.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def get_data_consumo_rollos(request, *args, **kwargs):
-
-
-
 
     labels={}
     ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)

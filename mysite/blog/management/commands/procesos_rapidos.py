@@ -162,11 +162,12 @@ class Command(BaseCommand):
 
 
                 labels=[]
-                ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
-                for i in range(0,7):
+                ahora=datetime.now().replace(hour= 0, minute=0,second=0, microsecond=0)
+                horizonte=7
+                for i in range(0,horizonte+1):
                     #por ahora los voy a ordenar por turno, después por hora.
-                    fecha=(ahora-timedelta(days=7-i)).replace(hour= 7)
-                    fechafin=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
+                    fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 7, minute=0, second=0, microsecond=0)
+                    fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30, second=0, microsecond=0)
                     turno="A"
                     label= fecha.strftime("%d-%m") + " " + turno
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
@@ -174,16 +175,16 @@ class Command(BaseCommand):
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
-                    fecha=(ahora-timedelta(days=7-i)).replace(hour= 14, minute=30)
-                    fechafin=(ahora-timedelta(days=7-i)).replace(hour= 22)
+                    fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30, second=0, microsecond=0)
+                    fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
                     turno="B"
                     label= fecha.strftime("%d-%m") + " " + turno
                     m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
-                    fecha=(ahora-timedelta(days=7-i)).replace(hour= 22)
-                    fechafin=(ahora-timedelta(days=7-i-1)).replace(hour= 7)
+                    fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
+                    fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7, minute=0, second=0, microsecond=0)
                     turno="C"
                     label= fecha.strftime("%d-%m") + " " + turno
                     m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)

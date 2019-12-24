@@ -75,4 +75,6 @@ urlpatterns = [
     url(r'^carga_mov_rollos/$',views.carga_mov_rollos,name='carga_mov_rollos'),
     url(r'^panel_consumo_rollos/$',views.panel_consumo_rollos,name='panel_consumo_rollos'),
     url(r'^api/get_data_consumo_rollos/$',views.get_data_consumo_rollos,name='api-data-consumo-rollos'),
+    url(r'^busqueda_pallet_wip/$',views.busqueda_pallet_wip,name='busqueda_pallet_wip'),
+    url(r'^api/get_data_busqueda_pallet_wip/$',views.get_data_busqueda_pallet_wip,name='api_data_busqueda_pallet_wip'),
 ]
