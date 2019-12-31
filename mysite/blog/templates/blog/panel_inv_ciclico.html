@@ -11,8 +11,24 @@
 <h6>Tabla lógica</h6>
 
 <table >
-  <tr style: bgcolor='#00FF00'>
-    <td style='font-size: 10px;' >Pallet OK en inventario</td>
+  <tr >
+    <td style='font-size: 10px;' style: bgcolor='#00FF00' >Pallet OK en inventario</td>
+
+    <td>
+      <form method="POST">
+      		{% csrf_token %}
+      		<div class="col-md-3">{{ form.town }}</div>
+
+      		<div class="col-md-6">
+
+      			<button type="submit" class="btn btn-default pull-right" name="excel">Excel Report</button>
+      		</div>
+      	</form>
+    </td>
+
+
+
+
 
   </tr>
   <tr style: bgcolor='Yellow'>
@@ -28,6 +44,7 @@
    <tr style: bgcolor='Red'>
      <td style='font-size: 10px;' >Faltó salida de pallet </td>
    </tr>
+
 </table>
 
 <br>
@@ -41,7 +58,7 @@
 <table>
 
 <tr>
-  <td><button type="button" id="actualiza">Actualizar</button></td>
+
   <td><h6 id="ultimatoma">Cargando datos inv..</h6></td>
   <td><td>
     <td><td>
@@ -49,8 +66,9 @@
         <td><td>
 
   <td>
+      {% csrf_token %}
   <form name="myform2" method="POST" class="post-form" id="theFormID">
-  {% csrf_token %}
+
 
     <button type="submit" class="save btn btn-default">Nueva Toma Inv</button>
 
@@ -69,6 +87,7 @@
 
 
 </div>
+
 
 
 <script type="text/javascript">
@@ -199,7 +218,7 @@ window.setInterval(function(){
   datosinv();
 
 
-}, 60000);
+}, 350000);
 
 
 ////// Función que muestra el input paresado
@@ -224,7 +243,7 @@ function displayHTMLTable(){
 
             table+= "<tr>";
             table+= "<td style='font-size: 14px;' >";
-                table+= ((datosWIP[key]['palletsencontrados'][0].length)/(datosWIP[key]['palletsenotracalle'][0].length+datosWIP[key]['palletsnoencontrados'][0].length+datosWIP[key]['palletscti'][0].length)).toFixed(2) + "%"
+                table+= ((datosWIP[key]['palletsencontrados'][0].length)/(datosWIP[key]['palletsenotracalle'][0].length+datosWIP[key]['palletsnoencontrados'][0].length+datosWIP[key]['palletscti'][0].length)*100).toFixed(2) + "%"
                 //table+= "<br>"
 
                 //table+= ((datosWIP[key]['palletsenotracalle'][0].length+datosWIP[key]['palletsnoencontrados'][0].length+datosWIP[key]['palletscti'][0].length)).toFixed(1) + "%"
@@ -368,4 +387,4 @@ function displayHTMLTable(){
 
 </script>
 
-{% endblock %}
+{% endblock content %}

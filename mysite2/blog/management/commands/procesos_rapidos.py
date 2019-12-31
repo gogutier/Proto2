@@ -4,6 +4,7 @@ from blog.models import FotoCorrplan as FotoCorrplan
 from blog.models import FotoProgCorr as FotoProgCorr
 from blog.models import FiltroEntradaWIP as FiltroEntradaWIP
 from blog.models import FiltroSalidaWIP as FiltroSalidaWIP
+from blog.models import FiltroMovInternoWIP as FiltroMovInternoWIP
 from blog.models import Datos_Proy_WIP as Datos_Proy_WIP
 from blog.models import DatosWIP_Prog as DatosWIP_Prog
 #from blog.models import Datos_INV_WIP as Datos_INV_WIP
@@ -48,8 +49,6 @@ class Command(BaseCommand):
 
         print("iniciando cálculo de inventario en WIP")
         datosWIP={
-        "CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},
-        "CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":1,"al2":2,"al3":3},
         "C01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
         "C02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
         "C03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
@@ -97,17 +96,22 @@ class Command(BaseCommand):
         m2totalCORR=0
         npalletstotalCORR=0
 
+        filtromovinternoqs=Q()
 
         for calle in datosWIP.keys():
 
             datosWIP[str(calle )]['cuenta']= Pallet.objects.filter(ubic__iexact=str(calle)).count()
             datosWIP[str(calle)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
+
+            filtromovinternoqs = filtromovinternoqs | Q(DESTINATION=str(calle))
+
             try:
                 datosWIP[str(calle)]['dias']= (datetime.now()-(Pallet.objects.filter(ubic__iexact=str(calle)).earliest('fechacreac').fechacreac.replace(tzinfo=None))).days#- datetime.now()))
 
-            except:
+            except Exception as e:
+                print(e)
                 datosWIP[str(calle)]['dias']=0
-                print("errorn no se encontraron días en calle")
+                print("error no se encontraron días de antiguedad en calle " + str(calle) )
 
             #print(str(calle))
             #print("fecha creación:")
@@ -134,7 +138,7 @@ class Command(BaseCommand):
 
 
         filtroentrada=[]
-        filtro=MovPallets.objects.filter(Q(DESTINATION="PLL") | Q(DESTINATION="PT10")).exclude( Q(SOURCE="PLL") | Q(SOURCE="PT10")).order_by('-TRANSACTIONINDEX')[:4]
+        filtro=MovPallets.objects.filter(Q(DESTINATION="PLL") | Q(DESTINATION="PT10")).exclude( Q(SOURCE="PLL") | Q(SOURCE="PT10")).order_by('-TRANSACTIONINDEX')[:3]
 
         # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
 
@@ -145,18 +149,27 @@ class Command(BaseCommand):
 
         #print(filtroentrada)
         filtrosalida=[]
-        filtro2=MovPallets.objects.filter(Q(DESTINATION="Truck") | Q(DESTINATION="AN1") | Q(DESTINATION="AN2")| Q(DESTINATION="AN3")| Q(DESTINATION="AN4")| Q(DESTINATION="AN5") | Q(DESTINATION="AN6")| Q(DESTINATION="AN7") | Q(DESTINATION="AN8")| Q(DESTINATION="AN9") ).order_by('-TRANSACTIONINDEX')[:4]
+        filtro2=MovPallets.objects.filter(Q(DESTINATION="Truck") | Q(DESTINATION="AN1") | Q(DESTINATION="AN2")| Q(DESTINATION="AN3")| Q(DESTINATION="AN4")| Q(DESTINATION="AN5") | Q(DESTINATION="AN6")| Q(DESTINATION="AN7") | Q(DESTINATION="AN8")| Q(DESTINATION="AN9") ).order_by('-TRANSACTIONINDEX')[:3]
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
             movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
             filtrosalida.append(movimiento)
 
+        filtromovinterno=[]
+        filtro3=MovPallets.objects.filter(filtromovinternoqs).exclude(DESTINATION="PLL").order_by('-TRANSACTIONINDEX')[:3]
+        print("hola")
+        for mov in filtro3:
+            print("hola")
+            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
+            filtromovinterno.append(movimiento)
+
 
         print(filtroentrada)
+        print(filtromovinterno)
         print(filtrosalida)
 
-        print("Pasando objetos: ")
+        print("Pasando objetos, creando una nueva foto de invetario: ")
 
 
 
@@ -177,6 +190,11 @@ class Command(BaseCommand):
             dato, created =FiltroSalidaWIP.objects.get_or_create(programa=foto, LOADID=mov[0], ORDERID=mov[1], SOURCE=mov[2], DESTINATION=mov[3], EVENTDATETIME=mov[4])
             dato.save()
 
+        for mov in filtromovinterno:
+
+            dato, created =FiltroMovInternoWIP.objects.get_or_create(programa=foto, LOADID=mov[0], ORDERID=mov[1], SOURCE=mov[2], DESTINATION=mov[3], EVENTDATETIME=mov[4])
+            dato.save()
+
 
         #sectores:
         for calle in datosWIP.keys():
@@ -184,6 +202,7 @@ class Command(BaseCommand):
             dato, created =Datos_Inv_WIP.objects.get_or_create(programa=foto, sector=str(calle), cuenta=datosWIP[str(calle)]['cuenta'], m2tot=datosWIP[str(calle)]['m2tot'], indice=datosWIP[str(calle)]['indice'], dias=datosWIP[str(calle)]['dias'], al1=datosWIP[str(calle)]['al1'], al2=datosWIP[str(calle)]['al2'], al3=datosWIP[str(calle)]['al3'])
             dato.save()
 
+        print("borrando la foto de inventario anteior")
         instance=Foto_Datos_Inv_WIP.objects.filter(fecha_foto__lt=foto.fecha_foto)
         instance.delete()
 
@@ -357,9 +376,60 @@ class Command(BaseCommand):
 
                     #Calculo el n° de movimientos registrados en ese turno:
 
+                    #hago el filtrro de movimientos internos en bodega
+
+                    datosWIP={
+                    "C01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "C02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "C03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C08":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C09":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C10":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C11":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C12":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "C13":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":11,"al2":37,"al3":44},
+                    "B01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":13,"al3":44},
+                    "B03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B08":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B09":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B10":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B11":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B12":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B13":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B14":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "B15":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":10,"al2":37,"al3":44},
+                    "E01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "E02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "E03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "E04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A02":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A03":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A04":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
+                    "A07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44}}
+
+
+                    filtromovinternoqs =Q()
+
+                    for calle in datosWIP.keys():
+
+                        filtromovinternoqs = filtromovinternoqs | Q(DESTINATION=str(calle))
+
+
                     movsaBPT= MovPallets.objects.filter(Q(DESTINATION="PLL")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsandenes= MovPallets.objects.filter(Q(DESTINATION="AN1") | Q(DESTINATION="AN2") | Q(DESTINATION="AN3") | Q(DESTINATION="AN4") | Q(DESTINATION="AN5") | Q(DESTINATION="AN6") | Q(DESTINATION="AN7") | Q(DESTINATION="AN8") | Q(DESTINATION="AN9")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsconv1= MovPallets.objects.filter(filtromovinternoqs).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movsaBPT":movsaBPT, "movsandenes":movsandenes, "movsconv1":movsconv1, "movsconv2":movsconv2})
                     print(movsconv2)

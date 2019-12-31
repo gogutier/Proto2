@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from blog.models import OrdenCorrplan as OrdenCorrplan
 from blog.models import FotoCorrplan as FotoCorrplan
 from blog.models import FotoProgCorr as FotoProgCorr
+from blog.models import m2Maqruta_WIP as m2Maqruta_WIP
 from blog.models import FiltroEntradaWIP as FiltroEntradaWIP
 from blog.models import FiltroSalidaWIP as FiltroSalidaWIP
 from blog.models import Datos_Proy_WIP as Datos_Proy_WIP
@@ -110,8 +111,23 @@ class Command(BaseCommand):
             filtrosalida.append(movimiento)
 
 
-        print(filtroentrada)
-        print(filtrosalida)
+        #print(filtroentrada)
+        #print(filtrosalida)
+
+
+
+        m2maqruta={"TCY":0, "HCR":0, "WRD":0, "FFG":0, "DRO":0, "FFW":0, "Otros":0}
+
+        for ruta in m2maqruta.keys():
+
+            filt= Pallet.objects.filter(maqruta=str(ruta)).filter(Q(ubic="ZPNC") | Q(ubic="ZHCR1") | Q(ubic="ZHCR2")| Q(ubic="ZTCY1")| Q(ubic="ZTCY2")| Q(ubic="ZWRD1")| Q(ubic="ZWRD2")| Q(ubic="ZSOB1")| Q(ubic="ZSOB2")| Q(ubic="ZFFW1")| Q(ubic="ZFFW2")| Q(ubic="ZDRO1")| Q(ubic="ZDRO2")| Q(ubic="ZFFG1")| Q(ubic="ZFFG2")| Q(ubic="ZPNC")| Q(ubic="ZPASILLO") )
+            totm2=0
+            for pallet in filt:
+                totm2=totm2 + pallet.m2pallet
+            m2maqruta[ruta]= totm2
+
+
+
 
         print("Pasando objetos: ")
 
@@ -123,6 +139,8 @@ class Command(BaseCommand):
         #Borrar los antiguos..
 
         #filtroentrada:
+        for ruta in m2maqruta.keys():
+            m2Maqruta_WIP.objects.get_or_create(programa=foto, maquina=ruta, m2=m2maqruta[ruta])
 
         for mov in filtroentrada:
 
@@ -600,10 +618,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         while (1):
 
-            self.update_datos_wip()
-            self.updatemovpallets()
-            self.updatewipprog()
-            self.updateproywip()
+            try:
+                self.update_datos_wip()
+                self.updatemovpallets()
+                self.updatewipprog()
+                self.updateproywip()
+
+            except Exception as e:
+                print(e)
+                print("error")
+                sleep(10)
 
 
 
@@ -611,5 +635,5 @@ class Command(BaseCommand):
 
 
             print("Esperando para hacer prox carga masiva de datos")
-            sleep(10)
+            sleep(2)
         #print(labels)

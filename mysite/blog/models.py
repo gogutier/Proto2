@@ -72,7 +72,6 @@ class Foto_Calles_Inv_Cic_WIP(models.Model):
 
 
 class Foto_Palletscti_Inv_Cic_WIP(models.Model):
-
     calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip1', on_delete=models.CASCADE, default=0)
     pallet=models.CharField(max_length=16, default="0")
     ORDERID=models.CharField(max_length=16, default="0")
@@ -81,8 +80,6 @@ class Foto_Palletscti_Inv_Cic_WIP(models.Model):
         return (str(self.pallet))
 
 class Foto_Palletsencontrados_Inv_Cic_WIP(models.Model):
-
-
     calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip2', on_delete=models.CASCADE, default=0)
     pallet=models.CharField(max_length=16, default="0")
     ORDERID=models.CharField(max_length=16, default="0")
@@ -91,7 +88,6 @@ class Foto_Palletsencontrados_Inv_Cic_WIP(models.Model):
         return (str(self.pallet))
 
 class Foto_Palletsenotracalle_Inv_Cic_WIP(models.Model):
-
 
     calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip3', on_delete=models.CASCADE, default=0)
     pallet=models.CharField(max_length=16, default="0")
@@ -102,7 +98,6 @@ class Foto_Palletsenotracalle_Inv_Cic_WIP(models.Model):
 
 class Foto_Palletsnoencontrados_Inv_Cic_WIP(models.Model):
 
-
     calle=models.ForeignKey('blog.Foto_Calles_Inv_Cic_WIP', related_name='foto_calle_wip4', on_delete=models.CASCADE, default=0)
     pallet=models.CharField(max_length=16, default="0")
     ORDERID=models.CharField(max_length=16, default="0")
@@ -112,12 +107,24 @@ class Foto_Palletsnoencontrados_Inv_Cic_WIP(models.Model):
 
 class Foto_Datos_Inv_WIP(models.Model):
 
-
     fecha_foto=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
     m2totalINV = models.FloatField(default=0)
 
     def __str__(self):
         return (str(self.fecha_foto))
+
+
+class m2Maqruta_WIP(models.Model):
+
+
+    programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwipmaqruta', on_delete=models.CASCADE, default=0)
+    maquina=models.CharField(max_length=16, default="0")
+    m2=models.FloatField(default=0)
+
+
+    def __str__(self):
+        return (str(self.maquina))
+
 
 
 class FiltroEntradaWIP(models.Model):

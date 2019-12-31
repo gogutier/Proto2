@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.views.generic.base import TemplateView
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -545,6 +545,7 @@ def get_data_inventario(request, *args, **kwargs):
 
         filtroentrada=[]
         filtrosalida=[]
+        filtromovinterno=[]
 
         #Selecciono la foto más reciente:
         fotoinv=Foto_Datos_Inv_WIP.objects.all().order_by('-pk')[0]
@@ -560,6 +561,11 @@ def get_data_inventario(request, *args, **kwargs):
             movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME]
             filtrosalida.append(movimiento)
 
+        for mov in FiltroMovInternoWIP.objects.filter(programa=fotoinv):
+            #movimiento=[tarja, destino, hora]
+            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME]
+            filtromovinterno.append(movimiento)
+
         datosWIP={}
         for dato in Datos_Inv_WIP.objects.filter(programa=fotoinv):
 
@@ -574,6 +580,7 @@ def get_data_inventario(request, *args, **kwargs):
         "m2totalCORR": m2totalCORR,
         "filtroentrada": filtroentrada,
         "filtrosalida": filtrosalida,
+        "filtromovinterno": filtromovinterno,
         #"filtroprod": filtroprod,
 
         }

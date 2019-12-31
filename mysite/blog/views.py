@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, m2Maqruta_WIP
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -18,10 +18,12 @@ from io import StringIO
 import pruebawebscrap
 import webscrap2
 import openpyxl
+from django.http.response import HttpResponse
 
 import xlrd
 from openpyxl.workbook import Workbook
 from openpyxl.reader.excel import load_workbook, InvalidFileException
+from excel_utils import WriteToExcel
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
@@ -317,23 +319,100 @@ def panel_movpallets(request):
 
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
-
+@csrf_exempt
 def panel_inv_ciclico(request):
     #print("cargando consumos puestos")
+
+
+
     if request.method == "POST":
-        #Crea una nueva TomaInvCic.
 
-        o = TomaInvCic.objects.create()
+        if 'excel' not in request.POST:
+            print("Recibiendo respuesta excel en POST")
+            #Crea una nueva TomaInvCic.
+            print("RECIBIENTO UN POST")
+            o = TomaInvCic.objects.create()
 
-        o.save()
+            o.save()
 
-        tomainvantiguos= TomaInvCic.objects.filter(fechatomainvcic__lt=o.fechatomainvcic)
-        for toma in tomainvantiguos:
-            toma.delete()
+            tomainvantiguos= TomaInvCic.objects.filter(fechatomainvcic__lt=o.fechatomainvcic)
+            for toma in tomainvantiguos:
+                toma.delete()
 
         #Borra Las anteriores.
 
 
+    #LA parte para generar el excel_data
+        if 'excel' in request.POST:
+            print("Recibiendo respuesta excel en POST")
+
+            #en datosinv es donde envío los datos a incluir en el gráfico
+            #Obtengo la foto del inv cic más reciente
+
+
+
+            ################## generando los mismos datos en el excel_data
+
+            fotoinv=Foto_Inv_Cic_WIP.objects.all().order_by('-pk')[0]
+
+            datosWIP2={}
+
+
+            for calle in Foto_Calles_Inv_Cic_WIP.objects.filter(foto=fotoinv):
+
+                lista2=[[],[]]
+                datosWIP2[str(calle)]={}
+                datosWIP2[str(calle)]['palletscti']=[[],[]]
+                datosWIP2[str(calle)]['palletsencontrados']=[[],[]]
+                datosWIP2[str(calle)]['palletsnoencontrados']=[[],[]]
+                datosWIP2[str(calle)]['palletsenotracalle']=[[],[]]
+
+                for pallet in Foto_Palletscti_Inv_Cic_WIP.objects.filter(calle=calle):
+                    if pallet:
+                        datosWIP2[str(calle)]['palletscti'][0].append(pallet.pallet)
+                        datosWIP2[str(calle)]['palletscti'][1].append(pallet.ORDERID)
+                        #print(pallet.pallet)
+                        #print(pallet.ORDERID)
+
+                for pallet in Foto_Palletsencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
+                    if pallet:
+                        datosWIP2[str(calle)]['palletsencontrados'][0].append(pallet.pallet)
+                        datosWIP2[str(calle)]['palletsencontrados'][1].append(pallet.ORDERID)
+                        #print(pallet.pallet)
+                        #print(pallet.ORDERID)
+
+                for pallet in Foto_Palletsenotracalle_Inv_Cic_WIP.objects.filter(calle=calle):
+                    if pallet:
+                        datosWIP2[str(calle)]['palletsenotracalle'][0].append(pallet.pallet)
+                        datosWIP2[str(calle)]['palletsenotracalle'][1].append(pallet.ORDERID)
+                        #print(pallet.pallet)
+                        #print(pallet.ORDERID)
+
+                for pallet in Foto_Palletsnoencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
+                    if pallet:
+                        datosWIP2[str(calle)]['palletsnoencontrados'][0].append(pallet.pallet)
+                        datosWIP2[str(calle)]['palletsnoencontrados'][1].append(pallet.ORDERID)
+                        #print(pallet.pallet)
+                        #print(pallet.ORDERID)
+
+
+
+
+
+                #####################
+
+
+
+
+
+
+            datosinv = datosWIP2
+            town = None
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=Report.xlsx'
+            xlsx_data = WriteToExcel(datosinv, town)
+            response.write(xlsx_data)
+            return response
 
 
     template_name = 'blog/panel_inv_ciclico.html'
@@ -460,7 +539,7 @@ def get_data_inventario(request, *args, **kwargs):
         m2totalCORR=0
         npalletstotalCORR=0
 
-
+        '''
         m2maqruta={"TCY":0, "HCR":0, "WRD":0, "FFG":0, "DRO":0, "FFW":0, "Otros":0}
 
         for ruta in m2maqruta.keys():
@@ -472,72 +551,9 @@ def get_data_inventario(request, *args, **kwargs):
             m2maqruta[ruta]= totm2
 
 
-
-
-        '''        datosWIP={"ZFFG1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFG2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZDRO2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZFFW2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZWRD2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZSOB2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZHCR2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY1":{"cuenta":0,"dias":0,"m2tot":0,"dias":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZTCY2":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPNC":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_UPPER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"CORR_LOWER_Stacker":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45},"ZPASILLO":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":20,"al2":30,"al3":45}}
-
-
-
-
-        for calle in datosWIP.keys():
-
-            datosWIP[str(calle)]['cuenta']= Pallet.objects.filter(ubic__iexact=str(calle)).count()
-            datosWIP[str(calle)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
-            try:
-                datosWIP[str(calle)]['dias']= (datetime.now()-(Pallet.objects.filter(ubic__iexact=str(calle)).earliest('fechacreac').fechacreac.replace(tzinfo=None))).days#- datetime.now()))
-
-            except:
-                datosWIP[str(calle)]['dias']=0
-
-            #print(str(calle))
-            #print("fecha creación:")
-            #print(datosWIP[str(calle)]['dias'])
-
-            if (calle == "CORR_LOWER_Stacker" or calle == "CORR_UPPER_Stacker"):
-                npalletstotalCORR=npalletstotalCORR+datosWIP[str(calle)]['cuenta']
-            else:
-
-                npalletstotalINV=npalletstotalINV+datosWIP[str(calle)]['cuenta']
-
-            m2aux=0
-            for pallet in Pallet.objects.filter(ubic__iexact=str(calle)):
-                m2aux= m2aux+pallet.m2pallet
-                if (calle == "CORR_LOWER_Stacker" or calle == "CORR_UPPER_Stacker"):
-                    m2totalCORR=m2totalCORR+pallet.m2pallet
-                else:
-
-                    m2totalINV=m2totalINV+pallet.m2pallet
-
-            datosWIP[str(calle)]['m2tot']=m2aux
-
-
-
-        filtroentrada=[]
-        filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")| Q(DESTINATION="ZPASILLO") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")| Q(SOURCE="ZPASILLO")).order_by('-TRANSACTIONINDEX')[:4]
-
-        # referencia: datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
-
-        for mov in filtro:
-            #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE , mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
-            filtroentrada.append(movimiento)
-
-        #print(filtroentrada)
-        filtrosalida=[]
-        filtro2=MovPallets.objects.filter(Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="TCY")| Q(DESTINATION="HCR")| Q(DESTINATION="DRO")| Q(DESTINATION="WRD") | Q(DESTINATION="DIM")| Q(DESTINATION="TAB") | Q(DESTINATION="ZPICADO")| Q(DESTINATION="PLL")).order_by('-TRANSACTIONINDEX')[:4]
-
-        for mov in filtro2:
-            #movimiento=[tarja, destino, hora]
-            movimiento=[mov.LOADID, mov.ORDERID, mov.SOURCE, mov.DESTINATION, mov.EVENTDATETIME.strftime("%d-%m-%y %H:%M:%S")]
-            filtrosalida.append(movimiento)
-
-
-        #"filtroprod": filtroprod,
-
         '''
 
         ##################################
-        #Lo nuevo:
 
 
 
@@ -546,6 +562,12 @@ def get_data_inventario(request, *args, **kwargs):
 
         #Selecciono la foto más reciente:
         fotoinv=Foto_Datos_Inv_WIP.objects.all().order_by('-pk')[0]
+
+
+        m2maqruta={}
+        #Lo nuevo:
+        for maqruta in m2Maqruta_WIP.objects.filter(programa=fotoinv):
+            m2maqruta[maqruta.maquina]=maqruta.m2
 
 
         for mov in FiltroEntradaWIP.objects.filter(programa=fotoinv):
@@ -579,7 +601,7 @@ def get_data_inventario(request, *args, **kwargs):
         return JsonResponse(data)#http response con el datatype de JS
 
 
-
+@csrf_exempt
 def get_data_inv_ciclico(request, *args, **kwargs):
 
 
@@ -588,8 +610,8 @@ def get_data_inv_ciclico(request, *args, **kwargs):
 
         #prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        tomainv=TomaInvCic.objects.all().order_by('pk')[0]
-        ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
+        tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+        ultimatoma=(tomainv.fechatomainvcic).strftime("%d/%m/%Y %H:%M:%S")
 
 
         '''
@@ -686,7 +708,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
         '''
         #### Lo nuevo
         #'''
-        fotoinv=Foto_Inv_Cic_WIP.objects.all().order_by('-pk')[0]
+        fotoinv=Foto_Inv_Cic_WIP.objects.all().order_by('-pk')[1]
 
         datosWIP2={}
 
@@ -714,6 +736,13 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                     #print(pallet.pallet)
                     #print(pallet.ORDERID)
 
+            for pallet in Foto_Palletsenotracalle_Inv_Cic_WIP.objects.filter(calle=calle):
+                if pallet:
+                    datosWIP2[str(calle)]['palletsenotracalle'][0].append(pallet.pallet)
+                    datosWIP2[str(calle)]['palletsenotracalle'][1].append(pallet.ORDERID)
+                    #print(pallet.pallet)
+                    #print(pallet.ORDERID)
+
             for pallet in Foto_Palletsnoencontrados_Inv_Cic_WIP.objects.filter(calle=calle):
                 if pallet:
                     datosWIP2[str(calle)]['palletsnoencontrados'][0].append(pallet.pallet)
@@ -721,12 +750,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
                     #print(pallet.pallet)
                     #print(pallet.ORDERID)
 
-            for pallet in Foto_Palletsenotracalle_Inv_Cic_WIP.objects.filter(calle=calle):
-                if pallet:
-                    datosWIP2[str(calle)]['palletsenotracalle'][0].append(pallet.pallet)
-                    datosWIP2[str(calle)]['palletsenotracalle'][1].append(pallet.ORDERID)
-                    #print(pallet.pallet)
-                    #print(pallet.ORDERID)
+
             #'''
 
         data = {
@@ -959,13 +983,13 @@ def invsimple2(request):
 
 
     palletstomainv = PalletCic.objects.filter(ubic=tomainv.aux1.upper(), tomainvcic=tomainv)
+    #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
+    palletscti= Pallet.objects.filter(ubic=tomainv.aux1.upper()).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
 
     #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
     palletsnoencontrados=  PalletCic.objects.filter(ubic=tomainv.aux1.upper(), tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=tomainv.aux1.upper())]).order_by('pk')
 
     palletsencontrados = PalletCic.objects.filter(ubic=tomainv.aux1.upper(), tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('pk')
-    #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
-    palletscti= Pallet.objects.filter(ubic=tomainv.aux1.upper()).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('pk')
 
 
 

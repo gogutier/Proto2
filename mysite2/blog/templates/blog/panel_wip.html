@@ -58,6 +58,8 @@
                     <br>
                     <br>
                   </tr>
+
+
                   <tr>
                     <td colspan='5' style='font-weight:bold'>Últimas entradas a Bodega</td>
                   </tr>
@@ -69,6 +71,7 @@
                       <td colspan='2'>Fecha </td>
                       </tr>
                       <tr>
+
                       <td> </td>
 
                       <td> </td>
@@ -104,11 +107,13 @@
                       <td colspan='2'> </td>
                       </tr>
 
-                    <td colspan='5' style='font-weight:bold'>Últimas salidas de Bodega</td>
+                <tr>
+                  <td colspan='5' style='font-weight:bold'>Últimas salidas de Bodega</td>
+                </tr>
+
 
                   <tr>
                   <td>Tarja/ID</td>
-
                   <td>Origen</td>
                   <td>Destino</td>
                   <td>Fecha</td>
@@ -141,6 +146,50 @@
                   <td> </td>
                   <td colspan='2'> </td>
                   </tr>
+
+
+
+
+                  <tr>
+                    <td colspan='5' style='font-weight:bold'>Últimos movs internos Bodega</td>
+                  </tr>
+
+
+                    <tr>
+                    <td>Tarja/ID</td>
+                    <td>Origen</td>
+                    <td>Destino</td>
+                    <td>Fecha</td>
+                    </tr>
+                    <tr>
+                    <td> </td>
+
+                    <td> </td>
+                    <td> </td>
+                    <td colspan='2'> </td>
+                    </tr>
+                    <tr>
+                    <td> </td>
+
+                    <td> </td>
+                    <td> </td>
+                    <td colspan='2'> </td>
+                    </tr>
+                    <tr>
+                    <td> </td>
+
+                    <td> </td>
+                    <td> </td>
+                    <td colspan='2'> </td>
+                    </tr>
+                    <tr>
+                    <td> </td>
+
+                    <td> </td>
+                    <td> </td>
+                    <td colspan='2'> </td>
+                    </tr>
+
 
 
                   </table>
@@ -205,6 +254,7 @@ function datosinv(){
       npalletstotalCORR= response_data.npalletstotalCORR;
       filtroentrada= response_data.filtroentrada; //este es list of lists
       filtrosalida= response_data.filtrosalida; //este es list of lists
+      filtromovinterno= response_data.filtromovinterno;
       //filtroprod= response_data.filtroprod; //este es list of lists
 
       //console.log(datos0["M2ZFFG1"].toFixed(2))
@@ -266,13 +316,21 @@ function datosinv(){
 
       for (var i=0; i < filtrosalida.length; i++)
       {
-      tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0] + "<br>" + filtroentrada[i][1]
+      tabla3.rows[9+i].cells[0].innerHTML=filtrosalida[i][0] + "<br>" + filtrosalida[i][1]
     //  tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
       tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][2].substring(0,7)
       tabla3.rows[9+i].cells[2].innerHTML=filtrosalida[i][3].substring(0,7)
       tabla3.rows[9+i].cells[3].innerHTML=filtrosalida[i][4]
       }
 
+      for (var i=0; i < filtrosalida.length; i++)
+      {
+      tabla3.rows[15+i].cells[0].innerHTML=filtromovinterno[i][0] + "<br>" + filtromovinterno[i][1]
+    //  tabla3.rows[9+i].cells[1].innerHTML=filtrosalida[i][1]
+      tabla3.rows[15+i].cells[1].innerHTML=filtromovinterno[i][2].substring(0,7)
+      tabla3.rows[15+i].cells[2].innerHTML=filtromovinterno[i][3].substring(0,7)
+      tabla3.rows[15+i].cells[3].innerHTML=filtromovinterno[i][4]
+      }
 
 
 

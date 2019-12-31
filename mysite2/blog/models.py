@@ -134,6 +134,23 @@ class FiltroEntradaWIP(models.Model):
         return (str(self.LOADID))
 
 
+
+class FiltroMovInternoWIP(models.Model):
+
+
+    programa=models.ForeignKey('blog.Foto_Datos_Inv_WIP', related_name='foto_datosinvwip3', on_delete=models.CASCADE, default=0)
+    LOADID=models.CharField(max_length=16, default="0")
+    ORDERID=models.CharField(max_length=16, default="0")
+    SOURCE=models.CharField(max_length=32, default="0")
+    DESTINATION=models.CharField(max_length=32, default="0")
+    EVENTDATETIME=models.CharField(max_length=32, default="0")
+
+
+    def __str__(self):
+        return (str(self.LOADID))
+
+
+
 class FiltroSalidaWIP(models.Model):
 
 

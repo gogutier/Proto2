@@ -59,8 +59,8 @@ def cargaconsbob(fechaini, fechafin):
 
                 rollo={'RollID':RollID,'RollStandID':RollStandID, 'formato':formato, 'peso':peso , 'grado':grado, 'diametro':diametro, 'mlusados':mlusados, 'mlrestantes':mlrestantes,'peelwaste':peelwaste}
                 #print(doc['CTI']['Roll'][i]['ID'])
-                print("rollo: ")
-                print(rollo)
+                #print("rollo: ")
+                #print(rollo)
                 lista.append(rollo)
 
         elif flag1consumo==1:
