@@ -24,6 +24,15 @@ from blog.models import FiltroSalidaWIP as FiltroSalidaWIP
 from blog.models import Foto_Datos_Inv_WIP as Foto_Datos_Inv_WIP
 from blog.models import Datos_Inv_WIP as Datos_Inv_WIP
 
+from blog.models import TomaInvCic as TomaInvCic
+from blog.models import PalletCic as PalletCic
+from blog.models import Foto_Inv_Cic_WIP as Foto_Inv_Cic_WIP
+from blog.models import Foto_Calles_Inv_Cic_WIP as Foto_Calles_Inv_Cic_WIP
+from blog.models import Foto_Palletscti_Inv_Cic_WIP as Foto_Palletscti_Inv_Cic_WIP
+from blog.models import Foto_Palletsencontrados_Inv_Cic_WIP as Foto_Palletsencontrados_Inv_Cic_WIP
+from blog.models import Foto_Palletsenotracalle_Inv_Cic_WIP as Foto_Palletsenotracalle_Inv_Cic_WIP
+from blog.models import Foto_Palletsnoencontrados_Inv_Cic_WIP as Foto_Palletsnoencontrados_Inv_Cic_WIP
+
 from django.db.models import Q
 import webscrap3
 import pruebaodbcconvertprod
@@ -58,6 +67,7 @@ class Command(BaseCommand):
 
 
         for calle in datosWIP.keys():
+            print(str(calle))
 
             datosWIP[str(calle )]['cuenta']= Pallet.objects.filter(ubic__iexact=str(calle)).count()
             datosWIP[str(calle)]['indice']= UbicPallet.objects.get(calle__iexact=str(calle)).pk
@@ -90,7 +100,7 @@ class Command(BaseCommand):
 
 
 
-
+        print("calculando filtros últimas entradas y salidas")
         filtroentrada=[]
         filtro=MovPallets.objects.filter(Q(DESTINATION="ZPNC") | Q(DESTINATION="ZHCR1") | Q(DESTINATION="ZHCR2")| Q(DESTINATION="ZTCY1")| Q(DESTINATION="ZTCY2")| Q(DESTINATION="ZWRD1")| Q(DESTINATION="ZWRD2")| Q(DESTINATION="ZSOB1")| Q(DESTINATION="ZSOB2")| Q(DESTINATION="ZFFW1")| Q(DESTINATION="ZFFW2")| Q(DESTINATION="ZDRO1")| Q(DESTINATION="ZDRO2")| Q(DESTINATION="ZFFG1")| Q(DESTINATION="ZFFG2")| Q(DESTINATION="ZPNC")| Q(DESTINATION="ZPASILLO") ).exclude( Q(SOURCE="ZPNC") | Q(SOURCE="ZHCR1") | Q(SOURCE="ZHCR2")| Q(SOURCE="ZTCY1")| Q(SOURCE="ZTCY2")| Q(SOURCE="ZWRD1")| Q(SOURCE="ZWRD2")| Q(SOURCE="ZSOB1")| Q(SOURCE="ZSOB2")| Q(SOURCE="ZFFW1")| Q(SOURCE="ZFFW2")| Q(SOURCE="ZDRO1")| Q(SOURCE="ZDRO2")| Q(SOURCE="ZFFG1")| Q(SOURCE="ZFFG2")| Q(SOURCE="ZPNC")| Q(SOURCE="ZPASILLO")).order_by('-TRANSACTIONINDEX')[:4]
 
@@ -297,6 +307,7 @@ class Command(BaseCommand):
 
 
                 print("completado, guardando el Model")
+                sleep(1)
 
 
                 #antiguos= Datos_MovPallets.objects.all().delete()
@@ -614,11 +625,111 @@ class Command(BaseCommand):
 
 
     #def updatepanelwip(self):
+    def update_datos_inv_cic(self):
+
+        if 1:
+            print("iniciando update datos inventario cíclico")
+            try:
+                datosWIP={"ZFFG1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFG2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZDRO2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZFFW2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZWRD2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZSOB2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZHCR2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY1":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZTCY2":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPNC":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0},"ZPASILLO":{"cuentaenc":0,"cuentanoenc":0,"cuentacti":0}}
+
+
+
+                tomainv=TomaInvCic.objects.all().order_by('-pk')[0]
+
+                fotoinvcic, created=Foto_Inv_Cic_WIP.objects.get_or_create(fecha_foto=datetime.now())
+                fotoinvcic.save()
+                #sleep(0.05)
+
+
+                ####Ahora voy a probar sacando el "enotracalle para ver si es más rápido"
+                for calle in datosWIP.keys():
+
+                    print(calle)
+
+                    palletstomainv = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)
+
+                    #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
+                    palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('tarja')
+
+                    #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
+                    palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('tarja')
+                    palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
+
+
+                    #print("palletsenotracalle")
+                    #print(palletsenotracalle)
+
+
+                    fotocalle, created =Foto_Calles_Inv_Cic_WIP.objects.get_or_create(foto = fotoinvcic, calle=calle)
+                    fotocalle.save()
+
+
+
+                    for pallet in palletscti.filter(ubic=calle).order_by('tarja'):
+
+                        ordid="vacío"
+
+                        try:
+                            ordid=(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                        except:
+                            #print("hola")
+                            ordid=("vacio")
+
+
+                        o =Foto_Palletscti_Inv_Cic_WIP.objects.create( calle=fotocalle, pallet=pallet.tarja ,ORDERID=ordid)
+                        o.save() #print(pallet[1])
+
+
+
+                    for pallet in palletsencontrados.filter(ubic=calle).order_by('tarja'):
+
+                        ordid="vacío"
+
+
+                        try:
+                            ordid=(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                        except:
+                            #print("hola")
+                            ordid=("vacio")
+
+
+                        o =Foto_Palletsencontrados_Inv_Cic_WIP.objects.create( calle=fotocalle, pallet=pallet.tarja ,ORDERID=ordid)
+                        o.save() #print(pallet[1])
+
+
+
+                    for pallet in palletsnoencontrados:
+
+                        ordid="vacío"
+                        try:
+                            ordid=(Pallet.objects.filter(tarja=pallet.tarja)[0].ORDERID)
+                        except:
+                            #print("hola")
+                            ordid=("vacio")
+
+                        o =Foto_Palletsnoencontrados_Inv_Cic_WIP.objects.create( calle=fotocalle, pallet=pallet.tarja ,ORDERID=ordid)
+                        o.save() #print(pallet[1])
+
+
+                    ultimatoma=(tomainv.fechatomainvcic).strftime("%m/%d/%Y %H:%M:%S")
+
+                instance=Foto_Inv_Cic_WIP.objects.filter(fecha_foto__lt=fotoinvcic.fecha_foto)
+                instance.delete()
+
+                #print(datosWIP)
+                print(ultimatoma)
+                #sleep(1)
+            except Exception as e:
+                print(e)
+                print("error!")
+                sleep(10)
+
 
     def handle(self, *args, **options):
         while (1):
 
             try:
+                self.update_datos_inv_cic()
                 self.update_datos_wip()
                 self.updatemovpallets()
                 self.updatewipprog()

@@ -708,7 +708,7 @@ def get_data_inv_ciclico(request, *args, **kwargs):
         '''
         #### Lo nuevo
         #'''
-        fotoinv=Foto_Inv_Cic_WIP.objects.all().order_by('-pk')[1]
+        fotoinv=Foto_Inv_Cic_WIP.objects.all().order_by('pk')[0]
 
         datosWIP2={}
 

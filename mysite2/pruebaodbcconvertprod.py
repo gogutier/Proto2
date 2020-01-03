@@ -52,7 +52,7 @@ def consulta(datetimeini,datetimefin):
     m2totcorr=0
     print("datos obtenidos entre " + ini + " y " + fin + ":")
     for row in cursor.fetchall():
-        print(row)
+        #print(row)
 
         m2placaUK=row[4]*row[5]
         unidsUK=row[7]
