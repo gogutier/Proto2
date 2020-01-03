@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 print(e)
                 print("Unexpected error:", sys.exc_info()[0])
                 print("error en conexión a datos :( (a DB o a sitio web))")
-                sleep(0.2)
+                sleep(2)
 
 
 
@@ -61,6 +61,7 @@ class Command(BaseCommand):
             print(e)
             print("Unexpected error:", sys.exc_info()[0])
             print("error al conectar con DB :(")
+            sleep(2)
 
     def inicia_browser(self):
 
@@ -264,7 +265,7 @@ class Command(BaseCommand):
 
             operation=0
 
-            destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03','B04','B05','B06','B07','B08','B09','B10','B11','B12','B13','B14','B15','B16','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','A01','A02','A03','A04','A05','A06','A07','A08','E01','E02','E03','E04','PAT1','PAT2','PAT3')
+            destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03','B04','B05','B06','B07','B08','B09','B10','B11','B12','B13','B14','B15','B16','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','A01','A02','A03','A04','A05','A06','A07','A08','E01','E02','E03','E04','PAT1','PAT2','PAT3', 'PTCAL','RP1','Truck', 'D01')
             destinotxt=""
             for dest in destinobpt:
                 destinotxt+= "Destination='"+ dest +"'"+ " or "
@@ -296,6 +297,7 @@ class Command(BaseCommand):
                 sleep(1)
                 row1=[]
                 datosextra=[]
+
 
 
 
@@ -442,8 +444,6 @@ class Command(BaseCommand):
             pesouni=0
             print("m2pallet")
             print(m2pallet)
-
-
             print("ancho")
             print(ancho)
             print("alto")
@@ -461,10 +461,12 @@ class Command(BaseCommand):
             print(" ")
         except Exception as e:
             print(e)
-            print("error al tomar row1 del nuevo movpallet!")
             print("Unexpected error:", sys.exc_info()[0])
+            print("error al tomar row1 del nuevo movpallet!")
+
             #print("Unexpected error:", sys.exc_info()[0])
-            sleep(1)
+            sleep(10)
+            #return(0)
             row1=[]
             datosextra=[]
         return(row1, datosextra)

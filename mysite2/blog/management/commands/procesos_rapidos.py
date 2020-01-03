@@ -88,7 +88,11 @@ class Command(BaseCommand):
         "A05":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
         "A06":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
         "A07":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":31,"al2":37,"al3":44},
-        "PLL":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":5,"al2":10,"al3":20}}
+        "PLL":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":5,"al2":10,"al3":20},
+        #"RP1":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":5,"al2":10,"al3":20},
+        "PTCAL":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":5,"al2":10,"al3":20},
+        "D01":{"cuenta":0,"m2tot":0,"indice":0,"dias":0,"al1":5,"al2":10,"al3":20}
+        }
 
         m2totalINV=0
         npalletstotalINV=0
@@ -149,7 +153,7 @@ class Command(BaseCommand):
 
         #print(filtroentrada)
         filtrosalida=[]
-        filtro2=MovPallets.objects.filter(Q(DESTINATION="Truck") | Q(DESTINATION="AN1") | Q(DESTINATION="AN2")| Q(DESTINATION="AN3")| Q(DESTINATION="AN4")| Q(DESTINATION="AN5") | Q(DESTINATION="AN6")| Q(DESTINATION="AN7") | Q(DESTINATION="AN8")| Q(DESTINATION="AN9") ).order_by('-TRANSACTIONINDEX')[:3]
+        filtro2=MovPallets.objects.filter(Q(DESTINATION="Truck") | Q(DESTINATION="AN1") | Q(DESTINATION="AN2")| Q(DESTINATION="AN3")| Q(DESTINATION="AN4")| Q(DESTINATION="AN5") | Q(DESTINATION="AN6")| Q(DESTINATION="AN7") | Q(DESTINATION="AN8")| Q(DESTINATION="AN9")| Q(DESTINATION="PTCAL")).order_by('-TRANSACTIONINDEX')[:3]
 
         for mov in filtro2:
             #movimiento=[tarja, destino, hora]
@@ -258,7 +262,7 @@ class Command(BaseCommand):
 
                 listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltroentrada=["PLL","PT10"]
-                listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9"]
+                listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9","Truck"]
 
                 filtroproducidoqs=Q()
                 filtroentradaqs=Q()
