@@ -38,9 +38,15 @@ class PruebaModForm(forms.ModelForm): #acà se hace ala form y se summonea del v
     class Meta:
         model = PruebaMod
         #widget=forms.TextInput(attrs={'placeholder': _('Username'), 'class': 'form-control', 'autofocus': True})
-
-        fields = ['dato1', 'dato2', 'ultrafile']
-
+        fecha1= forms.DateField(help_text="Ingresar fecha")
+        fields = ('dato1', 'dato2', 'ultrafile','fecha1','fecha2')
+        widgets = {
+            'fecha1': forms.DateInput(attrs={'type': 'date',
+                'class': 'form-control',
+                'placeholder': 'Enter Book Name here'
+                }
+            )
+        }
 
 
 

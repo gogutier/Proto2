@@ -4,6 +4,17 @@
 
 
 <div class="container" style="padding:10px 10px;">
+
+  <form name="myform2" method="POST" class="post-form" id="theFormID">
+  {% csrf_token %}
+
+    {{ form.fecha1}}
+
+
+    <button type="submit" class="save btn btn-default">Save</button>
+
+  </form>
+
 <table class='table table-hover' id='table'>
 
 <tr style="text-align: center">

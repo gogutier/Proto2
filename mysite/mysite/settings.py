@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'blog',
     'qr_code', #https://django-qr-code.readthedocs.io/en/latest/pages/README.html#
 ]

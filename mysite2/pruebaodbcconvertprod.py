@@ -63,7 +63,7 @@ def consulta(datetimeini,datetimefin):
         m2prodLK=m2placaLK*unidsLK
 
         m2totcorr += m2prodLK + m2prodUK
-        print("Suma m2 row: " + str(m2prodLK) + " " + str(m2prodUK))
+        #print("Suma m2 row: " + str(m2prodLK) + " " + str(m2prodUK))
 
 
     print("Suma total segmento Corr: "+ ini+ " - "+ fin + " "+ str(m2totcorr))

@@ -909,6 +909,8 @@ class PruebaMod(models.Model):
     dato1 = models.CharField(max_length=10)
     dato2 = models.CharField(max_length=10)
     ultrafile = models.TextField(default = "")
+    fecha1= models.DateField(default=timezone.now)
+    fecha2= models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.dato1

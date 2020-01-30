@@ -1,0 +1,172 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+
+<div class="container" style="padding:10px 10px;">
+<table class='table table-hover' id='table'>
+
+<tr style="text-align: center">
+  <td  colspan="6"><h3>Búsqueda de Remisiones</h3></td>
+  <td colspan="6">
+
+  <form>
+    <br>
+    Cliente:
+    <input id="cliente" type="text" name="cliente">
+
+
+
+    Padrón:
+    <input id="padron" type="text" name="padrón">
+
+
+
+  </form>
+
+  </td>
+
+  <td>
+    <br>
+    <button type="button" id="convert">Actualizar</button>
+  </td>
+</table>
+
+</div>
+
+<h6 id="remision">Remisión: </h6>
+<h6 id="patente">Patente: </h6>
+<h6 id="obs">Observación: </h6>
+
+<div class="row"   id="parsed_csv_list">
+</div>
+
+<script type="text/javascript">
+
+
+
+  var endpoint='/api/get_data_busqueda_remision/';
+
+
+  {% load staticfiles %}
+
+  function datosinv(){
+
+    console.log("iniciando ajax datos de búsqueda");
+
+    var cliente= $("#cliente").val()
+
+
+    $.ajax({
+        method: "POST",
+        url: endpoint,
+        data: {
+           cliente:cliente//.getElementsByTagName("td");,
+
+        },
+        success: function(response_data){
+
+          resultado = response_data.resultado;
+          datos_remi= response_data.datos_remi;
+          console.log("respuesta recibida");
+          displayHTMLTable();
+
+          var remision = document.getElementById("remision");
+          var patente = document.getElementById("patente");
+          var obs = document.getElementById("obs");
+
+
+          remision.innerHTML="Remisión: "+datos_remi[1]
+          patente.innerHTML="Patente: "+datos_remi[7]
+          obs.innerHTML="Observación: "+datos_remi[8]
+
+
+        },
+        error: function(error_data){
+          console.log("error en AJAX");
+          console.log(error_data);
+        }
+
+      })
+
+
+
+};
+
+
+  $('#cliente').keypress(function(e){
+    if(e.keyCode==13)
+    datosinv();
+  });
+
+  $("#convert").click(function()
+  {
+  datosinv()
+
+  });
+
+
+
+
+  function displayHTMLTable(){
+
+
+    console.log("generando tabla")
+
+    var table = "<table  class='table table-hover'  id='table' style='float: left;' >";
+
+
+
+      table+= "<tr style='text-align: center'>";
+
+        table+= "<td >Order ID</td>";
+        table+= "<td>n° Tarja</td>";
+        table+= "<td >Unidades</td>";
+        table+= "<td >SO</td>";
+        table+= "<td >M2</td>";
+        table+= "<td >Fecha Creación</td>";
+        table+= "<td >Ubic</td>";
+
+
+      table+= "</tr>";
+
+      for (var key in resultado){
+        value = resultado[key];
+        table+= "<tr style='text-align: center'>";
+
+            table+= "<td>";
+            table+= (resultado[key][1]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][2]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][3]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][4]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][5]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][6]);
+            table+= "</td>";
+            table+= "<td >";
+            table+= (resultado[key][6]);
+            table+= "</td>";
+            //moment(myTable.rows[i].cells[6].innerHTML, "DD-MM-YYYY HH:mm");
+            //moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
+
+        table+= "</tr>";
+      }
+
+
+    table+= "</table>";
+    $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+  }
+  </script>
+
+
+  {% endblock %}

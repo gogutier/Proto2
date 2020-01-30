@@ -237,7 +237,7 @@ class Command(BaseCommand):
                     turno="A"
                     label= fecha.strftime("%d-%m") + " " + turno
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
-                    m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    m2Conv, m2Corr= (0,0)#pruebaodbcconvertprod.consulta(fecha,fechafin)
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
@@ -245,7 +245,7 @@ class Command(BaseCommand):
                     fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i)).replace(hour= 22)
                     turno="B"
                     label= fecha.strftime("%d-%m") + " " + turno
-                    m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    m2Conv, m2Corr= (0,0) #pruebaodbcconvertprod.consulta(fecha,fechafin)
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
@@ -253,15 +253,15 @@ class Command(BaseCommand):
                     fechafin=(ahora+timedelta(days=1)-timedelta(days=horizonte-i-1)).replace(hour= 7)
                     turno="C"
                     label= fecha.strftime("%d-%m") + " " + turno
-                    m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    m2Conv, m2Corr= (0,0)#pruebaodbcconvertprod.consulta(fecha,fechafin)
                     #print(m2Corr)
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
 
                 print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
 
 
-                listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
-                listafiltroentrada=["PLL","PT10"]
+                #listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
+                listafiltroentrada=["PLL","PT10"]#Acá el PT10 es pq supuestamente lasdevoluciones se iban a detectar por ahí.Ahora al pareer habría q sacarlas de la tabla FGRETURN
                 listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9","Truck"]
 
                 filtroproducidoqs=Q()
@@ -270,28 +270,22 @@ class Command(BaseCommand):
                 filtrosalidaqs=Q()
                 filtrosalidaexcludeqs=Q()
                 print("iterando para llenar las listas..")
-                for item in listafiltroproducido:
-                    filtroproducidoqs = filtroproducidoqs | Q(DESTINATION=item)
+
 
                 for item in listafiltroentrada:
                     filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
 
-                for item in listafiltroentrada:
-                    filtroentradaexcludeqs = filtroentradaexcludeqs | Q(SOURCE=item)
-
 
                 for item in listafiltrosalida:
                     filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
-
-                for item in listafiltrosalida:
-                    filtrosalidaexcludeqs = filtrosalidaexcludeqs | Q(SOURCE=item)
 
                 print("empezando a agregar los ingresos y salida al labels")
 
                 for i in range(0,len(labels)):
 
 
-                    #Entradas
+                    print("haciendo consulta 1 Django")
+                    #Filtro Entradas
                     filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).exclude(filtroentradaexcludeqs)
 
                     cantidad1=filtro.count()
@@ -306,30 +300,12 @@ class Command(BaseCommand):
 
 
 
-                    #Producidos pero excluyendo los pallets que ya están en la lista de Entradas (acá saco el m2 actualizado de cada pallet, para descartar las producciones que se fueron a cero)
-                    filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"])
-
-
-                    for item in filtro:
-                        filtro2=filtro2.exclude(LOADID=item.LOADID)
-
-
-                    cantidad1=filtro2.count()
                     #sumo los m2 asociados a cada pallets
-                    m2tot=0
-                    for mov in filtro2:
-                        #print(str(mov) + ".." + str(mov.LOADID) )
-                        try:
-                            m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
-                        except Exception as e:
-                            print(e)
-                            print("error con " + str(mov) + ".." + str(mov.LOADID) + "!!")
 
+                    labels[i]["cantidadProd"]= 0
+                    labels[i]["m2Prod"]= 0
 
-                    labels[i]["cantidadProd"]= cantidad1
-                    labels[i]["m2Prod"]= m2tot
-
-
+                    print("haciendo consulta 3 Django")
                     #Salidas
                     filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).exclude(filtrosalidaexcludeqs)
                     cantidad1=filtro.count()
@@ -448,8 +424,10 @@ class Command(BaseCommand):
                 instance=Foto_Datos_MovPallets.objects.filter(fecha_foto__lt=foto.fecha_foto)
                 instance.delete()
             except Exception as e:
+                print("errooorrr")
                 print(e)
-                print("error")
+                print("error!!")
+                print(" ")
                 sleep(10)
                 ###########
 

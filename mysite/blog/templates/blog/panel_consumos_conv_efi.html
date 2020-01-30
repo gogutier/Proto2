@@ -1,0 +1,79 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+{% load humanize %}
+
+<div class="container">}
+  <div class="jumbotron">
+
+
+  <h5>Consumos Estimados EFI Mes actual</h5>
+  <br>
+  <table  class='table table-hover' style='font-size: 15px;' id='tabla2'>
+
+    <tr>
+        <td></td>
+        <td>TCY</td>
+        <td>HCR</td>
+        <td>WRD</td>
+        <td>FFW</td>
+        <td>DRO</td>
+        <td>FFG</td>
+        <td style='font-weight:bold'>Total</td>
+    </tr>
+    <tr>
+      <td>Mm2 Entregado a Conv</td>
+      <td>{{ m2Ingresado.TCY| intcomma  }}</td>
+      <td>{{ m2Ingresado.HCR| intcomma  }}</td>
+      <td>{{ m2Ingresado.WRD| intcomma  }}</td>
+      <td>{{ m2Ingresado.FFW| intcomma  }}</td>
+      <td>{{ m2Ingresado.DRO| intcomma  }}</td>
+      <td>{{ m2Ingresado.FFG| intcomma  }}</td>
+      <td style='font-weight:bold'>{{ totIngreso| intcomma  }}</td>
+    </tr>
+    <tr>
+      <td>Mm2 Devuelto</td>
+      <td>{{ m2Devuelto.TCY| intcomma  }}</td>
+      <td>{{ m2Devuelto.HCR| intcomma  }}</td>
+      <td>{{ m2Devuelto.WRD| intcomma  }}</td>
+      <td>{{ m2Devuelto.FFW| intcomma  }}</td>
+      <td>{{ m2Devuelto.DRO| intcomma  }}</td>
+      <td>{{ m2Devuelto.FFG| intcomma  }}</td>
+      <td style='font-weight:bold'>{{ totDevuelto| intcomma  }}</td>
+    </tr>
+    <tr>
+      <td>Mm2 Consumidos</td>
+      <td>{{ m2ConsumoTotal.TCY| intcomma  }}</td>
+      <td>{{ m2ConsumoTotal.HCR| intcomma  }}</td>
+      <td>{{ m2ConsumoTotal.WRD| intcomma  }}</td>
+      <td>{{ m2ConsumoTotal.FFW| intcomma  }}</td>
+      <td>{{ m2ConsumoTotal.DRO| intcomma  }}</td>
+      <td>{{ m2ConsumoTotal.FFG| intcomma  }}</td>
+      <td style='font-weight:bold'>{{ totConsumoTotal| intcomma  }}</td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>Mm2 a picado</td>
+      <td>{{ m2Apicado.TCY| intcomma  }}</td>
+      <td>{{ m2Apicado.HCR| intcomma  }}</td>
+      <td>{{ m2Apicado.WRD| intcomma  }}</td>
+      <td>{{ m2Apicado.FFW| intcomma  }}</td>
+      <td>{{ m2Apicado.DRO| intcomma  }}</td>
+      <td>{{ m2Apicado.FFG| intcomma  }}</td>
+      <td style='font-weight:bold'>{{ totApicado| intcomma  }}</td>
+    </tr>
+
+  </table>
+
+</div>
+  </div>
+
+
+<script type="text/javascript">
+  //<p>{{minuta.texto|truncatechars:200}}</p>
+
+</script>
+{% endblock %}

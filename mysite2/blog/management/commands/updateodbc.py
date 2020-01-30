@@ -100,6 +100,7 @@ class Command(BaseCommand):
             ####messages = page.find(id="ultimo")
             ultim=str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0].TRANSACTIONINDEX)
             print("útlimo TrIndex:"+ ultim)
+            print("fecha último: " + str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0].EVENTDATETIME))
 
 
             row, datosextra=self.cargaDatos(ultim,cursor)#Acá es donde ejecuto la odbc
@@ -270,203 +271,189 @@ class Command(BaseCommand):
             for dest in destinobpt:
                 destinotxt+= "Destination='"+ dest +"'"+ " or "
 
-            try:
-                print("obteniendo el row1 del MVLOAD")
-                #sleep(0.01)
+            rowcount=0
+
+            print("obteniendo el row1 del MVLOAD")
+            #sleep(0.01)
 
 
-                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
+            print("tamaño cursor:")
+
 
                 #Aquí hay que ponerle un TRY probablemente
+            if len(cursor.fetchall())>0:
                 try:
-                    row1=cursor.fetchone()
+                    cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
 
+                    row1=cursor.fetchone()
                     print(row1[0])
                     operation=row1[6]
                     print("Obtenida row1 de MVLOAD!")
-
-                except:
+                except Exception as e:
+                    print("error! :")
+                    print(e)
+                    print("Unexpected error:", sys.exc_info()[0])
                     print("error al hacer row1=cursor.fetchone()")
-                #print(row1)
-                #compara el transactionidex de fgload vs el de MVLOAD
-
-            except Exception as e:
-                print(e)
-                print("error!")
-                print("Unexpected error:", sys.exc_info()[0])
-                sleep(1)
-                row1=[]
-                datosextra=[]
 
 
+                print("Tarja: "+row1[8])
+                tarjax=row1[8]
+                orderidx=row1[4]
+                #id=row1[4]
 
+                print ("iniciando segunda consulta")
+                #sleep(0.01)
+                print("saco el FGLOAD de esa Tarja")
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(tarjax) +"' order by TRANSACTIONINDEX desc")
+                print("segunda consulta satisfactoria")
+                #De aquí quiero el número de unidades
+                #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
+                #for row in cursor:
+                #    print(row)
+                row2=cursor.fetchone()
+                if row2:
+                    print(row2)
+                    unidadespallet=row2[5]
+                else:
+                    print("No se encontraron tarjas en FGLOAD para la loadID " + str(tarjax) )
+                    unidadespallet=500
 
-        #print("consulta exitosa")
-        #print(cursor[0])
-        #return(cursor[0])
-        try:
+                print("Saco la fecha de creación de ese pallet. (EL FGLOAD más antguo que tenga ese pallet)")
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [ORDERID], [LOADID], [EventDateTime] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(tarjax) +"' order by TRANSACTIONINDEX asc")
+                row2B=cursor.fetchone()
+                if row2B:
+                    print(row2B)
+                    fechacreacionpallet=row2B[3]
+                    print("fecha de creacióm obtenida!")
+                else:
+                    print("No se encontraron tarjas en FGLOAD para la loadID " + str(row1[8]) )
+                    fechacreacionpallet=datetime.now()
+                #print("unidades pallet")
 
-            print("Tarja: "+row1[8])
-            tarjax=row1[8]
-            orderidx=row1[4]
-            #id=row1[4]
+                print("Obtengo el cliente en la tabla ORDERS_INFO para el ID: " + str(orderidx))
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO]  where ORDERID ='"+ str(orderidx) +"' order by TRANSACTIONINDEX desc")#**** Si aquí le pongo el DESC mejora? creo que si (lo cambié en el local pero no en el servidor productivo)
 
-            print ("iniciando segunda consulta")
-            #sleep(0.01)
-            print("saco el FGLOAD de esa Tarja")
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [WORKCENTERID], [ORDERID], [LOADID], [UNITNO], [TOTALLOADQTY], [STACKCOUNT], [LOADSIZE], [REPRINTINDICATOR], [INTERNALSPECID] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(tarjax) +"' order by TRANSACTIONINDEX desc")
-            print("segunda consulta satisfactoria")
-            #De aquí quiero el número de unidades
-            #tomo el valor de ese transactionindex para obtener el número de unidades por pallet
-            #for row in cursor:
-            #    print(row)
-            row2=cursor.fetchone()
-            if row2:
-                print(row2)
-                unidadespallet=row2[5]
-            else:
-                print("No se encontraron tarjas en FGLOAD para la loadID " + str(tarjax) )
-                unidadespallet=500
+                TI_Orders_Info=1000
+                row2C=cursor.fetchone()
+                if row2C:
 
-            print("Saco la fecha de creación de ese pallet. (EL FGLOAD más antguo que tenga ese pallet)")
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [ORDERID], [LOADID], [EventDateTime] FROM [ctidb_transact].[dbo].[FGLOAD] where loadid= '"+ str(tarjax) +"' order by TRANSACTIONINDEX asc")
-            row2B=cursor.fetchone()
-            if row2B:
-                print(row2B)
-                fechacreacionpallet=row2B[3]
-                print("fecha de creacióm obtenida!")
-            else:
-                print("No se encontraron tarjas en FGLOAD para la loadID " + str(row1[8]) )
-                fechacreacionpallet=datetime.now()
-            #print("unidades pallet")
-
-            print("Obtengo el cliente en la tabla ORDERS_INFO para el ID: " + str(orderidx))
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO]  where ORDERID ='"+ str(orderidx) +"' order by TRANSACTIONINDEX desc")#**** Si aquí le pongo el DESC mejora? creo que si (lo cambié en el local pero no en el servidor productivo)
-
-            TI_Orders_Info=1000
-            row2C=cursor.fetchone()
-            if row2C:
-
-                cliente=row2C[3]
-                print("cliente obtenido!")
-                print(row2C[3])
-                TI_Orders_Info=row2C[0]
-
-            else:
-                print("No se encontraron tarjas en CONVERTIONOPINFO para la orderid " + str(orderidx) )
-                cliente="vacío"
-
-            if row2C:
-                print("Obtengo la máquina en ruta de tabla ORDERS_INFO para el Transactionindex: " + str(TI_Orders_Info))
-                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[WORKCENTERID],[ROUTINGNO],[OPERATIONNO],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where Transactionindex='"+ str(TI_Orders_Info) +"' order by TRANSACTIONINDEX desc")
-
-                row2D=cursor.fetchone()
-                if row2D:
-
-                    maqruta=row2D[1]
-                    print("maqruta obtenido!")
-                    print(row2D[1])
+                    cliente=row2C[3]
+                    print("cliente obtenido!")
+                    print(row2C[3])
+                    TI_Orders_Info=row2C[0]
 
                 else:
-                    print("No se encontraron tarjas en ORDERS_INFO para el Transactionindex " + str(TI_Orders_Info) )
-                    maqruta="vacío"
-            else:
-                maqruta="vacío"
-                #print("unidades pallet")
-                #print("unidades pallet")
-                #print(unidadespallet)
+                    print("No se encontraron tarjas en CONVERTIONOPINFO para la orderid " + str(orderidx) )
+                    cliente="vacío"
 
+                if row2C:
+                    print("Obtengo la máquina en ruta de tabla ORDERS_INFO para el Transactionindex: " + str(TI_Orders_Info))
+                    cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[WORKCENTERID],[ROUTINGNO],[OPERATIONNO],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where Transactionindex='"+ str(TI_Orders_Info) +"' order by TRANSACTIONINDEX desc")
 
-            #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón###
-            # Ojo! Esto lo uso para sacar el transaction index inicial con el que se alimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
-            print("iniciando tercera consulta por el padron " + str(row1[3]) )
-            #sleep(0.01)
-            numberout=1
-            if (str(row1[3])!="Default"):
-                print("el Padron "+str(row1[3]) +" no es Default")
-                cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH],[NUMBERIN],[NUMBEROUT] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
-                row3=cursor.fetchone()
-                transaction=row3[0]
+                    row2D=cursor.fetchone()
+                    if row2D:
 
-                print("transaction: " + str(transaction))
-                #print(transaction)
+                        maqruta=row2D[1]
+                        print("maqruta obtenido!")
+                        print(row2D[1])
 
-                print("inciando cuarta consulta")
-                #sleep(0.01)
-
-                try:
-
-                    #OJOOOOO, aquí tengo que asegurarme de consultar el ancho y alto de la CAJA en caso de que el operationno sea distinto de cero.
-                    if operation==0:
-                        print("operation number es 0 placas")
-                        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
-                        row4=cursor.fetchone()
-                        #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
-                        ancho=row4[1]
-                        alto=row4[2]
-
-                        pesouni=0
                     else:
-                        print("operation number es mayor a cero (cajas)")
-                        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[INPUTWIDTH],[INPUTLENGTH],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
-                        row4=cursor.fetchone()
+                        print("No se encontraron tarjas en ORDERS_INFO para el Transactionindex " + str(TI_Orders_Info) )
+                        maqruta="vacío"
+                else:
+                    maqruta="vacío"
+                    #print("unidades pallet")
+                    #print("unidades pallet")
+                    #print(unidadespallet)
+
+
+                #acá saco las dimensiones del pallet según el útimo specID subido para ese padrón###
+                # Ojo! Esto lo uso para sacar el transaction index inicial con el que se alimentó la orden a EFI, con eso saco las dimensiones de placa de la siguiente consulta. Éstas dimensiones son de la caja.
+                print("iniciando tercera consulta por el padron " + str(row1[3]) )
+                #sleep(0.01)
+                numberout=1
+                if (str(row1[3])!="Default"):
+                    print("el Padron "+str(row1[3]) +" no es Default")
+                    cursor.execute( "SELECT TOP (1) [TRANSACTIONINDEX],[INTERNALSPECID],[PARTID],[ITEMWIDTH],[ITEMLENGTH],[ITEMDEPTH],[NUMBERIN],[NUMBEROUT] FROM [ctidb_transact].[dbo].[SPECS_INFO] where InternalspecID = '"+ str(row1[3]) + "' order by transactionindex desc")
+                    row3=cursor.fetchone()
+                    transaction=row3[0]
+
+                    print("transaction: " + str(transaction))
+                    #print(transaction)
+
+                    print("inciando cuarta consulta")
+                    #sleep(0.01)
+
+                    try:
+
+                        #OJOOOOO, aquí tengo que asegurarme de consultar el ancho y alto de la CAJA en caso de que el operationno sea distinto de cero.
+                        if operation==0:
+                            print("operation number es 0 placas")
+                            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [BLANKWIDTH],[BLANKLENGTH] FROM [ctidb_transact].[dbo].[CORRUGATOROPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
+                            row4=cursor.fetchone()
+                            #Ahora busco las medidas: de ese padrón (asociada a la última orden que tenga el padrón nomás.)
+                            ancho=row4[1]
+                            alto=row4[2]
+
+                            pesouni=0
+                        else:
+                            print("operation number es mayor a cero (cajas)")
+                            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[INPUTWIDTH],[INPUTLENGTH],[NUMBEROUT],[NUMBERIN] FROM [ctidb_transact].[dbo].[CONVERTINGOPINFO] where transactionindex= '"+ str(transaction) +"'order by transactionindex desc")
+                            row4=cursor.fetchone()
+                            pesouni=0
+                            ancho=row4[1]
+                            alto=row4[2]
+                            numberout=row4[3]
+                            if numberout<=0:
+                                numberout=1
+                    except Exception as e:
+                        print(e)
+                        print("error al tomar ancho y alto y nomberout!")
+                        print("Unexpected error:", sys.exc_info()[0])
+                        ancho=0
+                        alto=0
                         pesouni=0
-                        ancho=row4[1]
-                        alto=row4[2]
-                        numberout=row4[3]
-                        if numberout<=0:
-                            numberout=1
-                except Exception as e:
-                    print(e)
-                    print("error al tomar ancho y alto y nomberout!")
-                    print("Unexpected error:", sys.exc_info()[0])
+
+                else:
+                    print("el ID sí es default")
+                    row4=[0,0,0,0]
                     ancho=0
                     alto=0
                     pesouni=0
 
-            else:
-                print("el ID sí es default")
-                row4=[0,0,0,0]
-                ancho=0
-                alto=0
+                kgpallet= pesouni* unidadespallet
+                #print("tarja")
+                #print(row1[8])
+                #print("ID")
+                #print(id)
+                #print("kgpallet")
+                #print(kgpallet)
+
+                m2uni=ancho*alto/numberout
+                m2pallet=m2uni*unidadespallet
                 pesouni=0
+                print("m2pallet")
+                print(m2pallet)
+                print("ancho")
+                print(ancho)
+                print("alto")
+                print(alto)
+                print("unidades")
+                print(unidadespallet)
+                #print("pesouni")
+                #print(pesouni)
+                #print("m2uni")
+                #print(m2uni)
+                flagFGLoad=0
+                datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
+                print("obtención de último movimiento actualizada")
+                print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
+                print(" ")
+            else:
+                print("row1 igual a cero!")
+                row1=[]
+                datosextra=[]
 
-            kgpallet= pesouni* unidadespallet
-            #print("tarja")
-            #print(row1[8])
-            #print("ID")
-            #print(id)
-            #print("kgpallet")
-            #print(kgpallet)
 
-            m2uni=ancho*alto/numberout
-            m2pallet=m2uni*unidadespallet
-            pesouni=0
-            print("m2pallet")
-            print(m2pallet)
-            print("ancho")
-            print(ancho)
-            print("alto")
-            print(alto)
-            print("unidades")
-            print(unidadespallet)
-            #print("pesouni")
-            #print(pesouni)
-            #print("m2uni")
-            #print(m2uni)
-            flagFGLoad=0
-            datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
-            print("obtención de último movimiento actualizada")
-            print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
-            print(" ")
-        except Exception as e:
-            print(e)
-            print("Unexpected error:", sys.exc_info()[0])
-            print("error al tomar row1 del nuevo movpallet!")
-
-            #print("Unexpected error:", sys.exc_info()[0])
-            sleep(10)
-            #return(0)
-            row1=[]
-            datosextra=[]
         return(row1, datosextra)

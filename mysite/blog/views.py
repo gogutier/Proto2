@@ -27,6 +27,72 @@ from excel_utils import WriteToExcel
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+def panel_consumos_conv_efi(request):
+    #print("cargando datos wip")
+    template_name = 'blog/panel_consumos_conv_efi.html'
+
+    #lista de movimientos de máquinas conv:
+
+    listamaqs=("HCR","TCY","WRD", "DIM", "FFW", "DRO", "FFG")
+    #filtroconvqs=Q()
+    m2Ingresado={}
+    totIngreso=0
+    for ubic in listamaqs:
+    #    filtroconvqs = filtroconvqs | Q(DESTINATION=ubic)
+        consumos=MovPallets.objects.filter(DESTINATION=ubic, OPERATIONNO=0, EVENTDATETIME__gte=datetime.now().replace(day=1, hour= 7, minute=0, second=0, microsecond=0), EVENTDATETIME__lt=datetime.now() )
+        m2Ingresado[ubic]=0
+        for consumo in consumos:
+            m2Ingresado[ubic]+=consumo.m2pallet
+        m2Ingresado[ubic]=round(m2Ingresado[ubic]/1000,1)
+        totIngreso+=m2Ingresado[ubic]
+    totIngreso=round(totIngreso,1)
+
+    listacalles=("ZPICADO","ZPNC","ZFFG1","ZFFG2","ZDRO1","ZDRO2","ZFFW1","ZFFW2","ZSOB1","ZWRD1","ZWRD2","ZSOB2","ZHCR1","ZHCR2","ZTCY1","ZTCY2","ZPASILLO")
+    filtrocalleqs=Q()
+    for calle in listacalles:
+        filtrocalleqs = filtrocalleqs | Q(DESTINATION=calle)
+    #filtroconvqs=Q()
+
+    m2Devuelto={}
+    totDevuelto=0
+    for ubic in listamaqs:
+    #    filtroconvqs = filtroconvqs | Q(DESTINATION=ubic)
+        devs=MovPallets.objects.filter(filtrocalleqs, SOURCE=ubic, OPERATIONNO=0, EVENTDATETIME__gte=datetime.now().replace(day=1, hour= 7, minute=0, second=0, microsecond=0), EVENTDATETIME__lt=datetime.now() )
+        m2Devuelto[ubic]=0
+        for dev in devs:
+            m2Devuelto[ubic]+=dev.m2pallet
+        m2Devuelto[ubic]=round(m2Devuelto[ubic]/1000,1)
+        totDevuelto+=m2Devuelto[ubic]
+    totDevuelto=round(totDevuelto,1)
+
+    m2Apicado={}
+    totApicado=0
+
+    for ubic in listamaqs:
+    #    filtroconvqs = filtroconvqs | Q(DESTINATION=ubic)
+        devs=MovPallets.objects.filter(DESTINATION='ZPICADO', SOURCE=ubic, OPERATIONNO=0, EVENTDATETIME__gte=datetime.now().replace(day=1, hour= 7, minute=0, second=0, microsecond=0), EVENTDATETIME__lt=datetime.now() )
+        m2Apicado[ubic]=0
+        for dev in devs:
+            m2Apicado[ubic]+=dev.m2pallet
+        m2Apicado[ubic]=round(m2Apicado[ubic]/1000,1)
+        totApicado+=m2Apicado[ubic]
+    totApicado=round(totApicado,1)
+
+    transportistas=[]
+
+    m2ConsumoTotal={}
+    totConsumoTotal=0
+    for ubic in listamaqs:
+        m2ConsumoTotal[ubic]=m2Ingresado[ubic]-m2Devuelto[ubic]
+        m2ConsumoTotal[ubic] = round(m2ConsumoTotal[ubic],1)
+        totConsumoTotal+=m2ConsumoTotal[ubic]
+    totConsumoTotal=round(totConsumoTotal,1)
+
+    return render(request, template_name, {'consumos':consumos, 'transportistas':transportistas, 'm2Ingresado':m2Ingresado, 'm2Devuelto':m2Devuelto, 'm2Apicado':m2Apicado, 'm2ConsumoTotal':m2ConsumoTotal,'totConsumoTotal':totConsumoTotal, 'totApicado':totApicado, 'totDevuelto':totDevuelto, 'totIngreso':totIngreso  })#acá le puedo decir que los mande ordenados por fecha?
+
+
+
 @csrf_exempt
 def get_data_busqueda_pallet_wip(request, *args, **kwargs):
 
