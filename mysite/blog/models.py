@@ -192,8 +192,10 @@ class Datos_MovPallets(models.Model):
     label=models.CharField(max_length=16, blank=False, default="0")
     cantidadIn=models.IntegerField(default=0)
     m2In=models.FloatField(default=0)
-    cantidadProd=models.IntegerField(default=0)
-    m2Prod=models.FloatField(default=0)
+    cantidadCorrPicado=models.IntegerField(default=0)
+    m2CorrPicado=models.FloatField(default=0)
+    cantidadDirectoConv=models.IntegerField(default=0)
+    m2DirectoConv=models.FloatField(default=0)
     cantidadOut=models.IntegerField(default=0)
     m2Out=models.FloatField(default=0)
     m2Conv=models.FloatField(default=0)
@@ -212,6 +214,28 @@ class Datos_MovPallets_B(models.Model):
     fechaini=models.DateTimeField(blank=False, default=datetime.datetime.now())
     fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
     label=models.CharField(max_length=16, blank=False, default="0")
+
+    op1=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop1=models.IntegerField(default=0)
+
+    op2=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop2=models.IntegerField(default=0)
+
+    op3=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop3=models.IntegerField(default=0)
+
+    op4=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop4=models.IntegerField(default=0)
+
+    op5=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop5=models.IntegerField(default=0)
+
+    op6=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop6=models.IntegerField(default=0)
+
+    op7=models.CharField(max_length=26, blank=False, default="0")
+    movscorrop7=models.IntegerField(default=0)
+
     movscorr1=models.IntegerField(default=0)
     movscorr2=models.IntegerField(default=0)
     movsconv1=models.IntegerField(default=0)
@@ -330,6 +354,7 @@ class MovPallets(models.Model):
     DESTINATION=models.CharField(max_length=32, default="0")
     EVENTDATETIME=models.DateTimeField(blank=False, default=datetime.datetime.now())
     EVENTTIME=models.CharField(max_length=16, default="0")
+    OPERATORCODENAME=models.CharField(max_length=16, default="0")
     unidadespallet=models.IntegerField(default=0)
     kgpallet=models.FloatField(default=0)
     m2pallet=models.FloatField(default=0)
@@ -340,6 +365,7 @@ class MovPallets(models.Model):
     kguni=models.FloatField(default=0)
     ubic=models.CharField(max_length=32, default="vacio")
     esFGLoad=models.IntegerField(default=0)
+    fechacreac=models.DateTimeField(blank=False, default=datetime.datetime.now())
 
 
     def __str__(self):

@@ -97,11 +97,11 @@ def get_data_busqueda_pallet_bpt(request, *args, **kwargs):
             filtrocalleqs = filtrocalleqs | Q(ubic=calle)
 
         if orderID!="":
-            resultado= Pallet.objects.filter(filtrocalleqs).filter(ORDERID=orderID).values()
+            resultado= Pallet.objects.filter(filtrocalleqs).filter(ORDERID=orderID).order_by("-fechaultmov").values()
         elif cliente!="":
-            resultado= Pallet.objects.filter(filtrocalleqs).filter(cliente__icontains=cliente).order_by("-fechacreac")
+            resultado= Pallet.objects.filter(filtrocalleqs).filter(cliente__icontains=cliente).order_by("-fechaultmov")
             if padron!="":
-                resultado=  resultado.filter(padron__icontains=padron).order_by("-fechacreac")
+                resultado=  resultado.filter(padron__icontains=padron).order_by("-fechaultmov")
 
 
                 print("hola")
@@ -111,7 +111,6 @@ def get_data_busqueda_pallet_bpt(request, *args, **kwargs):
 
         data = {
         "resultado":list(resultado),
-
 
         }
         print("Enviando datos inventario")
@@ -443,7 +442,7 @@ def get_data_movpallets(request, *args, **kwargs):
         labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadProd":dato.cantidadProd, "m2Prod":dato.m2Prod, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv, "m2Corr":dato.m2Corr})
 
     for dato in Datos_MovPallets_B.objects.filter(programa=foto):
-        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movsaBPT":dato.movsaBPT, "movsandenes":dato.movsandenes, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2})
+        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movsaBPT":dato.movsaBPT, "movsandenes1":dato.movsandenes1, "movsandenes2":dato.movsandenes2, "movsandenes3":dato.movsandenes3, "movsandenes4":dato.movsandenes4, "movsandenes5":dato.movsandenes5, "movsandenes6":dato.movsandenes6, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2})
 
 
     #Muestro los movs realizados cada 5 min en 24 horas.

@@ -223,7 +223,12 @@ class Datos_MovPallets_B(models.Model):
     fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
     label=models.CharField(max_length=16, blank=False, default="0")
     movsaBPT=models.IntegerField(default=0)
-    movsandenes=models.IntegerField(default=0)
+    movsandenes1=models.IntegerField(default=0)
+    movsandenes2=models.IntegerField(default=0)
+    movsandenes3=models.IntegerField(default=0)
+    movsandenes4=models.IntegerField(default=0)
+    movsandenes5=models.IntegerField(default=0)
+    movsandenes6=models.IntegerField(default=0)
     movsconv1=models.IntegerField(default=0)
     movsconv2=models.IntegerField(default=0)
     movsapnc=models.IntegerField(default=0)
@@ -302,6 +307,10 @@ class Pallet(models.Model):
     ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default=1)
     fechaultmov=models.DateTimeField(blank=False, default=datetime.datetime.now())
     fechacreac=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    fechapll=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    flagpll=models.BooleanField(default=False)
+    fechacamion=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    flagcamion=models.BooleanField(default=False)
     kgpallet=models.FloatField(default=0)
     m2pallet=models.FloatField(default=0)
 
@@ -340,6 +349,7 @@ class MovPallets(models.Model):
     DESTINATION=models.CharField(max_length=32, default="0")
     EVENTDATETIME=models.DateTimeField(blank=False, default=datetime.datetime.now())
     EVENTTIME=models.CharField(max_length=16, default="0")
+    OPERATORCODENAME=models.CharField(max_length=16, default="0")
     unidadespallet=models.IntegerField(default=0)
     kgpallet=models.FloatField(default=0)
     m2pallet=models.FloatField(default=0)
@@ -353,7 +363,7 @@ class MovPallets(models.Model):
 
 
     def __str__(self):
-        return (str(self.TRANSACTIONINDEX) + " --- " + str(self.EVENTDATETIME) + " ---  " + str(self.DESTINATION))
+        return (str(self.TRANSACTIONINDEX) + " --- "+ str(self.LOADID) + " ---  " + str(self.EVENTDATETIME) + " ---  " + str(self.DESTINATION))
 
 
 class BobInvCic(models.Model):

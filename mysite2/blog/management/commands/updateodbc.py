@@ -7,7 +7,6 @@ import mechanicalsoup
 import argparse
 from getpass import getpass
 from time import time, sleep
-
 from datetime import datetime, timedelta
 from time import time, sleep
 import pyodbc
@@ -63,26 +62,6 @@ class Command(BaseCommand):
             print("error al conectar con DB :(")
             sleep(2)
 
-    def inicia_browser(self):
-
-            print("conectando a browser")
-            browser = mechanicalsoup.StatefulBrowser(
-                soup_config={'features': 'lxml'},
-                raise_on_404=True,
-                user_agent='MyBot/0.1: mysite.example.com/bot_info',
-            )
-
-            #Ojo que esto antes estaba en el webscrap_mov. Lo puse aquí para ver si funciona más rápido
-            print("entrando a página")
-            #browser.open("https://gogutier.pythonanywhere.com/carga_mov_pallets/")
-            browser.open("http://127.0.0.1:8000/carga_mov_pallets/") #esto creo que ya no sirve
-            #browser.open("http://192.168.7.32:8080/carga_mov_pallets/")
-
-            return(browser)
-            # Uncomment for a more verbose output:
-            # browser.set_verbose(2)
-
-
 
     #print("hola")
     def webscrap_mov(self,cursor):#(self, browser, cursor):
@@ -102,147 +81,122 @@ class Command(BaseCommand):
             print("útlimo TrIndex:"+ ultim)
             print("fecha último: " + str(MovPallets.objects.all().order_by('-TRANSACTIONINDEX')[0].EVENTDATETIME))
 
+            respuesta=self.cargaDatos(ultim,cursor)#Acá es donde ejecuto la odbc
 
-            row, datosextra=self.cargaDatos(ultim,cursor)#Acá es donde ejecuto la odbc
-            #print(row)
-            if (row!=None and len(row)>0):
+            for resp in respuesta:
+                print("Respuesta encontrada:")
+                print(resp[0])
+                row=resp[0]
+                datosextra=resp[1]
 
-                '''
-                #print("escribiendo datos de transacción en página")
-                browser["TRANSACTIONINDEX"] = str(row[0])#args.username
-                browser["PLANTID"] = str(row[1])#args.username
-                browser["WAREHOUSE"] = str(row[2])#args.username
-                browser["INTERNALSPECID"] = str(row[3])#args.username
-                browser["ORDERID"] = str(row[4])#args.username
-                browser["PARTID"] = str(row[5])#args.username
-                browser["OPERATIONNO"] = str(row[6])#args.username
-                browser["UNITTYPE"] = str(row[7])#args.username
-                browser["LOADID"] = str(row[8])#args.username
-                browser["UNITNO"] = str(row[9])#args.username
-                browser["SOURCE"] = str(row[10])#args.username
-                browser["DESTINATION"] = str(row[11])#args.username
-                browser["EVENTDATETIME"] = (row[12])#args.username
-                #print((row[12]))
-                browser["EVENTTIME"] = str(row[13])#args.username
-                browser["unidadespallet"] = datosextra[0]
-                browser["kgpallet"] = datosextra[1]
-                browser["m2pallet"] = datosextra[2]
-                browser["alto"] = datosextra[3]
-                browser["ancho"] = datosextra[4]
-                browser["kguni"] = datosextra[5]
-                browser["m2uni"] = datosextra[6]
-                browser["esFGLoad"] = datosextra[7]
+                #print(row)
+                if (row!=None and len(row)>0):
 
 
-                ##browser["password"] = "plant"#args.password
-                #print("submiteando")
-                resp = browser.submit_selected()
-                    # Uncomment to launch a web browser on the current page:
-                #browser.launch_browser()
-                    #print(browser.open("http://interlink.corrupac.cl"))
-                    #>>> browser.follow_link("forms") #sigue el link que tenga la palabra indicada
-                #<Response [200]>
-                #>>> browser.get_url()
-                '''
-                ###ESTO Es lo que antes pasaba en el views.py cuando se submiteaba un nuevo pallet.
-                dato0=str(row[0])#args.username#form.cleaned_data["TRANSACTIONINDEX"]
-                dato1=str(row[1])#args.username#form.cleaned_data["PLANTID"]
-                dato2=str(row[2])#form.cleaned_data["WAREHOUSE"]
-                dato3=str(row[3])#form.cleaned_data["INTERNALSPECID"]
-                dato4=str(row[4])#form.cleaned_data["ORDERID"]
-                dato5=str(row[5])#form.cleaned_data["PARTID"]
-                dato6=str(row[6])#form.cleaned_data["OPERATIONNO"]
-                dato7=str(row[7])#form.cleaned_data["UNITTYPE"]
-                dato8=str(row[8])#form.cleaned_data["LOADID"]
-                dato9=str(row[9])#form.cleaned_data["UNITNO"]
-                dato10=str(row[10])#form.cleaned_data["SOURCE"]
-                dato11=str(row[11])#form.cleaned_data["DESTINATION"]
-                dato12=(row[12])#form.cleaned_data["EVENTDATETIME"]
-                #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
-                dato13=str(row[13])#form.cleaned_data["EVENTTIME"]
-                datounidadespallet=datosextra[0]#form.cleaned_data["unidadespallet"]
-                datokgpallet=datosextra[1]#form.cleaned_data["kgpallet"]
-                datom2pallet=datosextra[2]#form.cleaned_data["m2pallet"]
-                datoalto=datosextra[3]#form.cleaned_data["alto"]
-                datoancho=datosextra[4]#form.cleaned_data["ancho"]
-                datokguni=datosextra[5]#form.cleaned_data["kguni"]
-                datom2uni=datosextra[6]#form.cleaned_data["m2uni"]
-                datoFGLoad=datosextra[7]#form.cleaned_data["esFGLoad"]
-                datocliente=datosextra[8]#form.cleaned_data["esFGLoad"]
-                datofechacreacionpallet=datosextra[9]#form.cleaned_data["esFGLoad"]
-                datomaqruta=datosextra[10]#form.cleaned_data["esFGLoad"]
+                    ###ESTO Es lo que antes pasaba en el views.py cuando se submiteaba un nuevo pallet.
+                    dato0=str(row[0])#args.username#form.cleaned_data["TRANSACTIONINDEX"]
+                    dato1=str(row[1])#args.username#form.cleaned_data["PLANTID"]
+                    dato2=str(row[2])#form.cleaned_data["WAREHOUSE"]
+                    dato3=str(row[3])#form.cleaned_data["INTERNALSPECID"]
+                    dato4=str(row[4])#form.cleaned_data["ORDERID"]
+                    dato5=str(row[5])#form.cleaned_data["PARTID"]
+                    dato6=str(row[6])#form.cleaned_data["OPERATIONNO"]
+                    dato7=str(row[7])#form.cleaned_data["UNITTYPE"]
+                    dato8=str(row[8])#form.cleaned_data["LOADID"]
+                    dato9=str(row[9])#form.cleaned_data["UNITNO"]
+                    dato10=str(row[10].upper())#form.cleaned_data["SOURCE"]
+                    dato11=str(row[11].upper())#form.cleaned_data["DESTINATION"]
+                    dato12=(row[12])#form.cleaned_data["EVENTDATETIME"]
+                    #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
+                    dato13=str(row[13])#form.cleaned_data["EVENTTIME"]
+                    dato14=str(row[14])
+                    datounidadespallet=datosextra[0]#form.cleaned_data["unidadespallet"]
+                    datokgpallet=datosextra[1]#form.cleaned_data["kgpallet"]
+                    datom2pallet=datosextra[2]#form.cleaned_data["m2pallet"]
+                    datoalto=datosextra[3]#form.cleaned_data["alto"]
+                    datoancho=datosextra[4]#form.cleaned_data["ancho"]
+                    datokguni=datosextra[5]#form.cleaned_data["kguni"]
+                    datom2uni=datosextra[6]#form.cleaned_data["m2uni"]
+                    datoFGLoad=datosextra[7]#form.cleaned_data["esFGLoad"]
+                    datocliente=datosextra[8]#form.cleaned_data["esFGLoad"]
+                    datofechacreacionpallet=datosextra[9]#form.cleaned_data["esFGLoad"]
+                    datomaqruta=datosextra[10]#form.cleaned_data["esFGLoad"]
 
-                #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
-                o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0)
-                o.PLANTID=dato1
-                o.WAREHOUSE=dato2
-                o.INTERNALSPECID=dato3
-                o.ORDERID=dato4
-                o.PARTID=dato5
-                o.OPERATIONNO=dato6
-                o.UNITTYPE=dato7
-                o.LOADID=dato8
-                o.UNITNO=dato9
-                o.SOURCE=dato10
-                o.DESTINATION=dato11
-                o.EVENTDATETIME=dato12
-                o.EVENTTIME=dato13
-                o.unidadespallet=datounidadespallet
-                o.kgpallet=datokgpallet
-                o.m2pallet=datom2pallet
-                o.alto=datoalto
-                o.ancho=datoancho
-                o.kguni=datokguni
-                o.m2uni=datom2uni
-                o.esFGLoad=datoFGLoad
+                    #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
+                    o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0, LOADID=dato8)
+                    o.PLANTID=dato1
+                    o.WAREHOUSE=dato2
+                    o.INTERNALSPECID=dato3
+                    o.ORDERID=dato4
+                    o.PARTID=dato5
+                    o.OPERATIONNO=dato6
+                    o.UNITTYPE=dato7
+                    o.LOADID=dato8
+                    o.UNITNO=dato9
+                    o.SOURCE=dato10
+                    o.DESTINATION=dato11
+                    o.EVENTDATETIME=dato12
+                    o.EVENTTIME=dato13
+                    o.OPERATORCODENAME=dato14
+                    o.unidadespallet=datounidadespallet
+                    o.kgpallet=datokgpallet
+                    o.m2pallet=datom2pallet
+                    o.alto=datoalto
+                    o.ancho=datoancho
+                    o.kguni=datokguni
+                    o.m2uni=datom2uni
+                    o.esFGLoad=datoFGLoad
 
-                o.save()
-                sleep(0.05)
+                    o.save()
+                    sleep(0.05)
 
-                #creo la ubicación de inventario en caso de que no exista.
-                a, created = UbicPallet.objects.get_or_create(calle=dato11)
-                a.save()
-                sleep(0.05)
+                    #creo la ubicación de inventario en caso de que no exista.
+                    a, created = UbicPallet.objects.get_or_create(calle=dato11.upper())
+                    a.save()
+                    sleep(0.05)
 
-                #creo el pallet en caso de que no exista. Si ya existe le actualizo la ubicación.
+                    #creo el pallet en caso de que no exista. Si ya existe le actualizo la ubicación.
 
-                c, created = Pallet.objects.get_or_create(tarja=dato8)
-                c.padron=dato3
-                c.ubic=dato11
-                c.ORDERID=dato4
-                #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
-                ##Esto lo borro para ver si ahora revisa la fecha de creación cada vez que se mueve un pallet#### if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
-                c.fechacreac=datofechacreacionpallet
-                c.ancho=datoancho
-                c.alto=datoalto
-                c.unidades=datounidadespallet
-                c.cliente=datocliente
-                c.maqruta=datomaqruta
-                c.m2uni=datom2uni
-                c.kguni=datokguni
-                c.m2pallet=datom2pallet
-                c.kgpallet=datokgpallet
-                c.save()
-                sleep(0.06)
+                    c, created = Pallet.objects.get_or_create(tarja=dato8)
+                    c.padron=dato3
+                    c.ubic=dato11.upper()
+                    c.ORDERID=dato4
+                    #c.ubic2=UbicPallet.objects.filter(calle=dato11)[0]
+                    ##Esto lo borro para ver si ahora revisa la fecha de creación cada vez que se mueve un pallet#### if datoFGLoad==1: #Aquí hay que arreglar el caso en que se mueve un pallet que todavía no está creado*ya está considerado, usa la fecha now() por defecto
+                    c.fechacreac=datofechacreacionpallet
 
-                #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
+                    c.fechaultmov=dato12
 
-                #form = MovPalletForm()
+                    if dato11=='PLL':
+                        c.flagpll=True
+                        c.fechapll=dato12
+                    if dato11.upper()=='TRUCK':
+                        c.flagcamion=True
+                        c.fechacamion=dato12
 
+                    c.ancho=datoancho
+                    c.alto=datoalto
+                    c.unidades=datounidadespallet
+                    c.cliente=datocliente
+                    c.maqruta=datomaqruta
+                    c.m2uni=datom2uni
+                    c.kguni=datokguni
+                    c.m2pallet=datom2pallet
+                    c.kgpallet=datokgpallet
+                    c.save()
+                    sleep(0.06)
 
-            #return redirect ('res_inventario')
+                    #form = MovPalletForm()#Esto se pone si quieres que después de submitear, los valores que pusiste en los form se borren
 
+                    #form = MovPalletForm()
 
 
+                #return redirect ('res_inventario')
 
-
-
-
-
-
-            resultado="dato enviado"
-            print("Dato guardado")
+                resultado="datos enviados"
+                print("Datos guardados")
             return(1)
+
 
         else:#except Exception as e:
             print(e)
@@ -260,16 +214,54 @@ class Command(BaseCommand):
         print("conectándose a DB para encontrar el transactionindex siguiente a " + str(ultimo))
 
 
-        flag0=0
+        flag0=9 #0 si voy a sacar el dato de MVLOAD o 1 si lo voy a sacar del Bill of Lading.
+        respuesta=[]
+
+        destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03','B04','B05','B06','B07','B08','B09','B10','B11','B12','B13','B14','B15','B16','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','A01','A02','A03','A04','A05','A06','A07','A08','E01','E02','E03','E04','PA1','PA2','PA3', 'PTCAL','RP1','Truck', 'D01')
+        destinotxt=""
+        for dest in destinobpt:
+            destinotxt+= "Destination='"+ dest +"'"+ " or "
+
+
+        #Acá decido si voy a sacar el próximo transactionindex del MVLOAD o del BILLOFLADING.
+        trmvload=99999999
+        trbol=99999999
+        #Obtengo el transactionindex del candidato de MVLOAD
+        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
+        try:
+            row=cursor.fetchone()
+            trmvload=int(row[0])
+        except:
+            trmvload=99999999
+
+        #Obtengo el transactionindex del Billoflading
+        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[ORDERID],[PARTID],[UNITID],[UNITQTY],[LOCATION] FROM [ctidb_transact].[dbo].[BILLOFLADINGLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' order by transactionindex asc")
+        try:
+            row=cursor.fetchone()
+            trbol=int(row[0])
+        except:
+            trbol=99999999
+
+        print("comparando "+ str(trmvload) + " y " + str(trbol) )
+
+        if trmvload<99999999 or trbol<99999999:
+            if trmvload<trbol:
+                flag0=0
+                print("el dato se sacará del MVLOAD")
+            else:
+                flag0=1
+                print("el dato se sacará del BILLOFLADING")
+        else:
+            print("no se encontraron transacciones mayores ni en MVLOAD ni en BILLOFLADING")
+
 
         if flag0==0: #si es un dato que saco de la MVLOAD..
 
+            print("el dato se sacará del MVLOAD")
+
             operation=0
 
-            destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03','B04','B05','B06','B07','B08','B09','B10','B11','B12','B13','B14','B15','B16','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','A01','A02','A03','A04','A05','A06','A07','A08','E01','E02','E03','E04','PAT1','PAT2','PAT3', 'PTCAL','RP1','Truck', 'D01')
-            destinotxt=""
-            for dest in destinobpt:
-                destinotxt+= "Destination='"+ dest +"'"+ " or "
+
 
             rowcount=0
 
@@ -277,14 +269,15 @@ class Command(BaseCommand):
             #sleep(0.01)
 
 
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
-            print("tamaño cursor:")
+
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
 
 
-                #Aquí hay que ponerle un TRY probablemente
+            #Aquí hay que ponerle un TRY probablemente
+            row1=[]
             if len(cursor.fetchall())>0:
                 try:
-                    cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
+                    cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +"Destination='xassxsa') order by transactionindex asc ")
 
                     row1=cursor.fetchone()
                     print(row1[0])
@@ -447,13 +440,55 @@ class Command(BaseCommand):
                 #print(m2uni)
                 flagFGLoad=0
                 datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
-                print("obtención de último movimiento actualizada")
+                print("obtención de último movimiento actualizado")
                 print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
                 print(" ")
+                respuesta.append([row1,datosextra])
+
+
+
             else:
                 print("row1 igual a cero!")
                 row1=[]
                 datosextra=[]
+                respuesta.append([row1,datosextra])
 
 
-        return(row1, datosextra)
+        elif flag0==1:
+            print("el dato se sacará del BILLOFLADING")
+            cursor.execute("SELECT TOP (1000) [TRANSACTIONINDEX],[ORDERID],[PARTID],[UNITID],[UNITQTY],[LOCATION] FROM [ctidb_transact].[dbo].[BILLOFLADINGLOAD] where TRANSACTIONINDEX='"+ str(trbol) +"' order by transactionindex desc")
+            row1bol=cursor.fetchall()
+            respuesta=[]
+            for row in row1bol:
+                #print(row[0])
+                # row1= [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]
+                #saco datos del billofladinginfo
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[BILLOFLADINGID],[SHIPDATETIME],[ORDERID],[SPECID],[TRAILERID] FROM [ctidb_transact].[dbo].[BILLOFLADINGINFO] where transactionindex='"+ str(trbol) +"' and orderid= '"+ str(row[1]) +"' order by transactionindex desc")
+                rowaux=cursor.fetchone()
+                #obtengo el padrón de esa tarja:
+
+                row1 =[ row[0],'800','wharehouse',rowaux[4], row[1], row[2],"1","UNITType",row[3],row[4],"vacio",row[5].upper(),rowaux[2],0,rowaux[5]]
+
+                #ahora saco los datosextra asociados.
+
+                #supuesto= todo pallet que se cargará a camión ya fue creado anteriormente y está en la BD de django control.corrupac
+                #datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]#
+                print(row[3])
+                c= Pallet.objects.get(tarja=str(row[3]))
+                datosextra = [c.unidades, c.kgpallet, c.m2pallet, c.alto, c.ancho, c.kguni, c.m2uni, 0, c.cliente, c.fechacreac, c.maqruta]
+                print("obtención de último movimiento actualizado")
+                print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
+                print(" ")
+                respuesta.append([row1,datosextra])
+
+            return(respuesta)
+            #por cada fila en el row le creo un row1 y un datoextra:
+
+            #por cada transacción guardad en row1bol, debo generar un movpallet equivalente en Django", después mandarlas django para q las guerde (van a tener transactionindex repetidos).
+
+        else:
+            row1=[]
+            datosextra=[]
+            respuesta.append([row1,datosextra])
+
+        return(respuesta)

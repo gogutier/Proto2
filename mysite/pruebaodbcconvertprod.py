@@ -55,11 +55,11 @@ def consulta(datetimeini,datetimefin):
         print(row)
 
         m2placaUK=row[4]*row[5]
-        unidsUK=row[7]
+        unidsUK=row[6]
         m2prodUK=m2placaUK*unidsUK
 
         m2placaLK=row[13]*row[14]
-        unidsLK=row[16]
+        unidsLK=row[15]
         m2prodLK=m2placaLK*unidsLK
 
         m2totcorr += m2prodLK + m2prodUK

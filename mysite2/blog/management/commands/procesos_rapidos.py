@@ -262,7 +262,7 @@ class Command(BaseCommand):
 
                 #listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltroentrada=["PLL","PT10"]#Acá el PT10 es pq supuestamente lasdevoluciones se iban a detectar por ahí.Ahora al pareer habría q sacarlas de la tabla FGRETURN
-                listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9","Truck"]
+                listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9"]
 
                 filtroproducidoqs=Q()
                 filtroentradaqs=Q()
@@ -338,13 +338,13 @@ class Command(BaseCommand):
 
                 labels2=[]
                 ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
-                for i in range(0,300):
+                for i in range(0,150):
                     #por ahora los voy a ordenar por turno, después por hora.
                     print("rango movpallet detalle:")
 
 
-                    fechaini=(ahora+timedelta(hours=1)-timedelta(minutes=(300-i)*5))
-                    fechafin=(ahora+timedelta(hours=1)-timedelta(minutes=(300-i-1)*5))
+                    fechaini=(ahora+timedelta(hours=1)-timedelta(minutes=(150-i)*10))
+                    fechafin=(ahora+timedelta(hours=1)-timedelta(minutes=(150-i-1)*10))
 
                     print(fechaini)
 
@@ -406,16 +406,30 @@ class Command(BaseCommand):
 
                         filtromovinternoqs = filtromovinternoqs | Q(DESTINATION=str(calle))
 
+                    if MovPallets.objects.filter(Q(DESTINATION="PLL")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()>0:
+                        movsaBPT= 1
+                    else:
+                        movsaBPT= 0
+                    #movsandenes= MovPallets.objects.filter(Q(DESTINATION="AN1") | Q(DESTINATION="AN2") | Q(DESTINATION="AN3") | Q(DESTINATION="AN4") | Q(DESTINATION="AN5") | Q(DESTINATION="AN6") | Q(DESTINATION="AN7") | Q(DESTINATION="AN8") | Q(DESTINATION="AN9")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsandenes1= MovPallets.objects.filter(DESTINATION="AN1", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsandenes2= MovPallets.objects.filter(DESTINATION="AN2", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsandenes3= MovPallets.objects.filter(DESTINATION="AN3", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsandenes4= MovPallets.objects.filter(DESTINATION="AN4", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsandenes5= MovPallets.objects.filter(DESTINATION="AN5", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    movsandenes6= MovPallets.objects.filter(DESTINATION="AN6", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
 
-                    movsaBPT= MovPallets.objects.filter(Q(DESTINATION="PLL")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movsandenes= MovPallets.objects.filter(Q(DESTINATION="AN1") | Q(DESTINATION="AN2") | Q(DESTINATION="AN3") | Q(DESTINATION="AN4") | Q(DESTINATION="AN5") | Q(DESTINATION="AN6") | Q(DESTINATION="AN7") | Q(DESTINATION="AN8") | Q(DESTINATION="AN9")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+
+
+
+
+
                     movsconv1= MovPallets.objects.filter(filtromovinternoqs).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movsaBPT":movsaBPT, "movsandenes":movsandenes, "movsconv1":movsconv1, "movsconv2":movsconv2})
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movsaBPT":movsaBPT, "movsandenes1":movsandenes1, "movsandenes2":movsandenes2, "movsandenes3":movsandenes3, "movsandenes4":movsandenes4, "movsandenes5":movsandenes5, "movsandenes6":movsandenes6, "movsconv1":movsconv1, "movsconv2":movsconv2})
                     print(movsconv2)
                 for dato in labels2:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movsaBPT=dato["movsaBPT"],movsandenes=dato['movsandenes'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movsaBPT=dato["movsaBPT"],movsandenes1=dato['movsandenes1'],movsandenes2=dato['movsandenes2'],movsandenes3=dato['movsandenes3'],movsandenes4=dato['movsandenes4'],movsandenes5=dato['movsandenes5'],movsandenes6=dato['movsandenes6'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'])
                     o.save()
                     sleep(0.05)
 

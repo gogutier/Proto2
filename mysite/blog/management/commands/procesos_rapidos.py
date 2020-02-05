@@ -224,11 +224,11 @@ class Command(BaseCommand):
 
                 listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO"]
-                listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","ZPICADO","PLL"]
+                listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","DIM","PLL"]
+                listafiltropicado=["ZPICADO"]
 
                 filtroproducidoqs=Q()
                 filtroentradaqs=Q()
-                filtroentradaexcludeqs=Q()
                 filtrosalidaqs=Q()
                 filtrosalidaexcludeqs=Q()
                 print("iterando para llenar las listas..")
@@ -237,9 +237,6 @@ class Command(BaseCommand):
 
                 for item in listafiltroentrada:
                     filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
-
-                for item in listafiltroentrada:
-                    filtroentradaexcludeqs = filtroentradaexcludeqs | Q(SOURCE=item)
 
 
                 for item in listafiltrosalida:
@@ -254,25 +251,27 @@ class Command(BaseCommand):
 
 
                     #Entradas
-                    filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).exclude(filtroentradaexcludeqs)
+                    filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
 
                     cantidad1=filtro.count()
                     #sumo los m2 asociados a cada pallets
                     m2tot=0
                     for mov in filtro:
-                        m2tot=m2tot+mov.m2pallet
+                        #checkeo si la fecha de creación de ese pallet es igual o posterior que el turno que estoy analizando (después se puede agregar la fecha de creación del pallet al movpallet)
+
+                        filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
+                        print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
+                        if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
+
+                            m2tot=m2tot+mov.m2pallet
 
                     labels[i]["cantidadIn"]= cantidad1
                     labels[i]["m2In"]= m2tot
 
 
-
+                    #Filtrando los que se movieron de stacker corrugado directo a máquina.
                     #Producidos pero excluyendo los pallets que ya están en la lista de Entradas (acá saco el m2 actualizado de cada pallet, para descartar las producciones que se fueron a cero)
-                    filtro2=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"])
-
-
-                    for item in filtro:
-                        filtro2=filtro2.exclude(LOADID=item.LOADID)
+                    filtro2=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
 
 
                     cantidad1=filtro2.count()
@@ -280,15 +279,45 @@ class Command(BaseCommand):
                     m2tot=0
                     for mov in filtro2:
                         #print(str(mov) + ".." + str(mov.LOADID) )
-                        try:
-                            m2tot=m2tot+Pallet.objects.get(tarja=mov.LOADID).m2pallet
-                        except Exception as e:
-                            print(e)
-                            print("error con " + str(mov) + ".." + str(mov.LOADID) + "!!")
+
+                        filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
+                        print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
+                        if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
+                            m2tot=m2tot+mov.m2pallet
 
 
-                    labels[i]["cantidadProd"]= cantidad1
-                    labels[i]["m2Prod"]= m2tot
+
+                    labels[i]["cantidadDirectoConv"]= cantidad1
+                    labels[i]["m2DirectoConv"]= m2tot
+
+
+                    #Filtro los que se fueron directo a picado desde corrugado
+                    filtro3=MovPallets.objects.filter( Q(DESTINATION="ZPICADO"), EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
+
+
+                    cantidad1=filtro3.count()
+                    #sumo los m2 asociados a cada pallets
+                    m2tot=0
+                    for mov in filtro3:
+                        #print(str(mov) + ".." + str(mov.LOADID) )
+
+                        filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
+                        print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
+                        if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
+                            m2tot=m2tot+mov.m2pallet
+
+
+
+                    labels[i]["cantidadCorrPicado"]=  cantidad1
+                    labels[i]["m2CorrPicado"]= m2tot
+
+
+
+
+
+
+
+
 
 
                     #Salidas
@@ -315,22 +344,30 @@ class Command(BaseCommand):
                 #print(labels)
                 for dato in labels:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadProd=dato['cantidadProd'],m2Prod=dato['m2Prod'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
                     o.save()
                     sleep(0.05)
 
+                print("model guardado")
+                ###################################
 
                 #### Ahora calculo los datos de sólo los movimientos..
+                print("iniciando datos B")
 
+                listaopgruacorr=["1009/Nolasco Carreño","1114/Andres Aguilera","1076/OSCAR  TOLEDO","1010/Héctor  Velasquez", "1026/Danilo Moya", "1027/Jaime Marchant", "1115/Hugo Orostiga"]
+                filtroopgruacorrqs=Q()
+                for op in listaopgruacorr:
+                    filtroopgruacorrqs = filtroopgruacorrqs | Q(OPERATORCODENAME=op)
                 labels2=[]
                 ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
-                for i in range(0,300):
+
+                for i in range(0,150):
                     #por ahora los voy a ordenar por turno, después por hora.
                     print("rango movpallet detalle:")
 
 
-                    fechaini=(ahora+timedelta(hours=1)-timedelta(minutes=(300-i)*5))
-                    fechafin=(ahora+timedelta(hours=1)-timedelta(minutes=(300-i-1)*5))
+                    fechaini=(ahora+timedelta(hours=1)-timedelta(minutes=(150-i)*10))
+                    fechafin=(ahora+timedelta(hours=1)-timedelta(minutes=(150-i-1)*10))
 
                     print(fechaini)
 
@@ -342,15 +379,23 @@ class Command(BaseCommand):
 
                     #Calculo el n° de movimientos registrados en ese turno:
 
-                    movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
+                    datosop=[[0,"0"]]
+                    for op in listaopgruacorr:
+                        datosop.append([op , MovPallets.objects.filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker"), OPERATORCODENAME=op, EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()])
+                    #print(datosop)
+
+                    movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") ).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movscorr2= MovPallets.objects.filter(Q(SOURCE="CORR_LOWER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2})
-                    print(movsconv2)
+
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "op1":datosop[1][0], "movscorrop1":datosop[1][1], "op2":datosop[2][0], "movscorrop2":datosop[2][1], "op3":datosop[3][0], "movscorrop3":datosop[3][1], "op4":datosop[4][0], "movscorrop4":datosop[4][1], "op5":datosop[5][0], "movscorrop5":datosop[5][1], "op6":datosop[6][0], "movscorrop6":datosop[6][1], "op7":datosop[7][0], "movscorrop7":datosop[7][1]})
+
+                print("datos obtenidos correctamente")
+                #print(datosop[1][0])
                 for dato in labels2:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],op1=dato['op1'],movscorrop1=dato['movscorrop2'],op2=dato['op2'],movscorrop2=dato['movscorrop2'],op3=dato['op3'],movscorrop3=dato['movscorrop3'],op4=dato['op4'],movscorrop4=dato['movscorrop4'],op5=dato['op5'],movscorrop5=dato['movscorrop5'],op6=dato['op6'],movscorrop6=dato['movscorrop6'],op7=dato['op7'],movscorrop7=dato['movscorrop7'])
                     o.save()
                     sleep(0.05)
 
@@ -729,9 +774,9 @@ class Command(BaseCommand):
         while (1):
 
             try:
+                self.updatemovpallets()
                 self.update_datos_inv_cic()
                 self.update_datos_wip()
-                self.updatemovpallets()
                 self.updatewipprog()
                 self.updateproywip()
 

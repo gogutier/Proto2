@@ -52,14 +52,16 @@
 </div>
 
 
+<div class="jumbotron">
 
-<div class="container">
 
-<canvas id="myChart2"  style="width:1000px"></canvas>
+<div class="container" >
+
+<canvas id="myChart2" style="position: relative; height:35vh; width:80vw" ></canvas>
 
 </div>
 
-
+</div>
 
 
 <div class="container">
@@ -398,12 +400,15 @@ function setChart2(){
 
             {
 
-            label: "Pallets ingresados a BPT por Paletizadora",
+            label: "Actividad Ingreso Paletizadora",
             data: movsaBPT,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
+            borderColor: "rgba(50,50,250)",
+            backgroundColor: "rgba(50,50,250)",
             stack: 'stack 0',
             borderWidth: 0,
+            aspectRatio:1,
+            responsive:true,
+            maintainAspectRatio: false,
 
 
             }]
@@ -413,16 +418,21 @@ function setChart2(){
             display:true,
             responsive:true,
             hoverMode:true,
-            text:"Movimiento Pallets"
+            text:"Actividad Paletizadora",
+
+
           },
           tooltips: {
     mode: 'label',
 
 },
           scales: {
-              xAxes: [{ stacked: true,
-                barPercentage: 0.95,
-                categoryPercentage: 0.5,
+              xAxes: [{
+                stacked: true,
+                categoryPercentage: 1.1,
+                barPercentage: 1.1 ,
+
+
                }],
               yAxes: [{stacked: true,
                       barPercentage: 1.0,
@@ -431,7 +441,10 @@ function setChart2(){
                       autoSkip: false,
                       beginAtZero:true,
                       suggestedMin: 0,
-                      suggestedMax: 10
+                      suggestedMax: 1,
+                      max: 1,
+                      stepSize:1,
+
                   }
               }]
           }
@@ -446,7 +459,12 @@ function setChart3(){
 
   //generando list de labels
   labelx=[]
-  movsandenes=[]
+  movsandenes1=[]
+  movsandenes2=[]
+  movsandenes3=[]
+  movsandenes4=[]
+  movsandenes5=[]
+  movsandenes6=[]
 
 
 
@@ -454,7 +472,12 @@ function setChart3(){
       {
         labelx.push(labels2[i]["label"]);
 
-        movsandenes.push((labels2[i]["movsandenes"]).toFixed(1));
+        movsandenes1.push((labels2[i]["movsandenes1"]).toFixed(1));
+        movsandenes2.push((labels2[i]["movsandenes2"]).toFixed(1));
+        movsandenes3.push((labels2[i]["movsandenes3"]).toFixed(1));
+        movsandenes4.push((labels2[i]["movsandenes4"]).toFixed(1));
+        movsandenes5.push((labels2[i]["movsandenes5"]).toFixed(1));
+        movsandenes6.push((labels2[i]["movsandenes6"]).toFixed(1));
 
       }
 
@@ -466,16 +489,56 @@ function setChart3(){
             datasets: [
 
             {
-
-            label: "Movimientos carga a andén",
-            data: movsandenes,
+            label: "AN1",
+            data: movsandenes1,
             borderColor: "rgba(100,100,150)",
             backgroundColor: "rgba(100,100,150)",
             stack: 'stack 0',
             borderWidth: 0,
+            },
+            {
+            label: "AN2",
+            data: movsandenes2,
+            borderColor: "rgba(150,80,80)",
+            backgroundColor: "rgba(150,80,80)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN3",
+            data: movsandenes3,
+            borderColor: "rgba(50,80,250)",
+            backgroundColor: "rgba(50,80,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN4",
+            data: movsandenes4,
+            borderColor: "rgba(80,80,80)",
+            backgroundColor: "rgba(80,80,80)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN5",
+            data: movsandenes5,
+            borderColor: "rgba(50,80,50)",
+            backgroundColor: "rgba(50,80,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN6",
+            data: movsandenes6,
+            borderColor: "rgba(150,80,200)",
+            backgroundColor: "rgba(150,80,200)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            }
 
 
-            }]
+          ]
       },
       options: {
           title:{
@@ -490,12 +553,12 @@ function setChart3(){
 },
           scales: {
               xAxes: [{ stacked: true,
-                barPercentage: 0.95,
-                categoryPercentage: 0.5,
+                barPercentage: 1,
+                categoryPercentage: 0.95,
                }],
               yAxes: [{stacked: true,
-                      barPercentage: 1.0,
-                      categoryPercentage: 1.0,
+                      barPercentage: 0.95,
+                      categoryPercentage: 0.95,
                   ticks: {
                       autoSkip: false,
                       beginAtZero:true,

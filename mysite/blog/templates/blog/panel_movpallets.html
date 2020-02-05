@@ -19,16 +19,16 @@
 
 
   <tr>
-    <td style='font-size: 30px;'>Balance WIP</td>
+    <td style='font-size: 30px;'>Indicador 7 días</td>
     </tr>
     <tr>
       <td>
-        <br>
+
       </td>
 
     </tr>
     <tr>
-      <td>Corrugado/Conversión</td>
+      <td>Corrugado/Movs grúa</td>
       </tr>
   <tr >
     <td  style='font-size: 50px;' id="ratiobalance">.</td>
@@ -36,10 +36,17 @@
 
 
   <tr>
-    <td>In/Out grúas</td>
+    <td>M2 transportados  </td>
     </tr>
   <tr >
     <td  style='font-size: 50px;' id="ratiobalance2">.</td>
+  </tr>
+
+  <tr>
+    <td>M2 a picado  </td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance3">.</td>
   </tr>
 
 </table>
@@ -59,14 +66,6 @@
 
 </div>
 
-
-
-
-<div class="container">
-
-<canvas id="myChart3"  style="width:1000px"></canvas>
-
-</div>
 
 
 
@@ -126,45 +125,32 @@ function datosinv(){
 
       var ratio = document.getElementById("ratiobalance");//.getElementsByTagName("td");
       var ratio2 = document.getElementById("ratiobalance2");//
+      var ratio3 = document.getElementById("ratiobalance3");//
       //Aquí calculo el ratio ratiobalance
 
       sumconv=0
       sumcorr=0
       aux=0
       aux1=0
+      suma=0
+      sumapicado=0
 
       diastrabajados=0
 
       for (var i = 0; i < labels.length; i++)
           {
 
-            if (labels[i]["m2Conv"]!=0 && labels[i]["m2Corr"]!=0 )
+            if (labels[i]["m2Corr"]>0)
             {
               diastrabajados+=1
+
+              suma+=(labels[i]["m2In"]+labels[i]["m2DirectoConv"]+labels[i]["m2CorrPicado"])/(labels[i]["m2Corr"])
             }
 
           }
 
-      for (var i = 0; i < labels.length; i++)
-          {
-            aux1=0
+        aux=suma/diastrabajados
 
-          if (labels[i]["m2Conv"]!=0)///(labels.length);
-            {
-              aux1=(labels[i]["m2Corr"]/labels[i]["m2Conv"])-1
-              if (aux1>0)
-              {
-
-                aux+=(1-aux1)/diastrabajados
-
-              }
-              else
-              {
-                aux+=(labels[i]["m2Corr"]/labels[i]["m2Conv"])/diastrabajados
-              }
-            }
-
-          }
 
 
       ratio.innerHTML= String((aux*100).toFixed(1))+"%"
@@ -176,49 +162,30 @@ function datosinv(){
       sumcorr=0
       aux=0
       aux1=0
+      sumapicado=0
 
       diastrabajados=0
 
       for (var i = 0; i < labels.length; i++)
           {
 
-            if (labels[i]["m2In"]!=0 && labels[i]["m2Out"]!=0 )
-            {
-              diastrabajados+=1
-            }
-
-          }
-
-      for (var i = 0; i < labels.length; i++)
-          {
-            aux1=0
-
-          if (labels[i]["m2Out"]!=0)///(labels.length);
-            {
-              aux1=(labels[i]["m2In"]/labels[i]["m2Out"])-1
-              if (aux1>0)
-              {
-
-                aux+=(1-aux1)/diastrabajados
-
-              }
-              else
-              {
-                aux+=(labels[i]["m2In"]/labels[i]["m2Out"])/diastrabajados
-              }
-            }
+            sumcorr+=labels[i]["m2In"]+labels[i]["m2DirectoConv"]+labels[i]["m2CorrPicado"]
+            sumapicado+=+labels[i]["m2CorrPicado"]
 
           }
 
 
-      ratio2.innerHTML= String((aux*100).toFixed(1))+"%"
+
+      ratio2.innerHTML= String((sumcorr/1000).toFixed(0))+"Mm2"
+      ratio3.innerHTML= String((sumapicado/1000).toFixed(0))+"Mm2"
+
 
 
 
 
       setChart1();
       setChart2();
-      setChart3();
+      //setChart3();
       setChart4();
       setChart5();
 
@@ -254,7 +221,8 @@ function setChart1(){
   labelx=[]
   m2Inx=[]
   m2Outx=[]
-  m2Prodx=[]
+  m2DirectoConvx=[]
+  m2CorrPicadox=[]
   m2Convx=[]
   m2Corrx=[]
 
@@ -264,7 +232,8 @@ function setChart1(){
 
         m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
         m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
-        m2Prodx.push((labels[i]["m2Prod"]/1000).toFixed(1));
+        m2DirectoConvx.push((labels[i]["m2DirectoConv"]/1000).toFixed(1));
+        m2CorrPicadox.push((labels[i]["m2CorrPicado"]/1000).toFixed(1));
         m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
         m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
       }
@@ -280,27 +249,15 @@ function setChart1(){
 
             label: "Mm2 Corrugados",
             data: m2Corrx,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
-            stack: 'stack 0',
-            borderWidth: 0,
 
-
-            },
-
-            {
-
-            label: "Mm2 Convertidos",
-            data: m2Convx,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(10,150,150)",
             stack: 'stack 0',
             borderWidth: 0,
 
 
             },{
 
-                    label: "Mm2 Ingreso a bodega",
+                    label: "Enviados a bodega",
                     data: m2Inx,
                     borderColor: "rgba(0,42,255)",
                     backgroundColor: "rgba(0,42,255)",
@@ -310,32 +267,33 @@ function setChart1(){
 
               },{
 
-              label: "Mm2 Producidos sin ingreso",
-              data: m2Prodx,
+              label: "Enviados Directo a Conv",
+              data: m2DirectoConvx,
               borderColor: "rgba(100,42,155)",
               backgroundColor: "rgba(100,42,155)",
               stack: 'stack 1',
               borderWidth: 0,
 
 
-          },
-            {
-              label: "Mm2 Salida de bodega",
-              data: m2Outx,
-              borderColor: "rgba(0,200,155)",
-              backgroundColor: "rgba(0,200,155)",
-              stack: 'stack 1',
-              borderWidth: 0,
+          }
+          ,{
+
+          label: "Enviados a Picado",
+          data: m2CorrPicadox,
+          borderColor: "rgba(150,100,155)",
+          backgroundColor: "rgba(150,100,155)",
+          stack: 'stack 1',
+          borderWidth: 0,
 
 
-          }]
+        }]
       },
       options: {
           title:{
             display:true,
             responsive:true,
             hoverMode:true,
-            text:"Movimiento Pallets"
+            text:"Producción Corrugado vs Movimientos Corrugado"
           },
           tooltips: {
     mode: 'label',
@@ -343,8 +301,8 @@ function setChart1(){
 },
           scales: {
               xAxes: [{ stacked: true,
-                barPercentage: 0.95,
-                categoryPercentage: 0.5,
+                barPercentage: 0.90,
+                categoryPercentage: 0.8,
                }],
               yAxes: [{stacked: true,
                       barPercentage: 1.0,
@@ -370,15 +328,39 @@ function setChart2(){
 
   //generando list de labels
   labelx=[]
-  movscorr1=[]
+  op1x=[]
+  op2x=[]
+  op3x=[]
+  op4x=[]
+  op5x=[]
+  op6x=[]
+  op7x=[]
+
+
+
+  movscorrop1x=[]
+  movscorrop2x=[]
+  movscorrop3x=[]
+  movscorrop4x=[]
+  movscorrop5x=[]
+  movscorrop6x=[]
+  movscorrop7x=[]
 
 
 
   for (var i = 0; i < labels2.length; i++)
       {
-        labelx.push(labels2[i]["label"]);
+        labelx.push(labels2[i]["label"])
 
-        movscorr1.push((labels2[i]["movscorr1"]).toFixed(1));
+
+
+        movscorrop1x.push((labels2[i]["movscorrop1"]).toFixed(1));
+        movscorrop2x.push((labels2[i]["movscorrop2"]).toFixed(1));
+        movscorrop3x.push((labels2[i]["movscorrop3"]).toFixed(1));
+        movscorrop4x.push((labels2[i]["movscorrop4"]).toFixed(1));
+        movscorrop5x.push((labels2[i]["movscorrop5"]).toFixed(1));
+        movscorrop6x.push((labels2[i]["movscorrop6"]).toFixed(1));
+        movscorrop7x.push((labels2[i]["movscorrop7"]).toFixed(1));
 
       }
 
@@ -390,32 +372,87 @@ function setChart2(){
             datasets: [
 
             {
-
-            label: "Movimientos salida Stacker Superior",
-            data: movscorr1,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
+            label: labels2[0]["op1"],
+            data: movscorrop1x,
+            borderColor: "rgba(50,100,250)",
+            backgroundColor: "rgba(50,100,250)",
             stack: 'stack 0',
             borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["op2"],
+            data: movscorrop2x,
+            borderColor: "rgba(80,150,250)",
+            backgroundColor: "rgba(80,150,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["op3"],
+            data: movscorrop3x,
 
+            backgroundColor: "rgba(200,100,0)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["op4"],
+            data: movscorrop4x,
 
-            }]
+            backgroundColor: "rgba(200,190,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["op5"],
+            data: movscorrop5x,
+
+            backgroundColor: "rgba(100,200,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["op6"],
+            data: movscorrop6x,
+
+            backgroundColor: "rgba(150,200,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["op7"],
+            data: movscorrop7x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+
+            ]
       },
       options: {
+        legend:{
+          position:"right",
+
+        },
           title:{
             display:true,
             responsive:true,
             hoverMode:true,
-            text:"Movimiento Pallets"
+            text:"Movimientos desde stacker Corrugado"
           },
           tooltips: {
-    mode: 'label',
-
-},
-          scales: {
+            mode: 'label',
+            },
+            scales: {
               xAxes: [{ stacked: true,
                 barPercentage: 0.95,
-                categoryPercentage: 0.5,
+                categoryPercentage: 0.9,
                }],
               yAxes: [{stacked: true,
                       barPercentage: 1.0,

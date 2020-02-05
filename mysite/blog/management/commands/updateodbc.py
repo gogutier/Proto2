@@ -157,6 +157,7 @@ class Command(BaseCommand):
                 dato12=(row[12])#form.cleaned_data["EVENTDATETIME"]
                 #Acá proceso el dato12 para pasarlo a datetime y poder guardarlo en el modelo.
                 dato13=str(row[13])#form.cleaned_data["EVENTTIME"]
+                dato14=str(row[14])#form.cleaned_data["OPERATORCODENAME"]
                 datounidadespallet=datosextra[0]#form.cleaned_data["unidadespallet"]
                 datokgpallet=datosextra[1]#form.cleaned_data["kgpallet"]
                 datom2pallet=datosextra[2]#form.cleaned_data["m2pallet"]
@@ -184,6 +185,7 @@ class Command(BaseCommand):
                 o.DESTINATION=dato11
                 o.EVENTDATETIME=dato12
                 o.EVENTTIME=dato13
+                o.OPERATORCODENAME=dato14
                 o.unidadespallet=datounidadespallet
                 o.kgpallet=datokgpallet
                 o.m2pallet=datom2pallet
@@ -192,6 +194,7 @@ class Command(BaseCommand):
                 o.kguni=datokguni
                 o.m2uni=datom2uni
                 o.esFGLoad=datoFGLoad
+                o.fechacreac=datofechacreacionpallet
 
                 o.save()
                 sleep(0.01)
@@ -264,6 +267,13 @@ class Command(BaseCommand):
         #Primero reviso si hay transactioninxes mayores a "ultimo" en la tabla FGLOAD. Si hay, simulo un movimiento de MVload a la ubicación #CORR_UPPER_Stacker o CORR_LOWER_Stacker.
         #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
         flag0=0
+
+        destinowip=("CORR_UPPER_Stacker", "CORR_LOWER_Stacker","ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO","TCY","HCR","WRD","FFW","DRO","FFG","DIM","PLL","TAB","ZPICADO")
+        destinotxt=""
+        for dest in destinowip:
+            destinotxt+= "Destination='"+ dest +"'"+ " or "
+        destinotxt+="Destination='xassxsa'"
+
         #sleep(0.01)
         print("obteniendo el último FGLOAD mayor más cercano a " + ultimo)
         cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EventDateTime],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
@@ -305,11 +315,11 @@ class Command(BaseCommand):
                 row0time='0'
 
 
-
-            row1=[row0[0], row0[1], "0", row0[3], row0[4], row0[5], row0[6], 0, row0[7], row0[8], "CORR" , destino, row0datetime, row0[11]]
+            #construyo el row1 en base a datos del MVLOAD
+            row1=[row0[0], row0[1], "0", row0[3], row0[4], row0[5], row0[6], 0, row0[7], row0[8], "CORR" , destino, row0datetime, row0[11], "vacio"]
             #sleep(0.01)
             print("obteniendo el transactionindex de MVLOAD siguiente para "+ str(ultimo))
-            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND OPERATIONNO = 0 order by transactionindex asc ")
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>'"+ str(ultimo) +"' AND ("+ destinotxt +") AND OPERATIONNO = 0 order by transactionindex asc ")
 
 
 
@@ -347,7 +357,7 @@ class Command(BaseCommand):
             try:
                 print("obteniendo el row1 del MVLOAD")
                 #sleep(0.01)
-                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND OPERATIONNO = 0 order by transactionindex asc ")
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]  FROM [ctidb_transact].[dbo].[MVLOAD] where TRANSACTIONINDEX>"+ ultimo +" AND ("+ destinotxt +") AND OPERATIONNO = 0 order by transactionindex asc ")
 
                 #Aquí hay que ponerle un TRY probablemente
                 try:
@@ -362,7 +372,7 @@ class Command(BaseCommand):
                 print(e)
                 print("error al obtener el row1 de MVLOAD!")
                 print("Unexpected error:", sys.exc_info()[0])
-                sleep(1)
+                sleep(2)
                 row1=[]
                 datosextra=[]
 

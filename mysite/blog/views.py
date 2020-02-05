@@ -32,6 +32,8 @@ def panel_consumos_conv_efi(request):
     #print("cargando datos wip")
     template_name = 'blog/panel_consumos_conv_efi.html'
 
+    print("Calculando consumos en base a movimientos EFI")
+
     #lista de movimientos de máquinas conv:
 
     listamaqs=("HCR","TCY","WRD", "DIM", "FFW", "DRO", "FFG")
@@ -88,7 +90,7 @@ def panel_consumos_conv_efi(request):
         m2ConsumoTotal[ubic] = round(m2ConsumoTotal[ubic],1)
         totConsumoTotal+=m2ConsumoTotal[ubic]
     totConsumoTotal=round(totConsumoTotal,1)
-
+    print(m2ConsumoTotal)
     return render(request, template_name, {'consumos':consumos, 'transportistas':transportistas, 'm2Ingresado':m2Ingresado, 'm2Devuelto':m2Devuelto, 'm2Apicado':m2Apicado, 'm2ConsumoTotal':m2ConsumoTotal,'totConsumoTotal':totConsumoTotal, 'totApicado':totApicado, 'totDevuelto':totDevuelto, 'totIngreso':totIngreso  })#acá le puedo decir que los mande ordenados por fecha?
 
 
@@ -500,10 +502,10 @@ def get_data_movpallets(request, *args, **kwargs):
 
 
     for dato in Datos_MovPallets.objects.filter(programa=foto):
-        labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadProd":dato.cantidadProd, "m2Prod":dato.m2Prod, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv, "m2Corr":dato.m2Corr})
+        labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadCorrPicado":dato.cantidadCorrPicado, "m2CorrPicado":dato.m2CorrPicado, "cantidadDirectoConv":dato.cantidadDirectoConv, "m2DirectoConv":dato.m2DirectoConv, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv, "m2Corr":dato.m2Corr})
 
     for dato in Datos_MovPallets_B.objects.filter(programa=foto):
-        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movscorr1":dato.movscorr1, "movscorr2":dato.movscorr2, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2})
+        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movscorr1":dato.movscorr1, "movscorr2":dato.movscorr2, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2, "op1":dato.op1, "movscorrop1":dato.movscorrop1,"op2":dato.op2, "movscorrop2":dato.movscorrop2,"op3":dato.op3, "movscorrop3":dato.movscorrop3,"op4":dato.op4, "movscorrop4":dato.movscorrop4,"op5":dato.op5, "movscorrop5":dato.movscorrop5,"op6":dato.op6, "movscorrop6":dato.movscorrop6,"op7":dato.op7, "movscorrop7":dato.movscorrop7})
 
 
     #Muestro los movs realizados cada 5 min en 24 horas.
