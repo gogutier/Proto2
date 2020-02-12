@@ -380,7 +380,7 @@ class Command(BaseCommand):
                 for op in listaopgruacorr:
                     filtroopgruacorrqs = filtroopgruacorrqs | Q(OPERATORCODENAME=op)
 
-                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1017/Raul Ormeño", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "-","-"]
+                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1017/Raul Ormeño", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "1025/Patricio  Chavez","-"]
                 filtroopgruaconvqs=Q()
                 for op in listaopgruaconv:
                     filtroopgruaconvqs = filtroopgruaconvqs | Q(OPERATORCODENAME=op)

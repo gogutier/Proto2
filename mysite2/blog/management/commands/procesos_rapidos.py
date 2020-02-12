@@ -263,14 +263,23 @@ class Command(BaseCommand):
                 #listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltroentrada=["PLL","PT10"]#Acá el PT10 es pq supuestamente lasdevoluciones se iban a detectar por ahí.Ahora al pareer habría q sacarlas de la tabla FGRETURN
                 listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9"]
-
+                listafiltrocallesbpt=["C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","E01","E02","E03","E04","A01","A02","A03","A04","A05","A06","A07","PA1","PA2","PA3"]
                 filtroproducidoqs=Q()
                 filtroentradaqs=Q()
                 filtroentradaexcludeqs=Q()
                 filtrosalidaqs=Q()
                 filtrosalidaexcludeqs=Q()
+                filtrocallesbptqs=Q()
+                filtroexcallesbptqs=Q()
                 print("iterando para llenar las listas..")
 
+
+
+                for item in listafiltrocallesbpt:#OJO acá falta incluir en el filtro para que considere sólo los pallets que entraron a PLL dentro del mismo turno
+                    filtrocallesbptqs = filtrocallesbptqs | Q(DESTINATION=item)
+
+                for item in listafiltrocallesbpt:#OJO acá falta incluir en el filtro para que considere sólo los pallets que entraron a PLL dentro del mismo turno
+                    filtroexcallesbptqs = filtroexcallesbptqs | Q(SOURCE=item)
 
                 for item in listafiltroentrada:
                     filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
@@ -320,6 +329,19 @@ class Command(BaseCommand):
                     labels[i]["m2Out"]= m2tot
 
 
+                    #Movimientos a calles bpt
+                    filtro=MovPallets.objects.filter(filtrocallesbptqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).exclude(filtroexcallesbptqs)
+                    cantidad1=filtro.count()
+                    #sumo los m2 asociados a cada pallet
+                    m2tot=0
+                    for mov in filtro:
+                        m2tot=m2tot+mov.m2pallet
+
+
+
+                    labels[i]["cantidadcallesbpt"]= cantidad1
+                    labels[i]["m2BPT"]= m2tot
+
 
                 print("completado, guardando el Model")
 
@@ -329,7 +351,7 @@ class Command(BaseCommand):
                 print("Guandando entradas y salidas")
                 for dato in labels:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadProd=dato['cantidadProd'],m2Prod=dato['m2Prod'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadcallesbpt=dato["cantidadcallesbpt"],m2BPT=dato["m2BPT"],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadProd=dato['cantidadProd'],m2Prod=dato['m2Prod'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
                     o.save()
                     sleep(0.05)
 

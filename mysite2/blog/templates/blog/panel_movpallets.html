@@ -1,8 +1,11 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<h3>Movimiento Pallets BPT</h3>
 
+<br>
+
+<h3>Declaraciones entrada BPT</h3>
+<br>
 
 <div class="container">
 
@@ -28,7 +31,7 @@
 
     </tr>
     <tr>
-      <td>Ingreso</td>
+      <td>Ingreso a BPT</td>
       </tr>
   <tr >
     <td  style='font-size: 50px;' id="ratiobalance">.</td>
@@ -36,10 +39,64 @@
 
 
   <tr>
-    <td>Salida por Remisión</td>
+    <td>% declarado a calles BPT</td>
     </tr>
   <tr >
     <td  style='font-size: 50px;' id="ratiobalance2">.</td>
+  </tr>
+
+</table>
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<br>
+<br>
+
+<h3>Declaraciones Salida BPT</h3>
+<br>
+
+
+<div class="container">
+
+<table>
+
+<tr>
+
+<td>
+<canvas id="myChartB"  style="width:900px"></canvas>
+</td>
+
+<td>
+  <table>
+
+
+  <tr>
+    <td style='font-size: 30px;'>BPT 7 días</td>
+    </tr>
+    <tr>
+      <td>
+        <br>
+      </td>
+
+    </tr>
+    <tr>
+      <td>Ingreso PLL</td>
+      </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalanceB">.</td>
+  </tr>
+
+
+  <tr>
+    <td>Salida por Remisión</td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance2B">.</td>
   </tr>
 
 </table>
@@ -125,6 +182,33 @@ function datosinv(){
       //Aquí calculo el ratio ratiobalance
 
       sumain=0
+      sumabpt=0
+
+      diastrabajados=0
+
+      for (var i = 0; i < labels.length; i++)
+          {
+
+            sumain+=labels[i]["m2In"]
+
+            sumabpt+=labels[i]["m2BPT"]
+
+          }
+
+
+      ratio.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
+      ratio2.innerHTML= String(((sumabpt/sumain)*100).toFixed(1))+"%"
+
+
+
+
+
+
+      var ratioB = document.getElementById("ratiobalanceB");//.getElementsByTagName("td");
+      var ratio2B = document.getElementById("ratiobalance2B");//
+      //Aquí calculo el ratio ratiobalance
+
+      sumain=0
       sumaout=0
 
       diastrabajados=0
@@ -139,13 +223,14 @@ function datosinv(){
           }
 
 
-      ratio.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
-      ratio2.innerHTML= String((sumaout/1000).toFixed(0))+"Mm2"
+      ratioB.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
+      ratio2B.innerHTML= String((sumaout/1000).toFixed(0))+"Mm2"
 
 
 
 
       setChart1();
+      setChart1B();
       setChart2();
       setChart3();
       setChart4();
@@ -186,6 +271,7 @@ function setChart1(){
   m2Prodx=[]
   m2Convx=[]
   m2Corrx=[]
+  m2BPTx=[]
 
   for (var i = 0; i < labels.length; i++)
       {
@@ -196,6 +282,7 @@ function setChart1(){
         m2Prodx.push((labels[i]["m2Prod"]/1000).toFixed(1));
         m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
         m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
+        m2BPTx.push((labels[i]["m2BPT"]/1000).toFixed(1));
       }
 
   var ctx = document.getElementById("myChart").getContext('2d');
@@ -204,45 +291,91 @@ function setChart1(){
       data: {
             labels: labelx,
             datasets: [
-/*
-            {
 
-            label: "Mm2 Corrugados",
-            data: m2Corrx,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
-            stack: 'stack 0',
-            borderWidth: 0,
+          {
 
-
-            },
-
-            {
-
-            label: "Mm2 Convertidos",
-            data: m2Convx,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
-            stack: 'stack 0',
-            borderWidth: 0,
+                  label: "Mm2 Ingreso a bodega BPT",
+                  data: m2Inx,
+                  borderColor: "rgba(0,42,255)",
+                  backgroundColor: "rgba(0,42,255)",
+                  stack: 'stack 1',
+                  borderWidth: 0,
 
 
             },
+            {
+
+                    label: "Mm2 a calles BPT",
+                    data: m2BPTx,
+                    borderColor:"rgba(180,180,80)",
+                    backgroundColor:"rgba(180,180, 70)",
+                    stack: 'stack 2',
+                    borderWidth: 0,
 
 
-
-              {
-
-              label: "Mm2 Producidos sin ingreso",
-              data: m2Prodx,
-              borderColor: "rgba(100,42,155)",
-              backgroundColor: "rgba(100,42,155)",
-              stack: 'stack 1',
-              borderWidth: 0,
-
-
+              }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
           },
-          */
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.9,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+
+
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+function setChart1B(){
+
+  //generando list de labels
+  labelx=[]
+  m2Inx=[]
+  m2Outx=[]
+  m2Prodx=[]
+  m2Convx=[]
+  m2Corrx=[]
+  m2BPTx=[]
+
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+
+        m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
+        m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
+        m2Prodx.push((labels[i]["m2Prod"]/1000).toFixed(1));
+        m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
+        m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
+        m2BPTx.push((labels[i]["m2BPT"]/1000).toFixed(1));
+      }
+
+  var ctx = document.getElementById("myChartB").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
 
           {
 
