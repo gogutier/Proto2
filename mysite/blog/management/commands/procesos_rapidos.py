@@ -223,17 +223,22 @@ class Command(BaseCommand):
 
 
                 listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
+                listafiltrobodega=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPASILLO","FFW", "FFG" , "DRO" ,"TCY" ,"HCR", "WRD" ,"DIM", "TAB"]
                 listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO"]
                 listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","DIM","PLL"]
                 listafiltropicado=["ZPICADO"]
 
                 filtroproducidoqs=Q()
+                filtrobodegaqs=Q()
                 filtroentradaqs=Q()
                 filtrosalidaqs=Q()
                 filtrosalidaexcludeqs=Q()
                 print("iterando para llenar las listas..")
                 for item in listafiltroproducido:
                     filtroproducidoqs = filtroproducidoqs | Q(DESTINATION=item)
+
+                for item in listafiltrobodega:
+                    filtrobodegaqs = filtrobodegaqs | Q(SOURCE=item)
 
                 for item in listafiltroentrada:
                     filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
@@ -258,12 +263,12 @@ class Command(BaseCommand):
                     m2tot=0
                     for mov in filtro:
                         #checkeo si la fecha de creación de ese pallet es igual o posterior que el turno que estoy analizando (después se puede agregar la fecha de creación del pallet al movpallet)
+                        if Pallet.objects.filter(tarja=mov.LOADID).count() >0:
+                            filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
+                            print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
+                            if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
 
-                        filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
-                        print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
-                        if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
-
-                            m2tot=m2tot+mov.m2pallet
+                                m2tot=m2tot+mov.m2pallet
 
                     labels[i]["cantidadIn"]= cantidad1
                     labels[i]["m2In"]= m2tot
@@ -313,13 +318,6 @@ class Command(BaseCommand):
 
 
 
-
-
-
-
-
-
-
                     #Salidas
                     filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).exclude(filtrosalidaexcludeqs)
                     cantidad1=filtro.count()
@@ -335,6 +333,29 @@ class Command(BaseCommand):
 
 
 
+                    filtro=MovPallets.objects.filter(Q(DESTINATION="HCR") | Q(DESTINATION="TCY") | Q(DESTINATION="WRD") | Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="DRO") | Q(DESTINATION="DIM"), EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"])
+                    cantidad1=filtro.count()
+                    #sumo los m2 asociados a cada pallet
+                    m2tot=0
+                    for mov in filtro:
+                        m2tot=m2tot+mov.m2pallet
+
+                    labels[i]["m2EntregadoAConv"]= m2tot
+
+
+                    #Filtro de bodega a Picado
+
+                    filtro=MovPallets.objects.filter(filtrobodegaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter(DESTINATION="ZPICADO")
+                    cantidad1=filtro.count()
+                    #sumo los m2 asociados a cada pallet
+                    m2tot=0
+                    for mov in filtro:
+                        m2tot=m2tot+mov.m2pallet
+
+                    labels[i]["m2DeConvAPicado"]= m2tot
+
+
+
                 print("completado, guardando el Model")
                 sleep(1)
 
@@ -344,7 +365,7 @@ class Command(BaseCommand):
                 #print(labels)
                 for dato in labels:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'],cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
                     o.save()
                     sleep(0.05)
 
@@ -358,6 +379,17 @@ class Command(BaseCommand):
                 filtroopgruacorrqs=Q()
                 for op in listaopgruacorr:
                     filtroopgruacorrqs = filtroopgruacorrqs | Q(OPERATORCODENAME=op)
+
+                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1017/Raul Ormeño", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "-","-"]
+                filtroopgruaconvqs=Q()
+                for op in listaopgruaconv:
+                    filtroopgruaconvqs = filtroopgruaconvqs | Q(OPERATORCODENAME=op)
+
+
+
+
+
+
                 labels2=[]
                 ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
 
@@ -383,19 +415,25 @@ class Command(BaseCommand):
                     for op in listaopgruacorr:
                         datosop.append([op , MovPallets.objects.filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker"), OPERATORCODENAME=op, EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()])
                     #print(datosop)
+                    datosopB=[[0,"0"]]
+                    #acá muestro todos los movimientos que han hecho esos operadores.
+                    for op in listaopgruaconv:
+                        datosopB.append([op , MovPallets.objects.filter( OPERATORCODENAME=op, EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()])
+                    #print(datosop)
 
                     movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") ).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movscorr2= MovPallets.objects.filter(Q(SOURCE="CORR_LOWER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
 
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "op1":datosop[1][0], "movscorrop1":datosop[1][1], "op2":datosop[2][0], "movscorrop2":datosop[2][1], "op3":datosop[3][0], "movscorrop3":datosop[3][1], "op4":datosop[4][0], "movscorrop4":datosop[4][1], "op5":datosop[5][0], "movscorrop5":datosop[5][1], "op6":datosop[6][0], "movscorrop6":datosop[6][1], "op7":datosop[7][0], "movscorrop7":datosop[7][1]})
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "opcorr1":datosop[1][0], "movscorrop1":datosop[1][1], "opcorr2":datosop[2][0], "movscorrop2":datosop[2][1], "opcorr3":datosop[3][0], "movscorrop3":datosop[3][1], "opcorr4":datosop[4][0], "movscorrop4":datosop[4][1], "opcorr5":datosop[5][0], "movscorrop5":datosop[5][1], "opcorr6":datosop[6][0], "movscorrop6":datosop[6][1], "opcorr7":datosop[7][0], "movscorrop7":datosop[7][1], "opconv1":datosopB[1][0], "movsconvop1":datosopB[1][1], "opconv2":datosopB[2][0], "movsconvop2":datosopB[2][1], "opconv3":datosopB[3][0], "movsconvop3":datosopB[3][1], "opconv4":datosopB[4][0], "movsconvop4":datosopB[4][1], "opconv5":datosopB[5][0], "movsconvop5":datosopB[5][1], "opconv6":datosopB[6][0], "movsconvop6":datosopB[6][1], "opconv7":datosopB[7][0], "movsconvop7":datosopB[7][1]})
 
                 print("datos obtenidos correctamente")
+                #print(datosopB)
                 #print(datosop[1][0])
                 for dato in labels2:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],op1=dato['op1'],movscorrop1=dato['movscorrop2'],op2=dato['op2'],movscorrop2=dato['movscorrop2'],op3=dato['op3'],movscorrop3=dato['movscorrop3'],op4=dato['op4'],movscorrop4=dato['movscorrop4'],op5=dato['op5'],movscorrop5=dato['movscorrop5'],op6=dato['op6'],movscorrop6=dato['movscorrop6'],op7=dato['op7'],movscorrop7=dato['movscorrop7'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],opcorr1=dato['opcorr1'],movscorrop1=dato['movscorrop1'],opcorr2=dato['opcorr2'],movscorrop2=dato['movscorrop2'],opcorr3=dato['opcorr3'],movscorrop3=dato['movscorrop3'],opcorr4=dato['opcorr4'],movscorrop4=dato['movscorrop4'],opcorr5=dato['opcorr5'],movscorrop5=dato['movscorrop5'],opcorr6=dato['opcorr6'],movscorrop6=dato['movscorrop6'],opcorr7=dato['opcorr7'],movscorrop7=dato['movscorrop7'],opconv1=dato['opconv1'],movsconvop1=dato['movsconvop1'],opconv2=dato['opconv2'],movsconvop2=dato['movsconvop2'],opconv3=dato['opconv3'],movsconvop3=dato['movsconvop3'],opconv4=dato['opconv4'],movsconvop4=dato['movsconvop4'],opconv5=dato['opconv5'],movsconvop5=dato['movsconvop5'],opconv6=dato['opconv6'],movsconvop6=dato['movsconvop6'],opconv7=dato['opconv7'],movsconvop7=dato['movsconvop7'])
                     o.save()
                     sleep(0.05)
 

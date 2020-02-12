@@ -200,6 +200,8 @@ class Datos_MovPallets(models.Model):
     m2Out=models.FloatField(default=0)
     m2Conv=models.FloatField(default=0)
     m2Corr=models.FloatField(default=0)
+    m2EntregadoAConv =models.FloatField(default=0)
+    m2DeConvAPicado =models.FloatField(default=0)
 
 
     def __str__(self):
@@ -215,26 +217,52 @@ class Datos_MovPallets_B(models.Model):
     fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
     label=models.CharField(max_length=16, blank=False, default="0")
 
-    op1=models.CharField(max_length=26, blank=False, default="0")
+    opcorr1=models.CharField(max_length=26, blank=False, default="0")
     movscorrop1=models.IntegerField(default=0)
 
-    op2=models.CharField(max_length=26, blank=False, default="0")
+    opcorr2=models.CharField(max_length=26, blank=False, default="0")
     movscorrop2=models.IntegerField(default=0)
 
-    op3=models.CharField(max_length=26, blank=False, default="0")
+    opcorr3=models.CharField(max_length=26, blank=False, default="0")
     movscorrop3=models.IntegerField(default=0)
 
-    op4=models.CharField(max_length=26, blank=False, default="0")
+    opcorr4=models.CharField(max_length=26, blank=False, default="0")
     movscorrop4=models.IntegerField(default=0)
 
-    op5=models.CharField(max_length=26, blank=False, default="0")
+    opcorr5=models.CharField(max_length=26, blank=False, default="0")
     movscorrop5=models.IntegerField(default=0)
 
-    op6=models.CharField(max_length=26, blank=False, default="0")
+    opcorr6=models.CharField(max_length=26, blank=False, default="0")
     movscorrop6=models.IntegerField(default=0)
 
-    op7=models.CharField(max_length=26, blank=False, default="0")
+    opcorr7=models.CharField(max_length=26, blank=False, default="0")
     movscorrop7=models.IntegerField(default=0)
+
+
+
+    opconv1=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop1=models.IntegerField(default=0)
+
+    opconv2=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop2=models.IntegerField(default=0)
+
+    opconv3=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop3=models.IntegerField(default=0)
+
+    opconv4=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop4=models.IntegerField(default=0)
+
+    opconv5=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop5=models.IntegerField(default=0)
+
+    opconv6=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop6=models.IntegerField(default=0)
+
+    opconv7=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop7=models.IntegerField(default=0)
+
+
+
 
     movscorr1=models.IntegerField(default=0)
     movscorr2=models.IntegerField(default=0)

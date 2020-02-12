@@ -1,7 +1,9 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<h3>Mov Pallets</h3>
+<br>
+<br>
+<h3>Seguimiento Corrugado</h3>
 
 
 <div class="container">
@@ -66,12 +68,63 @@
 
 </div>
 
+<br>
+<br>
 
+<h3>Seguimiento Conversión</h3>
 
 
 <div class="container">
 
-<canvas id="myChart4"  style="width:1000px"></canvas>
+<table>
+
+<tr>
+
+<td>
+<canvas id="myChart4"  style="width:900px"></canvas>
+</td>
+
+<td>
+  <table>
+
+
+  <tr>
+    <td style='font-size: 30px;'>Indicador 7 días</td>
+    </tr>
+    <tr>
+      <td>
+
+      </td>
+
+    </tr>
+    <tr>
+      <td>Coversión/Movs grúa</td>
+      </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalanceconv1">.</td>
+  </tr>
+
+
+  <tr>
+    <td>M2 transportados  </td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalanceconv2">.</td>
+  </tr>
+
+  <tr>
+    <td>M2 a picado  </td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalanceconv3">.</td>
+  </tr>
+
+</table>
+</td>
+
+</tr>
+
+</table>
 
 </div>
 
@@ -126,6 +179,11 @@ function datosinv(){
       var ratio = document.getElementById("ratiobalance");//.getElementsByTagName("td");
       var ratio2 = document.getElementById("ratiobalance2");//
       var ratio3 = document.getElementById("ratiobalance3");//
+
+
+      var ratioconv1 = document.getElementById("ratiobalanceconv1");//.getElementsByTagName("td");
+      var ratioconv2 = document.getElementById("ratiobalanceconv2");//
+      var ratioconv3 = document.getElementById("ratiobalanceconv3");//
       //Aquí calculo el ratio ratiobalance
 
       sumconv=0
@@ -136,6 +194,9 @@ function datosinv(){
       sumapicado=0
 
       diastrabajados=0
+      totcorrugado=0
+
+      //Acá voy a hacer la ponderación de cada % de cumplimiento según el M2 corrugado cada día.
 
       for (var i = 0; i < labels.length; i++)
           {
@@ -143,15 +204,14 @@ function datosinv(){
             if (labels[i]["m2Corr"]>0)
             {
               diastrabajados+=1
+              totcorrugado+=labels[i]["m2Corr"]
 
-              suma+=(labels[i]["m2In"]+labels[i]["m2DirectoConv"]+labels[i]["m2CorrPicado"])/(labels[i]["m2Corr"])
+              suma+=(labels[i]["m2In"]+labels[i]["m2DirectoConv"]+labels[i]["m2CorrPicado"])
             }
 
           }
 
-        aux=suma/diastrabajados
-
-
+        aux=suma/totcorrugado
 
       ratio.innerHTML= String((aux*100).toFixed(1))+"%"
 
@@ -178,6 +238,31 @@ function datosinv(){
 
       ratio2.innerHTML= String((sumcorr/1000).toFixed(0))+"Mm2"
       ratio3.innerHTML= String((sumapicado/1000).toFixed(0))+"Mm2"
+
+
+      /////
+      totconv=0
+      suma=0
+      sumapic=0
+      for (var i = 0; i < labels.length; i++)
+          {
+
+            if (labels[i]["m2Conv"]>0)
+            {
+              diastrabajados+=1
+              totconv+=Math.min(labels[i]["m2Conv"],350000)
+
+              suma+=(labels[i]["m2EntregadoAConv"])
+              sumapic+=(labels[i]["m2DeConvAPicado"])
+            }
+
+          }
+
+        aux=suma/totconv
+
+      ratioconv1.innerHTML= String((aux*100).toFixed(1))+"%"
+      ratioconv2.innerHTML= String((suma/1000).toFixed(0))+"Mm2"
+      ratioconv3.innerHTML= String((sumapic/1000).toFixed(0))+"Mm2"
 
 
 
@@ -328,13 +413,13 @@ function setChart2(){
 
   //generando list de labels
   labelx=[]
-  op1x=[]
-  op2x=[]
-  op3x=[]
-  op4x=[]
-  op5x=[]
-  op6x=[]
-  op7x=[]
+  opcorr1x=[]
+  opcorr2x=[]
+  opcorr3x=[]
+  opcorr4x=[]
+  opcorr5x=[]
+  opcorr6x=[]
+  opcorr7x=[]
 
 
 
@@ -372,7 +457,7 @@ function setChart2(){
             datasets: [
 
             {
-            label: labels2[0]["op1"],
+            label: labels2[0]["opcorr1"],
             data: movscorrop1x,
             borderColor: "rgba(50,100,250)",
             backgroundColor: "rgba(50,100,250)",
@@ -381,7 +466,7 @@ function setChart2(){
           }
           ,
           {
-            label: labels2[0]["op2"],
+            label: labels2[0]["opcorr2"],
             data: movscorrop2x,
             borderColor: "rgba(80,150,250)",
             backgroundColor: "rgba(80,150,250)",
@@ -390,7 +475,7 @@ function setChart2(){
           }
           ,
           {
-            label: labels2[0]["op3"],
+            label: labels2[0]["opcorr3"],
             data: movscorrop3x,
 
             backgroundColor: "rgba(200,100,0)",
@@ -399,7 +484,7 @@ function setChart2(){
           }
           ,
           {
-            label: labels2[0]["op4"],
+            label: labels2[0]["opcorr4"],
             data: movscorrop4x,
 
             backgroundColor: "rgba(200,190,100)",
@@ -408,7 +493,7 @@ function setChart2(){
           }
           ,
           {
-            label: labels2[0]["op5"],
+            label: labels2[0]["opcorr5"],
             data: movscorrop5x,
 
             backgroundColor: "rgba(100,200,150)",
@@ -417,7 +502,7 @@ function setChart2(){
           }
           ,
           {
-            label: labels2[0]["op6"],
+            label: labels2[0]["opcorr6"],
             data: movscorrop6x,
 
             backgroundColor: "rgba(150,200,100)",
@@ -426,7 +511,7 @@ function setChart2(){
           }
           ,
           {
-            label: labels2[0]["op7"],
+            label: labels2[0]["opcorr7"],
             data: movscorrop7x,
             backgroundColor: "rgba(150,60,150)",
             stack: 'stack 0',
@@ -470,8 +555,249 @@ function setChart2(){
 
 }
 
-///////////////
 
+function setChart4(){
+
+  //generando list de labels
+  labelx=[]
+  m2Inx=[]
+  m2Outx=[]
+  m2DirectoConvx=[]
+  m2CorrPicadox=[]
+  m2Convx=[]
+  m2Corrx=[]
+  m2EntregadoAConvx=[]
+
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+
+        m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
+        m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
+        m2DirectoConvx.push((labels[i]["m2DirectoConv"]/1000).toFixed(1));
+        m2CorrPicadox.push((labels[i]["m2CorrPicado"]/1000).toFixed(1));
+        m2Convx.push(Math.min((labels[i]["m2Conv"]/1000),350).toFixed(1));
+        m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
+        m2EntregadoAConvx.push((labels[i]["m2EntregadoAConv"]/1000).toFixed(1));
+      }
+
+  var ctx = document.getElementById("myChart4").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Mm2 Convertidos",
+            data: m2Convx,
+
+            backgroundColor: "rgba(10,150,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            },{
+
+                    label: "Entregados a Conversión",
+                    data: m2EntregadoAConvx,
+                    borderColor: "rgba(0,42,255)",
+                    backgroundColor: "rgba(0,42,255)",
+                    stack: 'stack 1',
+                    borderWidth: 0,
+
+
+              }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Producción Corrugado vs Movimientos Corrugado"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.90,
+                categoryPercentage: 0.8,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+
+
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+
+
+
+function setChart5(){
+
+  //generando list de labels
+  labelx=[]
+  opconv1x=[]
+  opconv2x=[]
+  opconv3x=[]
+  opconv4x=[]
+  opconv5x=[]
+  opconv6x=[]
+  opconv7x=[]
+
+
+
+  movsconvop1x=[]
+  movsconvop2x=[]
+  movsconvop3x=[]
+  movsconvop4x=[]
+  movsconvop5x=[]
+  movsconvop6x=[]
+  movsconvop7x=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"])
+
+
+
+        movsconvop1x.push((labels2[i]["movsconvop1"]).toFixed(1));
+        movsconvop2x.push((labels2[i]["movsconvop2"]).toFixed(1));
+        movsconvop3x.push((labels2[i]["movsconvop3"]).toFixed(1));
+        movsconvop4x.push((labels2[i]["movsconvop4"]).toFixed(1));
+        movsconvop5x.push((labels2[i]["movsconvop5"]).toFixed(1));
+        movsconvop6x.push((labels2[i]["movsconvop6"]).toFixed(1));
+        movsconvop7x.push((labels2[i]["movsconvop7"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart5").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+            label: labels2[0]["opconv1"],
+            data: movsconvop1x,
+            borderColor: "rgba(50,100,250)",
+            backgroundColor: "rgba(50,100,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv2"],
+            data: movsconvop2x,
+            borderColor: "rgba(80,150,250)",
+            backgroundColor: "rgba(80,150,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv3"],
+            data: movsconvop3x,
+
+            backgroundColor: "rgba(200,100,0)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv4"],
+            data: movsconvop4x,
+
+            backgroundColor: "rgba(200,190,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv5"],
+            data: movsconvop5x,
+
+            backgroundColor: "rgba(100,200,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv6"],
+            data: movsconvop6x,
+
+            backgroundColor: "rgba(150,200,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv7"],
+            data: movsconvop7x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+
+            ]
+      },
+      options: {
+        legend:{
+          position:"right",
+
+        },
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimientos Conversión"
+          },
+          tooltips: {
+            mode: 'label',
+            },
+            scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.9,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true,
+                      suggestedMin: 0,
+                      suggestedMax: 10
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+///////////////
+/*
 function setChart3(){
 
   //generando list de labels
@@ -538,9 +864,11 @@ function setChart3(){
   });
 
 }
-
+*/
 
 ////////////////////////
+
+/*
 
 function setChart4(){
 
@@ -611,12 +939,12 @@ function setChart4(){
 
 
 
-
+*/
 
 
 /////////////////////////////////////////
 
-
+/*
 function setChart5(){
 
   //generando list de labels
@@ -684,7 +1012,7 @@ function setChart5(){
 
 }
 
-
+*/
 
 
 

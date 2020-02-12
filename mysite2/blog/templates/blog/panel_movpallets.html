@@ -19,7 +19,7 @@
 
 
   <tr>
-    <td style='font-size: 30px;'>Balance WIP</td>
+    <td style='font-size: 30px;'>BPT 7 días</td>
     </tr>
     <tr>
       <td>
@@ -28,7 +28,7 @@
 
     </tr>
     <tr>
-      <td>Entrada/Salida</td>
+      <td>Ingreso</td>
       </tr>
   <tr >
     <td  style='font-size: 50px;' id="ratiobalance">.</td>
@@ -36,7 +36,7 @@
 
 
   <tr>
-    <td>In/Out grúas</td>
+    <td>Salida por Remisión</td>
     </tr>
   <tr >
     <td  style='font-size: 50px;' id="ratiobalance2">.</td>
@@ -52,17 +52,11 @@
 </div>
 
 
-<div class="jumbotron">
-
-
 <div class="container" >
 
-<canvas id="myChart2" style="position: relative; height:35vh; width:80vw" ></canvas>
+<canvas id="myChart2" style="position: relative; height:150px; width:800px" ></canvas>
 
 </div>
-
-</div>
-
 
 <div class="container">
 
@@ -130,90 +124,23 @@ function datosinv(){
       var ratio2 = document.getElementById("ratiobalance2");//
       //Aquí calculo el ratio ratiobalance
 
-      sumconv=0
-      sumcorr=0
-      aux=0
-      aux1=0
+      sumain=0
+      sumaout=0
 
       diastrabajados=0
 
       for (var i = 0; i < labels.length; i++)
           {
 
-            if (labels[i]["m2Conv"]!=0 && labels[i]["m2Corr"]!=0 )
-            {
-              diastrabajados+=1
-            }
+            sumain+=labels[i]["m2In"]
 
-          }
-
-      for (var i = 0; i < labels.length; i++)
-          {
-            aux1=0
-
-          if (labels[i]["m2Conv"]!=0)///(labels.length);
-            {
-              aux1=(labels[i]["m2Corr"]/labels[i]["m2Conv"])-1
-              if (aux1>0)
-              {
-
-                aux+=(1-aux1)/diastrabajados
-
-              }
-              else
-              {
-                aux+=(labels[i]["m2Corr"]/labels[i]["m2Conv"])/diastrabajados
-              }
-            }
+            sumaout+=labels[i]["m2Out"]
 
           }
 
 
-      ratio.innerHTML= String((aux*100).toFixed(1))+"%"
-
-
-      ///////////
-
-      sumconv=0
-      sumcorr=0
-      aux=0
-      aux1=0
-
-      diastrabajados=0
-
-      for (var i = 0; i < labels.length; i++)
-          {
-
-            if (labels[i]["m2In"]!=0 && labels[i]["m2Out"]!=0 )
-            {
-              diastrabajados+=1
-            }
-
-          }
-
-      for (var i = 0; i < labels.length; i++)
-          {
-            aux1=0
-
-          if (labels[i]["m2Out"]!=0)///(labels.length);
-            {
-              aux1=(labels[i]["m2In"]/labels[i]["m2Out"])-1
-              if (aux1>0)
-              {
-
-                aux+=(1-aux1)/diastrabajados
-
-              }
-              else
-              {
-                aux+=(labels[i]["m2In"]/labels[i]["m2Out"])/diastrabajados
-              }
-            }
-
-          }
-
-
-      ratio2.innerHTML= String((aux*100).toFixed(1))+"%"
+      ratio.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
+      ratio2.innerHTML= String((sumaout/1000).toFixed(0))+"Mm2"
 
 
 
@@ -406,9 +333,9 @@ function setChart2(){
             backgroundColor: "rgba(50,50,250)",
             stack: 'stack 0',
             borderWidth: 0,
-            aspectRatio:1,
+            aspectRatio:3,
             responsive:true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
 
 
             }]
