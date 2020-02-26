@@ -709,20 +709,62 @@ function setChart4(){
 
 /////////////////////////////////////////
 
-
 function setChart5(){
 
   //generando list de labels
   labelx=[]
-  movsconv2=[]
+  opbpt1x=[]
+  opbpt2x=[]
+  opbpt3x=[]
+  opbpt4x=[]
+  opbpt5x=[]
+  opbpt6x=[]
+  opbpt7x=[]
+  opbpt8x=[]
+  opbpt9x=[]
+  opbpt10x=[]
+  opbpt11x=[]
+  opbpt12x=[]
+  opbpt13x=[]
+
+
+
+  movsopbpt1x=[]
+  movsopbpt2x=[]
+  movsopbpt3x=[]
+  movsopbpt4x=[]
+  movsopbpt5x=[]
+  movsopbpt6x=[]
+  movsopbpt7x=[]
+  movsopbpt8x=[]
+  movsopbpt9x=[]
+  movsopbpt10x=[]
+  movsopbpt11x=[]
+  movsopbpt12x=[]
+  movsopbpt13x=[]
 
 
 
   for (var i = 0; i < labels2.length; i++)
       {
-        labelx.push(labels2[i]["label"]);
+        labelx.push(labels2[i]["label"])
 
-        movsconv2.push((labels2[i]["movsconv2"]).toFixed(1));
+
+
+        movsopbpt1x.push((labels2[i]["movsopbpt1"]).toFixed(1));
+        movsopbpt2x.push((labels2[i]["movsopbpt2"]).toFixed(1));
+        movsopbpt3x.push((labels2[i]["movsopbpt3"]).toFixed(1));
+        movsopbpt4x.push((labels2[i]["movsopbpt4"]).toFixed(1));
+        movsopbpt5x.push((labels2[i]["movsopbpt5"]).toFixed(1));
+        movsopbpt6x.push((labels2[i]["movsopbpt6"]).toFixed(1));
+        movsopbpt7x.push((labels2[i]["movsopbpt7"]).toFixed(1));
+        movsopbpt8x.push((labels2[i]["movsopbpt8"]).toFixed(1));
+        movsopbpt9x.push((labels2[i]["movsopbpt9"]).toFixed(1));
+        movsopbpt10x.push((labels2[i]["movsopbpt10"]).toFixed(1));
+        movsopbpt11x.push((labels2[i]["movsopbpt11"]).toFixed(1));
+        movsopbpt12x.push((labels2[i]["movsopbpt12"]).toFixed(1));
+        movsopbpt13x.push((labels2[i]["movsopbpt13"]).toFixed(1));
+
 
       }
 
@@ -734,32 +776,135 @@ function setChart5(){
             datasets: [
 
             {
-
-            label: "Movimientos entrada a Conversión (FFW, DRO, FFG)",
-            data: movsconv2,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
+            label: labels2[0]["opbpt1"],
+            data: movsopbpt1x,
+            borderColor: "rgba(50,100,250)",
+            backgroundColor: "rgba(50,100,250)",
             stack: 'stack 0',
             borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt2"],
+            data: movsopbpt2x,
+            borderColor: "rgba(80,150,250)",
+            backgroundColor: "rgba(80,150,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt3"],
+            data: movsopbpt3x,
 
+            backgroundColor: "rgba(200,100,0)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt4"],
+            data: movsopbpt4x,
 
-            }]
+            backgroundColor: "rgba(200,190,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt5"],
+            data: movsopbpt5x,
+
+            backgroundColor: "rgba(100,200,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt6"],
+            data: movsopbpt6x,
+
+            backgroundColor: "rgba(150,200,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt7"],
+            data: movsopbpt7x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt8"],
+            data: movsopbpt8x,
+            backgroundColor: "rgba(10,60,30)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt9"],
+            data: movsopbpt9x,
+            backgroundColor: "rgba(150,220,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt10"],
+            data: movsopbpt10x,
+            backgroundColor: "rgba(43,40,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt11"],
+            data: movsopbpt11x,
+            backgroundColor: "rgba(230,60,10)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt12"],
+            data: movsopbpt12x,
+            backgroundColor: "rgba(90,120,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt13"],
+            data: movsopbpt13x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+
+            ]
       },
       options: {
+        legend:{
+          position:"right",
+
+        },
           title:{
             display:true,
             responsive:true,
             hoverMode:true,
-            text:"Movimiento Pallets"
+            text:"Movimientos desde stacker Corrugado"
           },
           tooltips: {
-    mode: 'label',
-
-},
-          scales: {
+            mode: 'label',
+            },
+            scales: {
               xAxes: [{ stacked: true,
                 barPercentage: 0.95,
-                categoryPercentage: 0.5,
+                categoryPercentage: 0.9,
                }],
               yAxes: [{stacked: true,
                       barPercentage: 1.0,
@@ -776,7 +921,6 @@ function setChart5(){
   });
 
 }
-
 
 
 

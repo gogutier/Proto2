@@ -1,29 +1,74 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<h3>Control EFI extendido</h3>
 
-<!--
+<style>
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
 
-<h5>Inventario WIP</h5>
-<h6> <a class="link" href="{% url 'placas_wip' %}">control lìmite stock 24h </a></h6>
-<h5>Inventario BPT</h5>
+.button2 {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 24px;
+  width: 300px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
 
-<h5>Proyecciòn producciòn y consumos</h5>
-<h6>Òrdenes puestas</h6>
-<h6>avance proyecciòn</h6>
+</style>
 
 
 
-<h4>Inventario cíclico por calle</h4>
-<button type="button" id="actualiza">Actualiza</button>
+
+<h3>Control EFI BPT</h3>
 <br>
-<a href="{% url 'invsimple' %}">Toma Inventario</a>
+<div class="jumbotron">
+
+  <div class="container">
+
+    <a href="{% url 'panel_movpallets_1' %}" class="button2">Entrada BPT</a>
+
+
+    <a href="{% url 'panel_movpallets_2' %}" class="button2">Despachos BPT</a>
+
+
+  </div>
+
+
 <br>
-<a href="{% url 'carga_inventario' %}">Carga inventario</a>
-JQery //Ajax -->
-<a href="{% url 'invsimple2' %}">Toma Inventario cíclico</a>
-<br>
+<div class="container">
+
+  <a href="{% url 'busqueda_pallet_bpt' %}"class="button2">Busqueda pallets</a>
+
+  <a href="{% url 'qr_despacho' %}" class="button2">Datos transportistas</a>
+
+</div>
+
+
+</div>
+
+
+
+<button class="button">Button</button>
+<input type="button" class="button" value="Input Button">
+
+
+
 
 
 

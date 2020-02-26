@@ -1,0 +1,763 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<br>
+
+<h3>Declaraciones entrada BPT</h3>
+<br>
+
+<div class="container">
+
+<table>
+
+<tr>
+
+<td>
+<canvas id="myChart"  style="width:900px"></canvas>
+</td>
+
+<td>
+  <table>
+
+
+  <tr>
+    <td style='font-size: 30px;'>BPT 7 días</td>
+    </tr>
+    <tr>
+      <td>
+        <br>
+      </td>
+
+    </tr>
+    <tr>
+      <td>Ingreso a BPT</td>
+      </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance">.</td>
+  </tr>
+
+
+  <tr>
+    <td>% declarado a calles BPT</td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance2">.</td>
+  </tr>
+
+</table>
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<br>
+<br>
+
+
+
+
+<div class="container" >
+
+  <h3>Detalle 24h</h3>
+
+<canvas id="myChart2" style="position: relative; height:150px; width:800px" ></canvas>
+
+</div>
+
+<br>
+
+
+
+<div class="container">
+
+<canvas id="myChart4"  style="width:1000px"></canvas>
+
+</div>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+var endpoint='/api/get_data_movpallets/';
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      labels = response_data.labels;
+      labels2 = response_data.labels2;
+
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+      console.log(labels)
+
+      var ratio = document.getElementById("ratiobalance");//.getElementsByTagName("td");
+      var ratio2 = document.getElementById("ratiobalance2");//
+      //Aquí calculo el ratio ratiobalance
+
+      sumain=0
+      sumabpt=0
+
+      diastrabajados=0
+
+      for (var i = 0; i < labels.length; i++)
+          {
+
+            sumain+=labels[i]["m2In"]
+
+            sumabpt+=labels[i]["m2BPT"]
+
+          }
+
+
+      ratio.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
+      ratio2.innerHTML= String(((sumabpt/sumain)*100).toFixed(1))+"%"
+
+
+
+
+
+
+      var ratioB = document.getElementById("ratiobalanceB");//.getElementsByTagName("td");
+      var ratio2B = document.getElementById("ratiobalance2B");//
+      //Aquí calculo el ratio ratiobalance
+
+
+      setChart1();
+      setChart2();
+
+      setChart4();
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+    //displayTabla();
+
+}
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+datosinv()
+
+window.setInterval(function(){
+  console.log("hola");
+  //datosinv();
+}, 60000);
+
+
+
+function setChart1(){
+
+  //generando list de labels
+  labelx=[]
+  m2Inx=[]
+  m2Outx=[]
+  m2Prodx=[]
+  m2Convx=[]
+  m2Corrx=[]
+  m2BPTx=[]
+
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+
+        m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
+        m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
+        m2Prodx.push((labels[i]["m2Prod"]/1000).toFixed(1));
+        m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
+        m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
+        m2BPTx.push((labels[i]["m2BPT"]/1000).toFixed(1));
+      }
+
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+          {
+
+                  label: "Mm2 Ingreso a bodega BPT",
+                  data: m2Inx,
+                  borderColor: "rgba(0,42,255)",
+                  backgroundColor: "rgba(0,42,255)",
+                  stack: 'stack 1',
+                  borderWidth: 0,
+
+
+            },
+            {
+
+                    label: "Mm2 a calles BPT",
+                    data: m2BPTx,
+                    borderColor:"rgba(180,180,80)",
+                    backgroundColor:"rgba(180,180, 70)",
+                    stack: 'stack 2',
+                    borderWidth: 0,
+
+
+              }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.9,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+
+
+                  }
+              }]
+          }
+      }
+  });
+
+}
+////////////////
+
+function setChart2(){
+
+  //generando list de labels
+  labelx=[]
+  movsaBPT=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movsaBPT.push((labels2[i]["movsaBPT"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart2").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Actividad Ingreso Paletizadora",
+            data: movsaBPT,
+            borderColor: "rgba(50,50,250)",
+            backgroundColor: "rgba(50,50,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            aspectRatio:3,
+            responsive:true,
+            maintainAspectRatio: true,
+
+
+            }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Actividad Paletizadora",
+
+
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{
+                stacked: true,
+                categoryPercentage: 1.1,
+                barPercentage: 1.1 ,
+
+
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true,
+                      suggestedMin: 0,
+                      suggestedMax: 1,
+                      max: 1,
+                      stepSize:1,
+
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+///////////////
+
+function setChart3(){
+
+  //generando list de labels
+  labelx=[]
+  movsandenes1=[]
+  movsandenes2=[]
+  movsandenes3=[]
+  movsandenes4=[]
+  movsandenes5=[]
+  movsandenes6=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movsandenes1.push((labels2[i]["movsandenes1"]).toFixed(1));
+        movsandenes2.push((labels2[i]["movsandenes2"]).toFixed(1));
+        movsandenes3.push((labels2[i]["movsandenes3"]).toFixed(1));
+        movsandenes4.push((labels2[i]["movsandenes4"]).toFixed(1));
+        movsandenes5.push((labels2[i]["movsandenes5"]).toFixed(1));
+        movsandenes6.push((labels2[i]["movsandenes6"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart3").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+            label: "AN1",
+            data: movsandenes1,
+            borderColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(100,100,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN2",
+            data: movsandenes2,
+            borderColor: "rgba(150,80,80)",
+            backgroundColor: "rgba(150,80,80)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN3",
+            data: movsandenes3,
+            borderColor: "rgba(50,80,250)",
+            backgroundColor: "rgba(50,80,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN4",
+            data: movsandenes4,
+            borderColor: "rgba(80,80,80)",
+            backgroundColor: "rgba(80,80,80)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN5",
+            data: movsandenes5,
+            borderColor: "rgba(50,80,50)",
+            backgroundColor: "rgba(50,80,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            },
+            {
+            label: "AN6",
+            data: movsandenes6,
+            borderColor: "rgba(150,80,200)",
+            backgroundColor: "rgba(150,80,200)",
+            stack: 'stack 0',
+            borderWidth: 0,
+            }
+
+
+          ]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 1,
+                categoryPercentage: 0.95,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 0.95,
+                      categoryPercentage: 0.95,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true,
+                      suggestedMin: 0,
+                      suggestedMax: 10
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+////////////////////////
+
+function setChart4(){
+
+  //generando list de labels
+  labelx=[]
+  movsconv1=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"]);
+
+        movsconv1.push((labels2[i]["movsconv1"]).toFixed(1));
+
+      }
+
+  var ctx = document.getElementById("myChart4").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+
+            label: "Movimientos a calles de BPT",
+            data: movsconv1,
+            borderColor: "rgba(100,100,150)",
+            backgroundColor: "rgba(100,100,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.5,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true,
+                      suggestedMin: 0,
+                      suggestedMax: 10
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+
+
+/////////////////////////////////////////
+
+function setChart5(){
+
+  //generando list de labels
+  labelx=[]
+  opbpt1x=[]
+  opbpt2x=[]
+  opbpt3x=[]
+  opbpt4x=[]
+  opbpt5x=[]
+  opbpt6x=[]
+  opbpt7x=[]
+  opbpt8x=[]
+  opbpt9x=[]
+  opbpt10x=[]
+  opbpt11x=[]
+  opbpt12x=[]
+  opbpt13x=[]
+
+
+
+  movsopbpt1x=[]
+  movsopbpt2x=[]
+  movsopbpt3x=[]
+  movsopbpt4x=[]
+  movsopbpt5x=[]
+  movsopbpt6x=[]
+  movsopbpt7x=[]
+  movsopbpt8x=[]
+  movsopbpt9x=[]
+  movsopbpt10x=[]
+  movsopbpt11x=[]
+  movsopbpt12x=[]
+  movsopbpt13x=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"])
+
+
+
+        movsopbpt1x.push((labels2[i]["movsopbpt1"]).toFixed(1));
+        movsopbpt2x.push((labels2[i]["movsopbpt2"]).toFixed(1));
+        movsopbpt3x.push((labels2[i]["movsopbpt3"]).toFixed(1));
+        movsopbpt4x.push((labels2[i]["movsopbpt4"]).toFixed(1));
+        movsopbpt5x.push((labels2[i]["movsopbpt5"]).toFixed(1));
+        movsopbpt6x.push((labels2[i]["movsopbpt6"]).toFixed(1));
+        movsopbpt7x.push((labels2[i]["movsopbpt7"]).toFixed(1));
+        movsopbpt8x.push((labels2[i]["movsopbpt8"]).toFixed(1));
+        movsopbpt9x.push((labels2[i]["movsopbpt9"]).toFixed(1));
+        movsopbpt10x.push((labels2[i]["movsopbpt10"]).toFixed(1));
+        movsopbpt11x.push((labels2[i]["movsopbpt11"]).toFixed(1));
+        movsopbpt12x.push((labels2[i]["movsopbpt12"]).toFixed(1));
+        movsopbpt13x.push((labels2[i]["movsopbpt13"]).toFixed(1));
+
+
+      }
+
+  var ctx = document.getElementById("myChart5").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+            label: labels2[0]["opbpt1"],
+            data: movsopbpt1x,
+            borderColor: "rgba(50,100,250)",
+            backgroundColor: "rgba(50,100,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt2"],
+            data: movsopbpt2x,
+            borderColor: "rgba(80,150,250)",
+            backgroundColor: "rgba(80,150,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt3"],
+            data: movsopbpt3x,
+
+            backgroundColor: "rgba(200,100,0)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt4"],
+            data: movsopbpt4x,
+
+            backgroundColor: "rgba(200,190,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt5"],
+            data: movsopbpt5x,
+
+            backgroundColor: "rgba(100,200,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt6"],
+            data: movsopbpt6x,
+
+            backgroundColor: "rgba(150,200,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt7"],
+            data: movsopbpt7x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt8"],
+            data: movsopbpt8x,
+            backgroundColor: "rgba(10,60,30)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt9"],
+            data: movsopbpt9x,
+            backgroundColor: "rgba(150,220,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt10"],
+            data: movsopbpt10x,
+            backgroundColor: "rgba(43,40,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt11"],
+            data: movsopbpt11x,
+            backgroundColor: "rgba(230,60,10)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt12"],
+            data: movsopbpt12x,
+            backgroundColor: "rgba(90,120,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt13"],
+            data: movsopbpt13x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+
+            ]
+      },
+      options: {
+        legend:{
+          position:"right",
+
+        },
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimientos desde stacker Corrugado"
+          },
+          tooltips: {
+            mode: 'label',
+            },
+            scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.9,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true,
+                      suggestedMin: 0,
+                      suggestedMax: 10
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+</script>
+
+{% endblock %}

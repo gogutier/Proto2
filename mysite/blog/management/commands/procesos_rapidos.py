@@ -370,8 +370,9 @@ class Command(BaseCommand):
                     sleep(0.05)
 
                 print("model guardado")
-                ###################################
 
+
+                #######################################################################
                 #### Ahora calculo los datos de sólo los movimientos..
                 print("iniciando datos B")
 

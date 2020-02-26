@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.views.generic.base import TemplateView
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -91,7 +91,7 @@ def get_data_busqueda_pallet_bpt(request, *args, **kwargs):
         orderID=(request.POST['orderID'])
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        listacalles=("PLL","A01","A02","A03","A04","A05","A06","A07","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","C01","C01","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","E01","E02","E03","E04")
+        listacalles=("PLL","RP1","A01","A02","A03","A04","A05","A06","A07","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","C01","C01","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","E01","E02","E03","E04", "PTCAL")
         filtrocalleqs=Q()
         for calle in listacalles:
             filtrocalleqs = filtrocalleqs | Q(ubic=calle)
@@ -401,6 +401,20 @@ def panel_movpallets(request):
 
     return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
+def panel_movpallets_1(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_movpallets_1.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+def panel_movpallets_2(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/panel_movpallets_2.html'
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
 
 def panel_inv_ciclico(request):
     #print("cargando consumos puestos")
@@ -429,6 +443,7 @@ def panel_inv_ciclico(request):
 def get_data_movpallets(request, *args, **kwargs):
     labels=[]
     labels2=[]
+    labels3=[]
     #estructura: inicio turno en datetime, inicio turno en texto, inicio turno en descripción, m2 ingreso a planta en ese turno, m2 salida de planta en ese turno.
 
     #fecha, label, m2in, m2out
@@ -442,47 +457,16 @@ def get_data_movpallets(request, *args, **kwargs):
         labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label,"cantidadcallesbpt":dato.cantidadcallesbpt, "m2BPT":dato.m2BPT, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadProd":dato.cantidadProd, "m2Prod":dato.m2Prod, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv, "m2Corr":dato.m2Corr})
 
     for dato in Datos_MovPallets_B.objects.filter(programa=foto):
-        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movsaBPT":dato.movsaBPT, "movsandenes1":dato.movsandenes1, "movsandenes2":dato.movsandenes2, "movsandenes3":dato.movsandenes3, "movsandenes4":dato.movsandenes4, "movsandenes5":dato.movsandenes5, "movsandenes6":dato.movsandenes6, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2})
+        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movsaBPT":dato.movsaBPT, "movsandenes1":dato.movsandenes1, "movsandenes2":dato.movsandenes2, "movsandenes3":dato.movsandenes3, "movsandenes4":dato.movsandenes4, "movsandenes5":dato.movsandenes5, "movsandenes6":dato.movsandenes6, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2, "opbpt1":dato.opbpt1, "movsopbpt1":dato.movsopbpt1, "opbpt2":dato.opbpt2, "movsopbpt2":dato.movsopbpt2, "opbpt3":dato.opbpt3, "movsopbpt3":dato.movsopbpt3, "opbpt4":dato.opbpt4, "movsopbpt4":dato.movsopbpt4, "opbpt5":dato.opbpt5, "movsopbpt5":dato.movsopbpt5, "opbpt6":dato.opbpt6, "movsopbpt6":dato.movsopbpt6, "opbpt7":dato.opbpt7, "movsopbpt7":dato.movsopbpt7, "opbpt8":dato.opbpt8, "movsopbpt8":dato.movsopbpt8, "opbpt9":dato.opbpt9, "movsopbpt9":dato.movsopbpt9, "opbpt10":dato.opbpt10, "movsopbpt10":dato.movsopbpt10, "opbpt11":dato.opbpt11, "movsopbpt11":dato.movsopbpt11, "opbpt12":dato.opbpt12, "movsopbpt12":dato.movsopbpt12, "opbpt13":dato.opbpt13, "movsopbpt13":dato.movsopbpt13, "opbpt14":dato.opbpt14, "movsopbpt14":dato.movsopbpt14})
 
+    for dato in Datos_MovPallets_C.objects.filter(programa=foto):
+        labels3.append({"semana1":dato.semana1,"producsem1":dato.producsem1, "antiguedadsem1": dato.antiguedadsem1, "peakstock1":dato.peakstock1, "semana2":dato.semana2,"producsem2":dato.producsem2, "antiguedadsem2": dato.antiguedadsem2, "peakstock2":dato.peakstock2, "semana3":dato.semana3,"producsem3":dato.producsem3, "antiguedadsem3": dato.antiguedadsem3, "peakstock3":dato.peakstock3, "semana4":dato.semana4,"producsem4":dato.producsem4, "antiguedadsem4": dato.antiguedadsem4, "peakstock4":dato.peakstock4})
 
-    #Muestro los movs realizados cada 5 min en 24 horas.
-
-    #Genero labels de cada 5 minutos:
-    '''
-    if 1:
-        if 1:
-            if 1:
-                labels2=[]
-                ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
-                for i in range(0,288):
-                    #por ahora los voy a ordenar por turno, después por hora.
-                    fechaini=(ahora-timedelta(minutes=(288-i)*5))
-                    fechafin=(ahora-timedelta(minutes=(288-i-1)*5))
-
-
-                    label= (fechaini.strftime("%d-%m %H:%M")+ " a " + fechafin.strftime("%H:%M"))
-                    #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
-                    #m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
-                    #print(m2Corr)
-
-                    #Calculo el n° de movimientos registrados en ese turno:
-
-                    movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movscorr2= MovPallets.objects.filter(Q(SOURCE="CORR_LOWER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2})
-
-
-
-                print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
-
-
-    '''
 
     data = {
     "labels":labels,
     "labels2":labels2,
+    "labels3":labels3,
             }
     print("Enviando datos movpallets")
     return JsonResponse(data)#http response con el datatype de JS

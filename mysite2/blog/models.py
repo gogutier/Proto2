@@ -237,9 +237,85 @@ class Datos_MovPallets_B(models.Model):
     movsapicado=models.IntegerField(default=0)
     movsdevbodega=models.IntegerField(default=0)
 
+    opbpt1=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt1=models.IntegerField(default=0)
+
+    opbpt2=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt2=models.IntegerField(default=0)
+
+    opbpt3=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt3=models.IntegerField(default=0)
+
+    opbpt4=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt4=models.IntegerField(default=0)
+
+    opbpt5=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt5=models.IntegerField(default=0)
+
+    opbpt6=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt6=models.IntegerField(default=0)
+
+    opbpt7=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt7=models.IntegerField(default=0)
+
+    opbpt8=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt8=models.IntegerField(default=0)
+
+    opbpt9=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt9=models.IntegerField(default=0)
+
+    opbpt10=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt10=models.IntegerField(default=0)
+
+    opbpt11=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt11=models.IntegerField(default=0)
+
+    opbpt12=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt12=models.IntegerField(default=0)
+
+    opbpt13=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt13=models.IntegerField(default=0)
+
+    opbpt14=models.CharField(max_length=26, blank=False, default="0")
+    movsopbpt14=models.IntegerField(default=0)
+
 
     def __str__(self):
         return (str(self.label))
+
+
+
+class Datos_MovPallets_C(models.Model):
+
+
+    programa=models.ForeignKey('blog.Foto_Datos_MovPallets', related_name='foto_datosmovpalletC', on_delete=models.CASCADE, default=0)
+
+    #fechaini=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    #fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
+    #label=models.CharField(max_length=16, blank=False, default="0")
+    semana1=models.IntegerField(default=0)
+    producsem1= models.FloatField(default=0)
+    antiguedadsem1= models.FloatField(default=0)
+    peakstock1= models.FloatField(default=0)
+
+    semana2=models.IntegerField(default=0)
+    producsem2= models.FloatField(default=0)
+    antiguedadsem2= models.FloatField(default=0)
+    peakstock2= models.FloatField(default=0)
+
+    semana3=models.IntegerField(default=0)
+    producsem3= models.FloatField(default=0)
+    antiguedadsem3= models.FloatField(default=0)
+    peakstock3= models.FloatField(default=0)
+
+    semana4=models.IntegerField(default=0)
+    producsem4= models.FloatField(default=0)
+    antiguedadsem4= models.FloatField(default=0)
+    peakstock4= models.FloatField(default=0)
+
+
+    def __str__(self):
+        return (str(self.semana1))
 
 
 

@@ -1,0 +1,581 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<br>
+
+<h2>Declaraciones Salida BPT</h2>
+<br>
+
+<div class="container">
+<h4>Resumen 7d</h4>
+<table>
+
+<tr>
+
+<td>
+<canvas id="myChartB"  style="width:900px"></canvas>
+</td>
+
+<td>
+  <table>
+
+
+  <tr>
+    <td style='font-size: 30px;'>BPT 7 días</td>
+    </tr>
+    <tr>
+      <td>
+        <br>
+      </td>
+
+    </tr>
+    <tr>
+      <td>Ingreso PLL</td>
+      </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalanceB">.</td>
+  </tr>
+
+
+  <tr>
+    <td>Salida por Remisión</td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance2B">.</td>
+  </tr>
+
+</table>
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<br>
+
+<div class="container">
+
+  <table align="center">
+
+    <tr style='text-align: center;' bgcolor="#D3D3D3">
+      <td style="width:150px;"><h4>Semana</h4></td>
+        <td style='width:150px; font-size: 25px;' id="sem1"></td>
+        <td style='width:150px; font-size: 25px;' id="sem2"></td>
+        <td style='width:150px; font-size: 25px;'id="sem3"></td>
+        <td style='width:150px; font-size: 30px;'id="sem4"></td>
+
+
+
+
+    </tr>
+
+    <tr style='text-align: center;'>
+
+      <td style="width:150px;"><h4> Tasa carga<br>(Mm2/hora) </h4></td>
+
+      <td style='font-size: 25px;'id="prod1"></td>
+      <td style='font-size: 25px;'id="prod2"></td>
+        <td style='font-size: 25px;'id="prod3"></td>
+        <td style='font-size: 30px;'id="prod4"></td>
+
+
+
+
+
+    </tr>
+    <tr style='text-align: center;'>
+      <td style="width:150px;"><h4> Antiguedad <br>PLL carga<br>(días) </h4></td>
+
+
+        <td style='font-size: 25px;'id="ant1"></td>
+      <td style='font-size: 25px;'id="ant2"></td>
+      <td style='font-size: 25px;'id="ant3"></td>
+      <td style='font-size: 30px;'id="ant4"></td>
+
+
+
+
+    </tr>
+    <tr style='text-align: center;'>
+
+<td style="width:150px;"><h4> Peak stock<br> (Mm2)</h4></td>
+
+      <td style='font-size: 25px;'id="peak1"></td>
+      <td style='font-size: 25px;'id="peak2"></td>
+      <td style='font-size: 25px;'id="peak3"></td>
+        <td style='font-size: 30px;'id="peak4"></td
+
+    </tr>
+
+
+  </table>
+
+</div>
+
+
+<br>
+
+<div class="container">
+
+<h3>Detalle 24h</h3>
+
+<canvas id="myChart5"  style="width:1000px"></canvas>
+
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+var endpoint='/api/get_data_movpallets/';
+
+
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+  var myTable = document.getElementById('myTable');
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      labels = response_data.labels;
+      labels2 = response_data.labels2;
+      labels3 = response_data.labels3;
+
+
+      //console.log(datos0["M2ZFFG1"].toFixed(2))
+
+      //console.log(prueba['prueba1'][1])
+      //console.log(prueba['prueba2']['B'])
+      //console.log(m2total)
+      //console.log(npalletstotal)
+      console.log(labels3)
+
+      var sem1 = document.getElementById("sem1");//.getElementsByTagName("td");
+      var prod1 = document.getElementById("prod1");//.getElementsByTagName("td");
+      var ant1 = document.getElementById("ant1");//.getElementsByTagName("td");
+      var peak1 = document.getElementById("peak1");//.getElementsByTagName("td");
+
+
+      var sem2 = document.getElementById("sem2");//.getElementsByTagName("td");
+      var prod2 = document.getElementById("prod2");//.getElementsByTagName("td");
+      var ant2 = document.getElementById("ant2");//.getElementsByTagName("td");
+      var peak2 = document.getElementById("peak2");//.getElementsByTagName("td");
+
+
+      var sem3 = document.getElementById("sem3");//.getElementsByTagName("td");
+      var prod3 = document.getElementById("prod3");//.getElementsByTagName("td");
+      var ant3 = document.getElementById("ant3");//.getElementsByTagName("td");
+      var peak3 = document.getElementById("peak3");//.getElementsByTagName("td");
+
+      var sem4 = document.getElementById("sem4");//.getElementsByTagName("td");
+      var prod4 = document.getElementById("prod4");//.getElementsByTagName("td");
+      var ant4 = document.getElementById("ant4");//.getElementsByTagName("td");
+      var peak4 = document.getElementById("peak4");//.getElementsByTagName("td");
+
+
+
+      sem1.innerHTML= String(labels3[0]["semana1"])
+      prod1.innerHTML=  (labels3[0]["producsem1"]/1000).toFixed(1)
+      ant1.innerHTML=  (labels3[0]["antiguedadsem1"]).toFixed(1)
+      peak1.innerHTML= (labels3[0]["peakstock1"]).toFixed(1)
+
+
+      sem2.innerHTML= String(labels3[0]["semana2"])
+      prod2.innerHTML=  (labels3[0]["producsem2"]/1000).toFixed(1)
+      ant2.innerHTML=  (labels3[0]["antiguedadsem2"]).toFixed(1)
+      peak2.innerHTML= (labels3[0]["peakstock2"]).toFixed(1)
+
+
+      sem3.innerHTML= String(labels3[0]["semana3"])
+      prod3.innerHTML=  (labels3[0]["producsem3"]/1000).toFixed(1)
+      ant3.innerHTML=  (labels3[0]["antiguedadsem3"]).toFixed(1)
+      peak3.innerHTML= (labels3[0]["peakstock3"]).toFixed(1)
+
+
+      sem4.innerHTML= String(labels3[0]["semana4"])
+      prod4.innerHTML=  (labels3[0]["producsem4"]/1000).toFixed(1)
+      ant4.innerHTML=  (labels3[0]["antiguedadsem4"]).toFixed(1)
+      peak4.innerHTML= (labels3[0]["peakstock4"]).toFixed(1)
+
+
+      var ratioB = document.getElementById("ratiobalanceB");//.getElementsByTagName("td");
+      var ratio2B = document.getElementById("ratiobalance2B");//
+      //Aquí calculo el ratio ratiobalance
+
+      sumain=0
+      sumaout=0
+
+      diastrabajados=0
+
+      for (var i = 0; i < labels.length; i++)
+          {
+
+            sumain+=labels[i]["m2In"]
+
+            sumaout+=labels[i]["m2Out"]
+
+          }
+
+
+      ratioB.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
+      ratio2B.innerHTML= String((sumaout/1000).toFixed(0))+"Mm2"
+
+
+
+
+      setChart1B();
+      setChart5();
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+    //displayTabla();
+
+}
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+datosinv()
+
+window.setInterval(function(){
+  console.log("hola");
+  //datosinv();
+}, 60000);
+
+
+
+function setChart1B(){
+
+  //generando list de labels
+  labelx=[]
+  m2Inx=[]
+  m2Outx=[]
+  m2Prodx=[]
+  m2Convx=[]
+  m2Corrx=[]
+  m2BPTx=[]
+
+  for (var i = 0; i < labels.length; i++)
+      {
+        labelx.push(labels[i]["label"]);
+
+        m2Inx.push((labels[i]["m2In"]/1000).toFixed(1));
+        m2Outx.push((labels[i]["m2Out"]/-1000).toFixed(1));
+        m2Prodx.push((labels[i]["m2Prod"]/1000).toFixed(1));
+        m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
+        m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
+        m2BPTx.push((labels[i]["m2BPT"]/1000).toFixed(1));
+      }
+
+  var ctx = document.getElementById("myChartB").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+          {
+
+                  label: "Mm2 Ingreso a bodega BPT",
+                  data: m2Inx,
+                  borderColor: "rgba(0,42,255)",
+                  backgroundColor: "rgba(0,42,255)",
+                  stack: 'stack 1',
+                  borderWidth: 0,
+
+
+            },
+            {
+              label: "Mm2 Salida de bodega BPT",
+              data: m2Outx,
+              borderColor: "rgba(0,200,155)",
+              backgroundColor: "rgba(0,200,155)",
+              stack: 'stack 1',
+              borderWidth: 0,
+
+
+          }]
+      },
+      options: {
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimiento Pallets"
+          },
+          tooltips: {
+    mode: 'label',
+
+},
+          scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.5,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true
+
+
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+////////////////
+
+
+/////////////////////////////////////////
+
+function setChart5(){
+
+  //generando list de labels
+  labelx=[]
+  opbpt1x=[]
+  opbpt2x=[]
+  opbpt3x=[]
+  opbpt4x=[]
+  opbpt5x=[]
+  opbpt6x=[]
+  opbpt7x=[]
+  opbpt8x=[]
+  opbpt9x=[]
+  opbpt10x=[]
+  opbpt11x=[]
+  opbpt12x=[]
+  opbpt13x=[]
+
+
+
+  movsopbpt1x=[]
+  movsopbpt2x=[]
+  movsopbpt3x=[]
+  movsopbpt4x=[]
+  movsopbpt5x=[]
+  movsopbpt6x=[]
+  movsopbpt7x=[]
+  movsopbpt8x=[]
+  movsopbpt9x=[]
+  movsopbpt10x=[]
+  movsopbpt11x=[]
+  movsopbpt12x=[]
+  movsopbpt13x=[]
+
+
+
+  for (var i = 0; i < labels2.length; i++)
+      {
+        labelx.push(labels2[i]["label"])
+
+
+
+        movsopbpt1x.push((labels2[i]["movsopbpt1"]).toFixed(1));
+        movsopbpt2x.push((labels2[i]["movsopbpt2"]).toFixed(1));
+        movsopbpt3x.push((labels2[i]["movsopbpt3"]).toFixed(1));
+        movsopbpt4x.push((labels2[i]["movsopbpt4"]).toFixed(1));
+        movsopbpt5x.push((labels2[i]["movsopbpt5"]).toFixed(1));
+        movsopbpt6x.push((labels2[i]["movsopbpt6"]).toFixed(1));
+        movsopbpt7x.push((labels2[i]["movsopbpt7"]).toFixed(1));
+        movsopbpt8x.push((labels2[i]["movsopbpt8"]).toFixed(1));
+        movsopbpt9x.push((labels2[i]["movsopbpt9"]).toFixed(1));
+        movsopbpt10x.push((labels2[i]["movsopbpt10"]).toFixed(1));
+        movsopbpt11x.push((labels2[i]["movsopbpt11"]).toFixed(1));
+        movsopbpt12x.push((labels2[i]["movsopbpt12"]).toFixed(1));
+        movsopbpt13x.push((labels2[i]["movsopbpt13"]).toFixed(1));
+
+
+      }
+
+  var ctx = document.getElementById("myChart5").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+            labels: labelx,
+            datasets: [
+
+            {
+            label: labels2[0]["opbpt1"],
+            data: movsopbpt1x,
+            borderColor: "rgba(50,100,250)",
+            backgroundColor: "rgba(50,100,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt2"],
+            data: movsopbpt2x,
+            borderColor: "rgba(80,150,250)",
+            backgroundColor: "rgba(80,150,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt3"],
+            data: movsopbpt3x,
+
+            backgroundColor: "rgba(200,100,0)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt4"],
+            data: movsopbpt4x,
+
+            backgroundColor: "rgba(200,190,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt5"],
+            data: movsopbpt5x,
+
+            backgroundColor: "rgba(100,200,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt6"],
+            data: movsopbpt6x,
+
+            backgroundColor: "rgba(150,200,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt7"],
+            data: movsopbpt7x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt8"],
+            data: movsopbpt8x,
+            backgroundColor: "rgba(10,60,30)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt9"],
+            data: movsopbpt9x,
+            backgroundColor: "rgba(150,220,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt10"],
+            data: movsopbpt10x,
+            backgroundColor: "rgba(43,40,250)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt11"],
+            data: movsopbpt11x,
+            backgroundColor: "rgba(230,60,10)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt12"],
+            data: movsopbpt12x,
+            backgroundColor: "rgba(90,120,50)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt13"],
+            data: movsopbpt13x,
+            backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+
+            ]
+      },
+      options: {
+        legend:{
+          position:"right",
+
+        },
+          title:{
+            display:true,
+            responsive:true,
+            hoverMode:true,
+            text:"Movimientos desde stacker Corrugado"
+          },
+          tooltips: {
+            mode: 'label',
+            },
+            scales: {
+              xAxes: [{ stacked: true,
+                barPercentage: 0.95,
+                categoryPercentage: 0.9,
+               }],
+              yAxes: [{stacked: true,
+                      barPercentage: 1.0,
+                      categoryPercentage: 1.0,
+                  ticks: {
+                      autoSkip: false,
+                      beginAtZero:true,
+                      suggestedMin: 0,
+                      suggestedMax: 10
+                  }
+              }]
+          }
+      }
+  });
+
+}
+
+
+
+
+</script>
+
+{% endblock %}

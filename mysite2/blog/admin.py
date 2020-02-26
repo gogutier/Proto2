@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP,Datos_MovPallets, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Calles_Inv_Cic_WIP, Foto_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Foto_Datos_MovPallets, FiltroMovInternoWIP
+from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Calles_Inv_Cic_WIP, Foto_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Foto_Datos_MovPallets, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, FiltroMovInternoWIP
 
 
 # Register your models here.
@@ -46,7 +46,6 @@ admin.site.register(DatosWIP_Prog)
 admin.site.register(FotoProgCorr)
 admin.site.register(IDProgCorr)
 admin.site.register(Datos_Proy_WIP)
-admin.site.register(Datos_MovPallets)
 admin.site.register(Datos_Inv_WIP)
 admin.site.register(Foto_Datos_Inv_WIP)
 admin.site.register(FiltroEntradaWIP)
@@ -62,3 +61,6 @@ admin.site.register(MovRollos)
 admin.site.register(ConsumoRollos)
 admin.site.register(Foto_ConsumoRollos)
 admin.site.register(Foto_Datos_MovPallets)
+admin.site.register(Datos_MovPallets)
+admin.site.register(Datos_MovPallets_B)
+admin.site.register(Datos_MovPallets_C)

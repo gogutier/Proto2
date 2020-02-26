@@ -39,7 +39,7 @@ def consulta(datetimeini,datetimefin):
     #row0=cursor.fetchone()
     m2totconv=0
     for row in cursor.fetchall():
-        if (row[0]=="TCY" or row[0]=="HCR" or row[0]=="WRD" or row[0]=="FFW" or row[0]=="DRO" or row[0]=="FFG" or row[0]=="DIM" or row[0]=="TAB"):
+        if (row[0]=="TCY" or row[0]=="HCR" or row[0]=="WRD" or row[0]=="FFW" or row[0]=="DRO" or row[0]=="FFG"):# or row[0]=="DIM" or row[0]=="TAB"):
             m2placa=row[9]*row[10]
             unids=row[8]/row[11]
             m2prod=m2placa*unids
@@ -52,7 +52,7 @@ def consulta(datetimeini,datetimefin):
     m2totcorr=0
     print("datos obtenidos entre " + ini + " y " + fin + ":")
     for row in cursor.fetchall():
-        print(row)
+        #print(row)
 
         m2placaUK=row[4]*row[5]
         unidsUK=row[6]

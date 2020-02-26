@@ -11,6 +11,7 @@ from blog.models import DatosWIP_Prog as DatosWIP_Prog
 from blog.models import MovPallets as MovPallets
 from blog.models import Datos_MovPallets as Datos_MovPallets
 from blog.models import Datos_MovPallets_B as Datos_MovPallets_B
+from blog.models import Datos_MovPallets_C as Datos_MovPallets_C
 from blog.models import Foto_Datos_MovPallets as Foto_Datos_MovPallets
 from blog.models import IDProgCorr as IDProgCorr
 from blog.models import Pallet as Pallet
@@ -226,6 +227,53 @@ class Command(BaseCommand):
 
             try:
 
+                #Rango de fechas últimas 4 semanas..
+
+                print("Ahora voy a generar y guardar el resumen de los datos semanales..")
+
+                semanahoy=datetime.now().isocalendar()[1] #Ojo que aquí la semana parte el domingo
+                print("número de semana de hoy: " + str( semanahoy ))
+
+
+                #labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label"
+                lista=[ semanahoy-3, semanahoy-2, semanahoy-1, semanahoy]
+                labels3=[]
+                labels3.append({"hola":1,"dasd":1})
+                indx=0
+
+                for semana in lista:
+
+                    #calculo prodsem: suma de m2 / horas de la semana (24*5+15)
+                    remis= Pallet.objects.filter(flagcamion=True, fechacamion__date__week=semana)
+                    cont= remis.count()
+                    sumadays=0
+                    sumam2=0
+
+
+                    antiguedadsem=0
+                    producsem=0
+                    peakstock=0
+
+                    for rem in remis:
+                        print(str(rem.fechacamion)+ " " + str(rem.fechapll) )
+                        print((rem.fechacamion-rem.fechapll).days )
+                        sumadays+=max((rem.fechacamion-rem.fechapll).days,0)
+                        sumam2+=rem.m2pallet
+
+                    antiguedadsem=(sumadays/cont)
+                    producsem= (sumam2/(24*5+15))
+
+                    indx+=1
+
+                    labels3.append({"indx": indx, "semana":semana, "producsem":producsem, "antiguedadsem": antiguedadsem, "peakstock":peakstock})
+
+
+
+
+                o = Datos_MovPallets_C.objects.create(programa=foto, semana1=labels3[1]['semana'],producsem1=labels3[1]['producsem'],antiguedadsem1=labels3[1]['antiguedadsem'],peakstock1=labels3[1]['peakstock'], semana2=labels3[2]['semana'],producsem2=labels3[2]['producsem'],antiguedadsem2=labels3[2]['antiguedadsem'],peakstock2=labels3[2]['peakstock'], semana3=labels3[3]['semana'],producsem3=labels3[3]['producsem'],antiguedadsem3=labels3[3]['antiguedadsem'],peakstock3=labels3[3]['peakstock'], semana4=labels3[4]['semana'],producsem4=labels3[4]['producsem'],antiguedadsem4=labels3[4]['antiguedadsem'],peakstock4=labels3[4]['peakstock'])
+                o.save()
+
+
 
                 labels=[]
                 ahora=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
@@ -356,7 +404,18 @@ class Command(BaseCommand):
                     sleep(0.05)
 
 
+                ###############################################################
                 #### Ahora calculo los datos de sólo los movimientos..
+
+                print("iniciando datos B")
+
+                listaopgruabpt=["1091/PATRICIO FARIAS", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1095/RICARDO PRADO", "1002/Carlos Paz", "1099/SEBASTIAN PONCE", "1093/JORGE SOTO", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO", "1092/ROBERTO QUILALEO","-","-","-","-"]
+                filtroopgruabptqs=Q()
+                for op in listaopgruabpt:
+                    filtroopgruabptqs = filtroopgruabptqs | Q(OPERATORCODENAME=op)
+
+
+
 
                 labels2=[]
                 ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
@@ -375,6 +434,14 @@ class Command(BaseCommand):
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
                     #m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
                     #print(m2Corr)
+
+
+                    #movimientos por cada gruero:
+                    datosopB=[[0,"0"]]
+                    for op in listaopgruabpt:
+                        datosopB.append([op , MovPallets.objects.filter( filtroopgruabptqs , OPERATORCODENAME=op, EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()])
+                    #print(datosop)
+
 
                     #Calculo el n° de movimientos registrados en ese turno:
 
@@ -447,13 +514,21 @@ class Command(BaseCommand):
 
                     movsconv1= MovPallets.objects.filter(filtromovinternoqs).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movsaBPT":movsaBPT, "movsandenes1":movsandenes1, "movsandenes2":movsandenes2, "movsandenes3":movsandenes3, "movsandenes4":movsandenes4, "movsandenes5":movsandenes5, "movsandenes6":movsandenes6, "movsconv1":movsconv1, "movsconv2":movsconv2})
-                    print(movsconv2)
+
+                    print("labels2:")
+
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movsaBPT":movsaBPT, "movsandenes1":movsandenes1, "movsandenes2":movsandenes2, "movsandenes3":movsandenes3, "movsandenes4":movsandenes4, "movsandenes5":movsandenes5, "movsandenes6":movsandenes6, "movsconv1":movsconv1, "movsconv2":movsconv2, "opbpt1":datosopB[1][0], "movsopbpt1":datosopB[1][1], "opbpt2":datosopB[2][0], "movsopbpt2":datosopB[2][1], "opbpt3":datosopB[3][0], "movsopbpt3":datosopB[3][1], "opbpt4":datosopB[4][0], "movsopbpt4":datosopB[4][1], "opbpt5":datosopB[5][0], "movsopbpt5":datosopB[5][1], "opbpt6":datosopB[6][0], "movsopbpt6":datosopB[6][1], "opbpt7":datosopB[7][0], "movsopbpt7":datosopB[7][1], "opbpt8":datosopB[8][0], "movsopbpt8":datosopB[8][1], "opbpt9":datosopB[9][0], "movsopbpt9":datosopB[9][1], "opbpt10":datosopB[10][0], "movsopbpt10":datosopB[10][1], "opbpt11":datosopB[11][0], "movsopbpt11":datosopB[11][1], "opbpt12":datosopB[12][0], "movsopbpt12":datosopB[12][1], "opbpt13":datosopB[13][0], "movsopbpt13":datosopB[13][1], "opbpt14":datosopB[14][0], "movsopbpt14":datosopB[14][1]})
+                    print("ok labels 2")
+
+                    print("guardando el model")
                 for dato in labels2:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movsaBPT=dato["movsaBPT"],movsandenes1=dato['movsandenes1'],movsandenes2=dato['movsandenes2'],movsandenes3=dato['movsandenes3'],movsandenes4=dato['movsandenes4'],movsandenes5=dato['movsandenes5'],movsandenes6=dato['movsandenes6'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto, fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movsaBPT=dato["movsaBPT"],movsandenes1=dato['movsandenes1'],movsandenes2=dato['movsandenes2'],movsandenes3=dato['movsandenes3'],movsandenes4=dato['movsandenes4'],movsandenes5=dato['movsandenes5'],movsandenes6=dato['movsandenes6'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],opbpt1=dato['opbpt1'],movsopbpt1=dato['movsopbpt1'],opbpt2=dato['opbpt2'],movsopbpt2=dato['movsopbpt2'],opbpt3=dato['opbpt3'],movsopbpt3=dato['movsopbpt3'],opbpt4=dato['opbpt4'],movsopbpt4=dato['movsopbpt4'],opbpt5=dato['opbpt5'],movsopbpt5=dato['movsopbpt5'],opbpt6=dato['opbpt6'],movsopbpt6=dato['movsopbpt6'],opbpt7=dato['opbpt7'],movsopbpt7=dato['movsopbpt7'],opbpt8=dato['opbpt8'],movsopbpt8=dato['movsopbpt8'],opbpt9=dato['opbpt9'],movsopbpt9=dato['movsopbpt9'],opbpt10=dato['opbpt10'],movsopbpt10=dato['movsopbpt10'],opbpt11=dato['opbpt11'],movsopbpt11=dato['movsopbpt11'],opbpt12=dato['opbpt12'],movsopbpt12=dato['movsopbpt12'],opbpt13=dato['opbpt13'],movsopbpt13=dato['movsopbpt13'],opbpt14=dato['opbpt14'],movsopbpt14=dato['movsopbpt14'])
                     o.save()
                     sleep(0.05)
+                print("model guardado")
+
+
 
 
                 #Borrar las fotos antiguos..
@@ -732,8 +807,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         while (1):
 
-            self.update_datos_wip()
             self.updatemovpallets()
+            self.update_datos_wip()
+
 
             #self.updatewipprog()
             #self.updateproywip()
