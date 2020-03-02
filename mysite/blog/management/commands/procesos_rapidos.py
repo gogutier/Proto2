@@ -381,7 +381,7 @@ class Command(BaseCommand):
                 for op in listaopgruacorr:
                     filtroopgruacorrqs = filtroopgruacorrqs | Q(OPERATORCODENAME=op)
 
-                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1017/Raul Ormeño", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "1025/Patricio  Chavez","-"]
+                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1017/Raul Ormeño", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "1025/Patricio  Chavez","1018/Daniel Saavedra", "1002/Carlos Paz", "1017/Raul Ormeño", "-","-"]
                 filtroopgruaconvqs=Q()
                 for op in listaopgruaconv:
                     filtroopgruaconvqs = filtroopgruaconvqs | Q(OPERATORCODENAME=op)
@@ -427,14 +427,14 @@ class Command(BaseCommand):
                     movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
 
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "opcorr1":datosop[1][0], "movscorrop1":datosop[1][1], "opcorr2":datosop[2][0], "movscorrop2":datosop[2][1], "opcorr3":datosop[3][0], "movscorrop3":datosop[3][1], "opcorr4":datosop[4][0], "movscorrop4":datosop[4][1], "opcorr5":datosop[5][0], "movscorrop5":datosop[5][1], "opcorr6":datosop[6][0], "movscorrop6":datosop[6][1], "opcorr7":datosop[7][0], "movscorrop7":datosop[7][1], "opconv1":datosopB[1][0], "movsconvop1":datosopB[1][1], "opconv2":datosopB[2][0], "movsconvop2":datosopB[2][1], "opconv3":datosopB[3][0], "movsconvop3":datosopB[3][1], "opconv4":datosopB[4][0], "movsconvop4":datosopB[4][1], "opconv5":datosopB[5][0], "movsconvop5":datosopB[5][1], "opconv6":datosopB[6][0], "movsconvop6":datosopB[6][1], "opconv7":datosopB[7][0], "movsconvop7":datosopB[7][1]})
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "opcorr1":datosop[1][0], "movscorrop1":datosop[1][1], "opcorr2":datosop[2][0], "movscorrop2":datosop[2][1], "opcorr3":datosop[3][0], "movscorrop3":datosop[3][1], "opcorr4":datosop[4][0], "movscorrop4":datosop[4][1], "opcorr5":datosop[5][0], "movscorrop5":datosop[5][1], "opcorr6":datosop[6][0], "movscorrop6":datosop[6][1], "opcorr7":datosop[7][0], "movscorrop7":datosop[7][1], "opconv1":datosopB[1][0], "movsconvop1":datosopB[1][1], "opconv2":datosopB[2][0], "movsconvop2":datosopB[2][1], "opconv3":datosopB[3][0], "movsconvop3":datosopB[3][1], "opconv4":datosopB[4][0], "movsconvop4":datosopB[4][1], "opconv5":datosopB[5][0], "movsconvop5":datosopB[5][1], "opconv6":datosopB[6][0], "movsconvop6":datosopB[6][1], "opconv7":datosopB[7][0], "movsconvop7":datosopB[7][1], "opconv8":datosopB[8][0], "movsconvop8":datosopB[8][1], "opconv9":datosopB[9][0], "movsconvop9":datosopB[9][1], "opconv10":datosopB[10][0], "movsconvop10":datosopB[10][1]})
 
                 print("datos obtenidos correctamente")
                 #print(datosopB)
                 #print(datosop[1][0])
                 for dato in labels2:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],opcorr1=dato['opcorr1'],movscorrop1=dato['movscorrop1'],opcorr2=dato['opcorr2'],movscorrop2=dato['movscorrop2'],opcorr3=dato['opcorr3'],movscorrop3=dato['movscorrop3'],opcorr4=dato['opcorr4'],movscorrop4=dato['movscorrop4'],opcorr5=dato['opcorr5'],movscorrop5=dato['movscorrop5'],opcorr6=dato['opcorr6'],movscorrop6=dato['movscorrop6'],opcorr7=dato['opcorr7'],movscorrop7=dato['movscorrop7'],opconv1=dato['opconv1'],movsconvop1=dato['movsconvop1'],opconv2=dato['opconv2'],movsconvop2=dato['movsconvop2'],opconv3=dato['opconv3'],movsconvop3=dato['movsconvop3'],opconv4=dato['opconv4'],movsconvop4=dato['movsconvop4'],opconv5=dato['opconv5'],movsconvop5=dato['movsconvop5'],opconv6=dato['opconv6'],movsconvop6=dato['movsconvop6'],opconv7=dato['opconv7'],movsconvop7=dato['movsconvop7'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],opcorr1=dato['opcorr1'],movscorrop1=dato['movscorrop1'],opcorr2=dato['opcorr2'],movscorrop2=dato['movscorrop2'],opcorr3=dato['opcorr3'],movscorrop3=dato['movscorrop3'],opcorr4=dato['opcorr4'],movscorrop4=dato['movscorrop4'],opcorr5=dato['opcorr5'],movscorrop5=dato['movscorrop5'],opcorr6=dato['opcorr6'],movscorrop6=dato['movscorrop6'],opcorr7=dato['opcorr7'],movscorrop7=dato['movscorrop7'],opconv1=dato['opconv1'],movsconvop1=dato['movsconvop1'],opconv2=dato['opconv2'],movsconvop2=dato['movsconvop2'],opconv3=dato['opconv3'],movsconvop3=dato['movsconvop3'],opconv4=dato['opconv4'],movsconvop4=dato['movsconvop4'],opconv5=dato['opconv5'],movsconvop5=dato['movsconvop5'],opconv6=dato['opconv6'],movsconvop6=dato['movsconvop6'],opconv7=dato['opconv7'],movsconvop7=dato['movsconvop7'],opconv8=dato['opconv8'],movsconvop8=dato['movsconvop8'],opconv9=dato['opconv9'],movsconvop9=dato['movsconvop9'],opconv10=dato['opconv10'],movsconvop10=dato['movsconvop10'])
                     o.save()
                     sleep(0.05)
 
@@ -821,7 +821,7 @@ class Command(BaseCommand):
 
             except Exception as e:
                 print(e)
-                print("error")
+                print("error, posiblemente database is locked??")
                 sleep(10)
 
 

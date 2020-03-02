@@ -254,9 +254,10 @@ class Command(BaseCommand):
                     producsem=0
                     peakstock=0
 
+
                     for rem in remis:
-                        print(str(rem.fechacamion)+ " " + str(rem.fechapll) )
-                        print((rem.fechacamion-rem.fechapll).days )
+                        print(  str(rem.fechacamion)+ " " + str(rem.fechapll) )
+                        print(  str( (rem.fechacamion-rem.fechapll).days ) + " " + str(rem.tarja) + " " + str(rem.ORDERID) )
                         sumadays+=max((rem.fechacamion-rem.fechapll).days,0)
                         sumam2+=rem.m2pallet
 
@@ -506,10 +507,6 @@ class Command(BaseCommand):
                     movsandenes4= MovPallets.objects.filter(DESTINATION="AN4", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsandenes5= MovPallets.objects.filter(DESTINATION="AN5", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsandenes6= MovPallets.objects.filter(DESTINATION="AN6", EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-
-
-
-
 
 
                     movsconv1= MovPallets.objects.filter(filtromovinternoqs).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
@@ -807,18 +804,25 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         while (1):
 
-            self.updatemovpallets()
-            self.update_datos_wip()
+            try:
+                self.updatemovpallets()
+                self.update_datos_wip()
 
 
-            #self.updatewipprog()
-            #self.updateproywip()
+                #self.updatewipprog()
+                #self.updateproywip()
 
 
 
-            ###########
+                ###########
 
 
-            print("Esperando para hacer prox carga masiva de datos")
-            sleep(3)
+                print("Esperando para hacer prox carga masiva de datos")
+                sleep(3)
+
+            except Exception as e:
+                print(e)
+                print("error, posiblemente database is locked??")
+                sleep(10)
+
         #print(labels)

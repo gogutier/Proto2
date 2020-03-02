@@ -198,7 +198,7 @@ function datosinv(){
 
       //Acá voy a hacer la ponderación de cada % de cumplimiento según el M2 corrugado cada día.
 
-      for (var i = 0; i < labels.length; i++)
+      for (var i = 0; i < labels.length-3; i++)
           {
 
             if (labels[i]["m2Corr"]>0)
@@ -244,7 +244,7 @@ function datosinv(){
       totconv=0
       suma=0
       sumapic=0
-      for (var i = 0; i < labels.length; i++)
+      for (var i = 0; i < labels.length-3; i++)
           {
 
             if (labels[i]["m2Conv"]>0)
@@ -659,6 +659,9 @@ function setChart5(){
   opconv5x=[]
   opconv6x=[]
   opconv7x=[]
+  opconv8x=[]
+  opconv9x=[]
+  opconv10x=[]
 
 
 
@@ -669,6 +672,9 @@ function setChart5(){
   movsconvop5x=[]
   movsconvop6x=[]
   movsconvop7x=[]
+  movsconvop8x=[]
+  movsconvop9x=[]
+  movsconvop10x=[]
 
 
 
@@ -685,6 +691,9 @@ function setChart5(){
         movsconvop5x.push((labels2[i]["movsconvop5"]).toFixed(1));
         movsconvop6x.push((labels2[i]["movsconvop6"]).toFixed(1));
         movsconvop7x.push((labels2[i]["movsconvop7"]).toFixed(1));
+        movsconvop8x.push((labels2[i]["movsconvop8"]).toFixed(1));
+        movsconvop9x.push((labels2[i]["movsconvop9"]).toFixed(1));
+        movsconvop10x.push((labels2[i]["movsconvop10"]).toFixed(1));
 
       }
 
@@ -753,6 +762,30 @@ function setChart5(){
             label: labels2[0]["opconv7"],
             data: movsconvop7x,
             backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv8"],
+            data: movsconvop8x,
+            backgroundColor: "rgba(50,43,120)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv9"],
+            data: movsconvop9x,
+            backgroundColor: "rgba(34,233,10)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv10"],
+            data: movsconvop10x,
+            backgroundColor: "rgba(233,0,150)",
             stack: 'stack 0',
             borderWidth: 0,
           }

@@ -261,6 +261,15 @@ class Datos_MovPallets_B(models.Model):
     opconv7=models.CharField(max_length=26, blank=False, default="0")
     movsconvop7=models.IntegerField(default=0)
 
+    opconv8=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop8=models.IntegerField(default=0)
+
+    opconv9=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop9=models.IntegerField(default=0)
+
+    opconv10=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop10=models.IntegerField(default=0)
+
 
 
 
