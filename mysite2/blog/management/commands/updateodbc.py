@@ -455,30 +455,40 @@ class Command(BaseCommand):
 
 
         elif flag0==1:
-            print("el dato se sacará del BILLOFLADING")
+            print("sacando dato del BILLOFLADING")
             cursor.execute("SELECT TOP (1000) [TRANSACTIONINDEX],[ORDERID],[PARTID],[UNITID],[UNITQTY],[LOCATION] FROM [ctidb_transact].[dbo].[BILLOFLADINGLOAD] where TRANSACTIONINDEX='"+ str(trbol) +"' order by transactionindex desc")
             row1bol=cursor.fetchall()
+            print("dato extraido correctamente")
+            #print(row1bol)
             respuesta=[]
             for row in row1bol:
                 #print(row[0])
                 # row1= [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]
-                #saco datos del billofladinginfo
+                print("saco 1 dato del billofladinginfo, que tenga el transactionindex y la misma orderid")
                 cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[BILLOFLADINGID],[SHIPDATETIME],[ORDERID],[SPECID],[TRAILERID] FROM [ctidb_transact].[dbo].[BILLOFLADINGINFO] where transactionindex='"+ str(trbol) +"' and orderid= '"+ str(row[1]) +"' order by transactionindex desc")
                 rowaux=cursor.fetchone()
-                #obtengo el padrón de esa tarja:
+                #print("obtengo el padrón de esa tarja:")
 
                 row1 =[ row[0],'800','wharehouse',rowaux[4], row[1], row[2],"1","UNITType",row[3],row[4],"vacio",row[5].upper(),rowaux[2],0,rowaux[5]]
 
-                #ahora saco los datosextra asociados.
+                #print("ahora saco los datosextra asociados.")
 
-                #supuesto= todo pallet que se cargará a camión ya fue creado anteriormente y está en la BD de django control.corrupac
+                #print("supuesto: todo pallet que se cargará a camión ya fue creado anteriormente y está en la BD de django control.corrupac:8090")
                 #datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]#
-                print(row[3])
-                c= Pallet.objects.get(tarja=str(row[3]))
-                datosextra = [c.unidades, c.kgpallet, c.m2pallet, c.alto, c.ancho, c.kguni, c.m2uni, 0, c.cliente, c.fechacreac, c.maqruta]
-                print("obtención de último movimiento actualizado")
-                print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
-                print(" ")
+                print(str(row[3])+" "+str(row[1]))
+
+                try:
+                    c= Pallet.objects.get(tarja=str(row[3]))
+
+                #    print("pallet encontrado")
+                    datosextra = [c.unidades, c.kgpallet, c.m2pallet, c.alto, c.ancho, c.kguni, c.m2uni, 0, c.cliente, c.fechacreac, c.maqruta]
+                    print("obtención de último movimiento actualizado")
+                    print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
+                    print(" ")
+                except:
+                    c= Pallet.objects.get_or_create(tarja=str(row[3]))
+                    print("Error, pallet cargado a camión no pasó por registros efi previamente (cargaron un pallet muy antiguo por secretaría?)")
+                    sleep(5)
                 respuesta.append([row1,datosextra])
 
             return(respuesta)

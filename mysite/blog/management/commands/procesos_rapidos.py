@@ -199,28 +199,40 @@ class Command(BaseCommand):
                     turno="A"
                     label= fecha.strftime("%d-%m") + " " + turno
                     #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
-                    m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
-                    #print(m2Corr)
-                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
+                    result = pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    m2Conv= result[0]
+                    m2Corr= result[1]
+                    m2ConvWaste= result[2]
+                    m2CorrWaste= result[3]
+                    print("Convwaste:" + str(m2ConvWaste))
+                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr})
 
                     fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30, second=0, microsecond=0)
                     fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
                     turno="B"
                     label= fecha.strftime("%d-%m") + " " + turno
-                    m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
-                    #print(m2Corr)
-                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
+                    result = pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    m2Conv= result[0]
+                    m2Corr= result[1]
+                    m2ConvWaste= result[2]
+                    m2CorrWaste= result[3]
+                    print("Convwaste:" + str(m2ConvWaste))
+                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr})
 
                     fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
                     fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7, minute=0, second=0, microsecond=0)
                     turno="C"
                     label= fecha.strftime("%d-%m") + " " + turno
-                    m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
-                    #print(m2Corr)
-                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2Corr": m2Corr})
+                    result = pruebaodbcconvertprod.consulta(fecha,fechafin)
+                    m2Conv= result[0]
+                    m2Corr= result[1]
+                    m2ConvWaste= result[2]
+                    m2CorrWaste= result[3]
+                    print("Convwaste:" + str(m2ConvWaste))
+                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr})
 
                 print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
-
+                print(labels)
 
                 listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltrobodega=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPASILLO","FFW", "FFG" , "DRO" ,"TCY" ,"HCR", "WRD" ,"DIM", "TAB"]
@@ -242,7 +254,6 @@ class Command(BaseCommand):
 
                 for item in listafiltroentrada:
                     filtroentradaqs = filtroentradaqs | Q(DESTINATION=item)
-
 
                 for item in listafiltrosalida:
                     filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
@@ -297,7 +308,7 @@ class Command(BaseCommand):
 
 
                     #Filtro los que se fueron directo a picado desde corrugado
-                    filtro3=MovPallets.objects.filter( Q(DESTINATION="ZPICADO"), EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
+                    filtro3=MovPallets.objects.filter( Q(DESTINATION="ZPICADO"), EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker")| Q(SOURCE="CORR_Stacker_Waste")| Q(SOURCE="0001_Superior_Stacker_Waste")| Q(SOURCE="0001_Inferior_Stacker_Waste") )
 
 
                     cantidad1=filtro3.count()
@@ -364,8 +375,8 @@ class Command(BaseCommand):
 
                 #print(labels)
                 for dato in labels:
-                    #print(dato['cantidadIn'])
-                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2Conv=dato['m2Conv'], m2Corr=dato['m2Corr'])
+                    print(dato)
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2ConvWaste=dato['m2ConvWaste'],m2Conv=dato['m2Conv'],m2Corr=dato['m2Corr'])
                     o.save()
                     sleep(0.05)
 
@@ -381,7 +392,7 @@ class Command(BaseCommand):
                 for op in listaopgruacorr:
                     filtroopgruacorrqs = filtroopgruacorrqs | Q(OPERATORCODENAME=op)
 
-                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1017/Raul Ormeño", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "1025/Patricio  Chavez","1018/Daniel Saavedra", "1002/Carlos Paz", "1017/Raul Ormeño", "-","-"]
+                listaopgruaconv=["1003/Ignacio Molina", "1086/PATRICIO  CHAVEZ", "1114/Andres Aguilera", "1087/NIBALDO  LARA", "1025/Patricio  Chavez","1018/Daniel Saavedra", "1002/Carlos Paz", "1017/Raul Ormeño", "1078/EMILIO  BASTIAS","1007/Luis Gonzalez", "1076/OSCAR  TOLEDO", "-", "-", "-"]
                 filtroopgruaconvqs=Q()
                 for op in listaopgruaconv:
                     filtroopgruaconvqs = filtroopgruaconvqs | Q(OPERATORCODENAME=op)
@@ -427,14 +438,14 @@ class Command(BaseCommand):
                     movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
 
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "opcorr1":datosop[1][0], "movscorrop1":datosop[1][1], "opcorr2":datosop[2][0], "movscorrop2":datosop[2][1], "opcorr3":datosop[3][0], "movscorrop3":datosop[3][1], "opcorr4":datosop[4][0], "movscorrop4":datosop[4][1], "opcorr5":datosop[5][0], "movscorrop5":datosop[5][1], "opcorr6":datosop[6][0], "movscorrop6":datosop[6][1], "opcorr7":datosop[7][0], "movscorrop7":datosop[7][1], "opconv1":datosopB[1][0], "movsconvop1":datosopB[1][1], "opconv2":datosopB[2][0], "movsconvop2":datosopB[2][1], "opconv3":datosopB[3][0], "movsconvop3":datosopB[3][1], "opconv4":datosopB[4][0], "movsconvop4":datosopB[4][1], "opconv5":datosopB[5][0], "movsconvop5":datosopB[5][1], "opconv6":datosopB[6][0], "movsconvop6":datosopB[6][1], "opconv7":datosopB[7][0], "movsconvop7":datosopB[7][1], "opconv8":datosopB[8][0], "movsconvop8":datosopB[8][1], "opconv9":datosopB[9][0], "movsconvop9":datosopB[9][1], "opconv10":datosopB[10][0], "movsconvop10":datosopB[10][1]})
+                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2, "opcorr1":datosop[1][0], "movscorrop1":datosop[1][1], "opcorr2":datosop[2][0], "movscorrop2":datosop[2][1], "opcorr3":datosop[3][0], "movscorrop3":datosop[3][1], "opcorr4":datosop[4][0], "movscorrop4":datosop[4][1], "opcorr5":datosop[5][0], "movscorrop5":datosop[5][1], "opcorr6":datosop[6][0], "movscorrop6":datosop[6][1], "opcorr7":datosop[7][0], "movscorrop7":datosop[7][1], "opconv1":datosopB[1][0], "movsconvop1":datosopB[1][1], "opconv2":datosopB[2][0], "movsconvop2":datosopB[2][1], "opconv3":datosopB[3][0], "movsconvop3":datosopB[3][1], "opconv4":datosopB[4][0], "movsconvop4":datosopB[4][1], "opconv5":datosopB[5][0], "movsconvop5":datosopB[5][1], "opconv6":datosopB[6][0], "movsconvop6":datosopB[6][1], "opconv7":datosopB[7][0], "movsconvop7":datosopB[7][1], "opconv8":datosopB[8][0], "movsconvop8":datosopB[8][1], "opconv9":datosopB[9][0], "movsconvop9":datosopB[9][1], "opconv10":datosopB[10][0], "movsconvop10":datosopB[10][1], "opconv11":datosopB[11][0], "movsconvop11":datosopB[11][1], "opconv12":datosopB[12][0], "movsconvop12":datosopB[12][1], "opconv13":datosopB[13][0], "movsconvop13":datosopB[13][1], "opconv14":datosopB[14][0], "movsconvop14":datosopB[14][1]})
 
                 print("datos obtenidos correctamente")
                 #print(datosopB)
                 #print(datosop[1][0])
                 for dato in labels2:
                     #print(dato['cantidadIn'])
-                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],opcorr1=dato['opcorr1'],movscorrop1=dato['movscorrop1'],opcorr2=dato['opcorr2'],movscorrop2=dato['movscorrop2'],opcorr3=dato['opcorr3'],movscorrop3=dato['movscorrop3'],opcorr4=dato['opcorr4'],movscorrop4=dato['movscorrop4'],opcorr5=dato['opcorr5'],movscorrop5=dato['movscorrop5'],opcorr6=dato['opcorr6'],movscorrop6=dato['movscorrop6'],opcorr7=dato['opcorr7'],movscorrop7=dato['movscorrop7'],opconv1=dato['opconv1'],movsconvop1=dato['movsconvop1'],opconv2=dato['opconv2'],movsconvop2=dato['movsconvop2'],opconv3=dato['opconv3'],movsconvop3=dato['movsconvop3'],opconv4=dato['opconv4'],movsconvop4=dato['movsconvop4'],opconv5=dato['opconv5'],movsconvop5=dato['movsconvop5'],opconv6=dato['opconv6'],movsconvop6=dato['movsconvop6'],opconv7=dato['opconv7'],movsconvop7=dato['movsconvop7'],opconv8=dato['opconv8'],movsconvop8=dato['movsconvop8'],opconv9=dato['opconv9'],movsconvop9=dato['movsconvop9'],opconv10=dato['opconv10'],movsconvop10=dato['movsconvop10'])
+                    o = Datos_MovPallets_B.objects.create(programa=foto,fechaini=dato['fechaini'],fechafin=dato['fechafin'],label=dato['label'],movscorr1=dato["movscorr1"],movscorr2=dato['movscorr2'],movsconv1=dato['movsconv1'],movsconv2=dato['movsconv2'],opcorr1=dato['opcorr1'],movscorrop1=dato['movscorrop1'],opcorr2=dato['opcorr2'],movscorrop2=dato['movscorrop2'],opcorr3=dato['opcorr3'],movscorrop3=dato['movscorrop3'],opcorr4=dato['opcorr4'],movscorrop4=dato['movscorrop4'],opcorr5=dato['opcorr5'],movscorrop5=dato['movscorrop5'],opcorr6=dato['opcorr6'],movscorrop6=dato['movscorrop6'],opcorr7=dato['opcorr7'],movscorrop7=dato['movscorrop7'],opconv1=dato['opconv1'],movsconvop1=dato['movsconvop1'],opconv2=dato['opconv2'],movsconvop2=dato['movsconvop2'],opconv3=dato['opconv3'],movsconvop3=dato['movsconvop3'],opconv4=dato['opconv4'],movsconvop4=dato['movsconvop4'],opconv5=dato['opconv5'],movsconvop5=dato['movsconvop5'],opconv6=dato['opconv6'],movsconvop6=dato['movsconvop6'],opconv7=dato['opconv7'],movsconvop7=dato['movsconvop7'],opconv8=dato['opconv8'],movsconvop8=dato['movsconvop8'],opconv9=dato['opconv9'],movsconvop9=dato['movsconvop9'],opconv10=dato['opconv10'],movsconvop10=dato['movsconvop10'],opconv11=dato['opconv11'],movsconvop11=dato['movsconvop11'],opconv12=dato['opconv12'],movsconvop12=dato['movsconvop12'],opconv13=dato['opconv13'],movsconvop13=dato['movsconvop13'],opconv14=dato['opconv14'],movsconvop14=dato['movsconvop14'])
                     o.save()
                     sleep(0.05)
 

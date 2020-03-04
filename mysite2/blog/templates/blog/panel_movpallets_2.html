@@ -45,6 +45,14 @@
     <td  style='font-size: 50px;' id="ratiobalance2B">.</td>
   </tr>
 
+
+  <tr>
+    <td>Ratio Out/In declarado</td>
+    </tr>
+  <tr >
+    <td  style='font-size: 50px;' id="ratiobalance3B">.</td>
+  </tr>
+
 </table>
 </td>
 
@@ -61,11 +69,12 @@
   <table align="center">
 
     <tr style='text-align: center;' bgcolor="#D3D3D3">
-      <td style="width:150px;"><h4>Semana</h4></td>
-        <td style='width:150px; font-size: 25px;' id="sem1"></td>
-        <td style='width:150px; font-size: 25px;' id="sem2"></td>
+      <td style="width:180px;"><h4>Semana</h4></td>
+        <td style='width:150px; font-size: 25px;'id="sem1"></td>
+        <td style='width:150px; font-size: 25px;'id="sem2"></td>
         <td style='width:150px; font-size: 25px;'id="sem3"></td>
         <td style='width:150px; font-size: 30px;'id="sem4"></td>
+        <td style='width:150px; font-size: 30px;'id="sem5"></td>
 
 
 
@@ -74,12 +83,13 @@
 
     <tr style='text-align: center;'>
 
-      <td style="width:150px;"><h4> Tasa carga<br>(Mm2/hora) </h4></td>
+      <td style="width:200px;"><h4>Cargado a camión<br>(Mm2) </h4></td>
 
       <td style='font-size: 25px;'id="prod1"></td>
       <td style='font-size: 25px;'id="prod2"></td>
-        <td style='font-size: 25px;'id="prod3"></td>
-        <td style='font-size: 30px;'id="prod4"></td>
+      <td style='font-size: 25px;'id="prod3"></td>
+      <td style='font-size: 25px;'id="prod4"></td>
+      <td style='font-size: 30px;'id="prod5"></td>
 
 
 
@@ -87,13 +97,14 @@
 
     </tr>
     <tr style='text-align: center;'>
-      <td style="width:150px;"><h4> Antiguedad <br>PLL carga<br>(días) </h4></td>
+      <td style="width:200px;"><h4>Días bodega<br>pll despachados<br>(días) </h4></td>
 
 
-        <td style='font-size: 25px;'id="ant1"></td>
+      <td style='font-size: 25px;'id="ant1"></td>
       <td style='font-size: 25px;'id="ant2"></td>
       <td style='font-size: 25px;'id="ant3"></td>
-      <td style='font-size: 30px;'id="ant4"></td>
+      <td style='font-size: 25px;'id="ant4"></td>
+      <td style='font-size: 30px;'id="ant5"></td>
 
 
 
@@ -101,12 +112,13 @@
     </tr>
     <tr style='text-align: center;'>
 
-<td style="width:150px;"><h4> Peak stock<br> (Mm2)</h4></td>
+<td style="width:180px;"><h4> Ratio Out/In<br> (%)</h4></td>
 
       <td style='font-size: 25px;'id="peak1"></td>
       <td style='font-size: 25px;'id="peak2"></td>
       <td style='font-size: 25px;'id="peak3"></td>
-        <td style='font-size: 30px;'id="peak4"></td
+      <td style='font-size: 25px;'id="peak4"></td>
+      <td style='font-size: 30px;'id="peak5"></td>
 
     </tr>
 
@@ -189,34 +201,45 @@ function datosinv(){
       var ant4 = document.getElementById("ant4");//.getElementsByTagName("td");
       var peak4 = document.getElementById("peak4");//.getElementsByTagName("td");
 
+      var sem5 = document.getElementById("sem5");//.getElementsByTagName("td");
+      var prod5 = document.getElementById("prod5");//.getElementsByTagName("td");
+      var ant5 = document.getElementById("ant5");//.getElementsByTagName("td");
+      var peak5 = document.getElementById("peak5");//.getElementsByTagName("td");
+
 
 
       sem1.innerHTML= String(labels3[0]["semana1"])
-      prod1.innerHTML=  (labels3[0]["producsem1"]/1000).toFixed(1)
+      prod1.innerHTML=  (labels3[0]["producsem1"]).toFixed(0)
       ant1.innerHTML=  (labels3[0]["antiguedadsem1"]).toFixed(1)
-      peak1.innerHTML= (labels3[0]["peakstock1"]).toFixed(1)
+      peak1.innerHTML= (labels3[0]["peakstock1"]).toFixed(1)+ "%"
 
 
       sem2.innerHTML= String(labels3[0]["semana2"])
-      prod2.innerHTML=  (labels3[0]["producsem2"]/1000).toFixed(1)
+      prod2.innerHTML=  (labels3[0]["producsem2"]).toFixed(0)
       ant2.innerHTML=  (labels3[0]["antiguedadsem2"]).toFixed(1)
-      peak2.innerHTML= (labels3[0]["peakstock2"]).toFixed(1)
+      peak2.innerHTML= (labels3[0]["peakstock2"]).toFixed(1)+ "%"
 
 
       sem3.innerHTML= String(labels3[0]["semana3"])
-      prod3.innerHTML=  (labels3[0]["producsem3"]/1000).toFixed(1)
+      prod3.innerHTML=  (labels3[0]["producsem3"]).toFixed(0)
       ant3.innerHTML=  (labels3[0]["antiguedadsem3"]).toFixed(1)
-      peak3.innerHTML= (labels3[0]["peakstock3"]).toFixed(1)
+      peak3.innerHTML= (labels3[0]["peakstock3"]).toFixed(1)+ "%"
 
 
       sem4.innerHTML= String(labels3[0]["semana4"])
-      prod4.innerHTML=  (labels3[0]["producsem4"]/1000).toFixed(1)
+      prod4.innerHTML= (labels3[0]["producsem4"]).toFixed(0)
       ant4.innerHTML=  (labels3[0]["antiguedadsem4"]).toFixed(1)
-      peak4.innerHTML= (labels3[0]["peakstock4"]).toFixed(1)
+      peak4.innerHTML= (labels3[0]["peakstock4"]).toFixed(1)+ "%"
+
+      sem5.innerHTML= String(labels3[0]["semana5"])
+      prod5.innerHTML= (labels3[0]["producsem5"]).toFixed(0)
+      ant5.innerHTML=  (labels3[0]["antiguedadsem5"]).toFixed(1)
+      peak5.innerHTML= (labels3[0]["peakstock5"]).toFixed(1) + "%"
 
 
       var ratioB = document.getElementById("ratiobalanceB");//.getElementsByTagName("td");
       var ratio2B = document.getElementById("ratiobalance2B");//
+      var ratio3B = document.getElementById("ratiobalance3B");//
       //Aquí calculo el ratio ratiobalance
 
       sumain=0
@@ -236,6 +259,7 @@ function datosinv(){
 
       ratioB.innerHTML= String((sumain/1000).toFixed(0))+"Mm2"
       ratio2B.innerHTML= String((sumaout/1000).toFixed(0))+"Mm2"
+      ratio3B.innerHTML= String( (100*sumaout/sumain).toFixed(1) )+"%"
 
 
 
@@ -377,6 +401,7 @@ function setChart5(){
   opbpt11x=[]
   opbpt12x=[]
   opbpt13x=[]
+  opbpt14x=[]
 
 
 
@@ -393,6 +418,7 @@ function setChart5(){
   movsopbpt11x=[]
   movsopbpt12x=[]
   movsopbpt13x=[]
+  movsopbpt14x=[]
 
 
 
@@ -415,6 +441,7 @@ function setChart5(){
         movsopbpt11x.push((labels2[i]["movsopbpt11"]).toFixed(1));
         movsopbpt12x.push((labels2[i]["movsopbpt12"]).toFixed(1));
         movsopbpt13x.push((labels2[i]["movsopbpt13"]).toFixed(1));
+        movsopbpt14x.push((labels2[i]["movsopbpt14"]).toFixed(1));
 
 
       }
@@ -507,7 +534,7 @@ function setChart5(){
           {
             label: labels2[0]["opbpt10"],
             data: movsopbpt10x,
-            backgroundColor: "rgba(43,40,250)",
+            backgroundColor: "rgba(43,0,230)",
             stack: 'stack 0',
             borderWidth: 0,
           }
@@ -532,6 +559,14 @@ function setChart5(){
             label: labels2[0]["opbpt13"],
             data: movsopbpt13x,
             backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt14"],
+            data: movsopbpt14x,
+            backgroundColor: "rgba(120,60,90)",
             stack: 'stack 0',
             borderWidth: 0,
           }

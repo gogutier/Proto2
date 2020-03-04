@@ -15,29 +15,32 @@
 
 
 <table>
+	<!--
 <tr>
   <td style="text-align: center; padding:0; margin:0; "> {% qr_from_text patenteqr size="L" %}</td>
 </tr>
 <tr>
   <td style="text-align: center"><h4 class="txtUpsideDown">____{{camiones.Patente}}_____</h4></td>
 </tr>
+
+-->
 <tr>
   <td style="text-align: center; padding:0; margin:0;">{% qr_from_text infoqr size="M" %}</td>
 </tr>
 <tr>
     <td style="text-align: center; padding:0; margin:0;">{{camiones.Chofer}}
 
-    </br>
+    <br>
 
-    {{camiones.Rut}}
+    Rut: {{camiones.Rut}}
 
-    </br>
+    <br>
 
-    {{camiones.Telefono}}
+    Fono: {{camiones.Telefono}}
 
-    </br>
+    <br>
 
-    {{camiones.Transportista}}</td>
+    Empresa: {{camiones.Transportista}}</td>
 </tr>
 </table>
 

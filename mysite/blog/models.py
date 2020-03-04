@@ -183,7 +183,6 @@ class Foto_Datos_MovPallets(models.Model):
 
 class Datos_MovPallets(models.Model):
 
-
     programa=models.ForeignKey('blog.Foto_Datos_MovPallets', related_name='foto_datosmovpallet', on_delete=models.CASCADE, default=0)
 
     fecha=models.DateTimeField(blank=False, default=datetime.datetime.now())
@@ -200,8 +199,10 @@ class Datos_MovPallets(models.Model):
     m2Out=models.FloatField(default=0)
     m2Conv=models.FloatField(default=0)
     m2Corr=models.FloatField(default=0)
-    m2EntregadoAConv =models.FloatField(default=0)
-    m2DeConvAPicado =models.FloatField(default=0)
+    m2ConvWaste=models.FloatField(default=0)
+    m2CorrWaste=models.FloatField(default=0)
+    m2EntregadoAConv=models.FloatField(default=0)
+    m2DeConvAPicado=models.FloatField(default=0)
 
 
     def __str__(self):
@@ -239,7 +240,6 @@ class Datos_MovPallets_B(models.Model):
     movscorrop7=models.IntegerField(default=0)
 
 
-
     opconv1=models.CharField(max_length=26, blank=False, default="0")
     movsconvop1=models.IntegerField(default=0)
 
@@ -270,6 +270,17 @@ class Datos_MovPallets_B(models.Model):
     opconv10=models.CharField(max_length=26, blank=False, default="0")
     movsconvop10=models.IntegerField(default=0)
 
+    opconv11=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop11=models.IntegerField(default=0)
+
+    opconv12=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop12=models.IntegerField(default=0)
+
+    opconv13=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop13=models.IntegerField(default=0)
+
+    opconv14=models.CharField(max_length=26, blank=False, default="0")
+    movsconvop14=models.IntegerField(default=0)
 
 
 

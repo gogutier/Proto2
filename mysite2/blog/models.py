@@ -279,6 +279,22 @@ class Datos_MovPallets_B(models.Model):
     opbpt14=models.CharField(max_length=26, blank=False, default="0")
     movsopbpt14=models.IntegerField(default=0)
 
+    movsopbptIN1=models.IntegerField(default=0)
+    movsopbptIN2=models.IntegerField(default=0)
+    movsopbptIN3=models.IntegerField(default=0)
+    movsopbptIN4=models.IntegerField(default=0)
+    movsopbptIN5=models.IntegerField(default=0)
+    movsopbptIN6=models.IntegerField(default=0)
+    movsopbptIN7=models.IntegerField(default=0)
+    movsopbptIN8=models.IntegerField(default=0)
+    movsopbptIN9=models.IntegerField(default=0)
+    movsopbptIN10=models.IntegerField(default=0)
+    movsopbptIN11=models.IntegerField(default=0)
+    movsopbptIN12=models.IntegerField(default=0)
+    movsopbptIN13=models.IntegerField(default=0)
+    movsopbptIN14=models.IntegerField(default=0)
+
+
 
     def __str__(self):
         return (str(self.label))
@@ -312,6 +328,11 @@ class Datos_MovPallets_C(models.Model):
     producsem4= models.FloatField(default=0)
     antiguedadsem4= models.FloatField(default=0)
     peakstock4= models.FloatField(default=0)
+
+    semana5=models.IntegerField(default=0)
+    producsem5= models.FloatField(default=0)
+    antiguedadsem5= models.FloatField(default=0)
+    peakstock5= models.FloatField(default=0)
 
 
     def __str__(self):

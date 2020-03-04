@@ -64,7 +64,8 @@
 
   <h3>Detalle 24h</h3>
 
-<canvas id="myChart2" style="position: relative; height:150px; width:800px" ></canvas>
+  <canvas id="myChart4"  style="width:1000px"></canvas>
+
 
 </div>
 
@@ -74,7 +75,9 @@
 
 <div class="container">
 
-<canvas id="myChart4"  style="width:1000px"></canvas>
+
+<canvas id="myChart2" style="position: relative; height:150px; width:800px" ></canvas>
+
 
 </div>
 
@@ -472,80 +475,6 @@ function setChart4(){
 
   //generando list de labels
   labelx=[]
-  movsconv1=[]
-
-
-
-  for (var i = 0; i < labels2.length; i++)
-      {
-        labelx.push(labels2[i]["label"]);
-
-        movsconv1.push((labels2[i]["movsconv1"]).toFixed(1));
-
-      }
-
-  var ctx = document.getElementById("myChart4").getContext('2d');
-  var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-            labels: labelx,
-            datasets: [
-
-            {
-
-            label: "Movimientos a calles de BPT",
-            data: movsconv1,
-            borderColor: "rgba(100,100,150)",
-            backgroundColor: "rgba(100,100,150)",
-            stack: 'stack 0',
-            borderWidth: 0,
-
-
-            }]
-      },
-      options: {
-          title:{
-            display:true,
-            responsive:true,
-            hoverMode:true,
-            text:"Movimiento Pallets"
-          },
-          tooltips: {
-    mode: 'label',
-
-},
-          scales: {
-              xAxes: [{ stacked: true,
-                barPercentage: 0.95,
-                categoryPercentage: 0.5,
-               }],
-              yAxes: [{stacked: true,
-                      barPercentage: 1.0,
-                      categoryPercentage: 1.0,
-                  ticks: {
-                      autoSkip: false,
-                      beginAtZero:true,
-                      suggestedMin: 0,
-                      suggestedMax: 10
-                  }
-              }]
-          }
-      }
-  });
-
-}
-
-
-
-
-
-
-/////////////////////////////////////////
-
-function setChart5(){
-
-  //generando list de labels
-  labelx=[]
   opbpt1x=[]
   opbpt2x=[]
   opbpt3x=[]
@@ -559,22 +488,24 @@ function setChart5(){
   opbpt11x=[]
   opbpt12x=[]
   opbpt13x=[]
+  opbpt14x=[]
 
 
 
-  movsopbpt1x=[]
-  movsopbpt2x=[]
-  movsopbpt3x=[]
-  movsopbpt4x=[]
-  movsopbpt5x=[]
-  movsopbpt6x=[]
-  movsopbpt7x=[]
-  movsopbpt8x=[]
-  movsopbpt9x=[]
-  movsopbpt10x=[]
-  movsopbpt11x=[]
-  movsopbpt12x=[]
-  movsopbpt13x=[]
+  movsopbptIN1x=[]
+  movsopbptIN2x=[]
+  movsopbptIN3x=[]
+  movsopbptIN4x=[]
+  movsopbptIN5x=[]
+  movsopbptIN6x=[]
+  movsopbptIN7x=[]
+  movsopbptIN8x=[]
+  movsopbptIN9x=[]
+  movsopbptIN10x=[]
+  movsopbptIN11x=[]
+  movsopbptIN12x=[]
+  movsopbptIN13x=[]
+  movsopbptIN14x=[]
 
 
 
@@ -584,24 +515,25 @@ function setChart5(){
 
 
 
-        movsopbpt1x.push((labels2[i]["movsopbpt1"]).toFixed(1));
-        movsopbpt2x.push((labels2[i]["movsopbpt2"]).toFixed(1));
-        movsopbpt3x.push((labels2[i]["movsopbpt3"]).toFixed(1));
-        movsopbpt4x.push((labels2[i]["movsopbpt4"]).toFixed(1));
-        movsopbpt5x.push((labels2[i]["movsopbpt5"]).toFixed(1));
-        movsopbpt6x.push((labels2[i]["movsopbpt6"]).toFixed(1));
-        movsopbpt7x.push((labels2[i]["movsopbpt7"]).toFixed(1));
-        movsopbpt8x.push((labels2[i]["movsopbpt8"]).toFixed(1));
-        movsopbpt9x.push((labels2[i]["movsopbpt9"]).toFixed(1));
-        movsopbpt10x.push((labels2[i]["movsopbpt10"]).toFixed(1));
-        movsopbpt11x.push((labels2[i]["movsopbpt11"]).toFixed(1));
-        movsopbpt12x.push((labels2[i]["movsopbpt12"]).toFixed(1));
-        movsopbpt13x.push((labels2[i]["movsopbpt13"]).toFixed(1));
+        movsopbptIN1x.push((labels2[i]["movsopbptIN1"]).toFixed(1));
+        movsopbptIN2x.push((labels2[i]["movsopbptIN2"]).toFixed(1));
+        movsopbptIN3x.push((labels2[i]["movsopbptIN3"]).toFixed(1));
+        movsopbptIN4x.push((labels2[i]["movsopbptIN4"]).toFixed(1));
+        movsopbptIN5x.push((labels2[i]["movsopbptIN5"]).toFixed(1));
+        movsopbptIN6x.push((labels2[i]["movsopbptIN6"]).toFixed(1));
+        movsopbptIN7x.push((labels2[i]["movsopbptIN7"]).toFixed(1));
+        movsopbptIN8x.push((labels2[i]["movsopbptIN8"]).toFixed(1));
+        movsopbptIN9x.push((labels2[i]["movsopbptIN9"]).toFixed(1));
+        movsopbptIN10x.push((labels2[i]["movsopbptIN10"]).toFixed(1));
+        movsopbptIN11x.push((labels2[i]["movsopbptIN11"]).toFixed(1));
+        movsopbptIN12x.push((labels2[i]["movsopbptIN12"]).toFixed(1));
+        movsopbptIN13x.push((labels2[i]["movsopbptIN13"]).toFixed(1));
+        movsopbptIN14x.push((labels2[i]["movsopbptIN14"]).toFixed(1));
 
 
       }
 
-  var ctx = document.getElementById("myChart5").getContext('2d');
+  var ctx = document.getElementById("myChart4").getContext('2d');
   var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
@@ -610,7 +542,7 @@ function setChart5(){
 
             {
             label: labels2[0]["opbpt1"],
-            data: movsopbpt1x,
+            data: movsopbptIN1x,
             borderColor: "rgba(50,100,250)",
             backgroundColor: "rgba(50,100,250)",
             stack: 'stack 0',
@@ -619,7 +551,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt2"],
-            data: movsopbpt2x,
+            data: movsopbptIN2x,
             borderColor: "rgba(80,150,250)",
             backgroundColor: "rgba(80,150,250)",
             stack: 'stack 0',
@@ -628,7 +560,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt3"],
-            data: movsopbpt3x,
+            data: movsopbptIN3x,
 
             backgroundColor: "rgba(200,100,0)",
             stack: 'stack 0',
@@ -637,7 +569,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt4"],
-            data: movsopbpt4x,
+            data: movsopbptIN4x,
 
             backgroundColor: "rgba(200,190,100)",
             stack: 'stack 0',
@@ -646,7 +578,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt5"],
-            data: movsopbpt5x,
+            data: movsopbptIN5x,
 
             backgroundColor: "rgba(100,200,150)",
             stack: 'stack 0',
@@ -655,7 +587,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt6"],
-            data: movsopbpt6x,
+            data: movsopbptIN6x,
 
             backgroundColor: "rgba(150,200,100)",
             stack: 'stack 0',
@@ -664,7 +596,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt7"],
-            data: movsopbpt7x,
+            data: movsopbptIN7x,
             backgroundColor: "rgba(150,60,150)",
             stack: 'stack 0',
             borderWidth: 0,
@@ -672,7 +604,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt8"],
-            data: movsopbpt8x,
+            data: movsopbptIN8x,
             backgroundColor: "rgba(10,60,30)",
             stack: 'stack 0',
             borderWidth: 0,
@@ -680,7 +612,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt9"],
-            data: movsopbpt9x,
+            data: movsopbptIN9x,
             backgroundColor: "rgba(150,220,50)",
             stack: 'stack 0',
             borderWidth: 0,
@@ -688,15 +620,15 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt10"],
-            data: movsopbpt10x,
-            backgroundColor: "rgba(43,40,250)",
+            data: movsopbptIN10x,
+            backgroundColor: "rgba(43,0,230)",
             stack: 'stack 0',
             borderWidth: 0,
           }
           ,
           {
             label: labels2[0]["opbpt11"],
-            data: movsopbpt11x,
+            data: movsopbptIN11x,
             backgroundColor: "rgba(230,60,10)",
             stack: 'stack 0',
             borderWidth: 0,
@@ -704,7 +636,7 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt12"],
-            data: movsopbpt12x,
+            data: movsopbptIN12x,
             backgroundColor: "rgba(90,120,50)",
             stack: 'stack 0',
             borderWidth: 0,
@@ -712,8 +644,16 @@ function setChart5(){
           ,
           {
             label: labels2[0]["opbpt13"],
-            data: movsopbpt13x,
+            data: movsopbptIN13x,
             backgroundColor: "rgba(150,60,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opbpt14"],
+            data: movsopbptIN14x,
+            backgroundColor: "rgba(120,60,90)",
             stack: 'stack 0',
             borderWidth: 0,
           }
@@ -729,7 +669,7 @@ function setChart5(){
             display:true,
             responsive:true,
             hoverMode:true,
-            text:"Movimientos desde stacker Corrugado"
+            text:"Movimientos a calles BPT"
           },
           tooltips: {
             mode: 'label',
@@ -754,6 +694,13 @@ function setChart5(){
   });
 
 }
+
+
+
+
+
+
+
 
 
 

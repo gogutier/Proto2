@@ -174,7 +174,7 @@ function datosinv(){
       //console.log(prueba['prueba2']['B'])
       //console.log(m2total)
       //console.log(npalletstotal)
-      console.log(labels2)
+      console.log(labels)
 
       var ratio = document.getElementById("ratiobalance");//.getElementsByTagName("td");
       var ratio2 = document.getElementById("ratiobalance2");//
@@ -201,13 +201,12 @@ function datosinv(){
       for (var i = 0; i < labels.length-3; i++)
           {
 
-            if (labels[i]["m2Corr"]>0)
-            {
+
               diastrabajados+=1
               totcorrugado+=labels[i]["m2Corr"]
 
               suma+=(labels[i]["m2In"]+labels[i]["m2DirectoConv"]+labels[i]["m2CorrPicado"])
-            }
+
 
           }
 
@@ -247,14 +246,14 @@ function datosinv(){
       for (var i = 0; i < labels.length-3; i++)
           {
 
-            if (labels[i]["m2Conv"]>0)
-            {
+
+
               diastrabajados+=1
-              totconv+=Math.min(labels[i]["m2Conv"],350000)
+              totconv+=labels[i]["m2Conv"]+labels[i]["m2ConvWaste"]
 
               suma+=(labels[i]["m2EntregadoAConv"])
               sumapic+=(labels[i]["m2DeConvAPicado"])
-            }
+
 
           }
 
@@ -565,6 +564,7 @@ function setChart4(){
   m2DirectoConvx=[]
   m2CorrPicadox=[]
   m2Convx=[]
+  m2ConvWastex=[]
   m2Corrx=[]
   m2EntregadoAConvx=[]
 
@@ -577,6 +577,7 @@ function setChart4(){
         m2DirectoConvx.push((labels[i]["m2DirectoConv"]/1000).toFixed(1));
         m2CorrPicadox.push((labels[i]["m2CorrPicado"]/1000).toFixed(1));
         m2Convx.push(Math.min((labels[i]["m2Conv"]/1000),350).toFixed(1));
+        m2ConvWastex.push(Math.min((labels[i]["m2ConvWaste"]/1000),350).toFixed(1));
         m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
         m2EntregadoAConvx.push((labels[i]["m2EntregadoAConv"]/1000).toFixed(1));
       }
@@ -590,7 +591,7 @@ function setChart4(){
 
             {
 
-            label: "Mm2 Convertidos",
+            label: "Mm2 Convertidos Buenos",
             data: m2Convx,
 
             backgroundColor: "rgba(10,150,150)",
@@ -598,7 +599,21 @@ function setChart4(){
             borderWidth: 0,
 
 
-            },{
+            }
+            ,
+            {
+
+            label: "Mm2 Convertidos Malos",
+            data: m2ConvWastex,
+
+            backgroundColor: "rgba(190,100,100)",
+            stack: 'stack 0',
+            borderWidth: 0,
+
+
+            }
+
+            ,{
 
                     label: "Entregados a Conversión",
                     data: m2EntregadoAConvx,
@@ -662,6 +677,10 @@ function setChart5(){
   opconv8x=[]
   opconv9x=[]
   opconv10x=[]
+  opconv11x=[]
+  opconv12x=[]
+  opconv13x=[]
+  opconv14x=[]
 
 
 
@@ -675,6 +694,10 @@ function setChart5(){
   movsconvop8x=[]
   movsconvop9x=[]
   movsconvop10x=[]
+  movsconvop11x=[]
+  movsconvop12x=[]
+  movsconvop13x=[]
+  movsconvop14x=[]
 
 
 
@@ -694,6 +717,10 @@ function setChart5(){
         movsconvop8x.push((labels2[i]["movsconvop8"]).toFixed(1));
         movsconvop9x.push((labels2[i]["movsconvop9"]).toFixed(1));
         movsconvop10x.push((labels2[i]["movsconvop10"]).toFixed(1));
+        movsconvop11x.push((labels2[i]["movsconvop11"]).toFixed(1));
+        movsconvop12x.push((labels2[i]["movsconvop12"]).toFixed(1));
+        movsconvop13x.push((labels2[i]["movsconvop13"]).toFixed(1));
+        movsconvop14x.push((labels2[i]["movsconvop14"]).toFixed(1));
 
       }
 
@@ -785,11 +812,42 @@ function setChart5(){
           {
             label: labels2[0]["opconv10"],
             data: movsconvop10x,
+            backgroundColor: "rgba(120,80,130)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv11"],
+            data: movsconvop11x,
+            backgroundColor: "rgba(133,32,140)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv12"],
+            data: movsconvop12x,
+            backgroundColor: "rgba(100,134,11)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv13"],
+            data: movsconvop13x,
+            backgroundColor: "rgba(34,200,150)",
+            stack: 'stack 0',
+            borderWidth: 0,
+          }
+          ,
+          {
+            label: labels2[0]["opconv14"],
+            data: movsconvop14x,
             backgroundColor: "rgba(233,0,150)",
             stack: 'stack 0',
             borderWidth: 0,
           }
-
             ]
       },
       options: {
