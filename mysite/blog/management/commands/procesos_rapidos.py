@@ -269,12 +269,13 @@ class Command(BaseCommand):
                     #Entradas
                     filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
 
-                    cantidad1=filtro.count()
+                    cantidad1=0
                     #sumo los m2 asociados a cada pallets
                     m2tot=0
                     for mov in filtro:
                         #checkeo si la fecha de creación de ese pallet es igual o posterior que el turno que estoy analizando (después se puede agregar la fecha de creación del pallet al movpallet)
                         if Pallet.objects.filter(tarja=mov.LOADID).count() >0:
+                            cantidad1+=1
                             filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
                             print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
                             if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
@@ -290,11 +291,13 @@ class Command(BaseCommand):
                     filtro2=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
 
 
-                    cantidad1=filtro2.count()
+                    cantidad1=0
+
                     #sumo los m2 asociados a cada pallets
                     m2tot=0
                     for mov in filtro2:
                         #print(str(mov) + ".." + str(mov.LOADID) )
+                        cantidad1+=1
 
                         filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
                         print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
@@ -311,12 +314,12 @@ class Command(BaseCommand):
                     filtro3=MovPallets.objects.filter( Q(DESTINATION="ZPICADO"), EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker")| Q(SOURCE="CORR_Stacker_Waste")| Q(SOURCE="0001_Superior_Stacker_Waste")| Q(SOURCE="0001_Inferior_Stacker_Waste") )
 
 
-                    cantidad1=filtro3.count()
+                    cantidad1=0
                     #sumo los m2 asociados a cada pallets
                     m2tot=0
                     for mov in filtro3:
                         #print(str(mov) + ".." + str(mov.LOADID) )
-
+                        cantidad1+=1
                         filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
                         print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
                         if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
@@ -331,10 +334,11 @@ class Command(BaseCommand):
 
                     #Salidas
                     filtro=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).exclude(filtrosalidaexcludeqs)
-                    cantidad1=filtro.count()
+                    cantidad1=0
                     #sumo los m2 asociados a cada pallet
                     m2tot=0
                     for mov in filtro:
+                        cantidad1+=1
                         m2tot=m2tot+mov.m2pallet
 
 
@@ -345,10 +349,11 @@ class Command(BaseCommand):
 
 
                     filtro=MovPallets.objects.filter(Q(DESTINATION="HCR") | Q(DESTINATION="TCY") | Q(DESTINATION="WRD") | Q(DESTINATION="FFG") | Q(DESTINATION="FFW") | Q(DESTINATION="DRO") | Q(DESTINATION="DIM"), EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"])
-                    cantidad1=filtro.count()
+                    cantidad1=0
                     #sumo los m2 asociados a cada pallet
                     m2tot=0
                     for mov in filtro:
+                        cantidad1+=1
                         m2tot=m2tot+mov.m2pallet
 
                     labels[i]["m2EntregadoAConv"]= m2tot
@@ -357,12 +362,12 @@ class Command(BaseCommand):
                     #Filtro de bodega a Picado
 
                     filtro=MovPallets.objects.filter(filtrobodegaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter(DESTINATION="ZPICADO")
-                    cantidad1=filtro.count()
+                    cantidad1=0
                     #sumo los m2 asociados a cada pallet
                     m2tot=0
                     for mov in filtro:
                         m2tot=m2tot+mov.m2pallet
-
+                        cantidad1+=1
                     labels[i]["m2DeConvAPicado"]= m2tot
 
 
