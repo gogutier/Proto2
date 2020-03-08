@@ -3,13 +3,16 @@ import mechanicalsoup
 import argparse
 from getpass import getpass
 
+from datetime import datetime, timedelta
+from time import time, sleep
+
 #parser = argparse.ArgumentParser(description="Interlink.")
 #parser.add_argument("username")
 #args = parser.parse_args()
 
 #args.password = getpass("Please enter your Interlink password: ")
 
-def webscrap_wip():
+def webscrap_wip(maq, fini, ffin):
 
 
     browser = mechanicalsoup.StatefulBrowser(
@@ -53,25 +56,60 @@ def webscrap_wip():
 
     #Falta hacer que selecciones la opción 800 en plant y luego apriete la el form submit, esto en el explorador al parecer lo hace solo (script?)
 
-
-    browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedDowntime?StationLink=2&StartDate=2020-02-04&EndDate=2020-3-2+23%3A59")
+    #Acá es donde tengo que ingresar lo parámetros: Máquina a consultar y Rango de fechas.
+    maquina=str(maq)
+    fechaini=fini.strftime("%Y-%m-%d+%H:%M")
+    fechafin=ffin.strftime("%Y-%m-%d+%H:%M")
+    browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedDowntime?StationLink="+maquina+"&StartDate="+fechaini+"&EndDate="+fechafin)
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedRWU?dateFrom=2019-08-01+00%3A00&dateTo=2019-8-16+23%3A59")
 
 
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/ExtendedTransCar?MachineLink=0&PlantLink=1")
     #browser.open("http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusCorrplan?%21+link=OpMachineLink+in%282%2C+4%2C+27%2C+5%2C+12%2C+11%29%29&order+by=DueDateTime%2COrderID")
-    browser.launch_browser()
+    #browser.launch_browser()
 
 
 
-    print(browser.get_current_page().text)
-    pagetxt  = browser.get_current_page().text
+    page= browser.get_current_page()
+
+    table = page.find(lambda tag: tag.name=='table' and tag.has_attr('id') and tag['id']=="dataTable")
+    #rows = table.findAll(lambda tag: tag.name=='tbody')
+    rows = table.findAll(lambda tag: tag.name=='tr')# and tag.has_attr('class') and tag['class']=="C60")
+    tabla=[]
+    tabla2=[]
+    for row in rows[1:]:
+        fila=[]
+        cols = row.findAll(lambda tag: tag.name=='td')
+        '''
+        #if 'bgcolor' in tr.attrs and tr.attrs['bgcolor']=='#CEE3F6':
+        if 'bgcolor' in row.attrs:# and tr.attrs['bgcolor']=='#CEE3F6':
+            #print(row.attrs['bgcolor'])
+            fila.append(row.attrs['bgcolor'])
+        else:
+            fila.append("#0")
+        '''
+
+        for col in cols:
+            #print(col.text)
+            fila.append(col.text)
+
+        tabla.append(fila)
+    #print(tabla)
+
+    #ahora borro las filas que sean del tipio Scheduled:
+    for fila in tabla:
+
+        if fila[4]=="Scheduled":
+          tabla.remove(fila)
 
 
 
-    resultado=[]
+    return(tabla)
 
-
-    return(resultado)
-
-print(webscrap_wip())
+'''
+fechaini=datetime.strptime("02-03-2020 07:00:00", "%d-%m-%Y %H:%M:%S")
+fechafin=datetime.strptime("02-04-2020 07:00:00", "%d-%m-%Y %H:%M:%S")
+maq=4
+for fila in webscrap_wip(maq,fechaini,fechafin):
+    print(fila)
+'''

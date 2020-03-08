@@ -24,9 +24,87 @@ import xlrd
 from openpyxl.workbook import Workbook
 from openpyxl.reader.excel import load_workbook, InvalidFileException
 from excel_utils import WriteToExcel
+from excel_utils import WriteToExcel2
+import pruebawebscrapdowntime
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+
+@csrf_exempt
+def get_data_busqueda_improductivos(request, *args, **kwargs):
+
+        #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+
+        fechainicio=datetime.strptime(request.POST['fechainicio'], "%Y-%m-%d")
+        fechafin=datetime.strptime(request.POST['fechafin'], "%Y-%m-%d")
+        maquina=int(request.POST['maquina'])
+        prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
+
+        resultado= pruebawebscrapdowntime.webscrap_wip(maquina, fechainicio, fechafin)
+
+        #print(resultado)
+
+
+
+        data = {
+        "resultado":list(resultado),
+
+
+        }
+        print("Enviando datos improductivos")
+        return JsonResponse(data)#http response con el datatype de JS
+
+def busqueda_improductivos(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/busqueda_improductivos.html'
+
+    if (request.method == "POST"):
+        if 'excel' in request.POST:
+            print("Recibiendo respuesta excel en POST")
+            fechainicio=datetime.strptime(request.POST['fechainicio'], "%Y-%m-%d")
+            fechafin=datetime.strptime(request.POST['fechafin'], "%Y-%m-%d")
+            maquina=int(request.POST['maquina'])
+
+
+            resultado= pruebawebscrapdowntime.webscrap_wip(maquina, fechainicio, fechafin)
+
+            maq=""
+            if maquina==1:
+                maq="Corrugado"
+            if maquina==2:
+                maq="FFG"
+            if maquina==5:
+                maq="DRO"
+            if maquina==27:
+                maq="FFW"
+            if maquina==12:
+                maq="WRD"
+            if maquina==11:
+                maq="HCR"
+            if maquina==4:
+                maq="TCY"
+
+
+            datosinv = list(resultado)
+            town = None
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=Report.xlsx'
+            xlsx_data = WriteToExcel2(datosinv, maq)
+            response.write(xlsx_data)
+            return response
+
+
+
+    return render(request, template_name, {})#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
+
+
+
+
+
 
 def panel_consumos_conv_efi(request):
     #print("cargando datos wip")
@@ -355,7 +433,7 @@ def open_xls_as_xlsx(filename):
 def up_excel(request):
     if "GET" == request.method:
         return render(request, 'blog/up_excel.html', {})
-    else:
+    else :
         excel_file1 = request.FILES["excel_file"]
 
         # you may put validations here to check extension or file size
@@ -396,7 +474,7 @@ def panel_inv_ciclico(request):
     if request.method == "POST":
 
         if 'excel' not in request.POST:
-            print("Recibiendo respuesta excel en POST")
+
             #Crea una nueva TomaInvCic.
             print("RECIBIENTO UN POST")
             o = TomaInvCic.objects.create()

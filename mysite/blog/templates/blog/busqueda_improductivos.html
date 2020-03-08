@@ -1,0 +1,202 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+
+<div class="container" style="padding:10px 10px;">
+<table class='table table-hover' id='table'>
+
+<tr style="text-align: center">
+  <td  colspan="6"><h3>Búsqueda tiempos improductivos</h3></td>
+  <td colspan="6">
+
+  <form method="POST">
+      {% csrf_token %}
+    Fecha inicio:
+    <input id="fechainicio" type="date" name="fechainicio">
+
+    <br>
+
+    Fecha fin:
+    <input id="fechafin" type="date" name="fechafin">
+    <br>
+
+    Máquina:
+
+    <select id="maquina" name="maquina">
+      <option value="1">Corrugado</option>
+      <option value="2">FFG</option>
+      <option value="5">DRO</option>
+      <option value="27">FFW</option>
+      <option value="12">WRD</option>
+      <option value="11">HCR</option>
+      <option value="4">TCY</option>
+    </select>
+
+    <td>
+
+
+      <button type="button" id="convert">Actualizar</button>
+      <br>
+      <br>
+      <button style='font-size: 18px; display: none;' type="submit" class="btn btn-default pull-right" id="excel" name="excel">Excel Report</button>
+
+    </td>
+
+    <!--
+    <div class="col-md-6">
+    </div>
+      -->
+
+
+  </form>
+
+  </td>
+
+
+
+
+</table>
+
+</div>
+
+<div class="row"   id="parsed_csv_list">
+</div>
+
+<script type="text/javascript">
+
+
+
+  var endpoint='/api/get_data_busqueda_improductivos/';
+
+
+  {% load staticfiles %}
+
+  function datosinv(){
+
+    console.log("iniciando ajax datos de búsqueda");
+
+    var fechainicio= $("#fechainicio").val()
+
+    var fechafin= $("#fechafin").val()
+    var maquina= $("#maquina").val()
+
+    $.ajax({
+        method: "POST",
+        url: endpoint,
+        data: {
+           fechainicio:fechainicio,//.getElementsByTagName("td");,
+           fechafin:fechafin,//.getElementsByTagName("td");,
+           maquina:maquina//.getElementsByTagName("td");,
+        },
+        success: function(response_data){
+
+          resultado = response_data.resultado;
+          console.log("respuesta recibida");
+          console.log(resultado)
+          displayHTMLTable();
+
+
+        },
+        error: function(error_data){
+          console.log("error en AJAX");
+          console.log(error_data);
+        }
+
+      })
+
+
+
+};
+
+
+
+  $("#convert").click(function()
+  {
+  datosinv()
+  var x = document.getElementById("excel");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  }
+
+  });
+
+
+
+  $('#cliente').keypress(function(e){
+    if(e.keyCode==13)
+    $('#convert').click();
+  });
+
+  $('#padron').keypress(function(e){
+    if(e.keyCode==13)
+    $('#convert').click();
+  });
+
+  $('#ID').keypress(function(e){
+    if(e.keyCode==13)
+    $('#convert').click();
+  });
+
+  function displayHTMLTable(){
+
+
+    console.log("generando tabla")
+
+    var table = "<table  class='table table-hover'  id='table' style='float: left;' >";
+
+
+
+      table+= "<tr style='text-align: center'>";
+
+        table+= "<td >Turno</td>";
+        table+= "<td>Fecha Inicio</td>";
+        table+= "<td >Fecha Fin</td>";
+        table+= "<td >Descripción</td>";
+        table+= "<td >Tipo</td>";
+        table+= "<td >Categoría</td>";
+        table+= "<td >Duración</td>";
+
+
+      table+= "</tr>";
+
+      for (var key in resultado){
+
+        table+= "<tr style='text-align: center'>";
+
+            table+= "<td>";
+            table+= (resultado[key][0]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][1]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][2]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][3]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][4]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][5]);
+            table+= "</td>";
+            table+= "<td >";
+            table+= (resultado[key][6]);
+            table+= "</td>";
+            //moment(myTable.rows[i].cells[6].innerHTML, "DD-MM-YYYY HH:mm");
+            //moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
+
+        table+= "</tr>";
+      }
+
+
+    table+= "</table>";
+    $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+  }
+  </script>
+
+
+  {% endblock %}
