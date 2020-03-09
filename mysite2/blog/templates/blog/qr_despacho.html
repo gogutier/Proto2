@@ -1,8 +1,9 @@
 {% extends "blog/base.html" %}
 {% load qr_code %}
 {% block content %}
-<h2>Ingresar datos transportista</h2>
-<a href="{% url 'new_camion' %}" ><span class="glyphicon glyphicon-plus">Crear nuevo camión</span></a>
+<h2>Datos transportistas</h2>
+<br>
+<h4><a href="{% url 'new_camion' %}" ><span class="glyphicon glyphicon-plus">Crear nuevo camión</span></a></h4>
 
 <div class="container" style="padding:10px 10px;">
 
@@ -12,28 +13,34 @@
     <tr>
 
     <td>
-      <h5>Transportista</h5>
+      <h5><b>Patente</b></h5>
     </td>
 
+    <td></td>
     <td>
-      <h5>Patentes</h5>
+      <h5><b>Chofer</b></h5>
     </td>
+    <td></td>
+    <td><h5><b>Transportista</b></h5></td>
+
     </tr>
 
-    {% for transportista in transportistas %}
+    {% for camion in camiones %}
       <tr>
-
+        <td>
+        <a style="text-align: center;" href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
+        </td>
+        <td></td>
       <td>
-        <h6>{{transportista}}</h6>
+      <a style="text-align: center;">{{camion.Chofer}}</a>
       </td>
+      <td></td>
       <td>
-            {% for camion in camiones %}
-            {% if camion.Transportista == transportista %}
-            <a style="text-align: center;" href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
-            <br>
-            {% endif %}
-            {% endfor %}
-
+      <a style="text-align: center;" >{{camion.Transportista}}</a>
+      </td>
+      <td></td>
+      <td>
+        <a id="borrar" onclick="return confirm('¿Confirma borrar la patente {{camion.Patente}}?')" class="btn btn-info pull-right" href="{% url 'delete_object' pk=camion.pk %}">borrar</a>
       </td>
 
 

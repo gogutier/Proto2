@@ -28,7 +28,7 @@
   <td style="text-align: center; padding:0; margin:0;">{% qr_from_text infoqr size="M" %}</td>
 </tr>
 <tr>
-    <td style="text-align: center; padding:0; margin:0;">{{camiones.Chofer}}
+    <td style="text-align: left; padding:0; margin:0;">Chofer: {{camiones.Chofer}}
 
     <br>
 
@@ -42,8 +42,9 @@
 
     Empresa: {{camiones.Transportista}}</td>
 </tr>
+
 </table>
-
-
+<br>
+<h4><a href="{% url 'qr_despacho' %}">volver</a></h4>
 
 {% endblock %}

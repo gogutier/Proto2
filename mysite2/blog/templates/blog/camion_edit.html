@@ -1,12 +1,14 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-    <h2>New Camion</h2>
+    <br>
+    <h2>Nuevo Camión</h2>
+    <br>
     <div class="jumbotron">
 
       <form method="POST" class="post-form">{% csrf_token %}
           {{ form.as_p }}
-          <button type="submit" ">Save</button>
+          <button type="submit" ">Guardar</button>
       </form>
 
     </div>

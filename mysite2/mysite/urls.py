@@ -18,6 +18,7 @@ from django.contrib import admin
 
 from django.contrib.auth.views import LoginView, LogoutView
 
+
 #from django.urls import path
 
 urlpatterns = [
@@ -25,5 +26,5 @@ urlpatterns = [
     url(r'',include('blog.urls')),
     url(r'accounts/login/$', LoginView.as_view(template_name='...'), name="login"),
     url(r'accounts/logout/$',LogoutView.as_view(template_name='...'), name='logout', kwargs={'next_page':'/'}),
-
+    
 ]

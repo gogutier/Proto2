@@ -28,7 +28,12 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
-
+def objectDelete(request, pk):
+    
+    object = Camion.objects.get(pk=pk)
+    #object = get_object_or_404(Camion, pk)
+    object.delete()
+    return redirect ('qr_despacho')
 
 @csrf_exempt
 def get_data_busqueda_remision(request, *args, **kwargs):
@@ -1389,7 +1394,7 @@ def qr_despacho(request):
     #print("cargando datos wip")
     template_name = 'blog/qr_despacho.html'
 
-    camiones = Camion.objects.all() #Post.objects.filter(published_date__isnull=True).order_by('create_date')
+    camiones = Camion.objects.all().order_by('Patente').extra(select={'Patente': 'upper(Patente)'}).order_by('Patente') #Post.objects.filter(published_date__isnull=True).order_by('create_date')
     transportistas = []
     for camion in camiones:
         if not camion.Transportista in transportistas:
