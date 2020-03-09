@@ -42,14 +42,37 @@ def get_data_busqueda_improductivos(request, *args, **kwargs):
         maquina=int(request.POST['maquina'])
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        resultado= pruebawebscrapdowntime.webscrap_wip(maquina, fechainicio, fechafin)
 
+        if fechafin-fechainicio<=timedelta(days=31):
+            resultado= pruebawebscrapdowntime.webscrap_wip(maquina, fechainicio, fechafin)
+
+            maq=""
+            if maquina==1:
+                maq="Corrugado"
+            if maquina==2:
+                maq="FFG"
+            if maquina==5:
+                maq="DRO"
+            if maquina==27:
+                maq="FFW"
+            if maquina==12:
+                maq="WRD"
+            if maquina==11:
+                maq="HCR"
+            if maquina==4:
+                maq="TCY"
+
+            mensaje="Tiempos improducivos para "+ maq
+        else:
+            mensaje="Rango máximo de 31 días!!!"
+            resultado= [[0,0,0,"Reducir rango búsqueda",0,0,0]]
         #print(resultado)
 
 
 
         data = {
         "resultado":list(resultado),
+        "mensaje":mensaje,
 
 
         }

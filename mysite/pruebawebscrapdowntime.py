@@ -93,14 +93,27 @@ def webscrap_wip(maq, fini, ffin):
             #print(col.text)
             fila.append(col.text)
 
-        tabla.append(fila)
+        if fila[4].strip()!="Scheduled":
+            tabla.append(fila)
     #print(tabla)
 
     #ahora borro las filas que sean del tipio Scheduled:
-    for fila in tabla:
+    #print(len(tabla))
 
-        if fila[4]=="Scheduled":
-          tabla.remove(fila)
+    #busco todas las filas con schedule y las elimino
+    '''
+
+    for fila in (tabla):
+
+        if fila[4].strip()=="Scheduled":
+            print(fila)
+            del(tabla[tabla.index(fila)]#Acá no funciona cuando hay 2 scheduled seguidos
+    '''
+
+
+
+
+
 
 
 

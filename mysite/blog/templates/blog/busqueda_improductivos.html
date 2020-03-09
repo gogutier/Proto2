@@ -7,7 +7,7 @@
 <table class='table table-hover' id='table'>
 
 <tr style="text-align: center">
-  <td  colspan="6"><h3>Búsqueda tiempos improductivos</h3></td>
+  <td   colspan="4"><h3 id = "mensaje">Búsqueda tiempos improductivos</h3></td>
   <td colspan="6">
 
   <form method="POST">
@@ -76,6 +76,7 @@
 
     console.log("iniciando ajax datos de búsqueda");
 
+    var mensaje = document.getElementById('mensaje');
     var fechainicio= $("#fechainicio").val()
 
     var fechafin= $("#fechafin").val()
@@ -94,6 +95,7 @@
           resultado = response_data.resultado;
           console.log("respuesta recibida");
           console.log(resultado)
+          mensaje.innerHTML= response_data.mensaje;
           displayHTMLTable();
 
 
