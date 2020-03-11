@@ -268,6 +268,10 @@ class Command(BaseCommand):
                         sumadays+=max((rem.fechacamion-rem.fechapll).days,0)
                         sumam2+=rem.m2pallet
 
+                    if cont==0:
+                        cont=1
+                    if sumapll==0:
+                        sumapll=1
                     antiguedadsem=(sumadays/cont)
                     producsem= (sumam2/1000)
 

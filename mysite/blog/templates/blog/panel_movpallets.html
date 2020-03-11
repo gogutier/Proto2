@@ -310,6 +310,7 @@ function setChart1(){
   m2CorrPicadox=[]
   m2Convx=[]
   m2Corrx=[]
+  m2CorrPlannedx=[]
 
   for (var i = 0; i < labels.length; i++)
       {
@@ -321,6 +322,7 @@ function setChart1(){
         m2CorrPicadox.push((labels[i]["m2CorrPicado"]/1000).toFixed(1));
         m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
         m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
+        m2CorrPlannedx.push((labels[i]["m2CorrPlanned"]/1000).toFixed(1));
       }
 
   var ctx = document.getElementById("myChart").getContext('2d');
@@ -340,7 +342,20 @@ function setChart1(){
             borderWidth: 0,
 
 
-            },{
+            },
+            {
+
+            label: "Mm2 Corrugados para programa",
+            data: m2CorrPlannedx,
+
+            backgroundColor: "rgba(134,110,20)",
+            stack: 'stack 2',
+            borderWidth: 0,
+
+
+            },
+
+            {
 
                     label: "Enviados a bodega",
                     data: m2Inx,

@@ -199,6 +199,7 @@ class Datos_MovPallets(models.Model):
     m2Out=models.FloatField(default=0)
     m2Conv=models.FloatField(default=0)
     m2Corr=models.FloatField(default=0)
+    m2CorrPlanned=models.FloatField(default=0)
     m2ConvWaste=models.FloatField(default=0)
     m2CorrWaste=models.FloatField(default=0)
     m2EntregadoAConv=models.FloatField(default=0)

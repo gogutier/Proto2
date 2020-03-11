@@ -7,22 +7,14 @@
 <table class='table table-hover' id='table'>
 
 <tr style="text-align: center">
-  <td  colspan="6"><h3>Búsqueda de Remisiones</h3></td>
+  <td  colspan="6"><h3 id="mensaje">Búsqueda de Remisiones</h3></td>
   <td colspan="6">
 
-  <form>
     <br>
-    Cliente:
-    <input id="cliente" type="text" name="cliente">
+    Remisión:
+    <input id="inputremision" type="text" name="inputremision"></input>
 
 
-
-    Padrón:
-    <input id="padron" type="text" name="padrón">
-
-
-
-  </form>
 
   </td>
 
@@ -35,8 +27,12 @@
 </div>
 
 <h6 id="remision">Remisión: </h6>
+<h6 id="fecha">Fecha: </h6>
 <h6 id="patente">Patente: </h6>
+<h6 id="montacarguista">Montacarguista imputado: </h6>
 <h6 id="obs">Observación: </h6>
+
+<br>
 
 <div class="row"   id="parsed_csv_list">
 </div>
@@ -52,16 +48,17 @@
 
   function datosinv(){
 
+    mensaje.innerHTML="Buscando...                 "
     console.log("iniciando ajax datos de búsqueda");
 
-    var cliente= $("#cliente").val()
+    var inputremision= $("#inputremision").val()
 
 
     $.ajax({
         method: "POST",
         url: endpoint,
         data: {
-           cliente:cliente//.getElementsByTagName("td");,
+           inputremision:inputremision,//.getElementsByTagName("td");,
 
         },
         success: function(response_data){
@@ -69,22 +66,35 @@
           resultado = response_data.resultado;
           datos_remi= response_data.datos_remi;
           console.log("respuesta recibida");
-          displayHTMLTable();
+          console.log(resultado);
+
 
           var remision = document.getElementById("remision");
+          var fecha = document.getElementById("fecha");
           var patente = document.getElementById("patente");
           var obs = document.getElementById("obs");
+          var montacarguista = document.getElementById("montacarguista");
+          var mensaje = document.getElementById("mensaje");
 
+
+          mensaje.innerHTML="Resultado : "
 
           remision.innerHTML="Remisión: "+datos_remi[1]
+          fecha.innerHTML="Fecha: "+datos_remi[11]
           patente.innerHTML="Patente: "+datos_remi[7]
           obs.innerHTML="Observación: "+datos_remi[8]
+          montacarguista.innerHTML="Montacarguista imputado: "+datos_remi[10]
+
+
+
+          displayHTMLTable();
 
 
         },
         error: function(error_data){
           console.log("error en AJAX");
           console.log(error_data);
+          mensaje.innerHTML="Error!"
         }
 
       })
@@ -94,11 +104,10 @@
 };
 
 
-  $('#cliente').keypress(function(e){
+  $('#inputremision').keypress(function(e){
     if(e.keyCode==13)
     datosinv();
   });
-
   $("#convert").click(function()
   {
   datosinv()
@@ -119,13 +128,13 @@
 
       table+= "<tr style='text-align: center'>";
 
-        table+= "<td >Order ID</td>";
         table+= "<td>n° Tarja</td>";
+        table+= "<td>Padrón</td>";
+        table+= "<td>ID</td>";
         table+= "<td >Unidades</td>";
-        table+= "<td >SO</td>";
-        table+= "<td >M2</td>";
-        table+= "<td >Fecha Creación</td>";
-        table+= "<td >Ubic</td>";
+        table+= "<td >Fecha última carga andén</td>";
+        table+= "<td >Último andén cargado</td>";
+        table+= "<td >Operador</td>";
 
 
       table+= "</tr>";
@@ -135,26 +144,27 @@
         table+= "<tr style='text-align: center'>";
 
             table+= "<td>";
-            table+= (resultado[key][1]);
+            table+= (resultado[key][2]);
             table+= "</td>";
             table+= "<td>";
-            table+= (resultado[key][2]);
+            table+= (resultado[key][6]);
+            table+= "</td>";
+            table+= "<td>";
+            table+= (resultado[key][1]);
             table+= "</td>";
             table+= "<td>";
             table+= (resultado[key][3]);
             table+= "</td>";
             table+= "<td>";
-            table+= (resultado[key][4]);
+            table+= (resultado[key][9]);
             table+= "</td>";
             table+= "<td>";
-            table+= (resultado[key][5]);
+            table+= (resultado[key][8]);
             table+= "</td>";
             table+= "<td>";
-            table+= (resultado[key][6]);
+            table+= (resultado[key][10]);
             table+= "</td>";
-            table+= "<td >";
-            table+= (resultado[key][6]);
-            table+= "</td>";
+
             //moment(myTable.rows[i].cells[6].innerHTML, "DD-MM-YYYY HH:mm");
             //moment.parseZone("{{ordenprog.horizonteini.isoformat|safe}}");
 

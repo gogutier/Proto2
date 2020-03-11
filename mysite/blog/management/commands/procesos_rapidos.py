@@ -205,8 +205,9 @@ class Command(BaseCommand):
                     m2Corr= result[1]
                     m2ConvWaste= result[2]
                     m2CorrWaste= result[3]
-                    print("Convwaste:" + str(m2ConvWaste))
-                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr})
+                    m2CorrPlanned = result[4]
+                    print("CorrPlanned:" + str(m2CorrPlanned))
+                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr, "m2CorrPlanned": m2CorrPlanned})
 
                     fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30, second=0, microsecond=0)
                     fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
@@ -217,8 +218,9 @@ class Command(BaseCommand):
                     m2Corr= result[1]
                     m2ConvWaste= result[2]
                     m2CorrWaste= result[3]
-                    print("Convwaste:" + str(m2ConvWaste))
-                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr})
+                    m2CorrPlanned = result[4]
+                    print("CorrPlanned:" + str(m2CorrPlanned))
+                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr, "m2CorrPlanned": m2CorrPlanned})
 
                     fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
                     fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7, minute=0, second=0, microsecond=0)
@@ -229,8 +231,9 @@ class Command(BaseCommand):
                     m2Corr= result[1]
                     m2ConvWaste= result[2]
                     m2CorrWaste= result[3]
-                    print("Convwaste:" + str(m2ConvWaste))
-                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr})
+                    m2CorrPlanned = result[4]
+                    print("CorrPlanned:" + str(m2CorrPlanned))
+                    labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr, "m2CorrPlanned": m2CorrPlanned})
 
                 print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
                 print(labels)
@@ -238,7 +241,7 @@ class Command(BaseCommand):
                 listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltrobodega=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPASILLO","FFW", "FFG" , "DRO" ,"TCY" ,"HCR", "WRD" ,"DIM", "TAB"]
                 listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO"]
-                listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG","DIM","PLL"]
+                listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG"]
                 listafiltropicado=["ZPICADO"]
 
                 filtroproducidoqs=Q()
@@ -382,7 +385,7 @@ class Command(BaseCommand):
                 #print(labels)
                 for dato in labels:
                     print(dato)
-                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2ConvWaste=dato['m2ConvWaste'],m2Conv=dato['m2Conv'],m2Corr=dato['m2Corr'])
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2ConvWaste=dato['m2ConvWaste'],m2Conv=dato['m2Conv'],m2Corr=dato['m2Corr'],m2CorrPlanned=dato['m2CorrPlanned'])
                     o.save()
                     sleep(0.05)
 

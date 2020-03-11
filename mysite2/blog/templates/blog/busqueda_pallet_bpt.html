@@ -66,6 +66,7 @@
 
           resultado = response_data.resultado;
           console.log("respuesta recibida");
+          console.log(resultado)
           displayHTMLTable();
 
 
@@ -146,7 +147,7 @@
             table+= (resultado[key]['m2pallet'].toFixed(1));
             table+= "</td>";
             table+= "<td>";
-            table+= moment(resultado[key]['fechaultmov']).format('DD-MM-YY HH:mm');
+            table+= moment.parseZone(resultado[key]['fechaultmov']).format('DD-MM-YY HH:mm');//moment(resultado[key]['fechaultmov']).format('DD-MM-YY HH:mm Z');
             table+= "</td>";
             table+= "<td >";
             table+= (resultado[key]['ubic']);

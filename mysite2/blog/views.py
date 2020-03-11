@@ -29,7 +29,7 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
 
 def objectDelete(request, pk):
-    
+
     object = Camion.objects.get(pk=pk)
     #object = get_object_or_404(Camion, pk)
     object.delete()
@@ -41,35 +41,16 @@ def get_data_busqueda_remision(request, *args, **kwargs):
      #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
 
 
-        remision=(request.POST['cliente'])
+        remision=(request.POST['inputremision'])
 
         respuesta, row0=odbcremision.cargaDatos(remision)
         print("respuesta encontrada:")
-        print(respuesta)
+        #print(respuesta)
 
         resultado = respuesta#[("sd","sds","sdsd"),("sd","ssd","S"),("dewwef","343243432","3434","3434343")]
         #for pallet in respuesta:
         #    resultado.append(pallet)
 
-        '''
-        listacalles=("PLL","A01","A02","A03","A04","A05","A06","A07","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","C01","C01","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","E01","E02","E03","E04")
-        filtrocalleqs=Q()
-        for calle in listacalles:
-            filtrocalleqs = filtrocalleqs | Q(ubic=calle)
-
-        if orderID!="":
-            resultado= Pallet.objects.filter(filtrocalleqs).filter(ORDERID=orderID).values()
-        elif cliente!="":
-            resultado= Pallet.objects.filter(filtrocalleqs).filter(cliente__icontains=cliente).order_by("-fechacreac")
-            if padron!="":
-                resultado=  resultado.filter(padron__icontains=padron).order_by("-fechacreac")
-
-
-                print("hola")
-
-
-            resultado=resultado.values()
-        '''
 
         data = {
         "resultado":resultado,
@@ -96,7 +77,7 @@ def get_data_busqueda_pallet_bpt(request, *args, **kwargs):
         orderID=(request.POST['orderID'])
         prueba={"prueba1":(33,323), "prueba2":{"A":3,"B":4}}
 
-        listacalles=("PLL","RP1","A01","A02","A03","A04","A05","A06","A07","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","C01","C01","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","E01","E02","E03","E04", "PTCAL")
+        listacalles=("PLL","RP1","PA1","PA2","PA3","A01","A02","A03","A04","A05","A06","A07","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","C01","C01","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","E01","E02","E03","E04", "PTCAL")
         filtrocalleqs=Q()
         for calle in listacalles:
             filtrocalleqs = filtrocalleqs | Q(ubic=calle)

@@ -35,6 +35,8 @@ def consulta(datetimeini,datetimefin):
     m2totconvwaste=0
     m2totcorrwaste=0
 
+    m2totcorrplanned=0
+
     cursor= conecta_BD()
     #Saco el dato de conversión
     #Acá voy a considerar que la campaña completa se hace dentro del mismo turno en que comienza su runstartedate, para evitar el caso en que dejan el setup iniciado desde elfin del turno anterior.
@@ -60,22 +62,30 @@ def consulta(datetimeini,datetimefin):
     resultado=[]
     m2totcorr=0
     m2totcorrwaste=0
+    m2totcorrplanned=0
     #print("datos obtenidos entre " + ini + " y " + fin + ":")
     for row in cursor.fetchall():
         #print(row)
 
+
         m2placaUK=row[4]*row[5]
         unidsUK=row[6]
+        unidsUKplanned=row[8]
         m2prodUK=m2placaUK*unidsUK
+        m2prodUKplanned=m2placaUK*unidsUKplanned
 
         m2placaLK=row[13]*row[14]
         unidsLK=row[15]
+        unidsLKplanned=row[17]
         m2prodLK=m2placaLK*unidsLK
+        m2prodLKplanned=m2placaLK*unidsLKplanned
 
         m2totcorr += m2prodLK + m2prodUK
+        m2totcorrplanned+= min(m2prodUKplanned, m2prodUK) + min(m2prodLKplanned, m2prodLK)  #Acá me aseguro de que no se impute una producción planeada que no fue satisfecha.
+
         #print("Suma m2 row: " + str(m2prodLK) + " " + str(m2prodUK))
 
-    resultado=[m2totconv,m2totcorr,m2totconvwaste,m2totcorrwaste]
+    resultado=[m2totconv,m2totcorr,m2totconvwaste,m2totcorrwaste, m2totcorrplanned ]
     #print("Suma total segmento Corr: "+ ini+ " - "+ fin + " "+ str(m2totcorr))
     #sleep(5)
     return(resultado)

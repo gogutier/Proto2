@@ -603,46 +603,10 @@ def get_data_movpallets(request, *args, **kwargs):
 
 
     for dato in Datos_MovPallets.objects.filter(programa=foto):
-        labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In,"m2DeConvAPicado":dato.m2DeConvAPicado, "m2EntregadoAConv":dato.m2EntregadoAConv, "cantidadCorrPicado":dato.cantidadCorrPicado, "m2CorrPicado":dato.m2CorrPicado, "cantidadDirectoConv":dato.cantidadDirectoConv, "m2DirectoConv":dato.m2DirectoConv, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv,"m2ConvWaste":dato.m2ConvWaste, "m2Corr":dato.m2Corr})
+        labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In,"m2DeConvAPicado":dato.m2DeConvAPicado, "m2EntregadoAConv":dato.m2EntregadoAConv, "cantidadCorrPicado":dato.cantidadCorrPicado, "m2CorrPicado":dato.m2CorrPicado, "cantidadDirectoConv":dato.cantidadDirectoConv, "m2DirectoConv":dato.m2DirectoConv, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv,"m2ConvWaste":dato.m2ConvWaste, "m2Corr":dato.m2Corr, "m2CorrPlanned":dato.m2CorrPlanned})
 
     for dato in Datos_MovPallets_B.objects.filter(programa=foto):
         labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movscorr1":dato.movscorr1, "movscorr2":dato.movscorr2, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2, "opcorr1":dato.opcorr1, "movscorrop1":dato.movscorrop1,"opcorr2":dato.opcorr2, "movscorrop2":dato.movscorrop2,"opcorr3":dato.opcorr3, "movscorrop3":dato.movscorrop3,"opcorr4":dato.opcorr4, "movscorrop4":dato.movscorrop4,"opcorr5":dato.opcorr5, "movscorrop5":dato.movscorrop5,"opcorr6":dato.opcorr6, "movscorrop6":dato.movscorrop6,"opcorr7":dato.opcorr7, "movscorrop7":dato.movscorrop7, "opconv1":dato.opconv1, "movsconvop1":dato.movsconvop1,"opconv2":dato.opconv2, "movsconvop2":dato.movsconvop2,"opconv3":dato.opconv3, "movsconvop3":dato.movsconvop3,"opconv4":dato.opconv4, "movsconvop4":dato.movsconvop4,"opconv5":dato.opconv5, "movsconvop5":dato.movsconvop5,"opconv6":dato.opconv6, "movsconvop6":dato.movsconvop6,"opconv7":dato.opconv7, "movsconvop7":dato.movsconvop7,"opconv8":dato.opconv8, "movsconvop8":dato.movsconvop8,"opconv9":dato.opconv9, "movsconvop9":dato.movsconvop9,"opconv10":dato.opconv10, "movsconvop10":dato.movsconvop10,"opconv11":dato.opconv11, "movsconvop11":dato.movsconvop11,"opconv12":dato.opconv12, "movsconvop12":dato.movsconvop12,"opconv13":dato.opconv13, "movsconvop13":dato.movsconvop13,"opconv14":dato.opconv14, "movsconvop14":dato.movsconvop14})
-
-
-    #Muestro los movs realizados cada 5 min en 24 horas.
-
-    #Genero labels de cada 5 minutos:
-    '''
-    if 1:
-        if 1:
-            if 1:
-                labels2=[]
-                ahora=datetime.now().replace(minute=0, second=0, microsecond=0)
-                for i in range(0,288):
-                    #por ahora los voy a ordenar por turno, después por hora.
-                    fechaini=(ahora-timedelta(minutes=(288-i)*5))
-                    fechafin=(ahora-timedelta(minutes=(288-i-1)*5))
-
-
-                    label= (fechaini.strftime("%d-%m %H:%M")+ " a " + fechafin.strftime("%H:%M"))
-                    #calculo el m2 real convertido y corrugado en ese turno, para comparar con las salidas y entradas declaradas
-                    #m2Conv, m2Corr= pruebaodbcconvertprod.consulta(fecha,fechafin)
-                    #print(m2Corr)
-
-                    #Calculo el n° de movimientos registrados en ese turno:
-
-                    movscorr1= MovPallets.objects.filter(Q(SOURCE="CORR_UPPER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movscorr2= MovPallets.objects.filter(Q(SOURCE="CORR_LOWER_Stacker")).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movsconv1= MovPallets.objects.filter(Q(DESTINATION="TCY") | Q(DESTINATION="HCR")| Q(DESTINATION="WRD")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
-                    labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movscorr1":movscorr1, "movscorr2":movscorr2, "movsconv1":movsconv1, "movsconv2":movsconv2})
-
-
-
-                print("ahora calculo las listas de lo que se declaró como ingreso y como salida al wip  ")
-
-
-    '''
 
     data = {
     "labels":labels,
