@@ -225,6 +225,7 @@ class Datos_MovPallets_B(models.Model):
     fechafin=models.DateTimeField(blank=False, default=datetime.datetime.now())
     label=models.CharField(max_length=16, blank=False, default="0")
     movsaBPT=models.IntegerField(default=0)
+    movsaCalles=models.IntegerField(default=0)
     movsandenes1=models.IntegerField(default=0)
     movsandenes2=models.IntegerField(default=0)
     movsandenes3=models.IntegerField(default=0)

@@ -6,17 +6,18 @@ TelegramBot = telepot.Bot(token)
 
 print(TelegramBot.getMe())
 
-print(TelegramBot.getUpdates(746598385+1))
+print(TelegramBot.getUpdates(1))
 
-chat_id= 306739207
+#chat_id= 306739207
 
-TelegramBot.sendMessage(chat_id, 'Hola! Cómo te llamas?')
+#TelegramBot.sendMessage(chat_id1064061026:AAE7MTA70SnJTmbH9Bq8_oc8hEG3Z3QPCLw, 'Hola! Cómo te llamas?')
+#TelegramBot.sendMessage(chat_id, 'Hola! Cómo te llamas?')
 
 #Matriz estados por UsuaRIO
 
 
 #matriz_estados=[["chat_id","estado","nombre", "auxiliar", "ultima entrada"] ] #ahora esta será una lista de diccionarios.
-
+'''
 matriz_estados=[ ]
 
 
@@ -134,7 +135,7 @@ def handle(msg):
     print(matriz_estados)
 
 TelegramBot.message_loop(handle)
-
+#
 
 
 
@@ -143,3 +144,4 @@ print ('Listening ...')
 # Keep the program running.
 while 1:
     time.sleep(10)
+'''

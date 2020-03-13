@@ -240,7 +240,7 @@ class Command(BaseCommand):
 
                 listafiltroproducido=["CORR_UPPER_Stacker", "CORR_LOWER_Stacker"]
                 listafiltrobodega=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPASILLO","FFW", "FFG" , "DRO" ,"TCY" ,"HCR", "WRD" ,"DIM", "TAB"]
-                listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO"]
+                listafiltroentrada=["ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO", "DIM", "TAB"]
                 listafiltrosalida=["TCY","HCR","WRD","FFW","DRO","FFG"]
                 listafiltropicado=["ZPICADO"]
 
@@ -270,7 +270,25 @@ class Command(BaseCommand):
                 for i in range(0,len(labels)):
 
 
-                    #Entradas
+
+                    #Corrugado en máquina, tarjas creadas en stacker.
+                    filtro=MovPallets.objects.filter(filtroproducidoqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"])
+
+                    cantidad1=0
+                    #sumo los m2 asociados a cada pallets
+                    m2tot=0
+                    for mov in filtro:
+                        #checkeo si la fecha de creación de ese pallet es igual o posterior que el turno que estoy analizando (después se puede agregar la fecha de creación del pallet al movpallet)
+                        cantidad1+=1
+                        m2tot=m2tot+mov.m2pallet
+
+                    labels[i]["cantidadCorrStacker"]= cantidad1
+                    labels[i]["m2CorrStacker"]= m2tot
+
+
+
+
+                    #Entradas a bodega
                     filtro=MovPallets.objects.filter(filtroentradaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
 
                     cantidad1=0
@@ -293,7 +311,6 @@ class Command(BaseCommand):
                     #Filtrando los que se movieron de stacker corrugado directo a máquina.
                     #Producidos pero excluyendo los pallets que ya están en la lista de Entradas (acá saco el m2 actualizado de cada pallet, para descartar las producciones que se fueron a cero)
                     filtro2=MovPallets.objects.filter(filtrosalidaqs, EVENTDATETIME__gte=labels[i]["fecha"], EVENTDATETIME__lt=labels[i]["fechafin"]).filter( Q(SOURCE="CORR_UPPER_Stacker") | Q(SOURCE="CORR_LOWER_Stacker") )
-
 
                     cantidad1=0
 
@@ -385,7 +402,7 @@ class Command(BaseCommand):
                 #print(labels)
                 for dato in labels:
                     print(dato)
-                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2ConvWaste=dato['m2ConvWaste'],m2Conv=dato['m2Conv'],m2Corr=dato['m2Corr'],m2CorrPlanned=dato['m2CorrPlanned'])
+                    o = Datos_MovPallets.objects.create(programa=foto, fecha=dato['fecha'],fechafin=dato['fechafin'],turno=dato['turno'],label=dato['label'],cantidadCorrStacker=dato["cantidadCorrStacker"],m2CorrStacker=dato["m2CorrStacker"], cantidadIn=dato["cantidadIn"],m2In=dato['m2In'], m2DeConvAPicado=dato['m2DeConvAPicado'], m2EntregadoAConv=dato['m2EntregadoAConv'], cantidadCorrPicado=dato['cantidadCorrPicado'],m2CorrPicado=dato['m2CorrPicado'],cantidadDirectoConv=dato['cantidadDirectoConv'],m2DirectoConv=dato['m2DirectoConv'],cantidadOut=dato['cantidadOut'],m2Out=dato['m2Out'], m2ConvWaste=dato['m2ConvWaste'],m2Conv=dato['m2Conv'],m2Corr=dato['m2Corr'],m2CorrPlanned=dato['m2CorrPlanned'])
                     o.save()
                     sleep(0.05)
 
@@ -753,11 +770,11 @@ class Command(BaseCommand):
                     palletstomainv = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)
 
                     #los pallets que están en esa ubicación según CTI, pero exluyendo los que ya están en palletstomainv
-                    palletscti= Pallet.objects.filter(ubic=calle).exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('tarja')
+                    palletscti= Pallet.objects.filter(ubic="antes aquí decía calle").exclude(tarja__in=[o.tarja for o in palletstomainv]).order_by('tarja')
 
                     #palletsnoencontrados son los que se pistolearon pero no aparecen en palletsCTI
-                    palletsnoencontrados=  PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic=calle)]).order_by('tarja')
-                    palletsencontrados = PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
+                    palletsnoencontrados= PalletCic.objects.filter(ubic=calle, tomainvcic=tomainv)#.exclude(tarja__in=[o.tarja for o in Pallet.objects.filter(ubic="antes aquí decía calle")]).order_by('tarja')
+                    palletsencontrados = PalletCic.objects.filter(ubic="antes aquí decía calle", tomainvcic=tomainv).exclude(tarja__in=[o.tarja for o in palletsnoencontrados]).order_by('tarja')
 
 
                     #print("palletsenotracalle")
@@ -833,11 +850,11 @@ class Command(BaseCommand):
         while (1):
 
             try:
-                self.updatemovpallets()
                 self.update_datos_inv_cic()
+                self.updatemovpallets()
                 self.update_datos_wip()
-                self.updatewipprog()
-                self.updateproywip()
+                #self.updatewipprog()
+                #self.updateproywip()
 
             except Exception as e:
                 print(e)

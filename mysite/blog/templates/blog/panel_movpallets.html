@@ -305,6 +305,7 @@ function setChart1(){
   //generando list de labels
   labelx=[]
   m2Inx=[]
+  m2CorrStackerx=[]
   m2Outx=[]
   m2DirectoConvx=[]
   m2CorrPicadox=[]
@@ -323,6 +324,7 @@ function setChart1(){
         m2Convx.push((labels[i]["m2Conv"]/-1000).toFixed(1));
         m2Corrx.push((labels[i]["m2Corr"]/1000).toFixed(1));
         m2CorrPlannedx.push((labels[i]["m2CorrPlanned"]/1000).toFixed(1));
+        m2CorrStackerx.push((labels[i]["m2CorrStacker"]/1000).toFixed(1));
       }
 
   var ctx = document.getElementById("myChart").getContext('2d');
@@ -350,6 +352,17 @@ function setChart1(){
 
             backgroundColor: "rgba(134,110,20)",
             stack: 'stack 2',
+            borderWidth: 0,
+
+
+            },
+            {
+
+            label: "Mm2 declarados en stacker",
+            data: m2CorrStackerx,
+
+            backgroundColor: "rgba(110,50,80)",
+            stack: 'stack 3',
             borderWidth: 0,
 
 

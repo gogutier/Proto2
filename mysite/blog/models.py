@@ -190,6 +190,8 @@ class Datos_MovPallets(models.Model):
     turno=models.CharField(max_length=16, blank=False, default="0")
     label=models.CharField(max_length=16, blank=False, default="0")
     cantidadIn=models.IntegerField(default=0)
+    cantidadCorrStacker=models.IntegerField(default=0)
+    m2CorrStacker=models.FloatField(default=0)
     m2In=models.FloatField(default=0)
     cantidadCorrPicado=models.IntegerField(default=0)
     m2CorrPicado=models.FloatField(default=0)

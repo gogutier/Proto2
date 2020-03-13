@@ -54,8 +54,8 @@ def WriteToExcel(weather_data, town=None):
 
 
     worksheet_s.write(0, 0, "Pallet", header)
-    worksheet_s.write(0, 1, "ID"    , header)
-    worksheet_s.write(0, 2, "Calle", header)
+    worksheet_s.write(0, 1, "Calle"    , header)
+    worksheet_s.write(0, 2, "ID", header)
     # the rest of the headers from the HTML file
 
     # Here we will adding the code to add data
