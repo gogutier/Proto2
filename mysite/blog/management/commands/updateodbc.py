@@ -268,7 +268,7 @@ class Command(BaseCommand):
         #OJOO: Primero tengo que comparar cuál es el transaction ID más próximo al actual "último" que aparecen en el MVLOAD y el FGLOAD, después quedarme con el menor entre esos 2.
         flag0=0
 
-        destinowip=("CORR_UPPER_Stacker", "CORR_LOWER_Stacker","ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO","TCY","HCR","WRD","FFW","DRO","FFG","DIM","PLL","TAB","ZPICADO")
+        destinowip=("CORR_UPPER_Stacker", "CORR_LOWER_Stacker","ZTCY1","ZTCY2","ZHCR1","ZHCR2","ZWRD1","ZWRD2","ZFFW1","ZFFW2","ZDRO1","ZDRO2","ZFFG1","ZFFG2","ZSOB1","ZSOB2","ZPNC","ZPASILLO","TCY","HCR","WRD","FFW","DRO","FFG","DIM","PLL","TAB","ZPICADO","Z01")
         destinotxt=""
         for dest in destinowip:
             destinotxt+= "Destination='"+ dest +"'"+ " or "

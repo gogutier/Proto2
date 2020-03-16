@@ -850,9 +850,10 @@ class Command(BaseCommand):
         while (1):
 
             try:
+                self.update_datos_wip()
                 self.update_datos_inv_cic()
                 self.updatemovpallets()
-                self.update_datos_wip()
+
                 #self.updatewipprog()
                 #self.updateproywip()
 

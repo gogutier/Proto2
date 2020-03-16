@@ -19,8 +19,15 @@ class Command(BaseCommand):
         print("mobver pallets corrugado a Z01")
         for pallet in Pallet.objects.filter(ubic="CORR_UPPER_Stacker"):
             pallet.ubic="Z01"
+            pallet.save()
         for pallet in Pallet.objects.filter(ubic="CORR_LOWER_Stacker"):
             pallet.ubic="Z01"
+            pallet.save()
+        for pallet in Pallet.objects.filter(ubic="ZFFG2"):
+            pallet.ubic="Z01"
+            pallet.save()
+
+
         #print("iniciando limpieza consumo rollos")
         #ConsumoRollos.objects.all().delete()
 
