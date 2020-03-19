@@ -2,18 +2,27 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1>Pleaase log in</h1>
-  <h3>debes ser un superuser</h3>
+  <h1>Inicio de sesión</h1>
+  <br>
 
   {% if form.errors %}
     <p>User y/o password erróneo. Intentar de nuevo</p>
   {% endif %}
 
+  {% if next %}
+  {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+  {% else %}
+    <p>Please login to see this page.</p>
+  {% endif %}
+{% endif %}
+
   <form action="{% url 'login'%}" method="POST">
     {% csrf_token %}
       {{ form.as_p }}
       <input type="submit" class='btn btn-primary' value="LogIn">
-      <input type="hidden" name="next" value="{{next}}">
+      <input type="hidden" name="next" value="{{ next }}">
 
 
   </form>

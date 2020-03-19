@@ -1,0 +1,205 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<h2>Resumen operadores grúa</h2>
+
+<br>
+<br>
+
+
+<div class="container">
+<h3>Resumen por Mm2</h3>
+
+<table id="myTable" class="table table-bordered table-hover">
+  <tr>
+
+    <td></td>
+    <td colspan="4">Semanas pasadas (Mm2)</td>
+    <td> Semana en curso </td>
+    <td> Prom. 4 semanas </td>
+    <td> <b>Ratio carga 4 semanas</b> </td>
+  </tr>
+  <tr>
+    <td></td>
+
+  </tr>
+
+</table>
+
+</div>
+
+
+
+<script type="text/javascript">
+
+
+
+
+var endpoint='/api/get_data_resumen_opgruas/';
+
+
+{% load staticfiles %}
+
+function datosinv(){
+
+  console.log("iniciando ajax datos inv");
+
+
+  var imagentime ='<img src= {% static "images/time.png" %} alt=""  height=15 width=15></img>'
+  var auxtext = ''
+
+  $.ajax({
+      method: "GET",
+      url: endpoint,
+      success: function(response_data){
+
+      //datos0 = response_data.datos0; //aCÁ RECIBO UN ARRAY DE DATOS
+      respuesta = response_data.respuesta;
+      console.log(respuesta)
+
+
+
+      var table = document.getElementById("myTable");
+
+
+      var auxcont=2
+      var flag1=0
+      var sumam2total=0
+
+      for (var key in respuesta)
+      {
+        //Agrego las semanas a la tabla
+        var auxcont2=1
+
+        while (flag1==0)
+        {
+          for (var key2 in respuesta[key])
+            {
+              auxcont2+=1
+            }
+            flag1=1
+          }
+
+        var auxcont2=1
+        var sumam2=0
+        for (var key2 in respuesta[key])
+          {
+
+            if (auxcont2<=4)
+            {
+              sumam2total+=(respuesta[key][key2]["m2cargados"])
+            }
+
+            auxcont2+=1
+          }
+          //Al final agrego el promedio de las útimas 4 semanas
+
+        auxcont+=1
+      }
+
+
+
+      console.log(sumam2total)
+      var auxcont=2
+      var flag1=0
+      //sumam2total=0
+
+      for (var key in respuesta)
+      {
+
+        //Agrego las semanas a la tabla
+        var auxcont2=1
+
+        while (flag1==0)
+        {
+          for (var key2 in respuesta[key])
+            {
+              var fila1 = table.rows[1];
+              var cell = fila1.insertCell(auxcont2);
+              cell.innerHTML = key2;
+              cell.style ='width:100px; font-size: 25px;'
+              //style='width:150px; font-size: 25px;'
+
+              auxcont2+=1
+
+            }
+            flag1=1
+          }
+
+        var row = table.insertRow(auxcont);
+        var cell1 = row.insertCell(0);
+        cell1.innerHTML = key;
+        cell1.style ='font-size: 20px;'
+
+        var auxcont2=1
+        var sumam2=0
+        for (var key2 in respuesta[key])
+          {
+            var cell1 = row.insertCell(auxcont2);
+            cell1.innerHTML = ((respuesta[key][key2]["m2cargados"])/1000).toFixed(0);
+            cell1.style ='font-size: 20px;'
+
+
+            if (auxcont2<=4)
+            {
+              sumam2+=(respuesta[key][key2]["m2cargados"])
+              //sumam2total+=(respuesta[key][key2]["m2cargados"])
+            }
+
+            auxcont2+=1
+          }
+          //Al final agrego el promedio de las útimas 4 semanas
+          var cell1 = row.insertCell(auxcont2);
+          cell1.innerHTML = (sumam2/4000).toFixed(0);
+          cell1.style ='width:100px; font-size: 25px;'
+
+          var cell1 = row.insertCell(auxcont2+1);
+          cell1.innerHTML = ((sumam2/sumam2total)*100).toFixed(1)+"%";
+          cell1.style ='font-size: 25px;'
+
+        auxcont+=1
+      }
+
+
+
+
+
+      },
+      error: function(error_data){
+        console.log("error");
+        console.log(error_data);
+      }
+
+    })
+
+
+
+    //displayTabla();
+
+}
+
+
+
+/// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
+
+
+datosinv()
+
+
+
+
+
+
+</script>
+
+{% else %}
+<br>
+<h2>Usuario no autorizado!</h2>
+<br>
+<h3>Por favor inicia sesión :)</h3>
+{% endif %}
+
+{% endblock %}

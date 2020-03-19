@@ -19,12 +19,13 @@ from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 
 
-#from django.urls import path
-
+from django.urls import path
+#Add Django site authentication urls (for login, logout, password management)
 urlpatterns = [
+    path('accounts/', include('django.contrib.auth.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'',include('blog.urls')),
-    url(r'accounts/login/$', LoginView.as_view(template_name='...'), name="login"),
-    url(r'accounts/logout/$',LogoutView.as_view(template_name='...'), name='logout', kwargs={'next_page':'/'}),
-    
+    #url(r'accounts/login/$', LoginView.as_view(template_name='...'), name="login"),
+    #url(r'accounts/logout/$',LogoutView.as_view(template_name='...'), name='logout', kwargs={'next_page':'/'}),
+
 ]

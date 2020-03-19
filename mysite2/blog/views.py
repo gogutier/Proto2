@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.views.generic.base import TemplateView
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Datos_KPI_Semanal, Datos_KPI_OPGRUA
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -27,6 +27,72 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 
 #VIEWS ES DONDE SE PUEDE PROGRAMR EN PYTHON?
 #views functions take as input: HTTPRESPONSE objects, and returns HTTPRESpose object (html output)
+
+def auth_logout(request):
+  logout(request)
+  return redirect('inicio')
+
+
+def resumen_opgruas(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/resumen_opgruas.html'
+
+
+    return render(request, template_name,{} )#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+def get_data_resumen_opgruas(request, *args, **kwargs):
+
+     #consulto en la base de datos todos los objetos pallet que tiene ubicación zTCY1 (a minúsculas). sumo sus m2 por pallets. los Cuento
+
+
+    semanahoy=datetime.now().isocalendar()[1] #Ojo que aquí la semana parte el domingo    Isocalendar entrga [ISO Year,ISO Week Number,ISO Weekday]
+    añohoy=datetime.now().isocalendar()[0]
+    lista=[ semanahoy-4, semanahoy-3, semanahoy-2, semanahoy-1, semanahoy]
+    listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1002/Carlos Paz", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
+    #esa lista después la puedo agregar como model.
+    respuesta={}
+    respuesta2={}
+
+
+    for semana in lista:
+        #Creo el objeto semana
+        sem, aux= Datos_KPI_Semanal.objects.get_or_create(semana=semana, anno=añohoy)
+        #print(sem)# esto en las primeras semanas de enero va a generar un problema
+        respuesta[str(semana)]={}
+        for op in Datos_KPI_OPGRUA.objects.filter(semana=sem):
+            aux=op.codigoCTI
+            #print(aux)
+            #print(op.m2Cargados)
+            respuesta[str(semana)][str(op.codigoCTI)]={"m2cargados":op.m2Cargados, "palletscargados":op.palletsCargados}
+
+            #respuesta.update({str(sem):str(aux)})#{str(op.codigoCTI):op.m2Cargados} )
+
+    for op in listaopgruabpt:
+        respuesta2[str(op)]={}
+        for semana in lista:
+            respuesta2[str(op)][str(semana)]=respuesta[str(semana)][str(op)]
+
+
+
+    print("Datos KPI grúas enviado")
+
+
+
+
+    row0=0
+
+    data = {
+    "respuesta":respuesta2,
+    "datos_remi": row0,
+    }
+
+    return JsonResponse(data)#http response con el datatype de JS
+
+
+
+
+
+
 
 def objectDelete(request, pk):
 
@@ -443,7 +509,7 @@ def get_data_movpallets(request, *args, **kwargs):
         labels.append({"fecha":dato.fecha,"fechafin":dato.fechafin,"turno":dato.turno, "label": dato.label,"cantidadcallesbpt":dato.cantidadcallesbpt, "m2BPT":dato.m2BPT, "cantidadIn":dato.cantidadIn, "m2In":dato.m2In, "cantidadProd":dato.cantidadProd, "m2Prod":dato.m2Prod, "cantidadOut":dato.cantidadOut, "m2Out":dato.m2Out, "m2Conv":dato.m2Conv, "m2Corr":dato.m2Corr})
 
     for dato in Datos_MovPallets_B.objects.filter(programa=foto):
-        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movsaBPT":dato.movsaBPT,"movsaCalles":datos.movsaCalles, "movsandenes1":dato.movsandenes1, "movsandenes2":dato.movsandenes2, "movsandenes3":dato.movsandenes3, "movsandenes4":dato.movsandenes4, "movsandenes5":dato.movsandenes5, "movsandenes6":dato.movsandenes6, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2, "opbpt1":dato.opbpt1, "movsopbpt1":dato.movsopbpt1, "opbpt2":dato.opbpt2, "movsopbpt2":dato.movsopbpt2, "opbpt3":dato.opbpt3, "movsopbpt3":dato.movsopbpt3, "opbpt4":dato.opbpt4, "movsopbpt4":dato.movsopbpt4, "opbpt5":dato.opbpt5, "movsopbpt5":dato.movsopbpt5, "opbpt6":dato.opbpt6, "movsopbpt6":dato.movsopbpt6, "opbpt7":dato.opbpt7, "movsopbpt7":dato.movsopbpt7, "opbpt8":dato.opbpt8, "movsopbpt8":dato.movsopbpt8, "opbpt9":dato.opbpt9, "movsopbpt9":dato.movsopbpt9, "opbpt10":dato.opbpt10, "movsopbpt10":dato.movsopbpt10, "opbpt11":dato.opbpt11, "movsopbpt11":dato.movsopbpt11, "opbpt12":dato.opbpt12, "movsopbpt12":dato.movsopbpt12, "opbpt13":dato.opbpt13, "movsopbpt13":dato.movsopbpt13, "opbpt14":dato.opbpt14, "movsopbpt14":dato.movsopbpt14, "movsopbptIN1":dato.movsopbptIN1, "movsopbptIN2":dato.movsopbptIN2, "movsopbptIN3":dato.movsopbptIN3, "movsopbptIN4":dato.movsopbptIN4, "movsopbptIN5":dato.movsopbptIN5, "movsopbptIN6":dato.movsopbptIN6, "movsopbptIN7":dato.movsopbptIN7, "movsopbptIN8":dato.movsopbptIN8, "movsopbptIN9":dato.movsopbptIN9, "movsopbptIN10":dato.movsopbptIN10, "movsopbptIN11":dato.movsopbptIN11, "movsopbptIN12":dato.movsopbptIN12, "movsopbptIN13":dato.movsopbptIN13, "movsopbptIN14":dato.movsopbptIN14})
+        labels2.append({"fechaini":dato.fechaini,"fechafin":dato.fechafin, "label": dato.label, "movsaBPT":dato.movsaBPT,"movsaCalles":dato.movsaCalles, "movsandenes1":dato.movsandenes1, "movsandenes2":dato.movsandenes2, "movsandenes3":dato.movsandenes3, "movsandenes4":dato.movsandenes4, "movsandenes5":dato.movsandenes5, "movsandenes6":dato.movsandenes6, "movsconv1":dato.movsconv1, "movsconv2":dato.movsconv2, "opbpt1":dato.opbpt1, "movsopbpt1":dato.movsopbpt1, "opbpt2":dato.opbpt2, "movsopbpt2":dato.movsopbpt2, "opbpt3":dato.opbpt3, "movsopbpt3":dato.movsopbpt3, "opbpt4":dato.opbpt4, "movsopbpt4":dato.movsopbpt4, "opbpt5":dato.opbpt5, "movsopbpt5":dato.movsopbpt5, "opbpt6":dato.opbpt6, "movsopbpt6":dato.movsopbpt6, "opbpt7":dato.opbpt7, "movsopbpt7":dato.movsopbpt7, "opbpt8":dato.opbpt8, "movsopbpt8":dato.movsopbpt8, "opbpt9":dato.opbpt9, "movsopbpt9":dato.movsopbpt9, "opbpt10":dato.opbpt10, "movsopbpt10":dato.movsopbpt10, "opbpt11":dato.opbpt11, "movsopbpt11":dato.movsopbpt11, "opbpt12":dato.opbpt12, "movsopbpt12":dato.movsopbpt12, "opbpt13":dato.opbpt13, "movsopbpt13":dato.movsopbpt13, "opbpt14":dato.opbpt14, "movsopbpt14":dato.movsopbpt14, "movsopbptIN1":dato.movsopbptIN1, "movsopbptIN2":dato.movsopbptIN2, "movsopbptIN3":dato.movsopbptIN3, "movsopbptIN4":dato.movsopbptIN4, "movsopbptIN5":dato.movsopbptIN5, "movsopbptIN6":dato.movsopbptIN6, "movsopbptIN7":dato.movsopbptIN7, "movsopbptIN8":dato.movsopbptIN8, "movsopbptIN9":dato.movsopbptIN9, "movsopbptIN10":dato.movsopbptIN10, "movsopbptIN11":dato.movsopbptIN11, "movsopbptIN12":dato.movsopbptIN12, "movsopbptIN13":dato.movsopbptIN13, "movsopbptIN14":dato.movsopbptIN14})
 
     for dato in Datos_MovPallets_C.objects.filter(programa=foto):
         labels3.append({"semana1":dato.semana1,"producsem1":dato.producsem1, "antiguedadsem1": dato.antiguedadsem1, "peakstock1":dato.peakstock1, "semana2":dato.semana2,"producsem2":dato.producsem2, "antiguedadsem2": dato.antiguedadsem2, "peakstock2":dato.peakstock2, "semana3":dato.semana3,"producsem3":dato.producsem3, "antiguedadsem3": dato.antiguedadsem3, "peakstock3":dato.peakstock3, "semana4":dato.semana4,"producsem4":dato.producsem4, "antiguedadsem4": dato.antiguedadsem4, "peakstock4":dato.peakstock4, "semana5":dato.semana5,"producsem5":dato.producsem5, "antiguedadsem5": dato.antiguedadsem5, "peakstock5":dato.peakstock5})

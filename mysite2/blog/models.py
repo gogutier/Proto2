@@ -191,6 +191,8 @@ class Foto_Datos_MovPallets(models.Model):
     def __str__(self):
         return (str(self.fecha_foto))
 
+
+
 class Datos_MovPallets(models.Model):
 
 
@@ -339,7 +341,42 @@ class Datos_MovPallets_C(models.Model):
     def __str__(self):
         return (str(self.semana1))
 
+class Foto_KPI(models.Model):
 
+
+    fecha_foto=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
+
+    def __str__(self):
+        return (str(self.fecha_foto))
+
+
+class Datos_KPI_Semanal(models.Model):
+
+    #Por ahora no los voy a asociar a una foto KPI pq en teoría cuando actualizo una semana el resto ya está con los datos correctos
+    #foto=models.ForeignKey('blog.Foto_KPI', related_name='foto_datosKPI', on_delete=models.CASCADE, default=0)
+
+    semana=models.IntegerField(default=0)
+    anno=models.IntegerField(default=0)
+    #fecha_inicio=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
+    productividad= models.FloatField(default=0)
+    antiguedadstockdesp= models.FloatField(default=0)
+    peakstock= models.FloatField(default=0)
+
+    def __str__(self):
+        return (str(self.semana)+" - "+str(self.anno))
+
+class Datos_KPI_OPGRUA(models.Model):
+
+    semana=models.ForeignKey('blog.Datos_KPI_Semanal', related_name='foto_semanaKPI', on_delete=models.CASCADE, default=0)
+    codigoCTI=models.CharField(max_length=21, default="0")
+    codigo=models.CharField(max_length=16, default="0")
+    nombre=models.CharField(max_length=16, default="0")
+
+    m2Cargados=models.FloatField(default=0)
+    palletsCargados=models.FloatField(default=0)
+
+    def __str__(self):
+        return (str(self.semana)+" - "+str(self.codigoCTI))
 
 
 class Datos_Proy_WIP(models.Model):

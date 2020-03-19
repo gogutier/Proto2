@@ -319,81 +319,38 @@
           </li>
         -->
 
-        {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
+
+          <li>
+            <a>Hola {{user.username}}</a>
+          </li>
 
 
 
-
+    <li><a href="#">KPI</a>
+            <ul>
+              <li>
+                <a class="nav-link" href="{% url 'resumen_opgruas' %}">OPs Grúa</a>
+              </li>
+              <li>
+                <a class="nav-link" href="#">Clientes</a>
+              </li>
+            </ul>
+          </li>
 
 
           <li>
             <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
           </li>
-          <li>
-            <a>Welcome {{user.username}}</a>
-          </li>
 
-
-          <li><a href="#">Inventario</a>
-            <ul>
-              <li>
-                <a class="nav-link" href="{% url 'carga_inventario' %}">Carga inventario</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'kpi_conv' %}">Calcula KPI Conv</a>
-              </li>
-
-            </ul>
-          </li>
-
-          <li><a href="#">Carga datos Conv</a>
-            <ul>
-              <li>
-                <a class="nav-link" href="{% url 'carga_orderinfo' %}">Carga OrderInfo</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'carga_maestrop' %}">Carga Maestro Padrón</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'carga_prog' %}">Carga prog. Conversión</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'carga_prod_real' %}">Carga prod. Conversión</a>
-              </li>
-            </ul>
-          </li>
+    {% else %}
+      <li>
+        <a class='nav navbar-right'href="{% url 'login' %}"><span class='glyphicon glyphicon-user'>Log In</span></a>
+      </li>
 
 
 
-          <li><a href="#">Carga datos Corr</a>
-            <ul>
-              <li>
-                <a class="nav-link" href="{% url 'carga_prog_corr' %}">Carga prog. Corrugado</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'carga_prod_corr' %}">Carga prod. Corrugado</a>
-              </li>
-            </ul>
-          </li>
-
-
-    <li><a href="#">Proyección</a>
-            <ul>
-              <li>
-                <a class="nav-link" href="{% url 'carga_proyeccion' %}">Carga proy MKT</a>
-              </li>
-            </ul>
-          </li>
-
-            {% else %}
-            <li>
-              <a class='nav navbar-right'href="{% url 'login' %}"><span class='glyphicon glyphicon-user'>Login</span></a>
-            </li>
-
-
-
-          {% endif %}
+    {% endif %}
 
         </ul>
 

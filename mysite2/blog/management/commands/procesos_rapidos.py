@@ -9,6 +9,8 @@ from blog.models import Datos_Proy_WIP as Datos_Proy_WIP
 from blog.models import DatosWIP_Prog as DatosWIP_Prog
 #from blog.models import Datos_INV_WIP as Datos_INV_WIP
 from blog.models import MovPallets as MovPallets
+from blog.models import Datos_KPI_Semanal as Datos_KPI_Semanal
+from blog.models import Datos_KPI_OPGRUA as Datos_KPI_OPGRUA
 from blog.models import Datos_MovPallets as Datos_MovPallets
 from blog.models import Datos_MovPallets_B as Datos_MovPallets_B
 from blog.models import Datos_MovPallets_C as Datos_MovPallets_C
@@ -215,6 +217,121 @@ class Command(BaseCommand):
 
 
         print("Enviando datos inventario")
+
+    def updatekpisemanal(self):
+        if 1:#########
+
+            #CREO UNA nueva foto de movspallets:
+            foto, created =Foto_Datos_MovPallets.objects.get_or_create(fecha_foto=datetime.now())
+            foto.save()
+
+            print("actualizo el Movpallets")
+
+            try:
+
+                #Rango de fechas últimas 4 semanas..
+
+                print("Ahora voy a generar y guardar el resumen de los datos semanales..")
+
+                semanahoy=datetime.now().isocalendar()[1] #Ojo que aquí la semana parte el domingo    Isocalendar entrga [ISO Year,ISO Week Number,ISO Weekday]
+                añohoy=datetime.now().isocalendar()[0]
+                print("número de semana de hoy: " + str( semanahoy ))
+
+
+                #labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label"
+                lista=[ semanahoy-4, semanahoy-3, semanahoy-2, semanahoy-1, semanahoy]
+                labels3=[]
+                labels3.append({"hola":1,"dasd":1})
+                indx=0
+
+                for semana in lista:
+
+                    #Creo el objeto semana
+                    sem, aux= Datos_KPI_Semanal.objects.get_or_create(semana=semana, anno=añohoy)# esto en las primeras semanas de enero va a generar un problema
+                    #calculo prodsem: suma de m2 / horas de la semana (24*5+15)
+                    remis= Pallet.objects.filter(flagcamion=True, fechacamion__date__week=semana)
+                    palletizados= Pallet.objects.filter(flagpll=True, fechapll__date__week=semana)
+                    cont= remis.count()
+                    sumadays=0
+                    sumam2=0
+                    sumapll=0
+
+
+                    antiguedadsem=0
+                    producsem=0
+                    peakstock=0
+
+                    for pll in palletizados:
+
+                        sumapll+= pll.m2pallet
+
+
+                    for rem in remis:
+                        #print( str(rem.m2pallet) + " " + str(rem.fechacamion)+ " " + str(rem.fechapll) )
+                        #print("semana: " + str(semana) + " " +  str( (rem.fechacamion-rem.fechapll).days ) + " " + str(rem.tarja) + " " + str(rem.ORDERID) )
+                        sumadays+=max((rem.fechacamion-rem.fechapll).days,0)
+                        sumam2+=rem.m2pallet
+
+                    if cont==0:
+                        cont=1
+                    if sumapll==0:
+                        sumapll=1
+
+                    antiguedadsem=(sumadays/cont)#antiguedad promedio de cada pallet
+                    producsem= (sumam2/1000)
+
+                    peakstock=(sumam2/sumapll)*100
+
+                    indx+=1
+                    sem.productividad=producsem
+                    sem.antiguedadstockdesp=antiguedadsem
+                    sem.peakstock=peakstock
+
+
+                    sem.save()
+
+                    print(sem)
+                    print(sem.productividad)
+                    print(sem.antiguedadstockdesp)
+                    print(sem.peakstock)
+                    #ahora calculo los KPI de cada op grúa y los muestro asocio a esta sem
+
+                    listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1002/Carlos Paz", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
+                    listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9"]
+                    filtrosalidaqs=Q()
+                    for item in listafiltrosalida:
+                        filtrosalidaqs = filtrosalidaqs | Q(DESTINATION=item)
+
+
+
+                    for op in listaopgruabpt:
+                        opgrua, aux=Datos_KPI_OPGRUA.objects.get_or_create(semana=sem, codigoCTI=op)
+                        m2semanal=0
+                        npallets=0
+                        movs= MovPallets.objects.filter(filtrosalidaqs, OPERATORCODENAME=op, EVENTDATETIME__date__week=semana)
+                        for mov in movs:
+                            m2semanal+= mov.m2pallet
+                            npallets+=1
+
+                        opgrua.m2Cargados=m2semanal
+                        opgrua.palletsCargados=npallets
+
+                        opgrua.save()
+                        print(opgrua)
+                        #calculo todos los m2 cargados por ese operador dentro de la semana.
+
+
+
+
+
+
+
+            except Exception as e:
+                print("error")
+                print(e)
+                sleep(10)
+
+
 
 
     def updatemovpallets(self):
@@ -840,6 +957,7 @@ class Command(BaseCommand):
         while (1):
 
             try:
+                self.updatekpisemanal()
                 self.updatemovpallets()
                 self.update_datos_wip()
 

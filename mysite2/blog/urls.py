@@ -83,4 +83,6 @@ urlpatterns = [
     url(r'^api/get_data_busqueda_pallet_bpt/$',views.get_data_busqueda_pallet_bpt,name='api_data_busqueda_pallet_bpt'),
     url(r'^busqueda_remision/$',views.busqueda_remision,name='busqueda_remision'),
     url(r'^api/get_data_busqueda_remision/$',views.get_data_busqueda_remision,name='api_data_busqueda_remision'),
+    url(r'^resumen_opgruas/$',views.resumen_opgruas,name='resumen_opgruas'),
+    url(r'^api/get_data_resumen_opgruas/$',views.get_data_resumen_opgruas,name='api_data_resumen_opgruas'),
 ]
