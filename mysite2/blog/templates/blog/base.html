@@ -37,6 +37,9 @@
 
 
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <!-- Fonts----->
     <!--<link href="https://fonts.googleapis.com/css?family=Lora|Stalinist+One" rel="stylesheet">-->
@@ -178,88 +181,6 @@
 
           <li><a class="nav-link" href="{% url 'Inicio' %}" >Inicio</a>
             <ul>
-              <!--
-              <li>
-              <a class="nav-link" href="{% url 'res_conv_v2' %}">Cumpl. Conv.</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'res_corr' %}">Cumpl. Corr.</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'res_pareados' %}">Pareados</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'placas_wip' %}">Placas WIP</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'panel_bpt' %}">Panel BPT</a>
-              </li>
-
-
-              <li>
-                <a class="nav-link" href="{% url 'panel_wip' %}">Panel WIP</a>
-              </li>
-
-
-
-              <li>
-                <a class="nav-link" href="{% url 'panel_movpallets' %}">Panel MovPallets</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'panel_inv_ciclico' %}">Panel Inv. Cíclico</a>
-              </li>
-
-
-
-              <li>
-                <a class="nav-link" href="{% url 'resumen_entrada_pll' %}">Resumen Entradas a BPT</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'busqueda_pallet_bpt' %}">Búsqueda pallets BPT</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'busqueda_remision' %}">Búsqueda remision</a>
-              </li>
-
-
-
-              <li>
-                <a class="nav-link" href="{% url 'panel_wip_prog' %}">Panel WIP/Prog</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'panel_proy_wip' %}">Proyección WIP</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'carga_mov_rollos' %}">Carga Mov Rollos</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'qr_despacho' %}">QR despacho</a>
-              </li>
-
-
-              <li>
-                <a class="nav-link" href="{% url 'carga_mov_pallets' %}">Carga Mov Pallets</a>
-              </li>
-
-
-              <li>
-                <a class="nav-link" href="{% url 'get_corrplan' %}">Get_corrplan</a>
-              </li>
-              <li>
-                <a class="nav-link" href="{% url 'consumos_puestos' %}">Consumos_puestos</a>
-              </li>
-
-              <li>
-                <a class="nav-link" href="{% url 'cump_proto' %}">Cump_Proto</a>
-              </li>
-               -->
 
             </ul>
 
@@ -327,21 +248,20 @@
 
 
 
-    <li><a href="#">KPI</a>
-            <ul>
-              <li>
-                <a class="nav-link" href="{% url 'resumen_opgruas' %}">OPs Grúa</a>
-              </li>
-              <li>
-                <a class="nav-link" href="#">Clientes</a>
-              </li>
-            </ul>
-          </li>
-
-
           <li>
             <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
           </li>
+
+          <li><a href="#">KPI</a>
+                  <ul>
+                    <li>
+                      <a class="nav-link" href="{% url 'resumen_opgruas' %}">OPs Grúa</a>
+                    </li>
+                    <li>
+                      <a class="nav-link" href="#">Clientes</a>
+                    </li>
+                  </ul>
+                </li>
 
     {% else %}
       <li>

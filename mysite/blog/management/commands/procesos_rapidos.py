@@ -300,7 +300,7 @@ class Command(BaseCommand):
                             cantidad1+=1
                             filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
                             print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
-                            if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
+                            if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"] - timedelta(hours=7):
 
                                 m2tot=m2tot+mov.m2pallet
 
@@ -322,7 +322,7 @@ class Command(BaseCommand):
 
                         filt=Pallet.objects.filter(tarja=mov.LOADID)[0]
                         print(str(filt.fechacreac.replace(tzinfo=None)) + "---vs---" + str(labels[i]["fecha"]))
-                        if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]:
+                        if filt.fechacreac.replace(tzinfo=None)>=labels[i]["fecha"]  - timedelta(hours=7) :
                             m2tot=m2tot+mov.m2pallet
 
 

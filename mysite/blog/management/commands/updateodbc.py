@@ -275,7 +275,8 @@ class Command(BaseCommand):
         destinotxt+="Destination='xassxsa'"
 
         #sleep(0.01)
-        print("obteniendo el último FGLOAD mayor más cercano a " + ultimo)
+        print("_")
+        print("obteniendo el último FGLOAD con tranasctionindex mayor más cercano a " + ultimo)
         cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[PLANTID],[WORKCENTERID],[INTERNALSPECID],[ORDERID],[PARTID],[OPERATIONNO],[LOADID],[UNITNO],[TOTALLOADQTY],[EventDateTime],[EVENTTIME],[STEPNO],[WASTEDQUANTITY] FROM [ctidb_transact].[dbo].[FGLOAD] where operationno=0 and TRANSACTIONINDEX>"+ ultimo +"  order by transactionindex asc")
         try:
             row0=cursor.fetchone()
@@ -342,7 +343,7 @@ class Command(BaseCommand):
             else:
                 TIMVLOAD=999999999999
 
-            if row0[3] != "Default":
+            if row0[3] != "Default" and row0[3] != None:
                 if TIFGLOAD<TIMVLOAD:
                     flag0=1
                     flagFGLoad=1
@@ -367,7 +368,7 @@ class Command(BaseCommand):
                 #print(row1)
                 #compara el transactionidex de fgload vs el de MVLOAD
                 print("Obtenida row1 de MVLOAD!")
-                print(row1[0])
+                print(row1)
             except Exception as e:
                 print(e)
                 print("error al obtener el row1 de MVLOAD!")
