@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Calles_Inv_Cic_WIP, Foto_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Foto_Datos_MovPallets, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, FiltroMovInternoWIP, Datos_KPI_Semanal, Datos_KPI_OPGRUA
+from blog.models import Post, Comment, appointment, ProdID, Book, ProgramaConv, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, FotoProgCorr, IDProgCorr,Datos_Inv_WIP,Foto_Datos_Inv_WIP, Datos_Proy_WIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Calles_Inv_Cic_WIP, Foto_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Foto_Datos_MovPallets, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, FiltroMovInternoWIP, Datos_KPI_Semanal, Datos_KPI_OPGRUA, AlertaBot
 
 
 # Register your models here.
@@ -66,3 +66,4 @@ admin.site.register(Datos_MovPallets_B)
 admin.site.register(Datos_MovPallets_C)
 admin.site.register(Datos_KPI_Semanal)
 admin.site.register(Datos_KPI_OPGRUA)
+admin.site.register(AlertaBot)

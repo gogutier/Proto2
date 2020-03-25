@@ -17,7 +17,7 @@ print(TelegramBot.getUpdates(1))
 
 
 #matriz_estados=[["chat_id","estado","nombre", "auxiliar", "ultima entrada"] ] #ahora esta será una lista de diccionarios.
-'''
+
 matriz_estados=[ ]
 
 
@@ -67,7 +67,7 @@ def respuesta(text, chat_id):
 
 
 
-    elif (text =="Mirna" or text =="mirna" or text =="MIRNA"):
+    elif (text =="Mirn" or text =="mirn" or text =="MIRN"):
             respuestaz="Vaya, veo que eres muy bonita"
             #print("estado en respuesta():")
             #print(estado)
@@ -144,4 +144,3 @@ print ('Listening ...')
 # Keep the program running.
 while 1:
     time.sleep(10)
-'''

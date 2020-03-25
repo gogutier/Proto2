@@ -10,6 +10,21 @@ MAR = "Marzo"
 ABR = "Abril"
 
 
+class AlertaBot(models.Model):
+
+    chat_id=models.IntegerField(default=0)
+    nombre=models.CharField(max_length=16, default="vacio")
+    order_id=models.CharField(max_length=16, default="0")
+    tipoevento=models.CharField(max_length=16, default="0")
+    fechaalerta=models.DateTimeField(blank=False, default = datetime.datetime.now())
+    estadoalerta=models.CharField(max_length=16, default="0")
+    flagevento=models.BooleanField(default=False)
+    fechaevento=models.DateTimeField(blank=False, default = datetime.datetime.now())
+
+
+    def __str__(self):
+        return (str(self.chat_id) + " " + self.nombre + " " + str(self.order_id) + " " + str(self.tipoevento))
+
 class Foto_ConsumoRollos(models.Model):
 
     fecha_foto=models.DateTimeField(blank=False, default = datetime.datetime.now())
