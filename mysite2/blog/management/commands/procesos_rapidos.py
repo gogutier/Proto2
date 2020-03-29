@@ -296,7 +296,7 @@ class Command(BaseCommand):
                     print(sem.peakstock)
                     #ahora calculo los KPI de cada op grúa y los muestro asocio a esta sem
 
-                    listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1002/Carlos Paz", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
+                    listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1098/JONATHAN RIVEROS", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
                     listafiltrosalida=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9"]
                     filtrosalidaqs=Q()
                     for item in listafiltrosalida:
@@ -546,7 +546,7 @@ class Command(BaseCommand):
 
                 print("iniciando datos B")
 
-                listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1002/Carlos Paz", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
+                listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1098/JONATHAN RIVEROS", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
                 filtroopgruabptqs=Q()
 
                 for op in listaopgruabpt:

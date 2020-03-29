@@ -11,7 +11,6 @@
 
 
 
-
 <div class="container">
 
   <ul class="nav nav-tabs">
@@ -117,8 +116,8 @@ function datosinv(){
       respuesta = response_data.respuesta;
       console.log(respuesta)
 
-
-      /////////////Gráfico MM2
+      //Gráfico Mm2
+      /////////////Esto es para sacar el total de MM2 cargados en las últimas 4 semanas terminadas
       var table = document.getElementById("myTable");
 
 
@@ -160,6 +159,8 @@ function datosinv(){
 
 
       console.log(sumam2total)
+
+      //Ahora grabo los datos en la tabla
       var auxcont=2
       var flag1=0
       //sumam2total=0
@@ -184,6 +185,13 @@ function datosinv(){
 
             }
             flag1=1
+
+            //agrego las últimas 2 celdas para que todas las filas tengan el mismo número de columnas
+
+            var cell = fila1.insertCell(auxcont2);
+            auxcont2+=1
+            var cell = fila1.insertCell(auxcont2);
+
           }
 
         var row = table.insertRow(auxcont);
@@ -287,8 +295,14 @@ function datosinv(){
 
               auxcont2+=1
 
+
             }
             flag1=1
+            //agrego las últimas 2 celdas para que todas las filas tengan el mismo número de columnas
+
+            var cell = fila1.insertCell(auxcont2);
+            auxcont2+=1
+            var cell = fila1.insertCell(auxcont2);
           }
 
         var row = table.insertRow(auxcont);
@@ -323,9 +337,12 @@ function datosinv(){
           cell1.style ='font-size: 25px;'
 
         auxcont+=1
+
+
       }
 
-
+      ordena("myTable")
+      ordena("myTable2")
 
 
       },
@@ -343,11 +360,59 @@ function datosinv(){
 }
 
 
+function ordena(tab)
+{
+console.log("Ordenando")
 
+var table, rows, switching, i, x, y, shouldSwitch;
+ table = document.getElementById(tab);
+ switching = true;
+ /*Make a loop that will continue until
+ no switching has been done:*/
+ while (switching) {
+   //start by saying: no switching is done:
+   console.log("iniciando loop")
+   switching = false;
+   rows = table.rows;
+   console.log("Tabla:")
+   console.log(table)
+   console.log("n° de filas:")
+   console.log(table.rows.lenght)
+
+   /*Loop through all table rows (except the
+   first, which contains table headers):*/
+   for (i = 2; i < (rows.length - 1); i++) {
+     console.log("revisando filas")
+     //start by saying there should be no switching:
+     shouldSwitch = false;
+     /*Get the two elements you want to compare,
+     one from current row and one from the next:*/
+     x = rows[i].getElementsByTagName("TD")[6];
+     y = rows[i + 1].getElementsByTagName("TD")[6];
+     //check if the two rows should switch place:
+     if (Number(x.innerHTML) < Number(y.innerHTML)) {
+       //if so, mark as a switch and break the loop:
+       shouldSwitch = true;
+       break;
+     }
+   }
+   if (shouldSwitch) {
+     /*If a switch has been marked, make the switch
+     and mark that a switch has been done:*/
+     rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+     switching = true;
+   }
+ }
+
+
+
+}
 /// PAra transformar los cambios en modo texto a un array y generar un form por cada línea.
 
 
-datosinv()
+
+datosinv();
+ordena();
 
 
 

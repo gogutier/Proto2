@@ -121,7 +121,7 @@ class Command(BaseCommand):
                     datocliente=datosextra[8]#form.cleaned_data["esFGLoad"]
                     datofechacreacionpallet=datosextra[9]#form.cleaned_data["esFGLoad"]
                     datomaqruta=datosextra[10]#form.cleaned_data["esFGLoad"]
-
+                    datoremision=datosextra[11]
                     #Ojo aquí si cambia algún dato en un transactionindex lo va a duplicar?
                     o, created = MovPallets.objects.get_or_create(TRANSACTIONINDEX=dato0, LOADID=dato8)
                     o.PLANTID=dato1
@@ -146,6 +146,7 @@ class Command(BaseCommand):
                     o.kguni=datokguni
                     o.m2uni=datom2uni
                     o.esFGLoad=datoFGLoad
+                    o.remision=datoremision
 
                     o.save()
                     sleep(0.05)
@@ -183,6 +184,7 @@ class Command(BaseCommand):
                     c.kguni=datokguni
                     c.m2pallet=datom2pallet
                     c.kgpallet=datokgpallet
+                    c.remision=datoremision
                     c.save()
                     sleep(0.06)
 
@@ -216,6 +218,7 @@ class Command(BaseCommand):
 
         flag0=9 #0 si voy a sacar el dato de MVLOAD o 1 si lo voy a sacar del Bill of Lading.
         respuesta=[]
+        remision="vacio"
 
         destinobpt=('PLL','PT10','AN1','AN2','AN3','AN4','AN5','AN6','AN7','AN8','AN9','B01','B02','B03','B04','B05','B06','B07','B08','B09','B10','B11','B12','B13','B14','B15','B16','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','A01','A02','A03','A04','A05','A06','A07','A08','E01','E02','E03','E04','PA1','PA2','PA3', 'PTCAL','RP1','Truck', 'D01')
         destinotxt=""
@@ -439,7 +442,7 @@ class Command(BaseCommand):
                 #print("m2uni")
                 #print(m2uni)
                 flagFGLoad=0
-                datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta]
+                datosextra = [unidadespallet, kgpallet, m2pallet, alto, ancho, pesouni, m2uni, flagFGLoad, cliente, fechacreacionpallet, maqruta, remision]
                 print("obtención de último movimiento actualizado")
                 print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
                 print(" ")
@@ -464,13 +467,13 @@ class Command(BaseCommand):
             for row in row1bol:
                 #print(row[0])
                 # row1= [TRANSACTIONINDEX], [PLANTID] ,[WAREHOUSE],[INTERNALSPECID], [ORDERID], [PARTID], [OPERATIONNO], [UNITTYPE], [LOADID], [UNITNO],[SOURCE],[DESTINATION],[EVENTDATETIME],[EVENTTIME],[OPERATORCODENAME]
-                print("saco 1 dato del billofladinginfo, que tenga el transactionindex y la misma orderid")
+                print("saco 1 dato (el más reciente) del billofladinginfo, que tenga el transactionindex y la misma orderid. Tb guardo su número de remisión")
                 cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[BILLOFLADINGID],[SHIPDATETIME],[ORDERID],[SPECID],[TRAILERID] FROM [ctidb_transact].[dbo].[BILLOFLADINGINFO] where transactionindex='"+ str(trbol) +"' and orderid= '"+ str(row[1]) +"' order by transactionindex desc")
                 rowaux=cursor.fetchone()
                 #print("obtengo el padrón de esa tarja:")
 
                 row1 =[ row[0],'800','wharehouse',rowaux[4], row[1], row[2],"1","UNITType",row[3],row[4],"vacio",row[5].upper(),rowaux[2],0,rowaux[5]]
-
+                remision=rowaux[1]
                 #print("ahora saco los datosextra asociados.")
 
                 #print("supuesto: todo pallet que se cargará a camión ya fue creado anteriormente y está en la BD de django control.corrupac:8090")
@@ -481,13 +484,13 @@ class Command(BaseCommand):
                     c= Pallet.objects.get(tarja=str(row[3]))
 
                 #    print("pallet encontrado")
-                    datosextra = [c.unidades, c.kgpallet, c.m2pallet, c.alto, c.ancho, c.kguni, c.m2uni, 0, c.cliente, c.fechacreac, c.maqruta]
+                    datosextra = [c.unidades, c.kgpallet, c.m2pallet, c.alto, c.ancho, c.kguni, c.m2uni, 0, c.cliente, c.fechacreac, c.maqruta, remision]
                     print("obtención de último movimiento actualizado")
                     print(str(row1[0])+" "+str(row1[4])+" "+str(row1[12]) + " de " + str(row1[10])+ " a " + str(row1[11]))
                     print(" ")
                 except:
                     c= Pallet.objects.get_or_create(tarja=str(row[3]))
-                    print("Error, pallet cargado a camión no pasó por registros efi previamente (cargaron un pallet muy antiguo por secretaría?)")
+                    print("Error, pallet cargado a camión no pasó por registros efi previamente (¿cargaron un pallet muy antiguo por secretaría?)")
                     sleep(5)
                 respuesta.append([row1,datosextra])
 

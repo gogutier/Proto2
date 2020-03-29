@@ -23,7 +23,7 @@ class AlertaBot(models.Model):
 
 
     def __str__(self):
-        return (str(self.chat_id) + " " + self.nombre + " " + str(self.order_id) + " " + str(self.tipoevento))
+        return (str(self.fechaalerta)+ " " + str(self.chat_id) + " " + self.nombre + " " + str(self.order_id) + " " + str(self.tipoevento) + " " + str(self.flagevento))
 
 class Foto_ConsumoRollos(models.Model):
 
@@ -455,6 +455,7 @@ class Pallet(models.Model):
     kguni=models.FloatField(default=0)
     ubic=models.CharField(max_length=32, default="vacio")
     maqruta=models.CharField(max_length=16, default="vacio")
+    remision=models.CharField(max_length=16, default="vacio")
 
     ubic2=models.ForeignKey('blog.UbicPallet', related_name='ubic_pallet', on_delete=models.CASCADE, default=1)
     fechaultmov=models.DateTimeField(blank=False, default=datetime.datetime.now())
@@ -511,6 +512,7 @@ class MovPallets(models.Model):
     m2uni=models.FloatField(default=0)
     kguni=models.FloatField(default=0)
     ubic=models.CharField(max_length=32, default="vacio")
+    remision=models.CharField(max_length=16, default="vacio")
     esFGLoad=models.IntegerField(default=0)
 
 

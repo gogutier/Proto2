@@ -48,7 +48,7 @@ def get_data_resumen_opgruas(request, *args, **kwargs):
     semanahoy=datetime.now().isocalendar()[1] #Ojo que aquí la semana parte el domingo    Isocalendar entrga [ISO Year,ISO Week Number,ISO Weekday]
     añohoy=datetime.now().isocalendar()[0]
     lista=[ semanahoy-4, semanahoy-3, semanahoy-2, semanahoy-1, semanahoy]
-    listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1002/Carlos Paz", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
+    listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1098/JONATHAN RIVEROS", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
     #esa lista después la puedo agregar como model.
     respuesta={}
     respuesta2={}
