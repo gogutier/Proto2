@@ -380,6 +380,38 @@ class Datos_KPI_Semanal(models.Model):
     def __str__(self):
         return (str(self.semana)+" - "+str(self.anno))
 
+
+class Datos_KPI_Diario(models.Model):
+
+    #Por ahora no los voy a asociar a una foto KPI pq en teoría cuando actualizo una semana el resto ya está con los datos correctos
+    #foto=models.ForeignKey('blog.Foto_KPI', related_name='foto_datosKPI', on_delete=models.CASCADE, default=0)
+
+    dia=models.DateField(default = datetime.datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0))
+    anno=models.IntegerField(default=0)
+    #fecha_inicio=models.DateTimeField(unique=True, blank=False, default = datetime.datetime.now())
+    productividad= models.FloatField(default=0)
+    antiguedadstockdesp= models.FloatField(default=0)
+    peakstock= models.FloatField(default=0)
+
+    def __str__(self):
+        return (str(self.dia)+" - "+str(self.anno))
+
+
+class Datos_KPI_OPGRUA_Diario(models.Model):
+
+    dia=models.ForeignKey('blog.Datos_KPI_Diario', related_name='foto_diaKPI', on_delete=models.CASCADE, default=0)
+    codigoCTI=models.CharField(max_length=21, default="0")
+    codigo=models.CharField(max_length=16, default="0")
+    nombre=models.CharField(max_length=16, default="0")
+
+    m2Cargados=models.FloatField(default=0)
+    palletsCargados=models.FloatField(default=0)
+
+    def __str__(self):
+        return (str(self.dia)+" - "+str(self.codigoCTI))
+
+
+
 class Datos_KPI_OPGRUA(models.Model):
 
     semana=models.ForeignKey('blog.Datos_KPI_Semanal', related_name='foto_semanaKPI', on_delete=models.CASCADE, default=0)

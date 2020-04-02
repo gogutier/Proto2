@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.forms.models import model_to_dict
 from django.views.generic.base import TemplateView
 from django.utils import timezone
-from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Datos_KPI_Semanal, Datos_KPI_OPGRUA
+from blog.models import Post,Comment, appointment, CargaCSV, OCImportacion, ProdID, Book, PruebaMod, PruebaTabla, OrdenProg, DetalleProg, ProdReal, Maquinas, Turnos, Minuta, OrderInfo, Padron, DiaConv2, OrdenProgCorr, DetalleProgCorr, Meses, Semanas, FotoInventario, ProyMkt, ProyMktMes, ProyMktPadron, ProdRealCorr, InfoWIP, Camion, OrdenCorrplan, FotoCorrplan, Cartones, CalleBPT, BobInvCic, MovPallets, Pallet, UbicPallet, PalletCic, TomaInvCic, DatosWIP_Prog, Datos_Proy_WIP, IDProgCorr, Datos_MovPallets, Datos_MovPallets_B, Datos_MovPallets_C, Foto_Datos_MovPallets, Datos_Inv_WIP, Foto_Datos_Inv_WIP,  FiltroMovInternoWIP, FiltroEntradaWIP, FiltroSalidaWIP, Foto_Inv_Cic_WIP, Foto_Calles_Inv_Cic_WIP, Foto_Palletscti_Inv_Cic_WIP, Foto_Palletsencontrados_Inv_Cic_WIP, Foto_Palletsenotracalle_Inv_Cic_WIP, Foto_Palletsnoencontrados_Inv_Cic_WIP, MovRollos, ConsumoRollos, Foto_ConsumoRollos, Datos_KPI_Semanal, Datos_KPI_OPGRUA, Datos_KPI_Diario, Datos_KPI_OPGRUA_Diario
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -47,11 +47,14 @@ def get_data_resumen_opgruas(request, *args, **kwargs):
 
     semanahoy=datetime.now().isocalendar()[1] #Ojo que aquí la semana parte el domingo    Isocalendar entrga [ISO Year,ISO Week Number,ISO Weekday]
     añohoy=datetime.now().isocalendar()[0]
+    diahoy=datetime.now().replace(hour= 0, minute=0, second=0, microsecond=0)
     lista=[ semanahoy-4, semanahoy-3, semanahoy-2, semanahoy-1, semanahoy]
+    listadias=[ diahoy-timedelta(days=4), diahoy-timedelta(days=3), diahoy-timedelta(days=2), diahoy-timedelta(days=1), diahoy]
     listaopgruabpt=["1091/PATRICIO FARIAS", "1092/ROBERTO QUILALEO","1083/WALDO  MOLINA", "1095/RICARDO PRADO","1093/JORGE SOTO", "1097/PEDRO MIRANDA", "1096/JORGE ARENAS", "1098/JONATHAN RIVEROS", "1099/SEBASTIAN PONCE", "1112/PETERSON RAIMOND", "1110/VICTOR CORTES", "1111/LUIS LOPEZ", "1090/RENE DONOSO","1193/Jose Salas","-","-","-"]
     #esa lista después la puedo agregar como model.
     respuesta={}
     respuesta2={}
+    respuestadia={}
 
 
     for semana in lista:
@@ -72,6 +75,26 @@ def get_data_resumen_opgruas(request, *args, **kwargs):
         for semana in lista:
             respuesta2[str(op)][str(semana)]=respuesta[str(semana)][str(op)]
 
+    respuesta={}
+
+    for dia in listadias:
+        #Creo el objeto semana
+        di, aux= Datos_KPI_Diario.objects.get_or_create(dia=dia, anno=añohoy)
+        #print(sem)# esto en las primeras semanas de enero va a generar un problema
+        respuesta[dia.strftime("%d-%b")]={}
+        for op in Datos_KPI_OPGRUA_Diario.objects.filter(dia=di):
+            aux=op.codigoCTI
+            #print(aux)
+            #print(op.m2Cargados)
+            respuesta[dia.strftime("%d-%b")][str(op.codigoCTI)]={"m2cargados":op.m2Cargados, "palletscargados":op.palletsCargados}
+
+            #respuesta.update({str(sem):str(aux)})#{str(op.codigoCTI):op.m2Cargados} )
+
+    for op in listaopgruabpt:
+        respuestadia[str(op)]={}
+        for dia in listadias:
+            respuestadia[str(op)][dia.strftime("%d-%b")]=respuesta[dia.strftime("%d-%b")][str(op)]
+
 
 
     print("Datos KPI grúas enviado")
@@ -83,6 +106,7 @@ def get_data_resumen_opgruas(request, *args, **kwargs):
 
     data = {
     "respuesta":respuesta2,
+    "respuestadia":respuestadia,
     "datos_remi": row0,
     }
 
