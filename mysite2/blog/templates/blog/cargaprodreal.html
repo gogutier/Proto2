@@ -2,6 +2,8 @@
 {% block content %}
 
 <h1>Carga producción real</h1>
+<h4>Ingresar a Link y descargar producción conversión como CSV.</h4>
+<h4>Seleccionar archvo .csv y cargar.</h4>
 <h4><a href="http://interlink.corrupac.cl/pagegenerator.dll/SIMPLEORDERSTATUSCM">CSV Interlink</a></h4>
 <br>
 
@@ -21,7 +23,7 @@
               <input type="button" id="upload" class="btn btn-primary" value="UploadCSV" onclick = "UploadCSV()" accept=".csv"/>
 
             <div class="botongrabarform" id="botongrabar" style="display:none">
-            <button type="submit" class="save btn btn-default">Save</button>
+            <button  style="font-size: 20px;" type="submit" class="save btn btn-default"><b>Grabar</b></button>
             </div>
 
           </form>
@@ -88,6 +90,8 @@ function displayHTMLTable(results){
   table+= "</table>";
   $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
   document.getElementById("botongrabar").style.display = "block";
+  document.getElementById("csvFileUpload").style.display = "none";
+  document.getElementById("upload").style.display = "none";
 
 
 
@@ -184,7 +188,7 @@ function filtrocolumna(tablain){
 
 function UploadCSV() {
     var csvFileUpload = document.getElementById("csvFileUpload");
-    var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+    var regex = /^([a-zA-Z0-9\s_\\.\-:()])+(.csv|.txt)$/;
     if (regex.test(csvFileUpload.value.toLowerCase()))
      {
         if (typeof (FileReader) != "undefined")

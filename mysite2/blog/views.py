@@ -15,7 +15,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import csv
 from datetime import datetime, timedelta
+import time
 from io import StringIO
+import pyodbc
 import pruebawebscrap
 import webscrap2
 import odbcremision
@@ -31,6 +33,18 @@ from openpyxl.reader.excel import load_workbook, InvalidFileException
 def auth_logout(request):
   logout(request)
   return redirect('inicio')
+
+
+
+
+def pruebaminuta(request):
+    #print("cargando consumos puestos")
+    template_name = 'blog/pruebaminuta.html'
+
+
+    return render(request, template_name,{} )#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+
+
 
 
 def resumen_opgruas(request):
@@ -2428,7 +2442,7 @@ class OrdenProgDetailView(DetailView):
         context['prodreal'] = ProdReal.objects.filter(datefin__gte=OrdenProg.objects.get(pk=pk).fecha_programa + timedelta(days=-1), datefin__lt=OrdenProg.objects.get(pk=pk).horizontefin + timedelta(days=1)).order_by('datefin')#Acá hay que filtrar para que sean las órdenes reales desde la fecha del programa de referencia en adelante
         context['maquinas'] = Maquinas.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
         context['turnos'] = Turnos.objects.all()#.filter(published_date__isnull=True).order_by('-published_date')
-        context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
+        #context['orderinfos'] = OrderInfo.objects.all() #filtrar para que sólo mande los que están dentro del detalleprog?
         #context['padrones'] = Padron.objects.all()#Agregarle al orderinfo fecha de subida y filtrar para que busque?
 
         return context
@@ -2609,14 +2623,12 @@ def carga_prod_real(request):
     if request.method == "POST":
 
         form = PruebaModForm(request.POST) ##Ojo esta sí sirve, es el Ultrafile donde se pega el excel
-        if form.is_valid():
-            datocrudo=form.cleaned_data["ultrafile"]
-            print("datocrudo.clean: " + datocrudo)
-        else:
+
+        if True:
             datocrudo=form.data["ultrafile"]
             datoprocesado=datocrudo.split(",;,")
-            print("datoprocesado1:")
-            print(datoprocesado)
+            print("obteniend datoprocesado1")
+            #print(datoprocesado)
             for i in range (len(datoprocesado)):
                 datoprocesado[i]=datoprocesado[i].split(",")
             print(datoprocesado)
@@ -2707,7 +2719,7 @@ def carga_prod_real(request):
                 o.save()
 
 
-            #################
+        return redirect('res_conv_v2')
 
 
     else:
@@ -3370,20 +3382,10 @@ def carga_prog(request):
 
     if request.method == "POST":
         form = PruebaModForm(request.POST)
-        if form.is_valid():
 
-
-            datocrudo=form.cleaned_data["ultrafile"]
-            datoprocesado=datocrudo.split(";")
-
-            #PruebaTabla.objects.create(item1=datoprocesado[0],item2=datoprocesado[1],item3=datoprocesado[2])
-
-            post = form.save(commit=False)
-
-            post.save()
-
-        else:
+        if True:
             datocrudo=form.data["ultrafile"]
+            print("Recibiendo dato crudo de la carga de programa")
             '''
             f = StringIO(datocrudo)
             reader = list(csv.reader(f, delimiter=','))
@@ -3509,6 +3511,31 @@ def carga_prog(request):
                     colnumberout = j
             #print("Completado!!!!")
 
+            #Acá incio la conexión con la BD:
+
+            flagcursor=0
+
+            try:
+                conn = pyodbc.connect('Driver={SQL Server};'
+                                      'Server=192.168.8.41;'
+                                      'UID=cti;'
+                                      'PWD=ctidb;'
+                                      'Database=ctidb_transact;')
+                                      #'Trusted_Connection=yes;')
+                                      #DSN=QadNet;UID=CGCOM;HOST=192.168.8.7;PORT=7120;DB=cstprod;
+
+                cursor = conn.cursor()
+                flagcursor=1
+
+            except Exception as e:
+
+                print("error al conectar a BD para orderinfo!!")
+                print(e)
+                flagcursor=0
+                time.sleep(3)
+
+
+
             for i in range(1,len(datoprocesado)):
                 #try:
                     #print(OrdenProg.objects.all())
@@ -3532,10 +3559,21 @@ def carga_prog(request):
                     print(datoprocesado[i][colturno])
                     print(datoprocesado[i][colorderid])
 
+                    if flagcursor==1:
+                        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(datoprocesado[i][colorderid]) + " order by transactionindex desc")
+                        if len(cursor.fetchall())>0:
+                            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(datoprocesado[i][colorderid]) + " order by transactionindex desc")
+                            row0=cursor.fetchone()
+                            cliente=row0[3]
+                            padron=row0[2]
+                        else:
+                            cliente="#"
+                            padron="#"
 
-                    DetalleProg.objects.get_or_create(programma=OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0]  ,workcenter=datoprocesado[i][colworkcenter],orderId=datoprocesado[i][colorderid], dateini=dateini_datetime, datefin=datefin_datetime,qIn=cantQin, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colturno], orderIdPrev=datoprocesado[i][colorderid], orderIdPost=datoprocesado[i][colorderid], anchoplaca=datoprocesado[i][colanchoplaca], largoplaca=datoprocesado[i][collargoplaca], numberout=datoprocesado[i][colnumberout])
 
+                    DetalleProg.objects.get_or_create(programma=OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0]  ,workcenter=datoprocesado[i][colworkcenter],orderId=datoprocesado[i][colorderid], dateini=dateini_datetime, datefin=datefin_datetime,qIn=cantQin, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colturno], orderIdPrev=datoprocesado[i][colorderid], orderIdPost=datoprocesado[i][colorderid], anchoplaca=datoprocesado[i][colanchoplaca], largoplaca=datoprocesado[i][collargoplaca], numberout=datoprocesado[i][colnumberout], cliente=cliente, padron=padron)
 
+                    return redirect('res_conv_v2')
                 #except:
 
                     #print("hola")

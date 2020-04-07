@@ -4,9 +4,11 @@
 
   <h1 class="posttitle">{{ordenprog.fecha_programa}}</h1>
 
-<h3>Tabla JS:</h3>
-<div class="row" id="parsed_csv_list">
+<h3>Tabla programa:</h3>
+
+<div class="table" id="parsed_csv_list">
 </div>
+
 
 
 <script type="text/javascript">
@@ -22,6 +24,8 @@
   InfoProd[4]=new Array(); //qIn
   InfoProd[5]=new Array(); //Anchoplaca
   InfoProd[6]=new Array(); //LargoPlaca
+  InfoProd[7]=new Array(); //Cliente
+  InfoProd[8]=new Array(); //Padron
 
 
 {% for detalle in detalleprog %}
@@ -33,6 +37,8 @@ InfoProd[3].push("{{detalle.orderId}}");
 InfoProd[4].push(parseInt("{{detalle.qIn}}"));
 InfoProd[5].push(parseFloat("{{detalle.anchoplaca}}"));
 InfoProd[6].push(parseFloat("{{detalle.largoplaca}}"));
+InfoProd[7].push(("{{detalle.cliente}}"));
+InfoProd[8].push(("{{detalle.padron}}"));
 
 {% endfor %}
 
@@ -74,6 +80,7 @@ function displayHTMLTable(results){
 
 
   console.log(hormid.format("YYYY-MM-DDTHH:mm:ssZ"))
+
 
   var table = "<table class='table' >";
 
@@ -163,7 +170,7 @@ do {
 
                       {% for maquina in maquinas %};
 
-                            table+=     '<td>';
+                            table+=     '<td width="17%" >';
 
                           //for(i=0;i<=InfoProd[0].length-1;i++){
                           {% for detalle in detalleprog %};//acá podemos poner un filtro para evitarse el segundo if
@@ -192,7 +199,7 @@ do {
                                     {% if detalle.turno == turno.turno %}
 
                                     // Aquí agrego latabla resumen por orden
-                                    table+=               '<table class="table" >';
+                                    table+=               '<table class="table  table-hover table-bordered" >';
                                     table+=               '<tr class="tr">';
                                     table+=               '<td style="font-size: 15px; padding: 15px 5px;"><a href="http://interlink.corrupac.cl/pagegenerator.dll/OrderStatusSearch?%21+SplitN+=isNULL%28O.SplitNumber%2C0%29%3D0&O.OrderID+like={{detalle.orderId}}&C.Name+like=%25&CustPO+like=&CustItemID+like=&O.specid+like=&isNull%28ActGrade%2COrgGrade%29+like=&G.flute+like=&SecondaryCustomerPO+like=&shipzone+like=&O.SalesCode+like=&duedatetime+%3E%3D=&duedatetime+%3C%3D=&LateProductionDateTime+%3E%3D=&LateProductionDateTime+%3C%3D=&BlankWidth+%3E%3D=&BlankWidth+%3C%3D=&BlankLength+%3E%3D=&BlankLength+%3C%3D=&OrderPriority=&%21+Status=O.TrackingStatus%3C%3D80&%21+Warehouse=&%21+Held=&order+by=O.trackingstatus+asc&%21+group=+">{{ detalle.orderId }}</a>'
 
@@ -323,13 +330,13 @@ do {
                               //Calculo m2 total programado
                               m2prog=0;
                               m2prog= {{detalle.anchoplaca}} * {{detalle.largoplaca}} * {{detalle.qIn}};
-                              table+= m2prog.toLocaleString('es-ES',{maximumFractionDigits: 0 }) + " m2";
-                              table+=                    '<br/>';
+                              table+= m2prog.toLocaleString('en-EN',{maximumFractionDigits: 0 }) + " m2";
+
 
 
                               realproducido=0;
                               realproducidototal=0;
-                              table+=                  '<td colspan="1" style="font-size: 15px; padding: 15px 5px;">';
+                              table+=                  '<td colspan="1" style="font-size: 15px; padding: 15px 2px; text-align:center">';
                                   flag1=0;
                                   {% for prod in prodreal%}; //aquí aplicar el filtro para que considere la última prodreal subida para cada ID
                                   if(flag1==0)
@@ -361,18 +368,11 @@ do {
 
                             table+=                  '<tr>';
                             table+=                  '<td colspan="2" style="font-size: 12px">';
-                            strnamecliente = '#';
-                            strpadron = '#';
+
+                            strnamecliente = '{{detalle.cliente}}';
+                            strpadron = '{{detalle.padron}}';
                             m2 = 0;
 
-
-                                    {% for orderinfo in orderinfos%};
-                                          {% if orderinfo.orderId == detalle.orderId %};
-                                          strnamecliente = '{{orderinfo.cliente}}'.substring(0,15);
-                                          strpadron = '{{orderinfo.padron}}'.substring(0,20);
-
-                                            {% endif %};
-                                    {% endfor %};
 
 
 
@@ -410,7 +410,7 @@ hormid=hormid.add(1,"d")
 
     table+= "</tr>";
 
-  table+= "</table>";
+  table+= "</table> ";
   $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
 
 }

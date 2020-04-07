@@ -1,26 +1,33 @@
 {% extends "blog/base.html" %}
 {% block content %}
 <h1>Carga De Programa diario</h1>
+<div class="container">
+
+
 
 <form method="POST" class="post-form">
 {% csrf_token %}
 <div class="">
-  <h4>Cargar datos aquí</h4>
+  <h4>Cargar datos aquí. Sacar del reporte de Programación CTI en QAD (menú 91.8.33) una vez se libere el programa oficial a máquinas.</h4>
   {{ form.ultrafile}}
+
 </div>
 <button type="button" id="convert">Convert</button>
-<div class="botongrabarform" id="botongrabar">
-<button type="submit" class="save btn btn-default">Save</button>
+
+
+
+<br>
+<div class="botongrabarform" id="botongrabar" style="display: none;">
+<button style="font-size: 20px;" type="submit" class="save btn btn-default"><b>Guardar</b></button>
 </div>
-
 </form>
-
-
+<br>
+<br>
 <div class="row" id="parsed_csv_list">
 
 </div>
 
-
+</div>
 
 <script type="text/javascript">
 
@@ -402,15 +409,29 @@ function displayHTMLTable(results){
     var cells = row.join(",").split(",");
 
     for(j=0;j<=cells.length-1;j++){
-      table+= "<td>";
+      table+= "<td width='7%''>";
       table+= cells[j];
-      table+= "</th>";
+      table+= "</td>";
 
     }
       table+= "</tr>";
     }
     table+= "</table>";
   $("#parsed_csv_list").html(table); //Descomentar esto para ver la tabla grande
+
+
+
+  var x = document.getElementById("botongrabar");
+
+    x.style.display = "block";
+
+
+  var x = document.getElementById("convert");
+
+    x.style.display = "none";
+
+
+
 
 }
 

@@ -1011,6 +1011,9 @@ class DetalleProg(models.Model):
     completo_secuencia = models.CharField(max_length=200, default="vacio")
     completo_unidades = models.CharField(max_length=200, default="vacio")
 
+    cliente = models.CharField(max_length=17, default="vacio")
+    padron = models.CharField(max_length=17, default="vacio")
+
     def __str__(self):
         return (self.orderId)
 '''

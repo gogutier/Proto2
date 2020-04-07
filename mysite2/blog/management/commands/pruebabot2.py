@@ -314,10 +314,10 @@ print ('Listening ...')
 
 # Keep the program running.
 while 1:
-    if 1:#try:
+    try:
         time.sleep(10)
         print("ejecutando búsqueda de eventos...")
         checkeventos()
-    #except Exception as e:
-    #    print("Error!")
-    #    print(e)
+    except Exception as e:
+        print("Error!")
+        print(e)
