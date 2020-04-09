@@ -1014,18 +1014,16 @@ class DetalleProg(models.Model):
     cliente = models.CharField(max_length=17, default="vacio")
     padron = models.CharField(max_length=17, default="vacio")
 
+    m2producidos = models.FloatField(default=0)
+    m2ingresados_bpt = models.FloatField(default=0)
+    m2despachados = models.FloatField(default=0)
+
+    unidades_producidas = models.IntegerField(default=0)
+    unidades_ingresadas_bpt = models.IntegerField(default=0)
+    unidades_despachadas = models.IntegerField(default=0)
+
     def __str__(self):
         return (self.orderId)
-'''
-class CargaProducciones(models.Model):
-
-    fecha_carga= models.DateTimeField(default=datetime.datetime.now)# tb puede incluir default=datetime.now
-    completo_unidades = models.CharField(max_length=200, default="vacio")
-    #fecha_programa=models.CharField(max_length=200, default="vacio")
-
-    def __str__(self):
-        return str((self.fecha_carga))
-'''
 
 
 class ProdRealCorr(models.Model):

@@ -181,6 +181,7 @@ def respuesta(text, chat_id): #devuelve el texto de la respuesta y el nuevo esta
             respuesta= "ok, te avisaré cuando la ID "+ texto +" ingrese a bpt"
             o, created = AlertaBot.objects.get_or_create(chat_id=chat_dict["chat_id"], order_id=texto, tipoevento="ingreso")
             o.fechaalerta=datetime.now()
+            o.flagevento=False
             estado="Inicio"
         else:
             respuesta="Mm creo que escribiste mal en ID, por favor revisa y vuelve a intentar."
@@ -191,6 +192,7 @@ def respuesta(text, chat_id): #devuelve el texto de la respuesta y el nuevo esta
             respuesta= "ok, te avisaré cuando la ID "+ texto + " inicie su carga a camión."
             o, created = AlertaBot.objects.get_or_create(chat_id=chat_dict["chat_id"], order_id=texto, tipoevento="carga")
             o.fechaalerta=datetime.now()
+            o.flagevento=False
             estado="Inicio"
         else:
             respuesta="Mm creo que escribiste mal en ID, por favor revisa y vuelve a intentar."

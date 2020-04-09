@@ -2944,7 +2944,7 @@ def carga_prog_corr(request):
 
             fecha_programa_datetime=datetime.now()
             fecha_programa_horini=fecha_programa_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
-            fecha_programa_horfin=fecha_programa_horini + timedelta(days=1)
+            fecha_programa_horfin=fecha_programa_horini + timedelta(days=2)
                         #print("fecha programa")
                         #print(fecha_programa_datetime)
 
@@ -2968,9 +2968,9 @@ def carga_prog_corr(request):
             for i in range(1,len(datoprocesado)):
                 datefinajustada_datetime = datetime.strptime(datoprocesado[i][colDatefinajustada], "%d-%m-%Y")#"%d-%m-%Y %H:%M"
                 datefin_datetime = datetime.strptime(datoprocesado[i][colDatefin], "%d-%m-%Y %H:%M")#"%d-%m-%Y %H:%M"
-
-                DetalleProgCorr.objects.get_or_create(programma=OrdenProgCorr.objects.filter(fecha_programa=fecha_programa_datetime)[0], ajuste=datoprocesado[i][colAjuste], onda=datoprocesado[i][colOnda], formato=datoprocesado[i][colFormato], carton=datoprocesado[i][colCarton], metroslineales=datoprocesado[i][colMl], trim=datoprocesado[i][colTrim], papeles=datoprocesado[i][colPapeles],datefin=datefin_datetime, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colTurno])
-                print("completado!")
+                if datefin_datetime < fecha_programa_horfin:
+                    DetalleProgCorr.objects.get_or_create(programma=OrdenProgCorr.objects.filter(fecha_programa=fecha_programa_datetime)[0], ajuste=datoprocesado[i][colAjuste], onda=datoprocesado[i][colOnda], formato=datoprocesado[i][colFormato], carton=datoprocesado[i][colCarton], metroslineales=datoprocesado[i][colMl], trim=datoprocesado[i][colTrim], papeles=datoprocesado[i][colPapeles],datefin=datefin_datetime, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colTurno])
+                    print("completado!")
         return redirect ('res_corr')
 
     else:
@@ -3453,7 +3453,7 @@ def carga_prog(request):
 
             fecha_programa_datetime=datetime.strptime(datoprocesado[1][colFecha], "%d-%m-%Y %H:%M")
             fecha_programa_horini=fecha_programa_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
-            fecha_programa_horfin=fecha_programa_horini + timedelta(days=1)
+            fecha_programa_horfin=fecha_programa_horini + timedelta(days=2)
             #print("fecha programa")
             #print(fecha_programa_datetime)
 
@@ -3535,7 +3535,7 @@ def carga_prog(request):
                 time.sleep(3)
 
 
-
+            print("en total se encontraron " + str(len(datoprocesado)) + " producciones en prog covn")
             for i in range(1,len(datoprocesado)):
                 #try:
                     #print(OrdenProg.objects.all())
@@ -3548,32 +3548,34 @@ def carga_prog(request):
                     dateini_datetime = datetime.strptime(datoprocesado[i][coldateini], "%d-%m-%Y %H:%M")#"%d-%m-%Y %H:%M"
                     datefin_datetime = datetime.strptime(datoprocesado[i][coldatefin], "%d-%m-%Y %H:%M")#"%d-%m-%Y %H:%M"
                     cantQin=int(datoprocesado[i][colqin])
-                    print("datefinajustada: " + str(datefinajustada_datetime))
-                    print(OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0])
-                    print(datoprocesado[i][colworkcenter])
-                    print(datoprocesado[i][colorderid])
-                    print(datoprocesado[i][coldateini])
-                    print(datoprocesado[i][coldatefin])
-                    print(datoprocesado[i][colqin])
-                    print(fecha_programa_datetime)
-                    print(datoprocesado[i][colturno])
-                    print(datoprocesado[i][colorderid])
+                    if datefin_datetime < fecha_programa_horfin:
 
-                    if flagcursor==1:
-                        cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(datoprocesado[i][colorderid]) + " order by transactionindex desc")
-                        if len(cursor.fetchall())>0:
+                        #print("datefinajustada: " + str(datefinajustada_datetime))
+                        print(OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0])
+                        print(datoprocesado[i][colworkcenter])
+                        print(datoprocesado[i][colorderid])
+                        print(datoprocesado[i][coldateini])
+                        print(datoprocesado[i][coldatefin])
+                        print(datoprocesado[i][colqin])
+                        print(fecha_programa_datetime)
+                        print(datoprocesado[i][colturno])
+                        print(datoprocesado[i][colorderid])
+
+                        if flagcursor==1:
                             cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(datoprocesado[i][colorderid]) + " order by transactionindex desc")
-                            row0=cursor.fetchone()
-                            cliente=row0[3]
-                            padron=row0[2]
-                        else:
-                            cliente="#"
-                            padron="#"
+                            if len(cursor.fetchall())>0:
+                                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(datoprocesado[i][colorderid]) + " order by transactionindex desc")
+                                row0=cursor.fetchone()
+                                cliente=row0[3]
+                                padron=row0[2]
+                            else:
+                                cliente="#"
+                                padron="#"
 
 
-                    DetalleProg.objects.get_or_create(programma=OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0]  ,workcenter=datoprocesado[i][colworkcenter],orderId=datoprocesado[i][colorderid], dateini=dateini_datetime, datefin=datefin_datetime,qIn=cantQin, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colturno], orderIdPrev=datoprocesado[i][colorderid], orderIdPost=datoprocesado[i][colorderid], anchoplaca=datoprocesado[i][colanchoplaca], largoplaca=datoprocesado[i][collargoplaca], numberout=datoprocesado[i][colnumberout], cliente=cliente, padron=padron)
+                        DetalleProg.objects.get_or_create(programma=OrdenProg.objects.filter(fecha_programa=fecha_programa_datetime, transaction_index=datoprocesado[1][colTransindex])[0]  ,workcenter=datoprocesado[i][colworkcenter],orderId=datoprocesado[i][colorderid], dateini=dateini_datetime, datefin=datefin_datetime,qIn=cantQin, datefinajustada= datefinajustada_datetime , turno=datoprocesado[i][colturno], orderIdPrev=datoprocesado[i][colorderid], orderIdPost=datoprocesado[i][colorderid], anchoplaca=datoprocesado[i][colanchoplaca], largoplaca=datoprocesado[i][collargoplaca], numberout=datoprocesado[i][colnumberout], cliente=cliente, padron=padron)
 
-                    return redirect('res_conv_v2')
+            return redirect('res_conv_v2')
                 #except:
 
                     #print("hola")

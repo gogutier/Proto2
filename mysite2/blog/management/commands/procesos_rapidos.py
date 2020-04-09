@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from blog.models import OrdenCorrplan as OrdenCorrplan
+from blog.models import OrdenProg as OrdenProg
+from blog.models import DetalleProg as DetalleProg
 from blog.models import FotoCorrplan as FotoCorrplan
 from blog.models import FotoProgCorr as FotoProgCorr
 from blog.models import FiltroEntradaWIP as FiltroEntradaWIP
@@ -49,6 +51,33 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         #parser.add_argument('poll_id', nargs='+', type=int)
         poll_id="hola"
+
+    def update_detalleprogs(self):
+
+        print("iniciando actualización de último OrdenProg cargado de conversión")
+        #obteniendo último OrdenProg subido al sistema:
+        ordenprog= OrdenProg.objects.order_by("-fecha_programa")[1]
+        print(ordenprog)
+        #ahora tomo todas las detalleprog que pertenecen a esa orden
+        detalles= DetalleProg.objects.filter(programma=ordenprog, datefinajustada__lte = ordenprog.horizontefin)
+
+        listafiltrobpt=["AN1","AN2","AN3","AN4","AN5","AN6","AN7","AN8","AN9", "C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","E01","E02","E03","E04","A01","A02","A03","A04","A05","A06","A07","PA1","PA2","PA3","PLL","RP1","PT10"]
+        filtrobptqs=Q()
+        for item in listafiltrobpt:#OJO acá falta incluir en el filtro para que considere sólo los pallets que entraron a PLL dentro del mismo turno
+            filtrobptqs = filtrobptqs | Q(ubic=item)
+
+
+        for orden in detalles:
+            print(orden)
+            #por aca orden realizo la consulta de las unidades producidas, unidades ingresadas a bodega y unidades despachadas.
+            #buscando pallets producidos en FGLOAD "Conversión"
+            ntruck = Pallet.objects.filter(ubic="TRUCK", ORDERID=str(orden.orderId)).count()
+            orden.unidades_despachadas=ntruck
+            nbpt = Pallet.objects.filter(filtrobptqs, ORDERID=str(orden.orderId)).count()
+            orden.unidades_ingresadas_bpt = nbpt #en vdd estas son las unidades "en BPT"
+            orden.save()
+
+
 
     def update_datos_wip(self):
 
@@ -1021,6 +1050,7 @@ class Command(BaseCommand):
         while (1):
 
             try:
+                self.update_detalleprogs()
                 self.updatekpisemanal()
                 self.updatemovpallets()
                 self.update_datos_wip()
