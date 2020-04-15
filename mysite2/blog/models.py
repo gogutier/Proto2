@@ -9,6 +9,17 @@ FEB = "Febrero"
 MAR = "Marzo"
 ABR = "Abril"
 
+class Alarma(models.Model):
+
+    #cargamasivaa=models.ForeignKey('blog.CargaProducciones', related_name='fecha_carga_producciones', on_delete=models.CASCADE)
+
+    alarmaprogconv=models.DateTimeField(blank=False, default = datetime.datetime.now())
+    flagprogconv=models.BooleanField(default=False)
+
+    def __str__(self):
+        return (str(self.alarmaprogconv)+"-"+str(self.flagprogconv))
+
+
 
 class AlertaBot(models.Model):
 
@@ -1048,7 +1059,7 @@ class ProdRealCorr(models.Model):
 
 class DetalleProgCorr(models.Model):
 
-    programma=models.ForeignKey('blog.OrdenProgCorr', related_name='fecha_prog', on_delete=models.CASCADE)
+    programma=models.ForeignKey('blog.OrdenProgCorr', related_name='fecha_prog2', on_delete=models.CASCADE)
 
     ajuste= models.CharField(max_length=20, default="vacio")
     onda= models.CharField(max_length=20, default="vacio")

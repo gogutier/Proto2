@@ -18,7 +18,7 @@
 
 <br>
 <div class="botongrabarform" id="botongrabar" style="display: none;">
-<button style="font-size: 20px;" type="submit" class="save btn btn-default"><b>Guardar</b></button>
+  <button style="font-size: 20px;" type="submit" class="save btn btn-default"><b>Guardar</b></button>
 </div>
 </form>
 <br>
@@ -142,12 +142,7 @@ if (colterminationdate != -1)
 
     //console.log("Original: " + datefinoriginal);
 
-    var datepost = moment(datefinoriginal, "DD-MM-YYYY HH:mm");
-    var dateposthor = moment(fechaprog, "DD-MM-YYYY HH:mm");
 
-
-    var horater=Number(datepost.format("HH"));
-    var minter=Number(datepost.format("mm"));
 
     /*ejemplo moment
     var momentDate = moment('23.11.2009 12:34:56', 'DD.MM.YYYY HH:mm:ss');
@@ -163,6 +158,13 @@ if (colterminationdate != -1)
 
     //console.log("horater: " + horater)
     //console.log("minter: " + minter)
+
+    var datepost = moment(datefinoriginal, "DD-MM-YYYY HH:mm");
+    var dateposthor = moment(fechaprog, "DD-MM-YYYY HH:mm");
+
+
+    var horater=Number(datepost.format("HH"));
+    var minter=Number(datepost.format("mm"));
 
     if(0<=horater && horater<7)
     {

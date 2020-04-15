@@ -1,87 +1,274 @@
-
+{% extends "blog/base.html" %}
 
 {% block content %}
 
 {% if user.is_authenticated %}
+<head>
 
 
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+ <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 
-
+</head>
 
 <h3>Prototipo herramienta minuta online</h3>
 
 
-<div class="container">
-
-<h1>Bootstrap textarea demo</h1>
 
 
 
 
 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#pest1">Reunión</a></li>
+  <li><a data-toggle="tab" href="#pest2"> Resumen </a></li>
+</ul>
 
-<div class="row">
-    <div class="col-md-3">
-      <div class="input-group-prepend ">
-        <span class="input-group-text" id="basic-addon1">@</span>
+
+
+
+
+    <div class="tab-content">
+
+
+            <div id="pest1" class="tab-pane fade in active" >
+
+
+
+            <div class="container">
+              <br>
+
+              <div class="row">
+                <div class="col-md-2 ">
+                    <ul class="nav nav-pills flex-column" >
+                        <li class="nav-item active in ">
+                          <a class="nav-link" id="home-tab" data-toggle="tab" href="#asistentes">Asistentes</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#discus">Discusión</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#acuerdos">Acuerdos/Aprendizajes</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tareas">Tareas</a>
+                        </li>
+                  </ul>
+                </div>
+                <!-- /.col-md-4 -->
+                <div class="col-md-10">
+                    <div class="tab-content" id="myTabContent">
+
+
+                            <div class="tab-pane fade in active" id="asistentes">
+                            <div class="container">
+
+
+
+
+                              <div id="app2">
+
+
+
+
+                                <ul v-for="(input, index) in inputs">
+
+                                  <div class="container">
+
+                                        <div class="input-group-prepend col-md-2">
+                                          <span class="input-group-text">@</span>
+                                          <input v-model="input.nombre" class="form-control" aria-label="With textarea"></input>
+                                        </div>
+
+                                      <div class="col-md-2">
+
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text">Cargo</span>
+                                            <input v-model="input.cargo" class="form-control" aria-label="With textarea"></input> [[input.cargo]]
+                                          </div>
+
+                                       </div>
+
+                                      <div class="col-md-2">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text">Correo</span>
+                                            <input v-model="input.correo" class="form-control" aria-label="With textarea"></input>
+                                        </div>
+                                      </div>
+
+
+                                      <div class="col-md-2">
+                                          <div class="input-group-prepend">
+                                          <span class="input-group-text">Presente</span>
+                                          <select v-model="input.asiste" class="form-control">
+                                                <option>Asiste</option>
+                                                <option>Ausente</option>
+                                          </select>
+                                          </div>
+
+                                      </div>
+
+                                      <div class="col-md-4">
+                                        <button class="btn btn-info pull-left" @click="deleteRow(index)">Delete</button>
+                                      </div>
+
+
+                                      </div>
+
+                                </ul>
+
+
+
+
+
+
+                              <br>
+                              <button @click="addRow">Add row</button >
+                            </div>
+
+                        </div>
+                            </div>
+                            <div class="tab-pane fade" id="discus">
+                            <div class="form-group shadow-textarea">
+                              <label for="exampleFormControlTextarea6"><h3>Temas tratados</h3></label>
+                              <textarea class="form-control z-depth-1" id="exampleFormControlTextarea6" rows="3" placeholder="Write something here..."></textarea>
+                            </div>
+                            </div>
+                            <div class="tab-pane fade" id="acuerdos">
+                            <h2>Acuerdos/Aprendizajes</h2>
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque, eveniet earum. Sed accusantium eligendi molestiae quo hic velit nobis et, tempora placeat ratione rem blanditiis voluptates vel ipsam? Facilis, earum!</p>
+                            </div>
+                            <div class="tab-pane fade" id="tareas">
+                            <h2>Tareas</h2>
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque, eveniet earum. Sed accusantium eligendi molestiae quo hic velit nobis et, tempora placeat ratione rem blanditiis voluptates vel ipsam? Facilis, earum!</p>
+                            </div>
+                    </div>
+                </div>
+                <!-- /.col-md-8 -->
+              </div>
+
+
+
+            </div>
+
+            </div>
+
+
+
+        <div id="pest2" class="tab-pane fade">
+
+          <div class="container">
+
+          <div id="app3">
+
+
+
+          <h2>Resmen de la reunión</h2>
+
+
+
+            <h4>Asistentes</h4>
+
+          <ul v-for="(input, index) in inputs">
+
+              [[input.nombre]]    [[input.asiste]]
+
+          </ul>
+
+
+
+          </div>
+
+          </div>
+
+        </div>
+
+
+
       </div>
-      <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1"></div>
-
-    <div class="col-md-3">
-
-      <div class="input-group-prepend">
-        <span class="input-group-text">Cargo</span>
-        <input class="form-control" aria-label="With textarea"></input>
-
-     </div>
-
-   </div>
-
-  <div class="col-md-3">
-      <div class="input-group-prepend">
-      <span class="input-group-text">Correo</span>
-        <input class="form-control" aria-label="With textarea"></input>
-    </div>
-  </div>
 
 
-  <div class="col-md-3">
-      <div class="input-group-prepend">
-      <span class="input-group-text">Prente</span>
-      <select class="form-control">
-            <option>Asiste</option>
-            <option>Ausente</option>
-            </select>
-    </div>
-  </div>
 
 
-</div>
-<div class="row">
-  <div class="col-md-6">.col-md-6</div>
-  <div class="col-md-6">.col-md-6</div>
+
+
+
+<!------------------------------>
+
+<!-- /.container -->
+<!------------------------------>
+
+<div id="Hola">
+  <h3>fdsf</h3>
 </div>
 
 
 
 
-</div>
-
-
-<div class="form-group">
 
 
 
 
 
+<script type="text/javascript">
 
-</div>
+  var people = {{ items_json|safe }}; //Render our JSON data as JavaScript (Esta data la paso de Django a VUE como Json)
+
+</script>
 
 
-</div>
+<script> // Configuración del VUE.JS
+
+  const app2 = new Vue({
+
+    delimiters: ['[[', ']]'],
+    el: '#app2',
+    data: {
+      inputs: []
+          },
+
+    methods: {
+      addRow() {
+        console.log('presionaste botón');
+        this.inputs.push({
+          one: '',
+          two: '',
+          nombre:'',
+          cargo:'',
+          correo:'',
+          asiste:''
+        })
+      },
+      deleteRow(index) {
+        this.inputs.splice(index,1)
+      }
+    },
+
+  })
+
+app2.addRow()
+
+  const app3 = new Vue({
+
+    delimiters: ['[[', ']]'],
+    el: '#app3',
+    data: {
+      inputs: []
+          },
+
+    methods: {}
+
+  })
+
+
+  setTimeout(function() {
+	app3.inputs = app2.inputs;
+}, 2000);
+</script>
+
+
 
 
 {% endif %}

@@ -11,6 +11,7 @@ from blog.models import Datos_Proy_WIP as Datos_Proy_WIP
 from blog.models import DatosWIP_Prog as DatosWIP_Prog
 #from blog.models import Datos_INV_WIP as Datos_INV_WIP
 from blog.models import MovPallets as MovPallets
+from blog.models import Alarma as Alarma
 from blog.models import Datos_KPI_Semanal as Datos_KPI_Semanal
 from blog.models import Datos_KPI_OPGRUA as Datos_KPI_OPGRUA
 from blog.models import Datos_MovPallets as Datos_MovPallets
@@ -34,6 +35,7 @@ from blog.models import Datos_KPI_OPGRUA_Diario as Datos_KPI_OPGRUA_Diario
 from django.db.models import Q
 import webscrap3
 import pruebaodbcconvertprod
+import pyodbc
 
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -52,11 +54,149 @@ class Command(BaseCommand):
         #parser.add_argument('poll_id', nargs='+', type=int)
         poll_id="hola"
 
+    def checkupdate(self):
+
+        ultima = Alarma.objects.all().order_by("-alarmaprogconv")[0]
+        ahora= datetime.now().replace(tzinfo=None)
+        print(ahora)
+        print(ultima.alarmaprogconv.replace(tzinfo=None))
+
+        if ( ahora >= ultima.alarmaprogconv.replace(tzinfo=None)) and (ultima.flagprogconv==False):
+            ultima.flagprogconv=True
+            nueva = Alarma.objects.create(alarmaprogconv=ultima.alarmaprogconv + timedelta(days=1), flagprogconv=False)
+            ultima.save()
+            print("nueva alarma seteada")
+
+            return (1)
+
+        else:
+            return(0)
+
+    def updateprogconv(self):
+        #me conecto a CONVERTPROG y tomo el último programa del día de hot (se toma a las 21:00 todos los días)
+        #copio los datos y los cargo del mismo modo como si los cargara manual mediante el menú CTI.
+        print("Me conecto al progconv, tomo el transactionindex más reciente que haya:")
+        flagcursor=0
+        try:
+            conn = pyodbc.connect('Driver={SQL Server};'
+                                    'Server=192.168.8.41;'
+                                    'UID=cti;'
+                                    'PWD=ctidb;'
+                                    'Database=ctidb_transact;')
+                                    #'Trusted_Connection=yes;')
+                                    #DSN=QadNet;UID=CGCOM;HOST=192.168.8.7;PORT=7120;DB=cstprod;
+            cursor = conn.cursor()
+            flagcursor=1
+        except Exception as e:
+            print("error al conectar a BD para orderinfo!!")
+            print(e)
+            flagcursor=0
+            sleep(3)
+
+        if flagcursor==1:
+            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[ORDERID],[workcenterid],[OPERATIONSPLITID],[SETUPSTARTDATE],[RUNENDDATE],[QUANTITYIN],[INPUTSHEETWIDTH],[INPUTSHEETLENGTH],[NUMBEROUT],[ORIGWORKCENTERID] FROM [ctidb_transact].[dbo].[CONVERTSCHEDULE] where workcenterid='FFW' or workcenterid='DRO' or workcenterid='FFG' or workcenterid='WRD' or workcenterid='HCR' or workcenterid='TCY' order by transactionindex desc")
+            if len(cursor.fetchall())>0:
+                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX],[ORDERID],[workcenterid],[OPERATIONSPLITID],[SETUPSTARTDATE],[RUNENDDATE],[QUANTITYIN],[INPUTSHEETWIDTH],[INPUTSHEETLENGTH],[NUMBEROUT],[ORIGWORKCENTERID] FROM [ctidb_transact].[dbo].[CONVERTSCHEDULE] where workcenterid='FFW' or workcenterid='DRO' or workcenterid='FFG' or workcenterid='WRD' or workcenterid='HCR' or workcenterid='TCY' order by transactionindex desc")
+                row0=cursor.fetchone()
+                transactionindex=row0[0]
+
+                fechahoy=datetime.now() + timedelta(days=3)
+                horizonte=fechahoy.strftime("%Y-%m-%d %H:%M:%S")
+                print(horizonte)
+
+                #ahora hago el filtro para las órdenes del último transactionindex que no pasan de hoy + 3 días (formato '2020-04-14 23:59:59')
+                cursor.execute("SELECT TOP (1000) [TRANSACTIONINDEX],[ORDERID],[workcenterid],[OPERATIONSPLITID],[SETUPSTARTDATE],[RUNENDDATE],[QUANTITYIN],[INPUTSHEETWIDTH],[INPUTSHEETLENGTH],[NUMBEROUT],[ORIGWORKCENTERID] FROM [ctidb_transact].[dbo].[CONVERTSCHEDULE] where transactionindex="+ str(transactionindex) + " and setupstartdate<= '" + horizonte +"' and (workcenterid='FFW' or workcenterid='DRO' or workcenterid='FFG' or workcenterid='WRD' or workcenterid='HCR' or workcenterid='TCY') order by SETUPSTARTDATE asc")
+                row1=cursor.fetchall()
+                fechaprog=row1[0][4]
+                trindex=row1[0][0]
+                print("fechaporg:")
+                print(fechaprog)
+
+
+                fecha_programa_datetime=fechaprog
+                fecha_programa_horini=fecha_programa_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
+                fecha_programa_horfin=fecha_programa_horini + timedelta(days=2)
+
+                programma, created = OrdenProg.objects.get_or_create(fecha_programa=fecha_programa_datetime, transaction_index=row1[0][0], horizonteini=fecha_programa_horini, horizontefin=fecha_programa_horfin )
+
+                for prog in row1:
+                    #print("A")
+
+                    ##Acá está considerando que una orden pertenece a un turno si ésta está programada para TERMINAR en el turno
+
+                    #debo generar el dato: fechainiajustada y  turno
+                    #Este es el segmento que debo replicar de la página de carga:
+                    datefinoriginal=prog[4]#prog[4] para considerar el inicio de la producción, prog[5] para considerar al fin de la producción.
+
+                    horater=datefinoriginal.hour
+                    minter=datefinoriginal.minute
+                    turno=""
+                    #print(horater)
+                    #print(minter)
+
+                    #print("B")
+
+                    if(0<=horater and horater<7):
+                        fechater = datefinoriginal - timedelta(days=1)
+                        fechater = fechater.replace(hour= 0, minute=0, second=0, microsecond=0)
+                        turno = "C"
+                    elif ((7<=horater and horater<=13) or (horater==14 and minter<30)):
+                        fechater= datefinoriginal
+                        fechater = fechater.replace(hour= 0, minute=0, second=0, microsecond=0)
+                        turno= "A"
+
+                    elif ((horater==14 and minter>=30) or (15<=horater and horater<20)):
+                        fechater = datefinoriginal
+                        fechater = fechater.replace(hour= 0, minute=0, second=0, microsecond=0)
+                        turno= "B"
+                    elif (horater>=20):
+                        fechater = datefinoriginal
+                        fechater = fechater.replace(hour= 0, minute=0, second=0, microsecond=0)
+                        turno= "C"
+
+                    #print("C")
+                    #ahora tengo que cargar el programa de la misma manera que lo cargaba antes (la fecha de ingreso la podría sacar como el setupstartdate más cercano)
+                    datefinajustada_datetime = fechater#"%d-%m-%Y %H:%M"
+                    dateini_datetime = prog[4]#"%d-%m-%Y %H:%M"
+                    datefin_datetime = prog[5]#"%d-%m-%Y %H:%M"
+                    cantQin=prog[6]
+                    if datefin_datetime < fecha_programa_horfin:
+
+                        #print("datefinajustada: " + str(datefinajustada_datetime))
+
+                        print("D")
+                        if flagcursor==1:
+                            cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(prog[1]) + " order by transactionindex desc")
+                            if len(cursor.fetchall())>0:
+                                cursor.execute("SELECT TOP (1) [TRANSACTIONINDEX] ,[ORDERID],[INTERNALSPECID],[CUSTOMERNAME] FROM [ctidb_transact].[dbo].[ORDERS_INFO] where orderid="+ str(prog[1]) + " order by transactionindex desc")
+                                row0=cursor.fetchone()
+                                cliente=row0[3]
+                                padron=row0[2]
+                            else:
+                                cliente="#"
+                                padron="#"
+
+                        print("E")
+                        DetalleProg.objects.get_or_create(programma=programma,workcenter=prog[2],orderId=str(prog[1]), dateini=dateini_datetime, datefin=datefin_datetime,qIn=int(cantQin), datefinajustada= datefinajustada_datetime , turno=turno, orderIdPrev="vacio", orderIdPost="vacio", anchoplaca=prog[7], largoplaca=prog[8], numberout=prog[9], cliente=cliente, padron=padron)
+                        print("F")
+
+
+
+
+
+
+
+            else:
+                print("error en consulta de nuevo programa")
+                sleep(3)
+
+
+
     def update_detalleprogs(self):
 
         print("iniciando actualización de último OrdenProg cargado de conversión")
         #obteniendo último OrdenProg subido al sistema:
-        ordenprog= OrdenProg.objects.order_by("-fecha_programa")[1]
+        ordenprog= OrdenProg.objects.order_by("-fecha_programa")[0]
         print(ordenprog)
         #ahora tomo todas las detalleprog que pertenecen a esa orden
         detalles= DetalleProg.objects.filter(programma=ordenprog, datefinajustada__lte = ordenprog.horizontefin)
@@ -473,8 +613,8 @@ class Command(BaseCommand):
 
 
                     for rem in remis:
-                        print( str(rem.m2pallet) + " " + str(rem.fechacamion)+ " " + str(rem.fechapll) )
-                        print("semana: " + str(semana) + " " +  str( (rem.fechacamion-rem.fechapll).days ) + " " + str(rem.tarja) + " " + str(rem.ORDERID) )
+                        #print( str(rem.m2pallet) + " " + str(rem.fechacamion)+ " " + str(rem.fechapll) )
+                        #print("semana: " + str(semana) + " " +  str( (rem.fechacamion-rem.fechapll).days ) + " " + str(rem.tarja) + " " + str(rem.ORDERID) )
                         sumadays+=max((rem.fechacamion-rem.fechapll).days,0)
                         sumam2+=rem.m2pallet
 
@@ -752,10 +892,10 @@ class Command(BaseCommand):
                     movsconv1= MovPallets.objects.filter(filtromovinternoqs).filter(EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
                     movsconv2= MovPallets.objects.filter(Q(DESTINATION="FFW") | Q(DESTINATION="DRO")| Q(DESTINATION="FFG")).filter( EVENTDATETIME__gte=fechaini, EVENTDATETIME__lt=fechafin).count()
 
-                    print("labels2:")
+                    #print("labels2:")
 
                     labels2.append({"fechaini":fechaini,"fechafin":fechafin, "label": label, "movsaBPT":movsaBPT, "movsaCalles":movsaCalles, "movsandenes1":movsandenes1, "movsandenes2":movsandenes2, "movsandenes3":movsandenes3, "movsandenes4":movsandenes4, "movsandenes5":movsandenes5, "movsandenes6":movsandenes6, "movsconv1":movsconv1, "movsconv2":movsconv2, "opbpt1":datosopB[1][0], "movsopbpt1":datosopB[1][1], "opbpt2":datosopB[2][0], "movsopbpt2":datosopB[2][1], "opbpt3":datosopB[3][0], "movsopbpt3":datosopB[3][1], "opbpt4":datosopB[4][0], "movsopbpt4":datosopB[4][1], "opbpt5":datosopB[5][0], "movsopbpt5":datosopB[5][1], "opbpt6":datosopB[6][0], "movsopbpt6":datosopB[6][1], "opbpt7":datosopB[7][0], "movsopbpt7":datosopB[7][1], "opbpt8":datosopB[8][0], "movsopbpt8":datosopB[8][1], "opbpt9":datosopB[9][0], "movsopbpt9":datosopB[9][1], "opbpt10":datosopB[10][0], "movsopbpt10":datosopB[10][1], "opbpt11":datosopB[11][0], "movsopbpt11":datosopB[11][1], "opbpt12":datosopB[12][0], "movsopbpt12":datosopB[12][1], "opbpt13":datosopB[13][0], "movsopbpt13":datosopB[13][1], "opbpt14":datosopB[14][0], "movsopbpt14":datosopB[14][1], "movsopbptIN1":datosopB[1][2], "movsopbptIN2":datosopB[2][2],"movsopbptIN3":datosopB[3][2],"movsopbptIN4":datosopB[4][2], "movsopbptIN5":datosopB[5][2], "movsopbptIN6":datosopB[6][2],"movsopbptIN7":datosopB[7][2],"movsopbptIN8":datosopB[8][2],"movsopbptIN9":datosopB[9][2], "movsopbptIN10":datosopB[10][2], "movsopbptIN11":datosopB[11][2], "movsopbptIN12":datosopB[12][2], "movsopbptIN13":datosopB[13][2],"movsopbptIN14":datosopB[14][2]})
-                    print("ok labels 2")
+                    #print("ok labels 2")
 
 
                 for dato in labels2:
@@ -1050,9 +1190,13 @@ class Command(BaseCommand):
         while (1):
 
             try:
+                #checkeo si es necesario opdatear el programa de conversión( por ahora todos los días a las 21h)
+                up=self.checkupdate()
+                if up==1:
+                    self.updateprogconv()
                 self.update_detalleprogs()
-                self.updatekpisemanal()
                 self.updatemovpallets()
+                self.updatekpisemanal()
                 self.update_datos_wip()
 
 

@@ -22,6 +22,8 @@ import pruebawebscrap
 import webscrap2
 import odbcremision
 import openpyxl
+import random
+import json
 
 import xlrd
 from openpyxl.workbook import Workbook
@@ -42,7 +44,22 @@ def pruebaminuta(request):
     template_name = 'blog/pruebaminuta.html'
 
 
-    return render(request, template_name,{} )#     , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
+    names = ("bob", "dan", "jack", "lizzy", "susan")
+
+    items = []
+    for i in range(100):
+        items.append({
+            "name": random.choice(names),
+            "age": random.randint(20,80),
+            "url": "https://example.com",
+        })
+
+    context = {}
+    context["items_json"] = json.dumps(items)
+
+
+
+    return render(request, template_name,context )# {'context':context}    , "detallesProg": detallesProg})#acá le puedo decir que los mande ordenados por fecha?
 
 
 

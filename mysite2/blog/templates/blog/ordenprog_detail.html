@@ -42,6 +42,7 @@ InfoProd[8].push(("{{detalle.padron}}"));
 
 {% endfor %}
 
+console.log("InfoProd:")
 console.log(InfoProd);
 
 
@@ -379,6 +380,10 @@ do {
                             table+=                  strnamecliente;
                             table+=                  '</br>';
                             table+=                  strpadron;
+                            table+=                  '</br>';
+                            table+=                'PLL en BPT: {{detalle.unidades_ingresadas_bpt}}';
+                            table+=                  '</br>';
+                            table+=                'PLL Despachados {{detalle.unidades_despachadas}}';
 
 
                             table+=                  '</td>';

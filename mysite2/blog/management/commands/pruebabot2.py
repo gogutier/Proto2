@@ -32,6 +32,8 @@ estadoz="Inicio"
 
 
 def checkeventos():
+    print("datetime.now():")
+    print(datetime.now())
     for alerta in AlertaBot.objects.filter(flagevento=False):
         if alerta.tipoevento == "ingreso":
             print("buscando ingresos para esta ID: "+ alerta.order_id)
