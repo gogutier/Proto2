@@ -40,7 +40,7 @@ def consulta(datetimeini,datetimefin):
     cursor= conecta_BD()
     #Saco el dato de conversión
     #Acá voy a considerar que la campaña completa se hace dentro del mismo turno en que comienza su runstartedate, para evitar el caso en que dejan el setup iniciado desde elfin del turno anterior.
-    cursor.execute("SELECT TOP (3000)[WORKCENTERID],[ORDERID],[OPERATIONNO],[SETUPSTARTDATE],[SETUPENDDATE],[RUNSTARTDATE],[RUNENDDATE],[SETUPTOTAL],[RUNTOTAL],[GOODQUANTITY],[INPUTSHEETWIDTH],[INPUTSHEETLENGTH],[NUMBEROUT],[NUMBERIN],[REVIEWEDFLAG] FROM [ctidb_transact].[dbo].[CONVERTPROD] where SETUPSTARTDATE Between '"+ ini +"' And '"+ fin +"' order by transactionindex desc")
+    cursor.execute("SELECT TOP (3000)[WORKCENTERID],[ORDERID],[OPERATIONNO],[SETUPSTARTDATE],[SETUPENDDATE],[RUNSTARTDATE],[RUNENDDATE],[SETUPTOTAL],[RUNTOTAL],[GOODQUANTITY],[INPUTSHEETWIDTH],[INPUTSHEETLENGTH],[NUMBEROUT],[NUMBERIN],[REVIEWEDFLAG] FROM [ctidb_transact].[dbo].[CONVERTPROD] where SETUPSTARTDATE >= '"+ ini +"' And SETUPSTARTDATE <'"+ fin +"' order by transactionindex desc")
     #row0=cursor.fetchone()
     m2totconv=0
     m2totconvwaste=0
@@ -57,7 +57,7 @@ def consulta(datetimeini,datetimefin):
 
     #Ahora saco el dato de corrugado ***Acá saco sólo las GoodQTY, porque el waste que declara la fosber es el que sale durante el wetend? y no en el stacker??? No se le imprime tarja??
 
-    cursor.execute("SELECT TOP (3000)[SETUPID],[BOARDWIDTH],[GRADEID],[UKORDERID],[UKBLANKWIDTH],[UKBLANKLENGTH],[UKTOTALQTY],[UKGOODQTY],[UKPLANNEDQTY],[UKPLANNEDTOTAL],[UKNUMBERACROSS],[UKCOMPLETEFLAG],[LKORDERID],[LKBLANKWIDTH],[LKBLANKLENGTH],[LKTOTALQTY],[LKGOODQTY],[LKPLANNEDQTY],[LKPLANNEDTOTAL],[ACTUALSTARTDATE],[ACTUALENDDATE],[LINER1],[MEDIUM1],[LINER2],[MEDIUM2],[LINER3],[MEDIUM3],[LINER4],[LINER1WIDTH],[MEDIUM1WIDTH],[LINER2WIDTH],[MEDIUM2WIDTH],[LINER3WIDTH],[MEDIUM3WIDTH],[LINER4WIDTH],[ROWID],[TOTALLINEAL],[GOODLINEAL],[WASTELINEAL] FROM [ctidb_transact].[dbo].[CORRUGATORPROD]  where ACTUALSTARTDATE Between '"+ ini +"' And '"+ fin +"' order by transactionindex desc")
+    cursor.execute("SELECT TOP (3000)[SETUPID],[BOARDWIDTH],[GRADEID],[UKORDERID],[UKBLANKWIDTH],[UKBLANKLENGTH],[UKTOTALQTY],[UKGOODQTY],[UKPLANNEDQTY],[UKPLANNEDTOTAL],[UKNUMBERACROSS],[UKCOMPLETEFLAG],[LKORDERID],[LKBLANKWIDTH],[LKBLANKLENGTH],[LKTOTALQTY],[LKGOODQTY],[LKPLANNEDQTY],[LKPLANNEDTOTAL],[ACTUALSTARTDATE],[ACTUALENDDATE],[LINER1],[MEDIUM1],[LINER2],[MEDIUM2],[LINER3],[MEDIUM3],[LINER4],[LINER1WIDTH],[MEDIUM1WIDTH],[LINER2WIDTH],[MEDIUM2WIDTH],[LINER3WIDTH],[MEDIUM3WIDTH],[LINER4WIDTH],[ROWID],[TOTALLINEAL],[GOODLINEAL],[WASTELINEAL] FROM [ctidb_transact].[dbo].[CORRUGATORPROD]  where ACTUALSTARTDATE >= '"+ ini +"' And ACTUALSTARTDATE <'"+ fin +"' order by transactionindex desc")
 
     resultado=[]
     m2totcorr=0

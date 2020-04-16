@@ -210,7 +210,7 @@ class Command(BaseCommand):
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr, "m2CorrPlanned": m2CorrPlanned})
 
                     fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30, second=0, microsecond=0)
-                    fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
+                    fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 20, minute=0, second=0, microsecond=0)
                     turno="B"
                     label= fecha.strftime("%d-%m") + " " + turno
                     result = pruebaodbcconvertprod.consulta(fecha,fechafin)
@@ -222,7 +222,7 @@ class Command(BaseCommand):
                     print("CorrPlanned:" + str(m2CorrPlanned))
                     labels.append({"fecha":fecha ,"fechafin":fechafin ,"turno":turno, "label": label, "m2Conv": m2Conv, "m2ConvWaste": m2ConvWaste, "m2Corr": m2Corr, "m2CorrPlanned": m2CorrPlanned})
 
-                    fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 22, minute=0, second=0, microsecond=0)
+                    fecha=(ahora-timedelta(days=horizonte-i)).replace(hour= 20, minute=0, second=0, microsecond=0)
                     fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7, minute=0, second=0, microsecond=0)
                     turno="C"
                     label= fecha.strftime("%d-%m") + " " + turno
@@ -611,13 +611,13 @@ class Command(BaseCommand):
                         labels.append({"fecha_inicio":fecha_inicio ,"fecha_fin":fecha_fin ,"turno":turno, "label": label})
 
                     fecha_inicio=(ahorafix+timedelta(days=i)).replace(hour= 14, minute=30)
-                    fecha_fin=(ahorafix+timedelta(days=i)).replace(hour= 22)
+                    fecha_fin=(ahorafix+timedelta(days=i)).replace(hour= 20)
                     turno="B"
                     label= fecha_inicio.strftime("%d-%m") + " " + turno
                     if ahora<=fecha_fin:#ahora<=(ahorafix+timedelta(days=i)).replace(hour= 22):
                         labels.append({"fecha_inicio":fecha_inicio ,"fecha_fin":fecha_fin ,"turno":turno, "label": label})
 
-                    fecha_inicio=(ahorafix+timedelta(days=i)).replace(hour= 22)
+                    fecha_inicio=(ahorafix+timedelta(days=i)).replace(hour= 20)
                     fecha_fin=(ahorafix+timedelta(days=i+1)).replace(hour= 7)
                     turno="C"
                     label= fecha_inicio.strftime("%d-%m") + " " + turno
@@ -850,9 +850,12 @@ class Command(BaseCommand):
         while (1):
 
             try:
+                self.updatemovpallets()
                 self.update_datos_wip()
                 self.update_datos_inv_cic()
-                self.updatemovpallets()
+
+                print("Procesos rápidos completos..")
+                print("_")
 
                 #self.updatewipprog()
                 #self.updateproywip()

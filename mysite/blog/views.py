@@ -267,12 +267,12 @@ def get_data_consumo_rollos(request, *args, **kwargs):
         labels.update({label:([],[],fechaini,fechafin)})#append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
 
         fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 14, minute=30)
-        fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 22)
+        fechafin=(ahora-timedelta(days=horizonte-i)).replace(hour= 20)
         turno="B"
         label= fechaini.strftime("%d-%m") + " " + turno
         #print(m2Corr)
         labels.update({label:([],[],fechaini,fechafin)})#labels.append({"fechaini":fechaini ,"fechafin":fechafin ,"turno":turno, "label": label})
-        fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 22)
+        fechaini=(ahora-timedelta(days=horizonte-i)).replace(hour= 20)
         fechafin=(ahora-timedelta(days=horizonte-i-1)).replace(hour= 7)
         turno="C"
         label= fechaini.strftime("%d-%m") + " " + turno

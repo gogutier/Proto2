@@ -26,7 +26,10 @@
 
     </tr>
 
+
+
     {% for camion in camiones %}
+
       <tr>
         <td>
         <a style="text-align: center;" href="{% url 'camion_detail' pk=camion.pk %}" >{{camion.Patente}}</a>
@@ -47,6 +50,8 @@
 
     </tr>
   {% endfor %}
+
+
   </table>
 
 
